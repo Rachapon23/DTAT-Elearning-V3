@@ -1,0 +1,11 @@
+.row {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.row::after {
+    content: "";
+    flex: 0 0 48.9%;
+}
