@@ -4,12 +4,13 @@ import Courses from './components/WebPages/TeacherPages/TeacherCourse/Courses';
 import Exames from "./components/WebPages/TeacherPages/TeacherExam/Exames";
 import CourseCreate from "./components/WebPages/TeacherPages/TeacherCourse/CourseCreate";
 import ExamCreate from "./components/WebPages/TeacherPages/TeacherExam/ExamCreate";
+import Home from "./components/WebPages/HomePage/Home/Home";
 
 function App() {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<div> MAIN WEB PAGE <Link to="/teacher/home"> teacher </Link></div>} />
+        <Route path="/" element={<Home/>} />
         <Route path="/teacher/home" element={<TeacherHome/>} />
         <Route path="/teacher/courses" element={<Courses/>} />
         <Route path="/teacher/exams" element={<Exames/>} />
