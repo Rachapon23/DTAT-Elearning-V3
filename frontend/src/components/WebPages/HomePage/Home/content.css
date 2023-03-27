@@ -1,0 +1,9 @@
+div.title-content{
+    text-align: center;
+}
+.title-content .title-1{
+    font-size: 1.5rem;
+    color: #14347D;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
