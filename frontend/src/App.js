@@ -5,12 +5,15 @@ import Exames from "./components/WebPages/TeacherPages/TeacherExam/Exames";
 import CourseCreate from "./components/WebPages/TeacherPages/TeacherCourse/CourseCreate";
 import ExamCreate from "./components/WebPages/TeacherPages/TeacherExam/ExamCreate";
 import Home from "./components/WebPages/HomePage/Home/Home";
-
+import StudentHomePage from "./components/WebPages/StudentPage/StudentHome/StudentHomePage";
 function App() {
   return (
     <div>
       <Routes>
         <Route path="/" element={<Home/>} />
+        <Route path="/student/home" element={<StudentHomePage/>} />
+
+
         <Route path="/teacher/home" element={<TeacherHome/>} />
         <Route path="/teacher/courses" element={<Courses/>} />
         <Route path="/teacher/exams" element={<Exames/>} />

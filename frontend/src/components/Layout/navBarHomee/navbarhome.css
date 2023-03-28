@@ -49,7 +49,15 @@ a:hover::after {
   justify-content: space-between;
   align-items: center;
   z-index: 99;
+  transition: background-color 0.3s ease-out;
 }
+.nav-home.dark {
+  background-color: rgba(159, 187, 246, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(2em);
+  transition: background-color 0.3s ease-in;
+}
+
 .btn-login {
   width: 130px;
   height: 50px;
@@ -136,10 +144,11 @@ a:hover::after {
   }
 }
 
-
 /* Modal*/
 :where(.css-dev-only-do-not-override-mxhywb).ant-modal .ant-modal-content{
   background-color: rgba(159, 187, 246, 0.3);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(2em);
+  transition: height .2s ease;
 } 
+

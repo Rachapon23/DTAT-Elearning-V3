@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./navbarhome.css";
 import LogAndRe from "./LogAndRe";
 import { Button, Modal } from "antd";
 import { BarsOutlined } from "@ant-design/icons";
 const NavBarHome = () => {
   const [openDrop, setOpenDrop] = useState(false);
+  const [nextState, setNextState] = useState([]);
+  const [bg, setBg] = useState("");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const showModal = () => {
@@ -22,14 +24,54 @@ const NavBarHome = () => {
     setOpen(false);
   };
 
+  const changeBG = () => {
+    const scrollTop = this.myRef.current.scrollTop;
+    console.log(scrollTop);
+    if (window.screenY >= 90) {
+      setBg("");
+      setNextState([...nextState]);
+    } else {
+      console.log(window.screenY);
+      setBg("dark");
+      setNextState([...nextState]);
+    }
+  };
+
+  // window.addEventListener("scroll", changeBG);
+
+  const [scrollTop, setScrollTop] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = (event) => {
+      setScrollTop(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const handlechange = () => {
+    if (scrollTop >= 90) {
+      // setNextState([...nextState])
+      setBg("dark");
+    } else {
+      setBg("");
+      // setNextState([...nextState])
+    }
+  };
+  window.addEventListener("scroll", handlechange);
+
   return (
-    <div className={"nav-home"}>
+    <div className={`nav-home ${bg}`}>
       <h2 className="logo">Logo</h2>
       <nav className={"navigation"}>
-        <a href="#">Home</a>
-        <a href="#">Public Course</a>
+        <a href="/">Home</a>
+        <a href="/student/home">Public Course</a>
         <a href="#">Private Course</a>
-        <a href="#">Contact</a>
+        <a href="#contact">Contact</a>
         <button className={"btn-login"} onClick={showModal}>
           Login
         </button>
@@ -41,16 +83,16 @@ const NavBarHome = () => {
       </nav>
       <div className={`dropdown_menu ${openDrop}`}>
         <li>
-          <a href="#">Home</a>
+          <a href="/">Home</a>
         </li>
         <li>
-          <a href="#">Public Course</a>
+          <a href="/student/home">Public Course</a>
         </li>
         <li>
           <a href="#">Private Course</a>
         </li>
         <li>
-          <a href="#">Contact</a>
+          <a href="#contact">Contact</a>
         </li>
         <li>
           {" "}
@@ -62,13 +104,14 @@ const NavBarHome = () => {
 
       <Modal
         open={open}
+        width={1000}
         // title="login"
         onOk={handleOk}
         onCancel={handleCancel}
         footer={[]}
         mask={false}
       >
-     <LogAndRe/>
+        <LogAndRe />
       </Modal>
     </div>
   );
