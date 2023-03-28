@@ -42,6 +42,10 @@ const UserSchema = new mongoose.Schema({
         type: ObjectId,
         ref: "plant",
     },
+    verified: {
+        type: Boolean,
+        default: false,
+    }
 }, { timestamps: true });
 
 module.exports = User = mongoose.model("users", UserSchema);
