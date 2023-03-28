@@ -51,7 +51,7 @@ const Login = ({layout,setLayout}) => {
     </Form.Item>
 
     <Form.Item>
-      <Button type="primary" htmlType="submit" className="login-form-button">
+      <Button type="primary" htmlType="submit" className="form-button">
         Log in
       </Button>
       {/* Or <a href="">register now!</a> */}

@@ -1,6 +1,16 @@
 import React from 'react'
-import './content.css'
+import "./content.css";
+import CardCourse from "../../../Card/CardCourse";
+import { Col, Row } from "antd";
+
 const HomePrivate = () => {
+
+  const Data = {
+    img: "",
+    title: "",
+    description: "",
+  };
+
   return (
     <div>
         <div className="title-content">
@@ -11,9 +21,33 @@ const HomePrivate = () => {
         </p>
       </div>
       <div className="card-content">
-        <div className="card-1">
-            
-        </div>
+      <div className="card-content">
+      <Row  justify="space-between">
+          <Col span={8} className="col-card">
+            <CardCourse Data={Data} />
+          </Col>
+          <Col span={8} className="col-card">
+            <CardCourse Data={Data} />
+          </Col>
+          <Col span={8} className="col-card">
+            <CardCourse Data={Data} />
+          </Col>
+        </Row>
+        <Row  justify="space-between" style={{marginTop:"20px"}}>
+          <Col span={8} className="col-card">
+            <CardCourse Data={Data} />
+          </Col>
+          <Col span={8} className="col-card">
+            <CardCourse Data={Data} />
+          </Col>
+          <Col span={8} className="col-card">
+            <CardCourse Data={Data} />
+          </Col>
+        </Row>
+      </div>
+      </div>
+      <div className="btn-navigate">
+      <button className="btn-show-more">Show More</button>
       </div>
     </div>
   )

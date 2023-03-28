@@ -8,14 +8,18 @@
 .login-form {
     width: 100%;
   }
+.register-form {
+    width: 100%;
+  }
 .login-form-forgot {
     float: right;
   }
   .ant-col-rtl .login-form-forgot {
     float: left;
   }
-.login-form-button {
+.form-button {
     width: 100%;
+    margin-top: 10px;
   }
 .register-link{
     text-align: center;

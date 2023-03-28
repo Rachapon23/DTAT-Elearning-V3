@@ -1,0 +1,24 @@
+.bg-st-home {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 100vh;
+  min-height: 100vh;
+  background-image: url("../../../../../public/background.jpg");
+  background-size: cover;
+}
+.table-student{
+    width: 100%;
+    margin-bottom: 50px;
+}
+.content-home{
+    margin-top: 80px;
+    width: 950px;
+}
+.label-home-st{
+    font-size: 1rem;
+    color: #14347d;
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 20px;
+}

@@ -2,6 +2,7 @@ import React from "react";
 import HomePrivate from "./HomePrivate";
 import HomePublic from "./HomePublic";
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
+import Contact from "./Contact";
 import "./home.css";
 const Home = () => {
   return (
@@ -31,6 +32,9 @@ const Home = () => {
         </div>
         <div className="content">
           <HomePrivate />
+        </div>
+        <div className="contact" id="contact">
+          <Contact />
         </div>
       </div>
     </div>
