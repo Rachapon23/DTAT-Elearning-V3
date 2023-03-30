@@ -6,6 +6,7 @@
   min-height: 100vh;
   background-image: url("../../../../../public/background.jpg");
   background-size: cover;
+  padding: 0 100px;
 }
 .table-student{
     width: 100%;
@@ -13,7 +14,8 @@
 }
 .content-home{
     margin-top: 80px;
-    width: 950px;
+    width: 100%;
+    margin-bottom: 50px;
 }
 .label-home-st{
     font-size: 1rem;
