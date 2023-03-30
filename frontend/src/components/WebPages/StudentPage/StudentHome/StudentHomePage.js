@@ -2,6 +2,11 @@ import React from "react";
 import "./studenthome.css";
 import { Table } from "antd";
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
+import CalendarDisplay from "../../CalendarPage/CalendarDisplay";
+
+import { Breadcrumb, Layout, Menu, theme } from 'antd';
+const { Header, Content, Footer } = Layout;
+
 const StudentHomePage = () => {
     const columns = [
         {
@@ -36,6 +41,7 @@ const StudentHomePage = () => {
        
       ];
 
+
   return (
     <div className="bg-st-home">
       <NavBarHome />
@@ -65,6 +71,10 @@ const StudentHomePage = () => {
                   pageSizeOptions: ["10", "20", "30"],
                 }}
               />            
+        </div>
+        <div className="">
+            <p htmlFor="" className="label-home-st">Calendar</p>
+   <CalendarDisplay/>           
         </div>
 
 

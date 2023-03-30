@@ -3,6 +3,7 @@ import HomePrivate from "./HomePrivate";
 import HomePublic from "./HomePublic";
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 import Contact from "./Contact";
+
 import "./home.css";
 const Home = () => {
   return (
@@ -26,7 +27,9 @@ const Home = () => {
             <img alt="iconHome" className="iconHome" src="/iconHome.png" />
           </div>
         </div>
-        <div className="content"></div>
+        <div className="content">
+
+        </div>
         <div className="content">
           <HomePublic />
         </div>
