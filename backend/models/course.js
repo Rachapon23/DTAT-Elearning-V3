@@ -24,10 +24,10 @@ const CourseSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    condition: {
+    condition: [{
       type: ObjectId,
       ref: "condition",
-    },
+    }],
     topic: [{
       type: ObjectId,
       ref: "topic",
