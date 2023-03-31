@@ -1,17 +1,23 @@
 # Backend
-## ปัจจุบัน
-- ไม่มี
-## ต่อไป
-- ทำส่วน model ของ DB
-- ทำ route
+## API Testing (Postman)
+https://app.getpostman.com/join-team?invite_code=d50c30757d652e8d4514d3e7753249ee&target_code=7a85ae64f2c329b1ba0171c911211646
+## How to read API
+These are example of how to read API
+
+Over all pattern
+/***action***-***document***\[ \[ -***field*** \] || \[ /***document*** \] / ***:id*** \]
+
+1. /***action***-***document***
+-  /list-calendar => `list` document `calendar`
+
+2. /***action***-***document***-***field***
+-  /update-activity-progress/:id => `update` document `activity` in filed `progress`
+
+3. /***action***-***document***/***document***/***:id***
+-  /list-activity/course/:id => `list` document `activity` of this `course` with `id`
+
 
 # Frontend
-## ปัจจุบัน 
-- ส่วน UI เป็นเพียงโครงเท่านั้นมีหลายส่วนี่ยังใช้การไม่ได้หรือสมบูรณ์
-## ต่อไป
-- ไม่มี
-
-# Resource
 ## UI Design
 ### Quiz
 - https://dribbble.com/shots/18337993-Create-New-Quiz
