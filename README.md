@@ -1,11 +1,12 @@
 # Backend
 ## API Testing (Postman)
 https://app.getpostman.com/join-team?invite_code=d50c30757d652e8d4514d3e7753249ee&target_code=7a85ae64f2c329b1ba0171c911211646
-## How to read API
-These are example of how to read API
+
 ## How to writing tests in Postman
 https://learning.postman.com/docs/writing-scripts/test-scripts/#next-steps
 
+## How to read API
+These are example of how to read API
 ~~Over all pattern~~
 ~~/***action***-***document***\[ \[ -***field*** \] || \[ /***document*** \] / ***:id*** \]~~
 
