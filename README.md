@@ -4,8 +4,8 @@ https://app.getpostman.com/join-team?invite_code=d50c30757d652e8d4514d3e7753249e
 ## How to read API
 These are example of how to read API
 
-Over all pattern
-/***action***-***document***\[ \[ -***field*** \] || \[ /***document*** \] / ***:id*** \]
+~~Over all pattern~~
+~~/***action***-***document***\[ \[ -***field*** \] || \[ /***document*** \] / ***:id*** \]~~
 
 1. /***action***-***document***
 > /list-calendar => `list` document `calendar`
