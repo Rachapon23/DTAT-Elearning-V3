@@ -8,13 +8,16 @@ Over all pattern
 /***action***-***document***\[ \[ -***field*** \] || \[ /***document*** \] / ***:id*** \]
 
 1. /***action***-***document***
--  /list-calendar => `list` document `calendar`
+/list-calendar => `list` document `calendar`
 
-2. /***action***-***document***-***field***/***:id***
--  /update-activity-progress/:id => `update` document `activity` in filed `progress`
+2. /***action***-***document***/***:id***
+/get-course/:id => `get` document `course` with `id`
 
-3. /***action***-***document***/***document***/***:id***
--  /list-activity/course/:id => `list` document `activity` of this `course` with `id`
+3. /***action***-***document***-***field***/***:id***
+/update-activity/:id/progress => `update` document `activity` with `id` in filed `progress` 
+
+4. /***action***-***document***/***document***/***:id***
+/list-activity/course/:id => `list` document `activity` by use `course` `id`
 
 
 # Frontend
