@@ -22,7 +22,7 @@ These are example of how to read API
 
 # Frontend
 ## UI Design
-### Quiz
+### Exam
 - https://dribbble.com/shots/18337993-Create-New-Quiz
 ### Course
 - https://dribbble.com/shots/18328762-After-Purchase-Publish 
