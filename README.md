@@ -7,16 +7,16 @@ These are example of how to read API
 Over all pattern
 /***action***-***document***\[ \[ -***field*** \] || \[ /***document*** \] / ***:id*** \]
 
-1. /***action***-***document***
+1. /***action***-***document*** \n
 /list-calendar => `list` document `calendar`
 
-2. /***action***-***document***/***:id***
+2. /***action***-***document***/***:id*** \n
 /get-course/:id => `get` document `course` with `id`
 
-3. /***action***-***document***-***field***/***:id***
+3. /***action***-***document***-***field***/***:id*** \n
 /update-activity/:id/progress => `update` document `activity` with `id` in filed `progress` 
 
-4. /***action***-***document***/***document***/***:id***
+4. /***action***-***document***/***document***/***:id*** \n
 /list-activity/course/:id => `list` document `activity` by use `course` `id`
 
 
