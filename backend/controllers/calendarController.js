@@ -1,42 +1,38 @@
 
 const Calendar = require('../models/calendar')
-const layout = require('../models/layout')
-const Coursee = require("../models/course");
-const { populate } = require('../models/calendar');
+const Room = require('../models/room')
+const Course = require("../models/course");
+const Role = require("../models/role")
+const User = require("../models/user")
 
 exports.createCalendar = async (req, res) => {
     try {
-        const calendar = await new Calendar(req.body.values).save()
-        //    console.log(req.body.values)
-        const course = await Coursee.findOneAndUpdate(
-            {_id:req.body.values.coursee},
-            {calendar:[
-                {
-                    start:req.body.values.start,
-                    end:req.body.values.end,
-                    color:req.body.values.color,
-                    idcalendar:req.body.values.coursee
-                }
-            ]}
+        const calendar = await new Calendar({
+            start: req.body.start,
+            end: req.body.end,
+            color: req.body.color,
+        }).save()
+
+        const course = await Course.findOneAndUpdate(
+            { _id: req.params.id },
+            { calendar: calendar },
+            { new: true },
         )
-        .exec()
-        res.send(calendar);
-    } catch (err) {
+
+        res.json({ data: { calendar, course } });
+    }
+    catch (err) {
         console.log(err);
-        res.status(500).send("Server Error!!! on create calendar");
+        res.status(500).json({ error: "Server Error!!! on create calendar" });
     }
 };
 
-exports.listCalendar = async (req, res) => {
+exports.listCalendarRole = async (req, res) => {
     try {
-        const calendar = await Calendar.find({}).populate({
-            path: "coursee",
-            populate: {
-                path: "room"
-            },
+        // const user = await User.find({ role : req.params.id }).select("_id")
+        // const Course = await Course.find({ teacher : req.params.id }).populate("teacher")
 
-        })
-        res.send(calendar);
+        // res.send({ data: calendar });
     } catch (err) {
         console.log(err);
         res.status(500).send("Server Error!!! on list calendar");
@@ -52,7 +48,7 @@ exports.listCalendar = async (req, res) => {
 
 //         // })
 //         // res.send(calendar);
-        
+
 //         // const calendar = await Coursee.find({user:req.user.user_id})
 //         // populate('calendar')
 //         // .exec()
@@ -65,8 +61,8 @@ exports.listCalendar = async (req, res) => {
 // };
 exports.getCalendar = async (req, res) => {
     try {
-        const {id} = req.params
-        const calendar = await Calendar.find({coursee:id}).populate("coursee")
+        const { id } = req.params
+        const calendar = await Calendar.find({ coursee: id }).populate("coursee")
         // console.log(req.params)
         res.send(calendar);
     } catch (err) {
@@ -81,9 +77,9 @@ exports.updateCalendar = async (req, res) => {
         // console.log(req.body)
         const calendar = await Calendar.findOneAndUpdate(
             { coursee: req.body.id },
-            { start: req.body.start, end: req.body.end ,color:req.body.color}
+            { start: req.body.start, end: req.body.end, color: req.body.color }
         )
-// console.log(calendar)
+        // console.log(calendar)
         res.send(calendar);
     } catch (err) {
         console.log(err);

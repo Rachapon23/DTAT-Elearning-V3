@@ -20,8 +20,8 @@ router.get("/list-activity/course/:id", checkUser, checkTeacher, listActivityCou
 // student
 router.post("/create-activity", checkUser, createActivity);
 
-router.put("/update-activity-progress/:id", checkUser, updateActivityProgress);
-router.get("/get-activity-progress/:id", checkUser, getActivityProgress);
+router.put("/update-activity/:id/progress", checkUser, updateActivityProgress);
+router.get("/get-activity/:id/progress", checkUser, getActivityProgress);
 
 // we still have to add these API?
 // router.get("/get-my-course-student", checkUser, getMyCourseStudent);

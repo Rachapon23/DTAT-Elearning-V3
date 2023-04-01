@@ -5,17 +5,15 @@ const router = express.Router()
 const { checkUser, checkAdmin } = require('../middleware/middleware')
 const {
     listUser,
-    listStudent,
-    listTeacher,
-    changeRole,
-    changeEnable,
+    listUserRole,
+    updateUserRole,
+    updateUserEnabled,
 } = require('../controllers/userController')
 
 router.get('/list-user', checkUser, checkAdmin, listUser)
-router.get('/list-student', checkUser, checkAdmin, listStudent)
-router.get('/list-teacher', checkUser, checkAdmin, listTeacher)
+router.get('/list-user/role/:id', checkUser, checkAdmin, listUserRole)
 
-router.put('/change-role', checkUser, checkAdmin, changeRole)
-router.put('/change-enable', checkUser, checkAdmin, changeEnable)
+router.put('/update-user/:id/role', checkUser, checkAdmin, updateUserRole)
+router.put('/update-user/:id/enable', checkUser, checkAdmin, updateUserEnabled)
 
 module.exports = router;

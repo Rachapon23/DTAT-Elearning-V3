@@ -1,14 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-const { checkUser, checkAdmin, checkTeacher } = require('../middleware/middleware')
+const { checkUser, checkAdmin, checkTeacher, uploadPublic, uploadPrivate } = require('../middleware/middleware')
 const {
     createCourse,
     getCourse,
     listCourse,
     updateCourse,
-    changeEnableCourse,
+    updateEnableCourse,
     removeCourse,
+    updateCourseImage,
+    getCourseImage,
 } = require("../controllers/courseController");
 
 
@@ -19,7 +21,9 @@ router.get("/get-course/:id", checkUser, checkTeacher, getCourse);
 router.put("/update-course/:id", checkUser, checkTeacher, updateCourse);
 router.delete("/remove-course/:id", checkUser, checkTeacher, removeCourse);
 
-router.put("/change-enable-course/:id", checkUser, checkTeacher, changeEnableCourse);
+router.put("/update-course/:id/enabled", checkUser, checkTeacher, updateEnableCourse);
+router.put("/update-course/:id/image", checkUser, checkTeacher, uploadPublic, updateCourseImage);
+router.get("/get-course/:id/image", checkUser, checkTeacher, getCourseImage);
 
 // === waite for review =========================================================
 

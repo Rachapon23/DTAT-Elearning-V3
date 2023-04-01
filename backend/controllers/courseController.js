@@ -1,16 +1,14 @@
-const ObjectId = require("mongoose").Types.ObjectId;
 const fs = require("fs");
 const Course = require("../models/course");
-const Layout = require("../models/layout");
+const Room = require("../models/room");
 const Plant = require("../models/plant");
 const Calendar = require("../models/calendar");
 const User = require("../models/user");
-// const History = require('../models/history');
-// const Quiz = require("../models/quize");
 
 const studentActivity = require('../models/activity')
 const Condition = require("../models/condition");
 
+// POST: /create-course
 exports.createCourse = async (req, res) => {
   try {
     const { head, body } = req.body;
@@ -20,7 +18,7 @@ exports.createCourse = async (req, res) => {
     if (!plant) return res.status(404).json({ error: "Plant not found" });
 
     // find room
-    const room = Layout.findOne({ _id: head.room })
+    const room = Room.findOne({ _id: head.room })
     if (!room) return res.status(404).json({ error: "Room not found" });
 
     // create codition
@@ -34,11 +32,14 @@ exports.createCourse = async (req, res) => {
       video: head.video,
       type: head.type,
       enabled: head.enabled,
-      teacher: null,
+      teacher: head.teacher,
       calendar: null,
       exam: null,
       topic: null,
-      image: null,
+      image: {
+        original_name: null,
+        name: null,
+      },
       condition: condition,
     }).save();
 
@@ -51,6 +52,7 @@ exports.createCourse = async (req, res) => {
   }
 };
 
+// GET: /get-course/:id
 exports.getCourse = async (req, res) => {
   try {
     const course = await Course.findOne({ _id: req.params.id })
@@ -74,6 +76,7 @@ exports.listCourse = async (req, res) => {
   }
 };
 
+// PUT: /update-course/:id
 exports.updateCourse = async (req, res) => {
   try {
     let { head } = req.body;
@@ -84,7 +87,7 @@ exports.updateCourse = async (req, res) => {
     if (!plant) return res.status(404).json({ error: "Plant not found" });
 
     // find room
-    const room = Layout.findOne({ _id: head.room })
+    const room = Room.findOne({ _id: head.room })
     if (!room) return res.status(404).json({ error: "Room not found" });
 
     // find course
@@ -108,13 +111,14 @@ exports.updateCourse = async (req, res) => {
     )
 
     res.json({ data: course });
-  } 
+  }
   catch (err) {
     console.log(err);
     res.status(500).json({ error: "Unexpected error on update course" });
   }
 };
 
+// DELETE: /remove-course/:id
 exports.removeCourse = async (req, res) => {
   try {
     const courses = await Course.findOneAndDelete({ _id: req.params.id })
@@ -124,11 +128,12 @@ exports.removeCourse = async (req, res) => {
   }
   catch (err) {
     console.log(err);
-    res.status(500).json({ error: "fail to remove courses" });
+    res.status(500).json({ error: "Unexpected error on remove courses" });
   }
 };
 
-exports.changeEnableCourse = async (req, res) => {
+// PUT: /update-course/:id/enabled
+exports.updateEnableCourse = async (req, res) => {
   try {
     const { enabled } = req.body;
 
@@ -146,6 +151,60 @@ exports.changeEnableCourse = async (req, res) => {
   }
 };
 
+exports.updateCourseImage = async (req, res) => {
+  try {
+    const image_data = await Course.findOne({ _id: req.params.id }).select("image -_id")
+
+    let error_deleteFile = false
+    
+    console.log(req.body.upload_type)
+    if (image_data.image) {
+      fs.unlink(`./${req.body.upload_type}/uploads/${image_data.image.name}`, (err) => {
+        if (err) error_deleteFile = true;
+        else  error_deleteFile = false;
+      });
+    }
+
+    if(error_deleteFile) return res.status(500).json({ error: "Cannot delete previous image before update" });
+
+    
+    const course = await Course.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        image: {
+          original_name: req.body.original_name,
+          name: req.body.name
+        }
+      },
+      { new: true },
+    )
+
+    return res.json({ data: course });
+
+  }
+  catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Unexpected error on upload course image" });
+  }
+};
+
+exports.getCourseImage = async (req, res) => {
+  try {
+    const image_data = await Course.findOne({ _id: req.params.id }).select("image -_id")
+    
+    res.sendFile(`private/uploads/${image_data.image.name}`, { root : "."}, (err) => {
+      if(err) {
+        console.log(err)
+        return res.status(500).json({ error: "Cannot get course image" });
+      }
+    });
+
+  }
+  catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Unexpected error on get course image" });
+  }
+};
 
 // ==============================================================================================================
 
@@ -412,7 +471,7 @@ exports.deleteCourse = async (req, res) => {
 
 exports.getRoom = async (req, res) => {
   try {
-    const room = await Layout.find({}).exec();
+    const room = await Room.find({}).exec();
     res.send(room);
   } catch (err) {
     console.log(err);

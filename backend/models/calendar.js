@@ -1,9 +1,6 @@
 const mongoose = require('mongoose')
 
 const CalendarSchema = mongoose.Schema({
-    title: {
-        type: String
-    },
     start: {
         type: Date
     },
@@ -13,7 +10,7 @@ const CalendarSchema = mongoose.Schema({
     color: {
         type: String
     },
-    allDay: {
+    all_day: {
         type: Boolean,
         default: true
     },

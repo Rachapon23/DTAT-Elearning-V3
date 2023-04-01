@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
+const Multer = require("multer")
+const fs = require("fs")
 
 exports.checkUser = (req, res, next) => {
     try {
@@ -58,3 +60,39 @@ exports.checkAdmin = async (req, res, next) => {
         res.status(403).json({ error: "Unxpected error on check admin" })
     }
 }
+
+const storagePublic = Multer.diskStorage({
+    destination: (req, file, cb) => {
+        if(!fs.existsSync("./public/uploads")) {
+            fs.mkdirSync("./public/uploads")
+        }
+        cb(null, "./public/uploads")
+    },
+    filename: (req, file, cb) => {
+        const uniqueStr = `${Date.now()}-${Math.round(Math.random() * 1E9)}`
+        const splitedFileName = file.originalname.split(".")
+        const fileExtension = splitedFileName[splitedFileName.length - 1]
+        req.body["name"] = `${file.fieldname}-${uniqueStr}.${fileExtension}`
+        req.body["upload_type"] = "public";
+        cb(null, `${file.fieldname}-${uniqueStr}.${fileExtension}`)
+    }
+})
+exports.uploadPublic = Multer({storage: storagePublic}).single('file')
+
+const storagePrivate = Multer.diskStorage({
+    destination: (req, file, cb) => {
+        if(!fs.existsSync("./private/uploads")) {
+            fs.mkdirSync("./private/uploads")
+        }
+        cb(null, "./private/uploads")
+    },
+    filename: (req, file, cb) => {
+        const uniqueStr = `${Date.now()}-${Math.round(Math.random() * 1E9)}`
+        const splitedFileName = file.originalname.split(".")
+        const fileExtension = splitedFileName[splitedFileName.length - 1]
+        req.body["name"] = `${file.fieldname}-${uniqueStr}.${fileExtension}`
+        req.body["upload_type"] = "private";
+        cb(null, `${file.fieldname}-${uniqueStr}.${fileExtension}`)
+    }
+})
+exports.uploadPrivate = Multer({storage: storagePrivate}).single('file')

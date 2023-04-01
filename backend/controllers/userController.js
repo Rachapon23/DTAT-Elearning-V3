@@ -16,10 +16,9 @@ exports.listUser = async (req, res) => {
 };
 
 // GET: /list-student
-exports.listStudent = async (req, res) => {
+exports.listUserRole = async (req, res) => {
   try {
-    const role = await Role.findOne({ name: "student" }).select("_id")
-    const user = await User.find({ role: role._id }).select("-password")
+    const user = await User.find({ role: req.params.id }).select("-password")
 
     return res.json({ data: user });
   }
@@ -29,58 +28,30 @@ exports.listStudent = async (req, res) => {
   }
 };
 
-// GET: /list-teacher
-exports.listTeacher = async (req, res) => {
-  try {
-    const role = await Role.findOne({ name: "teacher" }).select("_id")
-    const user = await User.find({ role: role._id }).select("-password")
-
-    return res.json({ data: user });
-  }
-  catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: "Server Error!!! on listStudentuser" });
-  }
-};
-
-// POST: /change-role
-exports.changeRole = async (req, res) => {
+// POST: /update-user/:id/role
+exports.updateUserRole = async (req, res) => {
   try {
     const role = await Role.findOne({ name: req.body.role })
     const user = await User.findOneAndUpdate(
-      { _id: req.body.id },
+      { _id: req.params.id },
       { role: role._id }
     ).select("-password")
-
-    if (role.name === "teacher") {
-      if (user.profile === null) {
-        const profile = await new Profile({
-          image: null,
-          tel: null,
-          email: user.email,
-          target: 0,
-        }).save();
-
-        user.profile = profile;
-        await user.save();
-      }
-    }
 
     return res.json({ data: user });
   }
   catch (err) {
     console.log(err);
-    return res.status(500).jsone({ error: "Server Error!!! on ChangeRole" });
+    return res.status(500).json({ error: "Server Error!!! on ChangeRole" });
   }
 };
 
-// PUT: /change-enable
-exports.changeEnable = async (req, res) => {
+// PUT: /update-user/:id/enable
+exports.updateUserEnabled = async (req, res) => {
   try {
-    const data = req.body
-    const status = data.enabled === true;
+    const id = req.params.id
+    const status = req.body.enabled === true;
     const user = await User.findOneAndUpdate(
-      { _id: data.id },
+      { _id: id },
       { enabled: status },
       { new: true }
     ).select("_id enabled")

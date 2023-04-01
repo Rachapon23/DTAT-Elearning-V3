@@ -1,5 +1,5 @@
 
-const Layout = require('../models/layout');
+const Layout = require('../models/room');
 
 // POST: /create-room
 exports.createRoom = async (req, res) => {

@@ -9,7 +9,7 @@ const {
     createRoom,
     removeRoom,
     listRoom,
-} = require('../controllers/layoutController')
+} = require('../controllers/roomController')
 
 
 // admin

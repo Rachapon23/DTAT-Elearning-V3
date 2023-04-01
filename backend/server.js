@@ -15,9 +15,8 @@ const loadData = async () => {
     const Role = require("./models/role");
     const Department = require("./models/department");
     const bcrypt = require("bcryptjs");
-    const Layout = require("./models/layout");
+    const Room = require("./models/room");
     const Course = require("./models/course");
-    const Room = require("./models/layout");
     const Condition = require('./models/condition');
 
     // Plant
@@ -35,93 +34,93 @@ const loadData = async () => {
     // Department
     await Department.findOneAndUpdate({ id: "919323" }, { id: "919323" }, { upsert: true, new: true, setDefaultsOnInsert: true })
 
-    // Layout
-    await Layout.findOneAndUpdate(
+    // Room
+    await Room.findOneAndUpdate(
         { room: "Material 1" },
         { room: "Material 1", floor: 1 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Technical Skill 1" },
         { room: "Technical Skill 1", floor: 1 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Technical Skill 2" },
         { room: "Technical Skill 2", floor: 1 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Technical Skill 3" },
         { room: "Technical Skill 3", floor: 1 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Technical Skill 4" },
         { room: "Technical Skill 4", floor: 1 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Office" },
         { room: "Office", floor: 1 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Teacher Room" },
         { room: "Teacher Room", floor: 1 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Guest Room" },
         { room: "Guest Room", floor: 1 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Material 2" },
         { room: "Material 2", floor: 2 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Technical Skill 5" },
         { room: "Technical Skill 5", floor: 2 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Technical Skill 6" },
         { room: "Technical Skill 6", floor: 2 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Technical Skill 7" },
         { room: "Technical Skill 7", floor: 2 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Discussion 1" },
         { room: "Discussion 1", floor: 2 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Discussion 2" },
         { room: "Discussion 2", floor: 2 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Discussion 3" },
         { room: "Discussion 3", floor: 2 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Lecture 1" },
         { room: "Lecture 1", floor: 2 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Lecture 2" },
         { room: "Lecture 2", floor: 2 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    await Layout.findOneAndUpdate(
+    await Room.findOneAndUpdate(
         { room: "Hall" },
         { room: "Hall", floor: 2 },
         { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -189,6 +188,7 @@ const loadData = async () => {
             video: 2,
             type: true,
             enabled: true,
+            teacher: await User.findOne({ employee: "6100319" }),
             condition: [
                 await Condition.findOne({_id: "64264e62440e75505b4d5032"}),
                 await Condition.findOne({_id: "64264e62440e75505b4d5035"}),

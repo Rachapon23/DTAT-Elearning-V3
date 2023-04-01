@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const LayoutSchema = new mongoose.Schema({
+const RoomSchema = new mongoose.Schema({
     room: {
         type: String,
     },
@@ -9,4 +9,4 @@ const LayoutSchema = new mongoose.Schema({
     },
 });
 
-module.exports = Layout = mongoose.model("layout", LayoutSchema);
+module.exports = Room = mongoose.model("room", RoomSchema);

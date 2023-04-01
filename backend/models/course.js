@@ -18,11 +18,16 @@ const CourseSchema = new mongoose.Schema(
       type: Number,
     },
     image: {
-      type: String,
+      original_name: { type: String },
+      name: { type: String },
     },
     enabled: {
       type: Boolean,
       default: false,
+    },
+    teacher: {
+      type: ObjectId,
+      ref: "user",
     },
     condition: [{
       type: ObjectId,
@@ -34,7 +39,7 @@ const CourseSchema = new mongoose.Schema(
     }],
     room: {
       type: ObjectId,
-      ref: "layout",
+      ref: "room",
     },
     calendar: {
       type: ObjectId,

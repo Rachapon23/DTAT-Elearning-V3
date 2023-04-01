@@ -1,25 +1,31 @@
 # Backend
 ## API Testing (Postman)
 https://app.getpostman.com/join-team?invite_code=d50c30757d652e8d4514d3e7753249ee&target_code=7a85ae64f2c329b1ba0171c911211646
+
+## How to writing tests in Postman
+https://learning.postman.com/docs/writing-scripts/test-scripts/#next-steps
+
 ## How to read API
 These are example of how to read API
-
-Over all pattern
-/***action***-***document***\[ \[ -***field*** \] || \[ /***document*** \] / ***:id*** \]
+~~Over all pattern~~
+~~/***action***-***document***\[ \[ -***field*** \] || \[ /***document*** \] / ***:id*** \]~~
 
 1. /***action***-***document***
--  /list-calendar => `list` document `calendar`
+> /list-calendar => `list` document `calendar`
 
-2. /***action***-***document***-***field***
--  /update-activity-progress/:id => `update` document `activity` in filed `progress`
+2. /***action***-***document***/***:id***
+> /get-course/:id => `get` document `course` with `id`
 
-3. /***action***-***document***/***document***/***:id***
--  /list-activity/course/:id => `list` document `activity` of this `course` with `id`
+3. /***action***-***document***/***:id***/***field***
+> /update-activity/:id/progress => `update` document `activity` with `id` in filed `progress` 
+
+4. /***action***-***document***/***document***/***:id***
+> /list-activity/course/:id => `list` document `activity` by use `course` `id`
 
 
 # Frontend
 ## UI Design
-### Quiz
+### Exam
 - https://dribbble.com/shots/18337993-Create-New-Quiz
 ### Course
 - https://dribbble.com/shots/18328762-After-Purchase-Publish 
@@ -27,3 +33,14 @@ Over all pattern
 - https://dribbble.com/shots/18308307-Bundle-Course-Admin-View
 - https://dribbble.com/shots/18201776-My-Courses-Table-View
 - https://dribbble.com/shots/18201860-Bundle-Courses-Admin
+
+## Interesting UI Design
+- https://dribbble.com/shots/14038313-Project-Management-Dashboard-UX-UI-Design
+- https://dribbble.com/shots/18056963-System-Management-Dashboard-App
+- https://dribbble.com/shots/19634610-Create-new-project-admin-panel-ui-design
+- https://dribbble.com/shots/10523760-Eco-Create-New-Campaign
+- https://www.behance.net/gallery/147073469/Education-Dashboard-Design?tracking_source=search_projects_recommended%7CE-learning+App
+- https://cdn.dribbble.com/userupload/3178839/file/original-38cfc7b903e1ab702c114ff972d499f4.jpg?compress=1&resize=752x
+- https://dribbble.com/shots/15599311-Finance-Dashboard-App-UI-F-L-for-Love
+- https://dribbble.com/shots/20224879-W-Power-Courses-Dashboard
+- https://dribbble.com/shots/18418516-edtech-platform-product-design-dashboard
