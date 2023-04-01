@@ -19,7 +19,7 @@ These are example of how to read API
 3. /***action***-***document***/***:id***/***field***
 > /update-activity/:id/progress => `update` document `activity` with `id` in filed `progress` 
 
-4. /***action***-***document***/***document***/***:id*** \n
+4. /***action***-***document***/***document***/***:id***
 > /list-activity/course/:id => `list` document `activity` by use `course` `id`
 
 
