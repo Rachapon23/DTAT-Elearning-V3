@@ -16,7 +16,7 @@ These are example of how to read API
 2. /***action***-***document***/***:id***
 > /get-course/:id => `get` document `course` with `id`
 
-3. /***action***-***document***-***field***/***:id***
+3. /***action***-***document***/***:id***/***field***
 > /update-activity/:id/progress => `update` document `activity` with `id` in filed `progress` 
 
 4. /***action***-***document***/***document***/***:id*** \n
