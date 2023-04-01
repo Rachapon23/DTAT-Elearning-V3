@@ -22,7 +22,7 @@ function App() {
 
   return (
     <div>
-      <Row justify={"center"} align={"middle"} style={{paddingTop: "20%"}}>
+      <Row justify={"center"} align={"middle"} style={{paddingTop: "10%"}}>
         <Col style={{width: "80%"}}>
           <Carousel autoplay autoplaySpeed={5000}>
             {
