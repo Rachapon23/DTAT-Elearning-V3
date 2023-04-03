@@ -5,6 +5,7 @@ import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import CardContent from "./CardContent";
+import "../teach.css"
 
 const { Title } = Typography;
 const { Meta } = Card;
@@ -22,18 +23,18 @@ const ExamCreate = () => {
                         separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
                         items={[
                             {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><Link to="/teacher/exams">My Exams</Link></Title>,
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p >My Exam</p></Title>,
                                 key: "courses"
                             },
                             {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><Link to="/teacher/exams/create">Create Exam</Link></Title>,
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p>Create Exam</p></Title>,
                                 key: "courses_create",
                             },
                         ]}
                     />
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-                    <Link to="/teacher/exams">
+                    <Link to="/teacher/page/listexam">
                         <Button>
                             Back
                         </Button>
@@ -422,7 +423,7 @@ const ExamCreate = () => {
 
     const renderPageNav = () => {
         return (
-            <Row justify={"space-between"} style={{ height: "10%", }}>
+            <Row justify={"space-between"} style={{ height: "10%", }} >
                 <Col>
                     <Button> Preview</Button>
                 </Col>
@@ -443,13 +444,13 @@ const ExamCreate = () => {
 
 
     return (
-        <Layout>
-            <NavBar page={"Exams"} />
-            <Row style={{ backgroundColor: "white", marginBottom: "-1%", }}>
-                <Col sm={2} />
-                <Col flex="auto" style={{ paddingTop: "2%", display: "flex", justifyContent: "center" }}>
-                    <Card title={examCreateTitle()} style={{ minHeight: "770px", marginBottom: "2%", maxWidth: "83.3%", }}>
-                        <Row justify="space-between" style={{ marginBottom: "1%" }}>
+        <Layout  className="layout-content-create">
+            {/* <NavBar page={"Exams"} /> */}
+            <Row className="content">
+                {/* <Col sm={2} /> */}
+                <Col flex="auto" style={{display: "flex", justifyContent: "center" }}>
+                    <Card title={examCreateTitle()} style={{maxWidth: "100%"}}>
+                        <Row justify="space-between">
                         </Row>
                         <Row>
                             <Steps items={items} current={currentPage} />
@@ -461,14 +462,12 @@ const ExamCreate = () => {
                         </Row>
                     </Card>
                 </Col>
-                <Col sm={2} />
+                {/* <Col sm={2} /> */}
             </Row>
-            <Row style={{ backgroundColor: "white" }}>
-                <Col sm={2} />
+            <Row className="btn-bottom">
                 <Col flex={"auto"}>
                     {currentPage < pageList.length ? renderPageNav() : null}
                 </Col>
-                <Col sm={2} />
             </Row>
 
         </Layout>

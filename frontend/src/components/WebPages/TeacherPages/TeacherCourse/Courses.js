@@ -1,9 +1,10 @@
-import { Layout, Row, Col, Card, Typography, Button, Table, Segmented, Divider } from "antd";
+import { Layout, Row, Col, Card, Typography, Button, Table,  Breadcrumb, Segmented, Divider } from "antd";
 import { BarsOutlined, AppstoreOutlined } from "@ant-design/icons";
 import React from "react";
 import NavBar from "../../../Layout/NavBar";
 import { useState } from "react";
 import "./course.css"
+import "../teach.css"
 import { Link } from "react-router-dom";
 const { Title } = Typography;
 const { Meta } = Card;
@@ -164,10 +165,22 @@ const Courses = () => {
         return (
             <Row align={"middle"} justify={"space-between"} >
                 <Col>
-                    <Title level={5} style={{ marginTop: "10px" }}>My Courses</Title>
+                    <Breadcrumb
+                        separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
+                        items={[
+                            {
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p >My Courses</p></Title>,
+                                key: "courses"
+                            },
+                            {
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p>List Course</p></Title>,
+                                key: "courses_create",
+                            },
+                        ]}
+                    />
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px" }}>
-                    <Link to="/teacher/courses/create">
+                    <Link to="/teacher/page/createcourse">
                         <Button>
                             Create
                         </Button>
@@ -213,12 +226,12 @@ const Courses = () => {
 
 
     return (
-        <Layout>
-            <NavBar page={"Courses"} />
-            <Row style={{ backgroundColor: "white" }}>
-                <Col sm={2} />
-                <Col flex="auto" style={{ paddingTop: "2%", display: "flex", justifyContent: "center" }}>
-                    <Card title={myCoursesTitle()} style={{ minHeight: "770px", marginBottom: "2%", maxWidth: "83.3%" }}>
+        <Layout className="layout-content">
+            {/* <NavBar page={"Courses"} /> */}
+            <Row>
+                {/* <Col sm={2} /> */}
+                <Col flex="auto" style={{display: "flex", justifyContent: "center" }}>
+                    <Card title={myCoursesTitle()} style={{maxWidth: "100%" }}>
                         <Row justify="space-between" style={{ marginBottom: "1%" }}>
                             <Col>
                                 <Segmented
@@ -253,7 +266,7 @@ const Courses = () => {
                         </Row>
                     </Card>
                 </Col>
-                <Col sm={2} />
+                {/* <Col sm={2} /> */}
 
             </Row>
         </Layout>
