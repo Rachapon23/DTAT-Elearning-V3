@@ -17,7 +17,7 @@ These are example of how to read API
 > /get-course/:id => `get` document `course` with `id`
 
 3. /***action***-***document***/***:id***/***field***
-> /update-activity/:id/progress => `update` document `activity` with `id` in filed `progress` 
+> /update-activity/:id/progress => `update` document `activity` with `id` in field `progress` 
 
 4. /***action***-***document***/***document***/***:id***
 > /list-activity/course/:id => `list` document `activity` by use `course` `id`
