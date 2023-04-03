@@ -6,7 +6,7 @@ import CourseCreate from "./components/WebPages/TeacherPages/TeacherCourse/Cours
 import ExamCreate from "./components/WebPages/TeacherPages/TeacherExam/ExamCreate";
 import Home from "./components/WebPages/HomePage/Home/Home";
 import StudentHomePage from "./components/WebPages/StudentPage/StudentHome/StudentHomePage";
-
+import AdminPage from "./components/WebPages/AdminPage/AdminPage"
 import TeacherPage from "./components/WebPages/TeacherPages/TeacherPage";
 function App() {
   return (
@@ -17,6 +17,7 @@ function App() {
 
 
         <Route path="/teacher/page/:params" element={<TeacherPage/>} />
+        <Route path="/admin/page/:params" element={<AdminPage/>} />
         {/* <Route path="/teacher/courses" element={<Courses/>} /> */}
         {/* <Route path="/teacher/exams" element={<Exames/>} /> */}
         {/* <Route path="/teacher/calendar" element={<Calendar/>} /> */}

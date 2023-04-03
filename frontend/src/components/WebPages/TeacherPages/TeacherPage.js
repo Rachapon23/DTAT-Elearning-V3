@@ -57,6 +57,13 @@ const App = () => {
     getItem('Calendar', 'calendar', <CalendarOutlined />),
   ];
 
+  const items2 = [
+    getItem('Home', '/'),
+    getItem('Public Course', '/teacher/page/home'),
+    getItem('Private Course', '/admin/page/home'),
+    // getItem('Contact', '#',),
+  ];
+
   const renderContent = React.useCallback(() => {
     switch(params) {
       case 'home': 
@@ -78,33 +85,24 @@ const App = () => {
   }, [params]);
 
   return (
-    <Layout>
-      <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+    <Layout className="layout-teacher">
+      <Sider className="sider-teacher" collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="logo" />
-        <Menu
+        <Menu 
           onClick={(e)=>navigate(`/teacher/page/${e.key}`)}
-          theme="dark"
+          className="menu-teacher"
           mode="inline"
           defaultSelectedKeys={[`${params}`]}
           items={items}
 
         />
       </Sider>
-      <Layout className="site-layout">
-        {/* <Header
-          style={{
-            padding: 0,
-            background: colorBgContainer,
-          }}
-        >
-          {React.createElement(
-            collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-            {
-              className: "trigger",
-              onClick: () => setCollapsed(!collapsed),
-            }
-          )}
-        </Header> */}
+      <Layout className="site-layout-teacher">
+        <Header className="header-teacher">
+        <Menu className="header-menu"
+         onClick={(e)=>navigate(`${e.key}`)}
+          mode="horizontal" items={items2} />
+        </Header>
         <Content
           className="contentTeacher"
         >

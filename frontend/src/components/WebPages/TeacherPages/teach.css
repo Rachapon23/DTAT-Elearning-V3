@@ -20,7 +20,7 @@
     margin: 24px 16px;
     padding: 20px;
 }
-.site-layout{
+.site-layout-teacher{
   background-image: url("../../../../public/background-teacher.jpg");
   min-height: 100vh;
 }
@@ -39,4 +39,27 @@
 }
 .layout-content-create .btn-bottom{
   margin-top: 20px;
+}
+
+.menu-teacher{
+  background-color:transparent;
+  color: #fff;
+}
+.layout-teacher .sider-teacher{
+  background: rgb(9,9,121);
+  background: linear-gradient( rgb(0, 107, 20)0%,rgb(0, 33, 64)  70%);
+}
+.header-teacher{
+  background:  rgba(0, 107, 20,0.1);
+  /* background-color: transparent; */
+  border: none;
+  padding: 0;
+}
+.header-teacher .header-menu{
+  background-color: transparent;
+  justify-content: end;
+  padding-right: 30px;
+  font-size: 1.5em;
+  font-weight: 500;
+  color: #c0c0c0;
 }
