@@ -70,7 +70,7 @@ const NavBarHome = () => {
       <nav className={"navigation"}>
         <a href="/">Home</a>
         <a href="/student/home">Public Course</a>
-        <a href="#">Private Course</a>
+        <a href="/teacher/page/home">Private Course</a>
         <a href="#contact">Contact</a>
         <button className={"btn-login"} onClick={showModal}>
           Login
@@ -89,7 +89,7 @@ const NavBarHome = () => {
           <a href="/student/home">Public Course</a>
         </li>
         <li>
-          <a href="#">Private Course</a>
+          <a href="/teacher/page/home">Private Course</a>
         </li>
         <li>
           <a href="#contact">Contact</a>

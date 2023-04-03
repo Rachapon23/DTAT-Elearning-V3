@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Column, Pie } from '@ant-design/plots';
 import { Link, useNavigate } from 'react-router-dom';
 import NavBar from "../../../Layout/NavBar"
+import "../teach.css"
 
 const { Title } = Typography;
 
@@ -248,12 +249,12 @@ const TeacherHome = () => {
 
 
   return (
-    <Layout>
-      <NavBar page={"logo--------------"} />
-      <Row style={{ backgroundColor: "white" }} >
-        <Col sm={2} />
-        <Col flex="auto" style={{ paddingTop: "2%", }}>
-          <Card title="Teacher" style={{ minHeight: "720px", marginBottom: "2%" }}>
+    <Layout  className="layout-content">
+      {/* <NavBar page={"logo--------------"} /> */}
+      <Row>
+        {/* <Col sm={2} /> */}
+        <Col flex="auto">
+          <Card title="Teacher">
             <Row justify={"space-between"} >
 
               <Col flex={"auto"} style={{ paddingRight: "2%" }}>
@@ -278,7 +279,7 @@ const TeacherHome = () => {
             </Row>
           </Card>
         </Col>
-        <Col sm={2} />
+        {/* <Col sm={2} /> */}
 
       </Row>
     </Layout>

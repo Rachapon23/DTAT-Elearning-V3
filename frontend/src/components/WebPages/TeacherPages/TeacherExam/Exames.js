@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined } from '@ant-design/icons';
-import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert } from 'antd';
+import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress,Breadcrumb, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert } from 'antd';
 import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
+import "../teach.css"
 const { Title } = Typography;
 const { Meta } = Card;
 const { Header, Content, Footer, Sider } = Layout;
@@ -13,11 +13,23 @@ const Quizes = () => {
     const myQuizesTitle = () => {
         return (
             <Row align={"middle"} justify={"space-between"} >
-                <Col>
-                    <Title level={5} style={{ marginTop: "10px" }}>My Quizes</Title>
+                                <Col>
+                    <Breadcrumb
+                        separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
+                        items={[
+                            {
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p >My Exam</p></Title>,
+                                key: "courses"
+                            },
+                            {
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p>List Exam</p></Title>,
+                                key: "courses_create",
+                            },
+                        ]}
+                    />
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-                    <Link to="/teacher/exams/create">
+                    <Link to="/teacher/page/createexam">
                         <Button>
                             Create
                         </Button>
@@ -224,12 +236,12 @@ const Quizes = () => {
     }
 
     return (
-        <Layout>
-            <NavBar page={"Exams"} />
-            <Row style={{ backgroundColor: "white" }}>
-                <Col sm={2} />
-                <Col flex="auto" style={{ paddingTop: "2%", display: "flex", justifyContent: "center" }}>
-                    <Card title={myQuizesTitle()} style={{ minHeight: "770px", marginBottom: "2%", maxWidth: "83.3%", }}>
+        <Layout  className="layout-content">
+            {/* <NavBar page={"Exams"} /> */}
+            <Row>
+                {/* <Col sm={2} /> */}
+                <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
+                    <Card title={myQuizesTitle()} style={{maxWidth: "100%", }}>
                         <Row justify="space-between" style={{ marginBottom: "1%" }}>
                             <Col>
                                 <Segmented
@@ -261,7 +273,7 @@ const Quizes = () => {
                         </Row>
                     </Card>
                 </Col>
-                <Col sm={2} />
+                {/* <Col sm={2} /> */}
 
             </Row>
         </Layout>
