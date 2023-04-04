@@ -1,5 +1,5 @@
 const Activity = require('../models/activity')
-
+const Exam = require('../models/exam')
 // POST: /create-activity
 exports.createActivity = async (req, res) => {
     try {
@@ -22,6 +22,8 @@ exports.createActivity = async (req, res) => {
     }
 }
 
+
+
 // GET: /list-activity/course/:id
 exports.listActivityCourse = async (req, res) => {
     try {
@@ -35,12 +37,12 @@ exports.listActivityCourse = async (req, res) => {
     }
 }
 
-// GET: /list-activity-progress/:id
+// PUT: /update-activity/:id/progress
 exports.updateActivityProgress = async (req, res) => {
     try {
         const activity = await Activity.findOneAndUpdate(
-            { _id: req.params.id }, 
-            { progress: req.body.progress},
+            { _id: req.params.id },
+            { progress: req.body.progress },
             { new: true },
         )
 
@@ -52,6 +54,7 @@ exports.updateActivityProgress = async (req, res) => {
     }
 }
 
+// GET: /get-activity/:id/progress
 exports.getActivityProgress = async (req, res) => {
     try {
         const activity = await Activity.findOne(
@@ -65,6 +68,22 @@ exports.getActivityProgress = async (req, res) => {
         res.status(500).json({ error: "Uncexpected error on create activity" })
     }
 }
+
+// PUT: /update-activity/:id/score
+/////////////////////////////////////////////////////////////////////////////////////
+exports.updateActivityScore = async (req, res) => {
+    try {
+        const exam = await Activity.findOne({ _id: req.params.id }).populate("course")
+        console.log(exam )
+
+        res.json({ data: "activity" })
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Uncexpected error on create activity" })
+    }
+}
+/////////////////////////////////////////////////////////////////////////////////////
 
 
 // =============================================================

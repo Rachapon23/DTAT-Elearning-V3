@@ -26,7 +26,7 @@ exports.checkUser = (req, res, next) => {
 
 exports.checkTeacher = async (req, res, next) => {
     try {
-        const { user_id } = req.user
+        const { user_id } = req?.user
         const teacherUser = await User.findOne({ _id: user_id }).populate("role", "name -_id").exec()
 
         if (teacherUser.role.name == 'teacher' || teacherUser.role.name == 'admin') {

@@ -156,18 +156,36 @@ exports.updateCourseImage = async (req, res) => {
     const image_data = await Course.findOne({ _id: req.params.id }).select("image -_id")
 
     let error_deleteFile = false
-    
-    console.log(req.body.upload_type)
+
     if (image_data.image) {
+
       fs.unlink(`./${req.body.upload_type}/uploads/${image_data.image.name}`, (err) => {
-        if (err) error_deleteFile = true;
-        else  error_deleteFile = false;
+        if (err) {
+
+          if (req.body.upload_type === "public") {
+            fs.unlink(`./private/uploads/${image_data.image.name}`, (err) => {
+              if (err) error_deleteFile = true;
+              else error_deleteFile = false;
+            });
+          }
+          else error_deleteFile = false;
+
+          if (req.body.upload_type === "private") {
+            fs.unlink(`./public/uploads/${image_data.image.name}`, (err) => {
+              if (err) error_deleteFile = true;
+              else error_deleteFile = false;
+            });
+          }
+          else error_deleteFile = false;
+
+        }
+        else error_deleteFile = false;
       });
     }
 
-    if(error_deleteFile) return res.status(500).json({ error: "Cannot delete previous image before update" });
+    if (error_deleteFile) return res.status(500).json({ error: "Cannot delete previous image before update" });
 
-    
+
     const course = await Course.findOneAndUpdate(
       { _id: req.params.id },
       {
@@ -191,9 +209,9 @@ exports.updateCourseImage = async (req, res) => {
 exports.getCourseImage = async (req, res) => {
   try {
     const image_data = await Course.findOne({ _id: req.params.id }).select("image -_id")
-    
-    res.sendFile(`private/uploads/${image_data.image.name}`, { root : "."}, (err) => {
-      if(err) {
+
+    res.sendFile(`private/uploads/${image_data.image.name}`, { root: "." }, (err) => {
+      if (err) {
         console.log(err)
         return res.status(500).json({ error: "Cannot get course image" });
       }
