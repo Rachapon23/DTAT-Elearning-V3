@@ -65,34 +65,53 @@ const NavBarHome = () => {
   window.addEventListener("scroll", handlechange);
 
   return (
-    <div className={`nav-home ${bg}`}>
-      <h2 className="logo">Logo</h2>
-      <nav className={"navigation"}>
-        <a href="/">Home</a>
-        <a href="/student/home">Public Course</a>
-        <a href="/teacher/page/home">Private Course</a>
-        <a href="/admin/page/home">Contact</a>
-        <button className={"btn-login"} onClick={showModal}>
-          Login
-        </button>
-        <div className="toggle_btn">
-          <span onClick={() => setOpenDrop(!openDrop)}>
-            <BarsOutlined />
-          </span>
-        </div>
-      </nav>
+    <div className="nav-home">
+      <div className={`full-screen ${bg}`}>
+        <h2 className="logo">Logo</h2>
+        <nav className="navigation">
+          <a className="a-nav" href="/">
+            Home
+          </a>
+          <a className="a-nav" href="/student/home">
+            Public Course
+          </a>
+          <a className="a-nav" href="/teacher/page/home">
+            Private Course
+          </a>
+          <a className="a-nav" href="/admin/page/home">
+            Contact
+          </a>
+          <button className={"btn-login"} onClick={showModal}>
+            Login
+          </button>
+          <div className="toggle_btn">
+            <span onClick={() => setOpenDrop(!openDrop)}>
+              <BarsOutlined />
+            </span>
+          </div>
+        </nav>
+      </div>
+
       <div className={`dropdown_menu ${openDrop}`}>
         <li>
-          <a href="/">Home</a>
+          <a className="a-nav" href="/">
+            Home
+          </a>
         </li>
         <li>
-          <a href="/student/home">Public Course</a>
+          <a className="a-nav" href="/student/home">
+            Public Course
+          </a>
         </li>
         <li>
-          <a href="/teacher/page/home">Private Course</a>
+          <a className="a-nav" href="/teacher/page/home">
+            Private Course
+          </a>
         </li>
         <li>
-          <a href="/admin/page/home">Contact</a>
+          <a className="a-nav" href="/admin/page/home">
+            Contact
+          </a>
         </li>
         <li>
           {" "}
@@ -103,8 +122,14 @@ const NavBarHome = () => {
       </div>
 
       <Modal
+        className="modal-ant"
+        style={{
+          top:100,
+          left:0,
+          right:0,
+        }}
         open={open}
-        width={1000}
+        // width={1500}
         // title="login"
         onOk={handleOk}
         onCancel={handleCancel}
