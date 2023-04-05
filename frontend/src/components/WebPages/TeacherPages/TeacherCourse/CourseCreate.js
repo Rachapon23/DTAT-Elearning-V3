@@ -5,6 +5,7 @@ import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AntdImgCrop from "antd-img-crop";
+import "../teach.css"
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -589,11 +590,11 @@ const Coursecreate = () => {
                         separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
                         items={[
                             {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><Link to="/teacher/courses">My Courses</Link></Title>,
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p >My Courses</p></Title>,
                                 key: "courses"
                             },
                             {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><Link to="/teacher/courses/create">Create Course</Link></Title>,
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p>Create Course</p></Title>,
                                 key: "courses_create",
                             },
                         ]}
@@ -601,7 +602,7 @@ const Coursecreate = () => {
                     {/* <Title level={5} style={{ marginTop: "10px" }}>Create Course</Title> */}
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px" }}>
-                    <Link to="/teacher/courses">
+                    <Link to="/teacher/page/listcourse">
                         <Button>
                             Back
                         </Button>
@@ -635,14 +636,14 @@ const Coursecreate = () => {
     )
 
     const courseCreateFinished = (
-        <Row align={"middle"} justify={"center"} style={{ height: "620px" }}>
+        <Row align={"middle"} justify={"center"} style={{ height: "400px" }}>
             <Col >
                 <Result
                     status="success"
                     title="Successfully Purchased Cloud Server ECS!"
                     subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
                     extra={[
-                        <Link to="/teacher/courses">
+                        <Link to="/teacher/page/listcourse">
                             <Button type="primary" key="console">
                                 Back To My Courses
                             </Button>
@@ -752,13 +753,13 @@ const Coursecreate = () => {
 
 
     return (
-        <Layout>
-            <NavBar page={"Courses"} />
-            <Row style={{ backgroundColor: "white", marginBottom: "-1%", }}>
-                <Col sm={2} />
-                <Col flex="auto" style={{ paddingTop: "2%", display: "flex", justifyContent: "center" }}>
-                    <Card title={courseCreateTitle()} style={{ minHeight: "770px", marginBottom: "2%", maxWidth: "83.3%", }}>
-                        <Row justify="space-between" style={{ marginBottom: "1%" }}>
+        <Layout className="layout-content-create">
+            {/* <NavBar page={"Courses"} /> */}
+            <Row  className="content">
+                {/* <Col sm={2} /> */}
+                <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
+                    <Card title={courseCreateTitle()} style={{maxWidth: "100%", }}>
+                        <Row justify="space-between" >
                             {/* <Col>
                                 <Link to="/teacher/courses">
                                     <Button>
@@ -778,14 +779,14 @@ const Coursecreate = () => {
 
                     </Card>
                 </Col>
-                <Col sm={2} />
+                {/* <Col sm={2} /> */}
             </Row>
-            <Row style={{ backgroundColor: "white" }}>
-                <Col sm={2} />
+            <Row className="btn-bottom">
+                {/* <Col sm={2} /> */}
                 <Col flex={"auto"}>
                     {currentPage < pageList.length - 1 ? renderPageNav() : null}
                 </Col>
-                <Col sm={2} />
+                {/* <Col sm={2} /> */}
             </Row>
         </Layout>
     )

@@ -1,0 +1,29 @@
+.title-auth{
+    text-align: center;
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    font-weight: 500;
+}
+.login-form {
+    width: 100%;
+  }
+.register-form {
+    width: 100%;
+  }
+.login-form-forgot {
+    float: right;
+  }
+  .ant-col-rtl .login-form-forgot {
+    float: left;
+  }
+.form-button {
+    width: 100%;
+    margin-top: 10px;
+  }
+.register-link{
+    text-align: center;
+}
+.register-link .register-link-a{
+    margin-left: 10px;
+}

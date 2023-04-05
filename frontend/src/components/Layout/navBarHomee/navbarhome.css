@@ -1,0 +1,154 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+li {
+  list-style: none;
+}
+.navigation a {
+  position: relative;
+  font-size: 1.1rem;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 40px;
+}
+.dropdown_menu a {
+  position: relative;
+  font-size: 1.1rem;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+}
+a::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  bottom: -6px;
+  left: 0;
+  background: #fff;
+  border-radius: 5px;
+  transform-origin: right;
+  transform: scaleX(0);
+  transition: transform 0.5s;
+}
+a:hover::after {
+  transform-origin: left;
+  transform: scaleX(1);
+}
+
+.nav-home {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 99;
+  transition: background-color 0.3s ease-out;
+}
+.nav-home.dark {
+  background-color: rgba(159, 187, 246, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(2em);
+  transition: background-color 0.3s ease-in;
+}
+
+.btn-login {
+  width: 130px;
+  height: 50px;
+  background: transparent;
+  border: 2px solid #fff;
+  outline: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease-out, border 0.3s ease-out;
+}
+.navigation .btn-login {
+  margin-left: 40px;
+}
+.btn-login:hover {
+  background-color: #fff;
+  color: #14347d;
+  transition: color 0.5s ease-out, border 0.5s ease-out;
+}
+.logo {
+  font-size: 2rem;
+  color: #fff;
+}
+.navigation .toggle_btn {
+  color: #fff;
+  font-size: 1.8rem;
+  cursor: pointer;
+  display: none;
+  transition: color 0.2s ease-out;
+}
+.navigation .toggle_btn:hover {
+    color: #14347d;
+    transition: color 0.5s ease-out;
+}
+.dropdown_menu {
+  position: absolute;
+  right: 2rem;
+  top: 60px;
+  width: 300px;
+  height: 0;
+  background-color: rgba(159, 187, 246, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(2em);
+  border-radius: 10px;
+  overflow: hidden;
+  display: none;
+  transition: height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.dropdown_menu li {
+  padding: 0.7rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dropdown_menu .btn-login {
+  width: 100%;
+}
+.dropdown_menu.true {
+  height: 260px;
+}
+
+/* responsive deesign */
+@media (max-width: 992px) {
+  .navigation a,
+  .navigation .btn-login {
+    display: none;
+  }
+  .navigation .toggle_btn {
+    display: block;
+  }
+  .dropdown_menu {
+    display: block;
+    margin-top: 20px;
+  }
+}
+@media (max-width: 576px) {
+  .dropdown_menu {
+    margin-top: 20px;
+    left: 2rem;
+    width: unset;
+  }
+}
+
+/* Modal*/
+:where(.css-dev-only-do-not-override-mxhywb).ant-modal .ant-modal-content{
+  background-color: rgba(159, 187, 246, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(2em);
+  transition: height .2s ease;
+} 
+
