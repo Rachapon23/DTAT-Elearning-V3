@@ -11,7 +11,7 @@ const HomePublic = () => {
   };
 
   return (
-    <div>
+    <div className="content-course">
       <div className="title-content">
         <p className="title-1">Public Course</p>
         <p className="title-2">
@@ -19,32 +19,32 @@ const HomePublic = () => {
           readable content of a page when looking at its layout.
         </p>
       </div>
-      <div className="card-content">
-        <Row  justify="space-between">
-          <Col span={8} className="col-card">
+      <div className="">
+        <div className="row-content">
+          <div className="col-content">
             <CardCourse Data={Data} />
-          </Col>
-          <Col span={8} className="col-card">
+          </div>
+          <div className="col-content">
             <CardCourse Data={Data} />
-          </Col>
-          <Col span={8} className="col-card">
+          </div>
+          <div className="col-content">
             <CardCourse Data={Data} />
-          </Col>
-        </Row>
-        <Row  justify="space-between" style={{marginTop:"20px"}}>
-          <Col span={8} className="col-card">
+          </div>
+        </div>
+        <div className="row-content">
+          <div className="col-content none-dis">
             <CardCourse Data={Data} />
-          </Col>
-          <Col span={8} className="col-card">
+          </div>
+          <div className="col-content none-dis">
             <CardCourse Data={Data} />
-          </Col>
-          <Col span={8} className="col-card">
+          </div>
+          <div className="col-content none-dis">
             <CardCourse Data={Data} />
-          </Col>
-        </Row>
+          </div>
+        </div>
       </div>
       <div className="btn-navigate">
-      <button className="btn-show-more">Show More</button>
+        <button className="btn-show-more">Show More</button>
       </div>
     </div>
   );

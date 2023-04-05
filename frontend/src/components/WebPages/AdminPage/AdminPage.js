@@ -10,8 +10,11 @@ import {
   import React, { useState, useEffect } from "react";
   import "./adminpage.css";
   import { useParams,useNavigate } from "react-router-dom";
-
-
+import AdminHomePage from "./AdminHome/AdminHomePage";
+import AdminManageHome from "./AdminHome/AdminManageHome";
+import AdminListUser from "./AdminHome/AdminListUser";
+import AdminManageTeacher from "./AdminHome/AdminManageTeacher";
+import AdminManageStudent from "./AdminHome/AdminManageStudent";
   
   const { Header, Sider, Content } = Layout;
   
@@ -42,32 +45,32 @@ import {
       ];
 
     const items = [
-      getItem('Home', '1', <HomeOutlined />),
-      getItem('Manage Home', '2', <HomeOutlined />),
-      getItem('List User', '3', <HomeOutlined />),
-      getItem('List Teacher', '4', <HomeOutlined />),
-      getItem('List Student', '5', <CalendarOutlined />),
+      getItem('Home', 'home', <HomeOutlined />),
+      getItem('Manage Home', 'managehome', <HomeOutlined />),
+      getItem('List User', 'listuser', <HomeOutlined />),
+      getItem('List Teacher', 'manageteacher', <HomeOutlined />),
+      getItem('List Student', 'managestudent', <CalendarOutlined />),
     ];
   
-    // const renderContent = React.useCallback(() => {
-    //   switch(params) {
-    //     case 'home': 
-    //       return <TeacherHome/>;
-    //     case 'listcourse': 
-    //       return <Courses/>;
-    //     case 'createcourse': 
-    //       return <CourseCreate/>;
-    //     case 'listexam': 
-    //       return <Exames/>;
-    //     case 'createexam': 
-    //       return <ExamCreate/>;
-    //     case 'calendar': 
-    //       return <p className="success">Calendar</p>;
-    //     default: 
-    //       return <p className="success">404 not found ... </p>;
+    const renderContent = React.useCallback(() => {
+      switch(params) {
+        case 'home': 
+          return <AdminHomePage/>;
+        case 'managehome': 
+          return <AdminManageHome/>;
+        case 'listuser': 
+          return <AdminListUser/>;
+        case 'manageteacher': 
+          return <AdminManageTeacher/>;
+        case 'managestudent': 
+          return <AdminManageStudent/>;
+        // case 'calendar': 
+        //   return <p className="success">Calendar</p>;
+        default: 
+          return <p className="success">404 not found ... </p>;
         
-    //   }
-    // }, [params]);
+      }
+    }, [params]);
   
     return (
       <Layout className="layout-admin">
@@ -96,9 +99,9 @@ import {
             className="contentTeacher"
           >
              <Layout  className="layout-content">
-            <Row>
-                <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
-                    <h1>ter</h1>
+            <Row className="row-admin">
+                <Col className="col-admin">
+                    {renderContent()}
                 </Col>
             </Row>
         </Layout>
