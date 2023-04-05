@@ -8,6 +8,8 @@ const {
     updateActivityProgress,
     getActivityProgress,
     updateActivityScore,
+    getActivityScore,
+    getActivity,
 } = require('../controllers/activityController')
 
 // teacher
@@ -25,8 +27,14 @@ router.put("/update-activity/:id/progress", checkUser, updateActivityProgress);
 router.get("/get-activity/:id/progress", checkUser, getActivityProgress);
 
 router.put("/update-activity/:id/score", checkUser, updateActivityScore);
+router.get("/get-activity/:id/score", checkUser, getActivityScore);
+
 // we still have to add these API?
 // router.get("/get-my-course-student", checkUser, getMyCourseStudent);
 // router.get("/get-my-history-student", checkUser, getMyHistoryStudent);
+
+
+// new api pattern check role in controller
+router.get("/get-activity/:id/:field", checkUser, getActivity);
 
 module.exports = router;

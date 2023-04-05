@@ -70,20 +70,83 @@ exports.getActivityProgress = async (req, res) => {
 }
 
 // PUT: /update-activity/:id/score
-/////////////////////////////////////////////////////////////////////////////////////
 exports.updateActivityScore = async (req, res) => {
     try {
-        const exam = await Activity.findOne({ _id: req.params.id }).populate("course")
-        console.log(exam )
+        const activity = await Activity.findOne({ _id: req.params.id }).populate({
+            path: "course",
+            select: "exam",
+            populate: {
+                path: "exam",
+                model: "exam",
+                select: "quiz",
+                populate: {
+                    path: "quiz",
+                    model: "quiz"
+                }
+            }
+        })
 
-        res.json({ data: "activity" })
+        const quiz_data = activity?.course?.exam?.quiz;
+        const quiz_length = quiz_data?.length;
+
+        const answer_data = req?.body?.answer;
+        const answer_length = answer_data?.length;
+
+        if (!quiz_length) return res.status(404).json({ error: "Quiz is not exist" })
+        if (quiz_length !== answer_length) return res.status(400).json({ error: "Length of answer and quiz is not the same" })
+
+        let total_score = 0;
+        for (let i = 0; i < quiz_length; i++) {
+            if (quiz_data[i].answer === answer_data[i]) {
+                total_score++;
+            }
+        }
+
+        await Activity.findOneAndUpdate({ _id: req.params.id }, { score_value: total_score });
+
+        const payload = {
+            total_score: total_score,
+        }
+
+        return res.json({ data: payload });
     }
     catch (err) {
         console.log(err);
-        res.status(500).json({ error: "Uncexpected error on create activity" })
+        return res.status(500).json({ error: "Uncexpected error on create activity" })
     }
 }
-/////////////////////////////////////////////////////////////////////////////////////
+
+// GET: /get-activity/:id/score
+exports.getActivityScore = async (req, res) => {
+    try {
+        const activity = await Activity.findOne({ _id: req?.params?.id }).select("score_value -_id")
+        
+        return res.json({ data: activity });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Uncexpected error on create activity" })
+    }
+}
+
+
+
+
+// GET: /get-activity/:id/:field
+exports.getActivity = async (req, res) => {
+    try {
+        const field = req?.params?.field
+        const activity = await Activity.findOne({ _id: req?.params?.id }).select(`${field} -_id`)
+        
+        
+        if(activity[`${field}`] === undefined) return res.status(404).json({ error: `Cannot find field name ${field}` })
+        return res.json({ data: activity });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Uncexpected error on create activity" })
+    }
+}
 
 
 // =============================================================

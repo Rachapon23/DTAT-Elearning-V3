@@ -7,17 +7,20 @@ const Course = require("../models/course")
 // POST: /create-exam
 exports.createExam = async (req, res) => {
     try {
-        const { head, body } = req.body
+        const { head, body } = req.body;
 
-        const quiz = await Quiz.insertMany(body)
+        const quiz = await Quiz.insertMany(body);
         const exam = await new Exam({
             name: head.name,
             detail: head.detail,
             teacher: head.teacher,
             quiz: quiz,
-        }).save()
+        }).save();
 
-        res.json({ data: exam })
+        console.log(exam.quiz.length)
+        await Course.findOneAndUpdate({ _id: head.course }, { exam: exam });
+
+        res.json({ data: exam });
     }
     catch (err) {
         console.log(err)
@@ -114,13 +117,19 @@ exports.updateExam = async (req, res) => {
 // DELETE: /remove-exam/:id
 exports.removeExam = async (req, res) => {
     try {
-        const exam = await Exam.findOneAndRemove({ _id: req.params.id }) // 
-        await Quiz.deleteMany({}, exam.quiz)
+        const exam = await Exam.findOneAndRemove({ _id: req?.params?.id }) // 
+        await Quiz.deleteMany({}, exam?.quiz)
+        const course = await Course.findOneAndUpdate(
+            { exam: req?.params?.id },
+            { exam: null },
+            { new: true },
+        )
+
         // .exec((err, res) => {
         //     return res.json({ warning: { exam, message: "Cannot delete quiz data of exam" } })
         // })
 
-        return res.json(exam)
+        return res.json({ data: { exam, course } })
     }
     catch (err) {
         console.log(err)
