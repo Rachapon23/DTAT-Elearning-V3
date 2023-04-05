@@ -11,8 +11,8 @@ const ActivitySchema = new mongoose.Schema({
     ans: {
         type: []
     },
-    process: {
-        type: [],
+    progress: {
+        type: Number,
     },
     completed: {
         type: Boolean,

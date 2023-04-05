@@ -29,6 +29,7 @@ const UserSchema = new mongoose.Schema({
     profile: {
         type: ObjectId,
         ref: "profile",
+        default: null,
     },
     department: {
         type: ObjectId,
@@ -37,6 +38,7 @@ const UserSchema = new mongoose.Schema({
     role: {
         type: ObjectId,
         ref: "role",
+        default: null
     },
     plant: {
         type: ObjectId,

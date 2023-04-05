@@ -16,8 +16,6 @@ const { TextArea } = Input;
 
 const Coursecreate = () => {
 
-
-
     // Variable-Start 
     const [form] = Form.useForm();
     const [requiredMark, setRequiredMarkType] = useState('optional');

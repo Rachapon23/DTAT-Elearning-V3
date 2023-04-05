@@ -5,12 +5,12 @@ const QuizSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
-    choice: {
-        type: Date,
-    },
+    choice: [{
+        type: String,
+    }],
     image: {},
     answer: {
-        type: String
+        type: Number
     }
 }, { timestamps: true });
 
