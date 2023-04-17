@@ -30,7 +30,7 @@ exports.register = async (req, res) => {
 
     // check user email will not duplicate with other
     if (email.length > 0) {
-      const query_email = await User.findOne({ email: email }).exec()
+      const query_email = await User.findOne({ email: email })
       if (query_email) {
         return res.status(400).json({ error: "This email has been used" });
       }
@@ -59,6 +59,8 @@ exports.register = async (req, res) => {
     // Encrypt password
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
+
+    console.log(user)
 
     // save use data
     await user.save();
@@ -91,7 +93,7 @@ exports.login = async (req, res) => {
       // create payload
       const payload = {
         user: {
-          fisrtname: user.firstname,
+          firstname: user.firstname,
           role: user.role.name,
           user_id: user._id,
         },

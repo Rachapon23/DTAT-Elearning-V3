@@ -15,10 +15,10 @@ const Quizes = () => {
             <Row align={"middle"} justify={"space-between"} >
                                 <Col>
                     <Breadcrumb
-                        separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
+                        separator={<Title level={5} style={{ marginTop: "15px" }}> {">"} </Title>}
                         items={[
                             {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><p >My Exam</p></Title>,
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p >Exam</p></Title>,
                                 key: "courses"
                             },
                             {

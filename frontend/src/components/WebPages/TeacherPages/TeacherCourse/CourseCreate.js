@@ -587,10 +587,10 @@ const Coursecreate = () => {
             <Row align={"middle"} justify={"space-between"} >
                 <Col>
                     <Breadcrumb
-                        separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
+                        separator={<Title level={5} style={{ marginTop: "15px" }}> {">"} </Title>}
                         items={[
                             {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><p >My Courses</p></Title>,
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p >Courses</p></Title>,
                                 key: "courses"
                             },
                             {

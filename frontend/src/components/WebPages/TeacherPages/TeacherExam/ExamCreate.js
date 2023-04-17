@@ -20,10 +20,10 @@ const ExamCreate = () => {
             <Row align={"middle"} justify={"space-between"} >
                 <Col>
                     <Breadcrumb
-                        separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
+                        separator={<Title level={5} style={{ marginTop: "15px" }}> {">"} </Title>}
                         items={[
                             {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><p >My Exam</p></Title>,
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p >Exam</p></Title>,
                                 key: "courses"
                             },
                             {
@@ -150,12 +150,12 @@ const ExamCreate = () => {
     ]
 
     const [container, setContainer] = useState(null);
-    const [cardContentList, setCardContentList] = useState([<CardContent/>, <CardContent/>, <CardContent/>,])
+    const [cardContentList, setCardContentList] = useState([<CardContent />, <CardContent />, <CardContent />,])
     const handleCreateContent = () => {
-        setCardContentList([...cardContentList, <CardContent/>])
+        setCardContentList([...cardContentList, <CardContent />])
     }
 
-  
+
 
     const cardEmptyContent = (
         <Card>
@@ -193,12 +193,11 @@ const ExamCreate = () => {
         >
             <Row justify={"center"}>
                 {/* <Col style={{ width: "5%" }} /> */}
-                <Col style={{ width: "95%" }}>
-                    <Row style={{ paddingTop: "1%" }} >
+                <Col style={{ width: "95%" }} >
+                    <Row style={{ paddingTop: "1%" }}>
                         <Col
                             flex="auto"
                             style={{ height: "570px", }}
-
                         >
                             {
                                 cardContentList.length === 0 ? (
@@ -212,27 +211,24 @@ const ExamCreate = () => {
 
                             }
                         </Col>
-                        <Col style={{ paddingLeft: "1%" }}>
-                            <Affix target={() => container} onChange={(affixed) => console.log(affixed)} >
+                        <Col style={{ paddingLeft: "1%" }} >
 
-                                <Card style={{ height: "200px", display: "flex" }}>
-                                    <Row align={"middle"} justify={"center"} style={{ height: "100%" }}>
-                                        <Col flex={"auto"}>
-                                            <Row justify={"center"} >
-                                                <Button type="text" onClick={handleCreateContent} >New</Button>
-                                            </Row>
-                                            <Row justify={"center"}>
-                                                <Button type="text" >Link</Button>
-                                            </Row>
-                                            <Row justify={"center"}>
-                                                <Button type="text" >File</Button>
-                                            </Row>
-                                        </Col>
-                                    </Row>
+                            <Card style={{ height: "200px", display: "flex" }}>
+                                <Row align={"middle"} justify={"center"} style={{ height: "100%" }}>
+                                    <Col flex={"auto"}>
+                                        <Row justify={"center"} >
+                                            <Button type="text" onClick={handleCreateContent} >New</Button>
+                                        </Row>
+                                        <Row justify={"center"}>
+                                            <Button type="text" >Link</Button>
+                                        </Row>
+                                        <Row justify={"center"}>
+                                            <Button type="text" >File</Button>
+                                        </Row>
+                                    </Col>
+                                </Row>
+                            </Card>
 
-                                </Card>
-
-                            </Affix>
                         </Col>
                     </Row>
                 </Col>
@@ -444,12 +440,12 @@ const ExamCreate = () => {
 
 
     return (
-        <Layout  className="layout-content-create">
+        <Layout className="layout-content-create">
             {/* <NavBar page={"Exams"} /> */}
-            <Row className="content">
+            <Row >
                 {/* <Col sm={2} /> */}
-                <Col flex="auto" style={{display: "flex", justifyContent: "center" }}>
-                    <Card title={examCreateTitle()} style={{maxWidth: "100%"}}>
+                <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
+                    <Card title={examCreateTitle()} style={{ maxWidth: "100%" }}>
                         <Row justify="space-between">
                         </Row>
                         <Row>

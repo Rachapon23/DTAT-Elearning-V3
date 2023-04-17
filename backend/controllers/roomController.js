@@ -17,7 +17,7 @@ exports.createRoom = async (req, res) => {
 // GET: /list-room
 exports.listRoom = async (req, res) => {
     try {
-        const room = await Layout.find({});
+        const room = await Layout.find({}).select("-__v");
 
         res.json({ data: room });
     }

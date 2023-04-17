@@ -11,11 +11,11 @@ const {
     listPlant,
 } = require('../controllers/plantController')
 
+// non-system-user
+router.get("/list-plant", listPlant);
+
 // admin
 router.post("/create-plant", checkUser, checkAdmin, createPlant);
 router.delete("/remove-plant/:id", checkUser, checkAdmin, removePlant);
-
-// teacher
-router.get("/list-plant", checkUser, checkTeacher, listPlant);
 
 module.exports = router;

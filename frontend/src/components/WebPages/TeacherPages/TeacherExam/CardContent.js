@@ -20,7 +20,7 @@ const CardContent = () => {
 
 
     return (
-        <Row justify={"center"} style={{ paddingBottom: "1%" }} ref={lastCard}>
+        <Row justify={"center"} style={{ paddingBottom: "1%" }} ref={lastCard} onMouseEnter={() => console.log("Hit")}>
             <Col style={{ width: "100%" }}>
                 <Card >
                     <Row justify={"center"} align={"middle"}>

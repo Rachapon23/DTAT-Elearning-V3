@@ -10,16 +10,66 @@ import {
   Row,
   Select,
 } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { listPlant ,listDepartment, register } from "../../../function/auth";
 import "./logandre.css";
 
 const { Option } = Select;
 
 const App = ({ layout, setLayout }) => {
   const [form] = Form.useForm();
-  const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+  const [departments, setDepartments] = useState([{
+    _id: "",
+    id: "",
+  }]);
+
+  const [plants, setPlants] = useState([{
+    _id: "", 
+    name: ""
+  }]);
+
+  const onFinish = async (data) => {
+    delete data.confirm;
+    console.log("Received values of form: ", data);
+    
+    await register(data)
+      .then((res) => {
+        console.log(res.data)
+      })
+      .catch((err) => {
+        console.log(err.response.data)
+      })
+
   };
+
+  const fetchDepartment = async () => {
+    await listDepartment()
+      .then((res) => {
+        const data = res.data.data
+        console.log(data)
+        setDepartments(data)
+      })
+      .catch((err) => {
+        console.log(err.response.data)
+      })
+  }
+
+  const fetchPlant = async () => {
+    await listPlant()
+      .then((res) => {
+        const data = res.data.data
+        console.log(data)
+        setPlants(data)
+      })
+      .catch((err) => {
+        console.log(err.response.data)
+      })
+  }
+
+  useEffect(() => {
+    fetchDepartment();
+    fetchPlant();
+  }, [])
 
   return (
     <Form
@@ -31,7 +81,7 @@ const App = ({ layout, setLayout }) => {
       <Row gutter={16}>
         <Col span={12}>
           <Form.Item
-            name="employee_ID"
+            name="employee"
             label="Employee ID"
             // tooltip="What do you want others to call you?"
             rules={[
@@ -47,7 +97,7 @@ const App = ({ layout, setLayout }) => {
         </Col>
         <Col span={12}>
           <Form.Item
-            name="department_ID"
+            name="department"
             label="Department ID"
             // tooltip="What do you want others to call you?"
             rules={[
@@ -58,7 +108,17 @@ const App = ({ layout, setLayout }) => {
               },
             ]}
           >
-            <Input />
+            {/* <Input /> */}
+            <Select placeholder="Please select a Plant">
+              {/* <Option value="china">China</Option>
+              <Option value="usa">U.S.A</Option> */}
+              {
+                 departments.map((department) => (
+                  <Option key={department._id} value={department._id}> {department.id} </Option>
+                ))
+              }
+            </Select>
+
           </Form.Item>
         </Col>
       </Row>
@@ -129,16 +189,22 @@ const App = ({ layout, setLayout }) => {
         </Col>
         <Col span={12}>
           <Form.Item
-            name="select"
-            label="Select"
+            name="plant"
+            label="Plant"
             hasFeedback
-            rules={[{ 
-              required: true, 
-              message: "Please select your Plant!" }]}
+            rules={[{
+              required: true,
+              message: "Please select your Plant!"
+            }]}
           >
             <Select placeholder="Please select a Plant">
-              <Option value="china">China</Option>
-              <Option value="usa">U.S.A</Option>
+              {/* <Option value="china">China</Option>
+              <Option value="usa">U.S.A</Option> */}
+              {
+                plants.map((plant) => (
+                  <Option key={plant._id} value={plant._id}>{plant.name}</Option>
+                ))
+              }
             </Select>
           </Form.Item>
         </Col>
