@@ -703,7 +703,7 @@ const Coursecreate = () => {
                     <Row style={{ paddingTop: "1%" }} >
                         <Col
                             flex="auto"
-                            style={{ width: "2000px", height: "570px" }}
+                           
                         >
                             {
                                 cardContentList.length === 0 ? (
@@ -756,9 +756,8 @@ const Coursecreate = () => {
         <Layout className="layout-content-create">
             {/* <NavBar page={"Courses"} /> */}
             <Row  className="content">
-                {/* <Col sm={2} /> */}
-                <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
-                    <Card title={courseCreateTitle()} style={{maxWidth: "100%", }}>
+                <Col flex="auto" style={{justifyContent: "center" }}>
+                    <Card title={courseCreateTitle()}className="card-create">
                         <Row justify="space-between" >
                             {/* <Col>
                                 <Link to="/teacher/courses">
@@ -771,22 +770,23 @@ const Coursecreate = () => {
                         <Row>
                             <Steps items={stepItems} current={currentPage} />
                         </Row>
-                        <Row justify="center" >
-                            <Col flex={"auto"} style={{ width: "2000px", minheight: "534px", overflow: "auto" }}>
+                        <Row  className="row-con"
+                        justify="center" style={{ paddingTop: "1%" }} >
+                            <Col flex={"auto"} className="col-con">
                                 {renderDisplay()}
                             </Col>
                         </Row>
 
                     </Card>
                 </Col>
-                {/* <Col sm={2} /> */}
+
             </Row>
             <Row className="btn-bottom">
-                {/* <Col sm={2} /> */}
+
                 <Col flex={"auto"}>
                     {currentPage < pageList.length - 1 ? renderPageNav() : null}
                 </Col>
-                {/* <Col sm={2} /> */}
+
             </Row>
         </Layout>
     )
