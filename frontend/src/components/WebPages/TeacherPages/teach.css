@@ -1,65 +1,74 @@
 .trigger {
-    padding: 0 24px;
-    font-size: 18px;
-    line-height: 64px;
-    cursor: pointer;
-    transition: color 0.3s;
-  }
-  
-.trigger:hover {
-    color: #1890ff;
-  }
-  
-.logo {
-    height: 32px;
-    margin: 16px;
-    background: rgba(255, 255, 255, 0.3);
-  }
-
-.contentTeacher{
-    margin: 24px 16px;
-    padding: 20px;
+  padding: 0 24px;
+  font-size: 18px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: color 0.3s;
 }
-.site-layout-teacher{
+
+.trigger:hover {
+  color: #1890ff;
+}
+
+.logo {
+  height: 32px;
+  margin: 16px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.contentTeacher {
+  margin: 24px 16px;
+  padding: 20px;
+}
+.site-layout-teacher {
   background-image: url("../../../../public/background-teacher.jpg");
   min-height: 100vh;
+  max-height: 3000px;
 }
-.layout-content{
+/* .layout-content{
   border-radius: 6px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-.layout-content-create{
+} */
+.layout-content-create {
   background-color: transparent;
   border-radius: 6px;
 }
-.layout-content-create .content{
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  height: auto;
-  border-radius: 6px;
+.layout-content-create .content {
+  max-height: auto;
+  min-height: auto;
+  margin-top: auto;
 }
-.layout-content-create .btn-bottom{
+.layout-content-create .btn-bottom {
   margin-top: 20px;
 }
 
-.menu-teacher{
-  background-color:transparent;
+.menu-teacher {
+  background-color: transparent;
   color: #fff;
 }
-.layout-teacher .sider-teacher{
-  background: rgb(9,9,121);
-  background: linear-gradient( rgb(0, 107, 20)0%,rgb(0, 33, 64)  70%);
+.layout-teacher .sider-teacher {
+  background: rgb(9, 9, 121);
+  background: linear-gradient(rgb(0, 107, 20) 0%, rgb(0, 33, 64) 70%);
 }
-.header-teacher{
-  background:  rgba(0, 107, 20,0.1);
-  /* background-color: transparent; */
+.header-teacher {
+  background: rgba(0, 107, 20, 0.1);
   border: none;
   padding: 0;
 }
-.header-teacher .header-menu{
+.header-teacher .header-menu {
   background-color: transparent;
   justify-content: end;
   padding-right: 30px;
   font-size: 1.5em;
   font-weight: 500;
   color: #c0c0c0;
+}
+
+.card-create {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.card-nlf{
+  position: fixed;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  
 }

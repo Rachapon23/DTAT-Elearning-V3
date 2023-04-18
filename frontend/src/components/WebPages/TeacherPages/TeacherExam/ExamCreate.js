@@ -197,7 +197,7 @@ const ExamCreate = () => {
                     <Row style={{ paddingTop: "1%" }} >
                         <Col
                             flex="auto"
-                            style={{ height: "570px", }}
+                            // style={{ height: "570px", }}
 
                         >
                             {
@@ -215,7 +215,7 @@ const ExamCreate = () => {
                         <Col style={{ paddingLeft: "1%" }}>
                             <Affix target={() => container} onChange={(affixed) => console.log(affixed)} >
 
-                                <Card style={{ height: "200px", display: "flex" }}>
+                                <Card className="card-nlf">
                                     <Row align={"middle"} justify={"center"} style={{ height: "100%" }}>
                                         <Col flex={"auto"}>
                                             <Row justify={"center"} >
@@ -447,22 +447,25 @@ const ExamCreate = () => {
         <Layout  className="layout-content-create">
             {/* <NavBar page={"Exams"} /> */}
             <Row className="content">
-                {/* <Col sm={2} /> */}
-                <Col flex="auto" style={{display: "flex", justifyContent: "center" }}>
-                    <Card title={examCreateTitle()} style={{maxWidth: "100%"}}>
+
+                <Col flex="auto" style={{ justifyContent: "center" }}>
+                    <Card title={examCreateTitle()} className="card-create">
                         <Row justify="space-between">
                         </Row>
                         <Row>
                             <Steps items={items} current={currentPage} />
                         </Row>
-                        <Row justify="center" style={{ paddingTop: "1%" }}>
-                            <Col flex={"auto"} style={{ width: "2000px", overflow: "auto" }} ref={setContainer}>
+                        <Row
+                         className="row-con"
+                        justify="center" style={{ paddingTop: "1%" }}>
+                            <Col flex={"auto"} className="col-con"
+                             ref={setContainer}>
                                 {renderDisplay()}
                             </Col>
                         </Row>
                     </Card>
                 </Col>
-                {/* <Col sm={2} /> */}
+
             </Row>
             <Row className="btn-bottom">
                 <Col flex={"auto"}>
