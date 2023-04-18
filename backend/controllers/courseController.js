@@ -66,9 +66,18 @@ exports.getCourse = async (req, res) => {
 
 exports.listCourse = async (req, res) => {
   try {
-    const courses = await Course.find({})
-
-    res.json({ data: courses });
+    switch (req?.user?.role) {
+      case "admin":
+        return res.json({ data: await Course.find({}) });
+        break;
+      case "teacher":
+        return res.json({ data: await Course.find({ teacher: user_id }) });
+        break;
+      case "student":
+        return res.status(403).json({ error: "Access denine for student" });
+        break;
+      default: return res.status(404).json({ error: "This role does not exist in system" });
+    }
   }
   catch (err) {
     console.log("fail to fetch courses");

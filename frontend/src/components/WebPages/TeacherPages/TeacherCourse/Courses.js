@@ -1,11 +1,12 @@
-import { Layout, Row, Col, Card, Typography, Button, Table,  Breadcrumb, Segmented, Divider } from "antd";
-import { BarsOutlined, AppstoreOutlined } from "@ant-design/icons";
-import React from "react";
+import { Layout, Row, Col, Card, Typography, Button, Table, Breadcrumb, Segmented, Divider } from "antd";
+import { BarsOutlined, AppstoreOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import React, { useEffect } from "react";
 import NavBar from "../../../Layout/NavBar";
 import { useState } from "react";
 import "./course.css"
 import "../teach.css"
 import { Link } from "react-router-dom";
+import { listCourse, removeCourse } from "../../../../function/Teacher/course";
 const { Title } = Typography;
 const { Meta } = Card;
 
@@ -15,20 +16,57 @@ const Courses = () => {
     // Variable-Start
     const [filteredInfo, setFilteredInfo] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
+    const [hasChanged, setHasChanged] = useState(false);
+    const [courses, setCourses] = useState([{
+        image: {
+            original_name: "",
+            name: ""
+        },
+        _id: "",
+        condition: [],
+        createdAt: "",
+        detail: "",
+        enabled: null,
+        name: "",
+        room: "",
+        topic: [],
+        type: null,
+        updatedAt: "",
+        video: null,
+        calendar: "",
+        teacher: "",
+        exam: ""
+    }])
     // Variable-End -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+    const handleRemoveCourse = async (index) => {
+        await removeCourse(sessionStorage.getItem("token"), courses[index]?._id)
+            .then(
+                (res) => {
+                    console.log(res.data.data)
+                    setHasChanged(true);
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
 
 
     // Data-Page-Start 
     const columns = [
         {
             title: 'No',
-            dataIndex: 'key',
-            key: 'key',
-            sorter: (a, b) => a.key - b.key,
-            sortOrder: sortedInfo.columnKey === 'key' ? sortedInfo.order : null,
-            ellipsis: true,
+            // dataIndex: 'key',
+            // key: 'key',
+            // sorter: (a, b) => a.key - b.key,
+            // sortOrder: sortedInfo.columnKey === 'key' ? sortedInfo.order : null,
+            // ellipsis: true,
             width: '10%',
+            render: (data) => courses.indexOf(data) + 1,
 
         },
         {
@@ -56,27 +94,45 @@ const Courses = () => {
             title: 'Type',
             dataIndex: 'type',
             key: 'type',
+            render: (type) => type === true ? "Public" : "Private",
             align: 'center',
         },
         {
             title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
+            dataIndex: 'enabled',
+            key: 'enabled',
+            render: (enabled) => enabled === true ? "Enable" : "Disable",
             align: 'center',
         },
         {
             title: 'Edit',
-            dataIndex: 'edit',
             key: 'edit',
             align: 'center',
             width: '10%',
+            render: (data) => {
+                const index = courses.indexOf(data);
+                return (
+                    <Button onClick={() => null}>
+                        <EditOutlined />
+                    </Button>
+                )
+            },
+
+
         },
         {
             title: 'Delete',
-            dataIndex: 'delete',
             key: 'delete',
             align: 'center',
             width: '10%',
+            render: (data) => {
+                const index = courses.indexOf(data);
+                return (
+                    <Button onClick={() => handleRemoveCourse(index)}>
+                        <DeleteOutlined />
+                    </Button>
+                )
+            },
         }
     ];
     // Data-Page-End ------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -148,13 +204,21 @@ const Courses = () => {
         });
     };
 
+
+
+    // const [displayMode, setDisplayMode] = useState("List");
     const handleDisplay = (mode) => {
-        switch (mode) {
-            case "List": setCurrentDisplay(listDisplay); break;
-            case "Kanban": setCurrentDisplay(kanbanDisplay); break;
-            default: setCurrentDisplay(listDisplay);
-        }
-        console.log(currentDisplay)
+        // if (!mode) {
+        //     mode = displayMode;
+        // }
+        // else {
+        //     setDisplayMode(mode);
+        // }
+        // switch (mode) {
+        //     case "List": setCurrentDisplay(<Table columns={columns} dataSource={courses} onChange={handleChange} />); break;
+        //     case "Kanban": setCurrentDisplay(kanbanDisplay); break;
+        //     default: setCurrentDisplay(<Table columns={columns} dataSource={courses} onChange={handleChange} />);
+        // }
     }
     // Function-End -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -191,47 +255,68 @@ const Courses = () => {
     }
 
     const renderDisplay = () => {
-        return currentDisplay
+        return <Table columns={columns} dataSource={courses} onChange={handleChange} />
     }
     // Sub-Component-Page-End ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
     // Page-Conttoller-Start
-    const cardData = (
-        <div style={{ paddingTop: "1%" }}>
-            <Card
-                hoverable
-                style={{
-                    width: "450px",
-                }}
-                cover={<img alt="example" src="/book-main-img-3.png" />}
-            >
-                <Meta title="Course" description="This is a description of a course" />
-            </Card>
-        </div>
-    )
-    const arrayCrad = [cardData, cardData, cardData, cardData, cardData, cardData, cardData, cardData, cardData, cardData]
-    const kanbanDisplay = (
-        <div className="row">
-            {
-                arrayCrad.map((card) => card)
-            }
-        </div>
-    );
-    const listDisplay = (<Table columns={columns} dataSource={data} onChange={handleChange} />);
-    const [currentDisplay, setCurrentDisplay] = useState(listDisplay);
+    // const cardData = (
+    //     <div style={{ paddingTop: "1%" }}>
+    //         <Card
+    //             hoverable
+    //             style={{
+    //                 width: "450px",
+    //             }}
+    //             cover={<img alt="example" src="/book-main-img-3.png" />}
+    //         >
+    //             <Meta title="Course" description="This is a description of a course" />
+    //         </Card>
+    //     </div>
+    // )
+    // const arrayCrad = [cardData, cardData, cardData, cardData, cardData, cardData, cardData, cardData, cardData, cardData]
+    // const kanbanDisplay = (
+    //     <div className="row">
+    //         {
+    //             arrayCrad.map((card) => card)
+    //         }
+    //     </div>
+    // );
+
     // Page-Conttoller-End ------------------------------------------------------------------------------------------------------------------------------------------------------
 
+    const fetchCourse = async () => {
+        await listCourse(sessionStorage.getItem("token"))
+            .then(
+                (res) => {
+                    const data = res.data.data;
+                    console.log(data);
+                    setCourses(data);
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
 
+    useEffect(() => {
+        fetchCourse()
+        // renderDisplay()
+        return () => {
+            setHasChanged(false)
+        }
+    }, [hasChanged])
 
     return (
         <Layout className="layout-content">
             {/* <NavBar page={"Courses"} /> */}
             <Row>
                 {/* <Col sm={2} /> */}
-                <Col flex="auto" style={{display: "flex", justifyContent: "center" }}>
-                    <Card title={myCoursesTitle()} style={{maxWidth: "100%" }}>
+                <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
+                    <Card title={myCoursesTitle()} style={{ maxWidth: "100%" }}>
                         <Row justify="space-between" style={{ marginBottom: "1%" }}>
                             <Col>
                                 <Segmented

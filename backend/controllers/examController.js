@@ -54,12 +54,26 @@ exports.getExam = async (req, res) => {
 exports.listExam = async (req, res) => {
     try {
         // const exam = await Exam.find({ teacher: req.user.user_id })
-        switch (req.user.role) {
+        switch (req?.user?.role) {
             case "admin":
-                return res.json({ data: await Exam.find({}) });
+                return res.json({
+                    data: await Exam.find({})
+                        .select("-createdAt -updatedAt -__v")
+                        .populate({
+                            path: "course",
+                            select: "name -_id",
+                        })
+                });
                 break;
             case "teacher":
-                return res.json({ data: await Exam.find({ teacher: user_id }) });
+                return res.json({
+                    data: await Exam.find({ teacher: user_id })
+                        .select("-createdAt -updatedAt -__v")
+                        .populate({
+                            path: "course",
+                            select: "name -_id",
+                        })
+                });
                 break;
             case "student":
                 return res.status(403).json({ error: "Access denine for student" });
