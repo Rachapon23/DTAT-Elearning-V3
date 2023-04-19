@@ -17,7 +17,7 @@ const Courses = () => {
     const [filteredInfo, setFilteredInfo] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
     const [hasChanged, setHasChanged] = useState(false);
-    const [courses, setCourses] = useState([{
+    const [courses, setCourses] = useState(null | [{
         image: {
             original_name: "",
             name: ""

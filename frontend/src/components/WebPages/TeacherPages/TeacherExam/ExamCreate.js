@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import CardContent from "./CardContent";
 import "../teach.css"
+import { getCourseWoQuiz } from "../../../../function/Teacher/exame";
 
 const { Title } = Typography;
 const { Meta } = Card;
@@ -15,6 +16,7 @@ const { TextArea } = Input;
 
 
 const ExamCreate = () => {
+
     const examCreateTitle = () => {
         return (
             <Row align={"middle"} justify={"space-between"} >
@@ -113,8 +115,8 @@ const ExamCreate = () => {
                 if (!selected[coursesData.indexOf(obj)] && selected.length < coursesData.length) {
                     selected.push(false)
                 }
-                // console.log(obj,Number(selected.indexOf(obj)))
-                // console.log(selected)
+                console.log(obj,Number(selected.indexOf(obj)))
+                console.log(selected)
                 return <Radio checked={selected[Number(coursesData.indexOf(obj))]} onChange={(e) => handleRadioChange(e, Number(coursesData.indexOf(obj)))}></Radio>
             },
         },
@@ -296,7 +298,7 @@ const ExamCreate = () => {
     )
 
 
-    const handleRadioChange = (e, index) => {
+    const handleRadioChange = (index) => {
         if (!currentSelected) {
             selected.splice(index, 1, true)
             setCurentSelected(index)
@@ -314,7 +316,7 @@ const ExamCreate = () => {
 
     const handleRowSelect = (e, index) => {
         if (e.target.innerText === "Preview") return
-        handleRadioChange(null, index)
+        handleRadioChange(index)
     }
 
     let courseAmount = coursesData.length;
@@ -388,7 +390,6 @@ const ExamCreate = () => {
     const handleDisplay = (mode) => {
         if (mode) {
             if (mode.target.innerText === "Next") {
-
                 // if(currentPage + 1 <= pageList.length) {
                 // console.log(pageList[currentPage + 1])
                 setCurrentPage(currentPage + 1);
@@ -409,7 +410,24 @@ const ExamCreate = () => {
         setCurrentDisplay(pageList[currentPage]);
     }
 
+    const fetchCourseWoQuiz = async () => {
+        await getCourseWoQuiz(sessionStorage.getItem("token"))
+            .then(
+                (res) => {
+                    const data = res.data.data;
+                    console.log("ss: ",data);
+                    // setCourseCount(data)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
+
     useEffect(() => {
+        // fetchCourseWoQuiz()
         handleDisplay()
     }, [currentPage, selected, keyword, cardContentList])
 
@@ -444,33 +462,33 @@ const ExamCreate = () => {
             {/* <NavBar page={"Exams"} /> */}
             <Row className="content">
 
-                    <Col flex="auto" style={{ justifyContent: "center" }}>
-                        <Card title={examCreateTitle()} className="card-create">
-                            <Row justify="space-between">
-                            </Row>
-                            <Row>
-                                <Steps items={items} current={currentPage} />
-                            </Row>
-                            <Row
-                                className="row-con"
-                                justify="center" style={{ paddingTop: "1%" }}>
-                                <Col flex={"auto"} className="col-con"
-                                    ref={setContainer}>
-                                    {renderDisplay()}
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
+                <Col flex="auto" style={{ justifyContent: "center" }}>
+                    <Card title={examCreateTitle()} className="card-create">
+                        <Row justify="space-between">
+                        </Row>
+                        <Row>
+                            <Steps items={items} current={currentPage} />
+                        </Row>
+                        <Row
+                            className="row-con"
+                            justify="center" style={{ paddingTop: "1%" }}>
+                            <Col flex={"auto"} className="col-con"
+                                ref={setContainer}>
+                                {renderDisplay()}
+                            </Col>
+                        </Row>
+                    </Card>
+                </Col>
 
-                </Row>
-                <Row className="btn-bottom">
-                    <Col flex={"auto"}>
-                        {currentPage < pageList.length ? renderPageNav() : null}
-                    </Col>
-                </Row>
+            </Row>
+            <Row className="btn-bottom">
+                <Col flex={"auto"}>
+                    {currentPage < pageList.length ? renderPageNav() : null}
+                </Col>
+            </Row>
 
-            </Layout>
-            )
+        </Layout>
+    )
 }
 
-            export default ExamCreate;
+export default ExamCreate;

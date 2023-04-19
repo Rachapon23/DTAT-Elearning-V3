@@ -5,20 +5,22 @@ import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../teach.css"
-import { listExam, removeExam } from "../../../../function/Teacher/exame";
+import { getCourseCount, listExam, removeExam } from "../../../../function/Teacher/exame";
 const { Title } = Typography;
 const { Meta } = Card;
 const { Header, Content, Footer, Sider } = Layout;
 
 const Quizes = () => {
 
-    const [exams, setExams] = useState([{
+    const [exams, setExams] = useState(null | [{
         _id: "",
         name: "",
         detail: "",
         teacher: "",
         quiz: [],
     }]);
+    const [courseCount, setCourseCount] = useState(0);
+    const [examCount, setExamCount] = useState(0);
     const [hasChanged, setHasChanged] = useState(false);
 
     const myQuizesTitle = () => {
@@ -278,6 +280,23 @@ const Quizes = () => {
                     const data = res.data.data;
                     console.log(data);
                     setExams(data);
+                    setExamCount(data?.length);
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
+
+    const fetchCourseCount = async () => {
+        await getCourseCount(sessionStorage.getItem("token"))
+            .then(
+                (res) => {
+                    const data = res.data.data;
+                    console.log(data);
+                    setCourseCount(data);
                 }
             )
             .catch(
@@ -289,6 +308,7 @@ const Quizes = () => {
 
     useEffect(() => {
         fetchExam()
+        fetchCourseCount()
         return () => {
             setHasChanged(false)
         }
@@ -329,7 +349,16 @@ const Quizes = () => {
                                 />
                             </Col>
                             <Col style={{ marginBottom: "-1%" }}>
-                                <Alert style={{ height: "70%" }} message="6  exams avialiable to create" type="info" showIcon />
+                                {
+                                    courseCount - examCount === 0 ?
+                                        (
+                                            <Alert style={{ height: "70%" }} message={`No exams to create`} type="success" showIcon />
+                                        )
+                                        :
+                                        (
+                                            <Alert style={{ height: "70%" }} message={`${courseCount - examCount} exams avialiable to create`} type="info" showIcon />
+                                        )
+                                }
                             </Col>
                         </Row>
                         <Row justify="center" >
