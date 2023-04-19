@@ -23,10 +23,10 @@ These are example of how to read API
 > /list-activity/course/:id => `list` document `activity` by use field `course` `id`
 
 5. /***action***-***document***/***special action***
-> /list-course-count => `list` document `course` `count`
+> /list-course/count => `list` document `course` `count`
 
 6. /***action***-***document***/***special action***/***field***
-> /list-course-wo/quiz => `list` document `course` that `without` field `quiz`
+> /list-course/wo/quiz => `list` document `course` that `without` field `quiz`
 
 # Frontend
 ## UI Design
