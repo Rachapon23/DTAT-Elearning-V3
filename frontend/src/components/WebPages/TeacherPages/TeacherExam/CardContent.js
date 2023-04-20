@@ -1,13 +1,13 @@
-import React from "react"
+import React, { useState } from "react"
 import { useEffect, useRef } from "react"
-import { PictureOutlined } from '@ant-design/icons';
-import { Card, Col, Row, Tooltip, Button, Input, Form } from 'antd'; 
+import { PictureOutlined, CloseOutlined } from '@ant-design/icons';
+import { Card, Col, Row, Tooltip, Button, Input, Form } from 'antd';
+import { Link, useSearchParams } from "react-router-dom";
 
 const { TextArea } = Input;
 
 
-const CardContent = () => {
-
+const CardContent = ({ index = null, onDelete = null }) => {
     const lastCard = useRef(null)
 
     const scrollToBottom = () => {
@@ -18,13 +18,19 @@ const CardContent = () => {
         scrollToBottom()
     }, [lastCard])
 
-
     return (
-        <Row justify={"center"} style={{ paddingBottom: "1%" }} ref={lastCard} onMouseEnter={() => console.log("Hit")}>
+        <Row justify={"center"} style={{ paddingBottom: "1%" }} ref={lastCard}
+        // onMouseEnter={() => console.log("Hit")}
+        >
             <Col style={{ width: "100%" }}>
                 <Card >
                     <Row justify={"center"} align={"middle"}>
                         <Col style={{ width: "100%" }} >
+                            <Row style={{ marginTop: "-0.5%", marginBottom: "-0.2%", marginRight: "-0.5%" }} justify={"end"} align={"middle"}>
+                                <Link onClick={() => onDelete(index)}>
+                                    <CloseOutlined style={{ fontSize: "120%" }} />
+                                </Link>
+                            </Row>
                             <Row justify={"space-between"} align={"middle"}>
                                 <Col style={{ width: "95%" }}>
                                     <Form.Item label="Question" tooltip="This is a required field">

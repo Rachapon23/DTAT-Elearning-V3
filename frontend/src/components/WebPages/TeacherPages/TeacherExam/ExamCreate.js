@@ -17,6 +17,17 @@ const { TextArea } = Input;
 
 const ExamCreate = () => {
 
+    const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null | [{
+        enabled: null,
+        name: "",
+        teacher: "",
+        image: null,
+        type: null,
+        _id: "",
+    }])
+    const [hasChanged, setHasChanged] = useState(false);
+    const [deleteIndex, setDeleteIndex] = useState(null);
+
     const examCreateTitle = () => {
         return (
             <Row align={"middle"} justify={"space-between"} >
@@ -54,7 +65,7 @@ const ExamCreate = () => {
 
     const coursesData = [
         {
-            key: "A",
+            id: "A",
             course: "A",
             type: "Public",
             status: "Avialable",
@@ -62,7 +73,7 @@ const ExamCreate = () => {
             select: false
         },
         {
-            key: "B",
+            id: "B",
             course: "B",
             type: "Public",
             status: "Avialable",
@@ -70,7 +81,7 @@ const ExamCreate = () => {
             select: false
         },
         {
-            key: "C",
+            id: "C",
             course: "C",
             type: "Private",
             status: "Avialable",
@@ -78,6 +89,16 @@ const ExamCreate = () => {
             select: false
         },
     ]
+
+    const [selected, setSelected] = useState("");
+    const [currentSelected, setCurentSelected] = useState(null)
+
+    const handleRadioChange = (data) => {
+        setCurentSelected(data?.index)
+        setSelected(data?._id)
+    }
+
+
 
     const coursesCol = [
         {
@@ -89,38 +110,32 @@ const ExamCreate = () => {
         },
         {
             title: "Course",
-            dataIndex: 'course',
-            key: 'course',
-            width: "50%"
+            dataIndex: 'name',
+            key: 'name',
+            width: "50%",
         },
         {
             title: "Type",
             dataIndex: 'type',
             key: 'type',
             align: "center",
+            render: (type) => type === true ? "Public" : "Private",
         },
         {
             title: "Status",
             dataIndex: 'status',
             key: 'status',
             align: "center",
+            render: (status) => status === true ? "Disable" : "Eanble",
         },
         {
             title: "Select",
-            dataIndex: 'select',
-            key: 'select',
             align: "center",
             width: "10%",
-            render: (_, obj) => {
-                if (!selected[coursesData.indexOf(obj)] && selected.length < coursesData.length) {
-                    selected.push(false)
-                }
-                console.log(obj,Number(selected.indexOf(obj)))
-                console.log(selected)
-                return <Radio checked={selected[Number(coursesData.indexOf(obj))]} onChange={(e) => handleRadioChange(e, Number(coursesData.indexOf(obj)))}></Radio>
+            render: (data) => {
+                return <Radio checked={selected === data?._id} onChange={(e) => handleRadioChange({ checked: e?.target?.checked, _id: data?._id, index: cousresWithOutQuiz.indexOf(data) })}></Radio>
             },
         },
-
     ]
 
     const examInfoCol = [
@@ -133,8 +148,8 @@ const ExamCreate = () => {
         },
         {
             title: "Course",
-            dataIndex: 'course',
-            key: 'course',
+            dataIndex: 'name',
+            key: 'name',
             width: "50%"
         },
         {
@@ -152,10 +167,24 @@ const ExamCreate = () => {
     ]
 
     const [container, setContainer] = useState(null);
-    const [cardContentList, setCardContentList] = useState([<CardContent />, <CardContent />, <CardContent />,])
-    const handleCreateContent = () => {
-        setCardContentList([...cardContentList, <CardContent />])
+    const [cardContentList, setCardContentList] = useState([])
+    
+    
+    const onDeleteCardContent = (index) => {
+        
+        
+        cardContentList.splice(index, 1)
+        setCardContentList(cardContentList)
+        
     }
+    
+    const handleCreateContent = () => {
+        const currentIndex = cardContentList.length;
+        setCardContentList([...cardContentList, <CardContent index={currentIndex} onDelete={onDeleteCardContent}/>])
+        console.log(cardContentList)
+    }
+
+
 
 
 
@@ -239,10 +268,6 @@ const ExamCreate = () => {
         </Form>
     )
 
-
-    const [selected, setSelected] = useState([]);
-    const [currentSelected, setCurentSelected] = useState(null)
-
     const examInfo = (
         <Form
             style={{ paddingTop: "2%" }}
@@ -263,9 +288,10 @@ const ExamCreate = () => {
                             <Col style={{ width: "100%", height: "160px" }}>
                                 <Table
                                     dataSource={
-                                        currentSelected === null ? null : coursesData.slice(currentSelected, currentSelected + 1)
+                                        currentSelected === null ? null : cousresWithOutQuiz.slice(currentSelected, currentSelected + 1)
                                     }
-                                    columns={examInfoCol} pagination={false}
+                                    // dataSource={cousresWithOutQuiz.slice(currentSelected, currentSelected + 1)}
+                                    columns={coursesCol} pagination={false}
                                 />
                             </Col>
                         </Row>
@@ -273,7 +299,7 @@ const ExamCreate = () => {
                     </Form.Item>
 
                     <Form.Item label="Exam Name" required tooltip="This is a required field">
-                        <Input placeholder="input placeholder" />
+                        <Input placeholder="Exam name" />
                     </Form.Item>
 
                     <Form.Item
@@ -287,7 +313,7 @@ const ExamCreate = () => {
                             showCount
                             maxLength={250}
                             style={{ height: 120 }}
-                            placeholder="can resize"
+                            placeholder="Detail"
                         />
                     </Form.Item>
 
@@ -298,25 +324,11 @@ const ExamCreate = () => {
     )
 
 
-    const handleRadioChange = (index) => {
-        if (!currentSelected) {
-            selected.splice(index, 1, true)
-            setCurentSelected(index)
-            setSelected([...selected])
-        }
-        if (currentSelected !== index) {
-            selected.splice(currentSelected, 1, false)
-            selected.splice(index, 1, true)
-            setCurentSelected(index)
-            setSelected([...selected])
-        }
-
-    }
 
 
     const handleRowSelect = (e, index) => {
         if (e.target.innerText === "Preview") return
-        handleRadioChange(index)
+        handleRadioChange({ _id: cousresWithOutQuiz[index]._id, index: index })
     }
 
     let courseAmount = coursesData.length;
@@ -328,10 +340,17 @@ const ExamCreate = () => {
         setCurrentCoursePage(1)
     }
 
-    const filterCourse = (data) => data.filter((item) => {
-        return item.course.toLowerCase().indexOf(keyword) >= 0;
-    }).slice(pageSize * (currentCoursePage - 1), (pageSize * (currentCoursePage - 1)) + pageSize)
+    const filterCourse = (data) => {
+        if(!data) return
+        return data.filter((item) => {
+            return item?.name?.toLowerCase().indexOf(keyword) >= 0;
+        }).slice(pageSize * (currentCoursePage - 1), (pageSize * (currentCoursePage - 1)) + pageSize)
+    }
 
+    // const filterCourse = (data) => {
+    //     if(!data) return
+    //     console.log(data)
+    // }
 
     const selectCourse = (
         <Form
@@ -349,7 +368,8 @@ const ExamCreate = () => {
 
                     <Form.Item label="Select Course" required tooltip="This is a required field">
                         <Input placeholder="Search course" prefix={<SearchOutlined />} onChange={handleSearch} />
-                        <Table style={{ paddingTop: "1%" }} dataSource={filterCourse(coursesData)} columns={coursesCol} onRow={(rec, index) => {
+                        <Table style={{ paddingTop: "1%" }} dataSource={filterCourse(cousresWithOutQuiz)} columns={coursesCol} onRow={(_, index) => {
+                            // console.log("sdd",rec, index)
                             return {
                                 onClick: (e) => handleRowSelect(e, index),
                             }
@@ -390,18 +410,18 @@ const ExamCreate = () => {
     const handleDisplay = (mode) => {
         if (mode) {
             if (mode.target.innerText === "Next") {
-                // if(currentPage + 1 <= pageList.length) {
-                // console.log(pageList[currentPage + 1])
-                setCurrentPage(currentPage + 1);
-                // }
+                if (currentPage + 1 <= pageList.length) {
+                    // console.log(pageList[currentPage + 1])
+                    setCurrentPage(currentPage + 1);
+                }
                 setKeyword("")
 
             }
             else if (mode.target.innerText === "Previous") {
-                // if(currentPage - 1 > 1) {
-                // console.log(pageList[currentPage - 1])
-                setCurrentPage(currentPage - 1);
-                // }
+                if (currentPage - 1 >= 0) {
+                    console.log(pageList[currentPage - 1])
+                    setCurrentPage(currentPage - 1);
+                }
                 setKeyword("")
 
             }
@@ -415,8 +435,8 @@ const ExamCreate = () => {
             .then(
                 (res) => {
                     const data = res.data.data;
-                    console.log("ss: ",data);
-                    // setCourseCount(data)
+                    setCousresWithOutQuiz(data);
+                    setHasChanged(true)
                 }
             )
             .catch(
@@ -427,9 +447,12 @@ const ExamCreate = () => {
     }
 
     useEffect(() => {
-        // fetchCourseWoQuiz()
+        fetchCourseWoQuiz()
         handleDisplay()
-    }, [currentPage, selected, keyword, cardContentList])
+        return () => {
+            setHasChanged(false)
+        }
+    }, [currentPage, selected, keyword, cardContentList, currentSelected, hasChanged])
 
     const renderDisplay = () => {
         return currentDisplay
