@@ -1,6 +1,6 @@
 # Backend
-## API Testing (Postman)
-https://app.getpostman.com/join-team?invite_code=d50c30757d652e8d4514d3e7753249ee&target_code=7a85ae64f2c329b1ba0171c911211646
+## API Testing Postman (Update Link at: 21/4/2023 09:45 AM)
+https://app.getpostman.com/join-team?invite_code=10a11f7c6c9269a0e987e83d0ebd0f4c&target_code=5a74a505d8263268a3f13934a003e741
 
 ## How to writing tests in Postman
 https://learning.postman.com/docs/writing-scripts/test-scripts/#next-steps
