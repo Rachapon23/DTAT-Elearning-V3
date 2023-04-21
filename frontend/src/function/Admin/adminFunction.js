@@ -59,3 +59,11 @@ export const removeRoom = async (authtoken, id) =>
             authtoken,
         }
     });
+
+// PUT: /update-user/:id/enabled
+export const updateUserEnabled = async (authtoken, id, data) =>
+    await axios.put(process.env.REACT_APP_API + `/update-user/${id}/enable`, data, { 
+        headers: {
+            authtoken,
+        }
+    });

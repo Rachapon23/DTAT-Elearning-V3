@@ -75,8 +75,10 @@ exports.updateUserRole = async (req, res) => {
 // PUT: /update-user/:id/enable
 exports.updateUserEnabled = async (req, res) => {
   try {
-    const id = req.params.id
-    const status = req.body.enabled === true;
+    const id = req?.params?.id
+    const status = req?.body?.enabled === true;
+    if(!id) return res.status(400).json({ error: "Request not in correct form" });
+    if(status === null || status === undefined) return res.status(400).json({ error: "Request not in correct form" });
     const user = await User.findOneAndUpdate(
       { _id: id },
       { enabled: status },

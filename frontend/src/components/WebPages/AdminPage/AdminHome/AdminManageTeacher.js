@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./adminhome.css";
-import { Button, Input, Select, Table, Typography, Breadcrumb } from "antd";
-import { listUserRole } from "../../../../function/Admin/adminFunction";
+import { Button, Input, Select, Table, Typography, Breadcrumb, Switch } from "antd";
+import { listUserRole, updateUserEnabled } from "../../../../function/Admin/adminFunction";
 const { Title } = Typography;
 const AdminManageTeacher = () => {
   const role = "teacher";
+  const [hasChanged, setHasChanged] = useState(false);
   const [users, setUsers] = useState([
     {
       _id: "",
@@ -20,6 +21,22 @@ const AdminManageTeacher = () => {
       verified: null
     }
   ]);
+
+  const handleChangeEnabled = async (id, enabled) => {
+    console.log(id, enabled)
+    await updateUserEnabled(sessionStorage.getItem("token"), id, { enabled: !enabled })
+      .then(
+        (res) => {
+          console.log(res)
+          setHasChanged(true)
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err)
+        }
+      )
+  }
 
   const columns = [
     {
@@ -47,10 +64,17 @@ const AdminManageTeacher = () => {
       align: "center",
       render: (data) => `${data?.firstname} ${data?.lastname}`,
     },
+    // {
+    //   title: `role`,
+    //   align: "center",
+    //   render: (data) => data?.role?.name,
+    // },
     {
-      title: `role`,
+      title: `Status`,
       align: "center",
-      render: (data) => data?.role?.name,
+      render: (data) => {
+        return <Switch checked={data?.enabled} onChange={() => handleChangeEnabled(data?._id, data?.enabled)} />
+      },
     },
   ];
 
@@ -59,7 +83,7 @@ const AdminManageTeacher = () => {
       .then(
         (res) => {
           const data = res.data.data
-          console.log(data)
+          // console.log(data)
           setUsers(data)
         }
       )
@@ -72,7 +96,10 @@ const AdminManageTeacher = () => {
 
   useEffect(() => {
     fetchUsers()
-  }, [])
+    return () => {
+      setHasChanged(false)
+    }
+  }, [hasChanged])
   return (
     <div>
       <Breadcrumb

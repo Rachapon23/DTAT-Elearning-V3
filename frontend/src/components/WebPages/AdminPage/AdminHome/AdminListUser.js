@@ -49,7 +49,7 @@ const AdminListUser = () => {
       render: (data) => `${data?.firstname} ${data?.lastname}`,
     },
     {
-      title: `role`,
+      title: `Role`,
       align: "center",
       render: (data) => data?.role?.name,
     },

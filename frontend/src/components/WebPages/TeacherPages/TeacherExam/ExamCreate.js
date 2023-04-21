@@ -17,7 +17,7 @@ const { TextArea } = Input;
 
 const ExamCreate = () => {
 
-    const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null | [{
+    const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null |[{
         enabled: null,
         name: "",
         teacher: "",
@@ -168,19 +168,19 @@ const ExamCreate = () => {
 
     const [container, setContainer] = useState(null);
     const [cardContentList, setCardContentList] = useState([])
-    
-    
+
+
     const onDeleteCardContent = (index) => {
-        
-        
+
+
         cardContentList.splice(index, 1)
         setCardContentList(cardContentList)
-        
+
     }
-    
+
     const handleCreateContent = () => {
         const currentIndex = cardContentList.length;
-        setCardContentList([...cardContentList, <CardContent index={currentIndex} onDelete={onDeleteCardContent}/>])
+        setCardContentList([...cardContentList, <CardContent index={currentIndex} onDelete={onDeleteCardContent} />])
         console.log(cardContentList)
     }
 
@@ -341,7 +341,7 @@ const ExamCreate = () => {
     }
 
     const filterCourse = (data) => {
-        if(!data) return
+        if (!data) return
         return data.filter((item) => {
             return item?.name?.toLowerCase().indexOf(keyword) >= 0;
         }).slice(pageSize * (currentCoursePage - 1), (pageSize * (currentCoursePage - 1)) + pageSize)
@@ -415,7 +415,7 @@ const ExamCreate = () => {
                     setCurrentPage(currentPage + 1);
                 }
                 setKeyword("")
-
+                
             }
             else if (mode.target.innerText === "Previous") {
                 if (currentPage - 1 >= 0) {
@@ -425,9 +425,11 @@ const ExamCreate = () => {
                 setKeyword("")
 
             }
-
+            
+            
         }
         setCurrentDisplay(pageList[currentPage]);
+        setHasChanged(true)
     }
 
     const fetchCourseWoQuiz = async () => {
@@ -436,7 +438,6 @@ const ExamCreate = () => {
                 (res) => {
                     const data = res.data.data;
                     setCousresWithOutQuiz(data);
-                    setHasChanged(true)
                 }
             )
             .catch(
@@ -446,17 +447,23 @@ const ExamCreate = () => {
             )
     }
 
+    const renderDisplay = () => {
+        return currentDisplay
+    }
+
     useEffect(() => {
+
+        
         fetchCourseWoQuiz()
         handleDisplay()
         return () => {
             setHasChanged(false)
         }
+        
+
     }, [currentPage, selected, keyword, cardContentList, currentSelected, hasChanged])
 
-    const renderDisplay = () => {
-        return currentDisplay
-    }
+    
 
     const renderPageNav = () => {
         return (
