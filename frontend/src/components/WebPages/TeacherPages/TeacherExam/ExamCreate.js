@@ -449,7 +449,6 @@ const ExamCreate = () => {
             setHasChanged(true)
         }
         setCurrentDisplay(pageList[currentPage]);
-        setHasChanged(true)
     }
 
     const fetchCourseWoQuiz = async () => {
