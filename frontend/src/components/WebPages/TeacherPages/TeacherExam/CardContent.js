@@ -9,6 +9,7 @@ const { TextArea } = Input;
 
 const CardContent = ({ index = null, onDelete = null }) => {
     const lastCard = useRef(null)
+    console.log("index: ", index)
 
     const scrollToBottom = () => {
         lastCard.current?.scrollIntoView({ behavior: "smooth" })
@@ -33,12 +34,12 @@ const CardContent = ({ index = null, onDelete = null }) => {
                             </Row>
                             <Row justify={"space-between"} align={"middle"}>
                                 <Col style={{ width: "95%" }}>
-                                    <Form.Item label="Question" tooltip="This is a required field">
+                                    <Form.Item label={`Question ${index + 1}`} tooltip="This is a required field">
                                         <Input placeholder="input placeholder" />
                                     </Form.Item>
                                 </Col>
                                 <Col style={{ width: "5%", paddingTop: "0.5%", paddingLeft: "1%" }}>
-                                    <Tooltip title="Add image">
+                                    <Tooltip title="Add image" placement="bottom">
                                         <Button type="text" style={{ height: "100%" }}>
                                             <PictureOutlined style={{ fontSize: "25px", display: "flex", justifyContent: "center" }} />
                                         </Button>

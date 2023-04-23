@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, InfoCircleOutlined, CloseOutlined, PictureOutlined } from '@ant-design/icons';
-import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, } from 'antd';
+import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result} from 'antd';
 import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -25,8 +25,20 @@ const ExamCreate = () => {
         type: null,
         _id: "",
     }])
+    const [inputData, setInputData] = useState({
+        head: {
+            name: "",
+            detail: "",
+            teacher: "",
+            course: "",
+            quiz: null
+        },
+        body: {
+
+        }
+    })
     const [hasChanged, setHasChanged] = useState(false);
-    const [deleteIndex, setDeleteIndex] = useState(null);
+    const [firstLoad, setFirstLoad] = useState(false);
 
     const examCreateTitle = () => {
         return (
@@ -171,22 +183,17 @@ const ExamCreate = () => {
     
     
     const onDeleteCardContent = (index) => {
-        
-        
-        cardContentList.splice(index, 1)
-        setCardContentList(cardContentList)
+        setCardContentList(cardContentList => cardContentList.filter(card => card.key !== String(index)))
+        setHasChanged(true)
         
     }
     
     const handleCreateContent = () => {
         const currentIndex = cardContentList.length;
-        setCardContentList([...cardContentList, <CardContent index={currentIndex} onDelete={onDeleteCardContent}/>])
-        console.log(cardContentList)
+        const newCardContentList = <CardContent key={currentIndex} index={currentIndex} onDelete={onDeleteCardContent}/>
+        setCardContentList(cardContentList => [...cardContentList, newCardContentList])
+        setHasChanged(true)
     }
-
-
-
-
 
     const cardEmptyContent = (
         <Card>
@@ -290,7 +297,6 @@ const ExamCreate = () => {
                                     dataSource={
                                         currentSelected === null ? null : cousresWithOutQuiz.slice(currentSelected, currentSelected + 1)
                                     }
-                                    // dataSource={cousresWithOutQuiz.slice(currentSelected, currentSelected + 1)}
                                     columns={coursesCol} pagination={false}
                                 />
                             </Col>
@@ -323,8 +329,25 @@ const ExamCreate = () => {
         </Form>
     )
 
-
-
+    const examCreateFinished = (
+        <Row align={"middle"} justify={"center"} style={{ height: "400px" }}>
+            <Col >
+                <Result
+                    status="success"
+                    title="Successfully Purchased Cloud Server ECS!"
+                    subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+                    extra={[
+                        <Link to="/teacher/page/listexam">
+                            <Button type="primary" key="console">
+                                Back To List Exam
+                            </Button>
+                        </Link>,
+                        // <Button key="buy">Buy Again</Button>,
+                    ]}
+                />
+            </Col>
+        </Row>
+    )
 
     const handleRowSelect = (e, index) => {
         if (e.target.innerText === "Preview") return
@@ -365,7 +388,6 @@ const ExamCreate = () => {
         >
             <Row >
                 <Col style={{ width: "100%" }}>
-
                     <Form.Item label="Select Course" required tooltip="This is a required field">
                         <Input placeholder="Search course" prefix={<SearchOutlined />} onChange={handleSearch} />
                         <Table style={{ paddingTop: "1%" }} dataSource={filterCourse(cousresWithOutQuiz)} columns={coursesCol} onRow={(_, index) => {
@@ -381,7 +403,7 @@ const ExamCreate = () => {
         </Form>
     )
 
-    const pageList = [selectCourse, examInfo, examContent, (<div>HI</div>)]
+    const pageList = [selectCourse, examInfo, examContent, examCreateFinished]
     const [currentDisplay, setCurrentDisplay] = useState(pageList[0]);
     const [currentPage, setCurrentPage] = useState(0);
     const steps = [
@@ -411,7 +433,6 @@ const ExamCreate = () => {
         if (mode) {
             if (mode.target.innerText === "Next") {
                 if (currentPage + 1 <= pageList.length) {
-                    // console.log(pageList[currentPage + 1])
                     setCurrentPage(currentPage + 1);
                 }
                 setKeyword("")
@@ -425,7 +446,7 @@ const ExamCreate = () => {
                 setKeyword("")
 
             }
-
+            setHasChanged(true)
         }
         setCurrentDisplay(pageList[currentPage]);
     }
@@ -436,7 +457,7 @@ const ExamCreate = () => {
                 (res) => {
                     const data = res.data.data;
                     setCousresWithOutQuiz(data);
-                    setHasChanged(true)
+                    setFirstLoad(true);
                 }
             )
             .catch(
@@ -447,12 +468,12 @@ const ExamCreate = () => {
     }
 
     useEffect(() => {
-        fetchCourseWoQuiz()
+        if(currentPage === 0) fetchCourseWoQuiz()
         handleDisplay()
         return () => {
             setHasChanged(false)
         }
-    }, [currentPage, selected, keyword, cardContentList, currentSelected, hasChanged])
+    }, [hasChanged, firstLoad, selected])
 
     const renderDisplay = () => {
         return currentDisplay
@@ -471,7 +492,7 @@ const ExamCreate = () => {
                             <Button onClick={handleDisplay}>Previous</Button>
                         </Col>
                         <Col>
-                            <Button type="primary" onClick={handleDisplay}>{currentPage === pageList.length - 1 ? "Done" : "Next"}</Button>
+                            <Button type="primary" disabled={!selected} onClick={handleDisplay}>{currentPage === pageList.length - 1 ? "Done" : "Next"}</Button>
                         </Col>
                     </Row>
                 </Col>
