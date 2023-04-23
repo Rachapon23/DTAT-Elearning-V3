@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./adminhome.css";
-import { Button, Input, Select, Table, Typography, Breadcrumb } from "antd";
-import { listUserRole } from "../../../../function/Admin/adminFunction";
+import { Button, Input, Select, Table, Typography, Breadcrumb, Switch } from "antd";
+import { listUserRole, updateUserEnabled } from "../../../../function/Admin/adminFunction";
 
 const { Title } = Typography;
 
 const AdminManageStudent = () => {
   const role = "student";
+  const [hasChanged, setHasChanged] = useState(false);
   const [users, setUsers] = useState([
     {
       _id: "",
@@ -22,6 +23,22 @@ const AdminManageStudent = () => {
       verified: null
     }
   ]);
+
+  const handleChangeEnabled = async (id, enabled) => {
+    console.log(id, enabled)
+    await updateUserEnabled(sessionStorage.getItem("token"), id, { enabled: !enabled })
+      .then(
+        (res) => {
+          console.log(res)
+          setHasChanged(true)
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err)
+        }
+      )
+  }
 
   const columns = [
     {
@@ -49,10 +66,17 @@ const AdminManageStudent = () => {
       align: "center",
       render: (data) => `${data?.firstname} ${data?.lastname}`,
     },
+    // {
+    //   title: `Role`,
+    //   align: "center",
+    //   render: (data) => data?.role?.name,
+    // },
     {
-      title: `role`,
+      title: `Status`,
       align: "center",
-      render: (data) => data?.role?.name,
+      render: (data) => {
+        return <Switch checked={data?.enabled} onChange={() => handleChangeEnabled(data?._id, data?.enabled)} />
+      },
     },
   ];
 
@@ -74,8 +98,11 @@ const AdminManageStudent = () => {
 
   useEffect(() => {
     fetchUsers()
-  }, [])
-  
+    return () => {
+      setHasChanged(false)
+    }
+  }, [hasChanged])
+
   return (
     <div>
       <Breadcrumb

@@ -17,7 +17,7 @@ const { TextArea } = Input;
 
 const ExamCreate = () => {
 
-    const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null | [{
+    const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null |[{
         enabled: null,
         name: "",
         teacher: "",
@@ -180,14 +180,14 @@ const ExamCreate = () => {
 
     const [container, setContainer] = useState(null);
     const [cardContentList, setCardContentList] = useState([])
-    
-    
+
+
     const onDeleteCardContent = (index) => {
         setCardContentList(cardContentList => cardContentList.filter(card => card.key !== String(index)))
         setHasChanged(true)
         
     }
-    
+
     const handleCreateContent = () => {
         const currentIndex = cardContentList.length;
         const newCardContentList = <CardContent key={currentIndex} index={currentIndex} onDelete={onDeleteCardContent}/>
@@ -364,7 +364,7 @@ const ExamCreate = () => {
     }
 
     const filterCourse = (data) => {
-        if(!data) return
+        if (!data) return
         return data.filter((item) => {
             return item?.name?.toLowerCase().indexOf(keyword) >= 0;
         }).slice(pageSize * (currentCoursePage - 1), (pageSize * (currentCoursePage - 1)) + pageSize)
@@ -436,7 +436,7 @@ const ExamCreate = () => {
                     setCurrentPage(currentPage + 1);
                 }
                 setKeyword("")
-
+                
             }
             else if (mode.target.innerText === "Previous") {
                 if (currentPage - 1 >= 0) {
@@ -449,6 +449,7 @@ const ExamCreate = () => {
             setHasChanged(true)
         }
         setCurrentDisplay(pageList[currentPage]);
+        setHasChanged(true)
     }
 
     const fetchCourseWoQuiz = async () => {
@@ -467,6 +468,10 @@ const ExamCreate = () => {
             )
     }
 
+    const renderDisplay = () => {
+        return currentDisplay
+    }
+
     useEffect(() => {
         if(currentPage === 0) fetchCourseWoQuiz()
         handleDisplay()
@@ -475,9 +480,7 @@ const ExamCreate = () => {
         }
     }, [hasChanged, firstLoad, selected])
 
-    const renderDisplay = () => {
-        return currentDisplay
-    }
+    
 
     const renderPageNav = () => {
         return (
