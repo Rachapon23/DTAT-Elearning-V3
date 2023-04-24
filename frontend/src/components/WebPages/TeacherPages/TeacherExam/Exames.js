@@ -1,24 +1,37 @@
 import React, { useEffect } from "react";
-import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined } from '@ant-design/icons';
-import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress,Breadcrumb, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert } from 'antd';
+import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Breadcrumb, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert } from 'antd';
 import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../teach.css"
+import { getCourseCount, listExam, removeExam } from "../../../../function/Teacher/exame";
 const { Title } = Typography;
 const { Meta } = Card;
 const { Header, Content, Footer, Sider } = Layout;
 
 const Quizes = () => {
+
+    const [exams, setExams] = useState(null | [{
+        _id: "",
+        name: "",
+        detail: "",
+        teacher: "",
+        quiz: [],
+    }]);
+    const [courseCount, setCourseCount] = useState(0);
+    const [examCount, setExamCount] = useState(0);
+    const [hasChanged, setHasChanged] = useState(false);
+
     const myQuizesTitle = () => {
         return (
             <Row align={"middle"} justify={"space-between"} >
-                                <Col>
+                <Col>
                     <Breadcrumb
-                        separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
+                        separator={<Title level={5} style={{ marginTop: "15px" }}> {">"} </Title>}
                         items={[
                             {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><p >My Exam</p></Title>,
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p >Exam</p></Title>,
                                 key: "courses"
                             },
                             {
@@ -100,37 +113,54 @@ const Quizes = () => {
         },
     ];
 
+    const handleRemoveCourse = async (index) => {
+        await removeExam(sessionStorage.getItem("token"), exams[index]?._id)
+            .then(
+                (res) => {
+                    console.log(res.data.data)
+                    setHasChanged(true);
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
+
     const columns = [
         {
             title: 'No',
-            dataIndex: 'key',
-            key: 'key',
-            sorter: (a, b) => a.key - b.key,
-            sortOrder: sortedInfo.columnKey === 'key' ? sortedInfo.order : null,
-            ellipsis: true,
+            // dataIndex: 'key',
+            // key: 'key',
+            // sorter: (a, b) => a.key - b.key,
+            // sortOrder: sortedInfo.columnKey === 'key' ? sortedInfo.order : null,
+            // ellipsis: true,
             width: '10%',
+            render: (data) => exams.indexOf(data) + 1,
 
         },
         {
             title: 'Course',
-            dataIndex: 'name',
-            key: 'name',
+            dataIndex: 'course',
+            key: 'course',
             width: '35%',
-            filters: [
-                {
-                    text: 'Joe',
-                    value: 'Joe',
-                },
-                {
-                    text: 'Jim',
-                    value: 'Jim',
-                },
-            ],
-            filteredValue: filteredInfo.name || null,
-            onFilter: (value, record) => record.name.includes(value),
-            sorter: (a, b) => a.name.length - b.name.length,
-            sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
-            ellipsis: true,
+            // filters: [
+            //     {
+            //         text: 'Joe',
+            //         value: 'Joe',
+            //     },
+            //     {
+            //         text: 'Jim',
+            //         value: 'Jim',
+            //     },
+            // ],
+            // filteredValue: filteredInfo.name || null,
+            // onFilter: (value, record) => record.name.includes(value),
+            // sorter: (a, b) => a.name.length - b.name.length,
+            // sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
+            // ellipsis: true,
+            render: (course) => course?.name,
         },
         // {
         //     title: 'Age',
@@ -162,24 +192,40 @@ const Quizes = () => {
         // },
         {
             title: 'Exam',
-            dataIndex: 'exam',
-            key: 'exam',
+            dataIndex: 'name',
+            key: 'name',
             width: '35%',
         },
         {
             title: 'Edit',
-            dataIndex: 'edit',
             key: 'edit',
             align: 'center',
             width: '10%',
+            render: (data) => {
+                const index = exams.indexOf(data);
+                return (
+                    <Button onClick={() => null}>
+                        <EditOutlined />
+                    </Button>
+                )
+            },
+
+
         },
         {
             title: 'Delete',
-            dataIndex: 'delete',
             key: 'delete',
             align: 'center',
             width: '10%',
-        }
+            render: (data) => {
+                const index = exams.indexOf(data);
+                return (
+                    <Button onClick={() => handleRemoveCourse(index)}>
+                        <DeleteOutlined />
+                    </Button>
+                )
+            },
+        },
     ];
 
 
@@ -227,21 +273,61 @@ const Quizes = () => {
         // console.log(currentDisplay)
     }
 
+    const fetchExam = async () => {
+        await listExam(sessionStorage.getItem("token"))
+            .then(
+                (res) => {
+                    const data = res.data.data;
+                    console.log(data);
+                    setExams(data);
+                    setExamCount(data?.length);
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
+
+    const fetchCourseCount = async () => {
+        await getCourseCount(sessionStorage.getItem("token"))
+            .then(
+                (res) => {
+                    const data = res.data.data;
+                    console.log(data);
+                    setCourseCount(data);
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
+
     useEffect(() => {
-        handleDisplay()
-    }, [displayMode])
+        fetchExam()
+        fetchCourseCount()
+        return () => {
+            setHasChanged(false)
+        }
+    }, [hasChanged])
+
+
 
     const renderDisplay = () => {
-        return currentDisplay
+        return <Table columns={columns} dataSource={exams} onChange={handleChange} />
+        // return currentDisplay
     }
 
     return (
-        <Layout  className="layout-content">
+        <Layout className="layout-content">
             {/* <NavBar page={"Exams"} /> */}
             <Row>
                 {/* <Col sm={2} /> */}
                 <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
-                    <Card title={myQuizesTitle()} style={{maxWidth: "100%", }}>
+                    <Card title={myQuizesTitle()} style={{ maxWidth: "100%", }}>
                         <Row justify="space-between" style={{ marginBottom: "1%" }}>
                             <Col>
                                 <Segmented
@@ -262,8 +348,17 @@ const Quizes = () => {
                                     onChange={handleDisplay}
                                 />
                             </Col>
-                            <Col style={{marginBottom: "-1%"}}>
-                                <Alert style={{height: "70%"}} message="6  exams avialiable to create" type="info" showIcon />
+                            <Col style={{ marginBottom: "-1%" }}>
+                                {
+                                    courseCount - examCount === 0 ?
+                                        (
+                                            <Alert style={{ height: "70%" }} message={`No exams to create`} type="success" showIcon />
+                                        )
+                                        :
+                                        (
+                                            <Alert style={{ height: "70%" }} message={`${courseCount - examCount} exams avialiable to create`} type="info" showIcon />
+                                        )
+                                }
                             </Col>
                         </Row>
                         <Row justify="center" >

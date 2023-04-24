@@ -16,7 +16,7 @@ exports.createPlant = async (req, res) => {
 // GET: /list-plant
 exports.listPlant = async (req, res) => {
     try {
-        const plant = await Plant.find({});
+        const plant = await Plant.find({}).select("-__v");
 
         res.json({ data: plant });
     }

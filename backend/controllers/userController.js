@@ -5,20 +5,47 @@ const Profile = require("../models/profile");
 // GET: /list-user
 exports.listUser = async (req, res) => {
   try {
-    const user = await User.find({}).select("-password")
+    const users = await User.find({})
+      .select("-password -__v -createdAt -updatedAt")
+      .populate({
+        path: "department",
+        select: "id -_id",
+      })
+      .populate({
+        path: "plant",
+        select: "name -_id",
+      })
+      .populate({
+        path: "role",
+        select: "name -_id",
+      })
 
-    return res.json({ data: user });
+    return res.json({ data: users });
   }
   catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Server Error!!! on liastAlluser" });
+    return res.status(500).json({ error: "Server Error!!! on list user" });
   }
 };
 
 // GET: /list-student
 exports.listUserRole = async (req, res) => {
   try {
-    const user = await User.find({ role: req.params.id }).select("-password")
+    const role = await Role.findOne({ name: req.params.role });
+    const user = await User.find({ role:  role._id })
+      .select("-password -__v -createdAt -updatedAt")
+      .populate({
+        path: "department",
+        select: "id -_id",
+      })
+      .populate({
+        path: "plant",
+        select: "name -_id",
+      })
+      .populate({
+        path: "role",
+        select: "name -_id",
+      })
 
     return res.json({ data: user });
   }
@@ -48,8 +75,10 @@ exports.updateUserRole = async (req, res) => {
 // PUT: /update-user/:id/enable
 exports.updateUserEnabled = async (req, res) => {
   try {
-    const id = req.params.id
-    const status = req.body.enabled === true;
+    const id = req?.params?.id
+    const status = req?.body?.enabled === true;
+    if(!id) return res.status(400).json({ error: "Request not in correct form" });
+    if(status === null || status === undefined) return res.status(400).json({ error: "Request not in correct form" });
     const user = await User.findOneAndUpdate(
       { _id: id },
       { enabled: status },

@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, InfoCircleOutlined, CloseOutlined, PictureOutlined } from '@ant-design/icons';
-import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, } from 'antd';
+import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result} from 'antd';
 import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import CardContent from "./CardContent";
 import "../teach.css"
+import { getCourseWoQuiz } from "../../../../function/Teacher/exame";
 
 const { Title } = Typography;
 const { Meta } = Card;
@@ -15,15 +16,39 @@ const { TextArea } = Input;
 
 
 const ExamCreate = () => {
+
+    const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null |[{
+        enabled: null,
+        name: "",
+        teacher: "",
+        image: null,
+        type: null,
+        _id: "",
+    }])
+    const [inputData, setInputData] = useState({
+        head: {
+            name: "",
+            detail: "",
+            teacher: "",
+            course: "",
+            quiz: null
+        },
+        body: {
+
+        }
+    })
+    const [hasChanged, setHasChanged] = useState(false);
+    const [firstLoad, setFirstLoad] = useState(false);
+
     const examCreateTitle = () => {
         return (
             <Row align={"middle"} justify={"space-between"} >
                 <Col>
                     <Breadcrumb
-                        separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
+                        separator={<Title level={5} style={{ marginTop: "15px" }}> {">"} </Title>}
                         items={[
                             {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><p >My Exam</p></Title>,
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p >Exam</p></Title>,
                                 key: "courses"
                             },
                             {
@@ -52,7 +77,7 @@ const ExamCreate = () => {
 
     const coursesData = [
         {
-            key: "A",
+            id: "A",
             course: "A",
             type: "Public",
             status: "Avialable",
@@ -60,7 +85,7 @@ const ExamCreate = () => {
             select: false
         },
         {
-            key: "B",
+            id: "B",
             course: "B",
             type: "Public",
             status: "Avialable",
@@ -68,7 +93,7 @@ const ExamCreate = () => {
             select: false
         },
         {
-            key: "C",
+            id: "C",
             course: "C",
             type: "Private",
             status: "Avialable",
@@ -76,6 +101,16 @@ const ExamCreate = () => {
             select: false
         },
     ]
+
+    const [selected, setSelected] = useState("");
+    const [currentSelected, setCurentSelected] = useState(null)
+
+    const handleRadioChange = (data) => {
+        setCurentSelected(data?.index)
+        setSelected(data?._id)
+    }
+
+
 
     const coursesCol = [
         {
@@ -87,38 +122,32 @@ const ExamCreate = () => {
         },
         {
             title: "Course",
-            dataIndex: 'course',
-            key: 'course',
-            width: "50%"
+            dataIndex: 'name',
+            key: 'name',
+            width: "50%",
         },
         {
             title: "Type",
             dataIndex: 'type',
             key: 'type',
             align: "center",
+            render: (type) => type === true ? "Public" : "Private",
         },
         {
             title: "Status",
             dataIndex: 'status',
             key: 'status',
             align: "center",
+            render: (status) => status === true ? "Disable" : "Eanble",
         },
         {
             title: "Select",
-            dataIndex: 'select',
-            key: 'select',
             align: "center",
             width: "10%",
-            render: (_, obj) => {
-                if (!selected[coursesData.indexOf(obj)] && selected.length < coursesData.length) {
-                    selected.push(false)
-                }
-                // console.log(obj,Number(selected.indexOf(obj)))
-                // console.log(selected)
-                return <Radio checked={selected[Number(coursesData.indexOf(obj))]} onChange={(e) => handleRadioChange(e, Number(coursesData.indexOf(obj)))}></Radio>
+            render: (data) => {
+                return <Radio checked={selected === data?._id} onChange={(e) => handleRadioChange({ checked: e?.target?.checked, _id: data?._id, index: cousresWithOutQuiz.indexOf(data) })}></Radio>
             },
         },
-
     ]
 
     const examInfoCol = [
@@ -131,8 +160,8 @@ const ExamCreate = () => {
         },
         {
             title: "Course",
-            dataIndex: 'course',
-            key: 'course',
+            dataIndex: 'name',
+            key: 'name',
             width: "50%"
         },
         {
@@ -150,12 +179,21 @@ const ExamCreate = () => {
     ]
 
     const [container, setContainer] = useState(null);
-    const [cardContentList, setCardContentList] = useState([<CardContent/>, <CardContent/>, <CardContent/>,])
-    const handleCreateContent = () => {
-        setCardContentList([...cardContentList, <CardContent/>])
+    const [cardContentList, setCardContentList] = useState([])
+
+
+    const onDeleteCardContent = (index) => {
+        setCardContentList(cardContentList => cardContentList.filter(card => card.key !== String(index)))
+        setHasChanged(true)
+        
     }
 
-  
+    const handleCreateContent = () => {
+        const currentIndex = cardContentList.length;
+        const newCardContentList = <CardContent key={currentIndex} index={currentIndex} onDelete={onDeleteCardContent}/>
+        setCardContentList(cardContentList => [...cardContentList, newCardContentList])
+        setHasChanged(true)
+    }
 
     const cardEmptyContent = (
         <Card>
@@ -193,11 +231,11 @@ const ExamCreate = () => {
         >
             <Row justify={"center"}>
                 {/* <Col style={{ width: "5%" }} /> */}
-                <Col style={{ width: "95%" }}>
-                    <Row style={{ paddingTop: "1%" }} >
+                <Col style={{ width: "95%" }} >
+                    <Row style={{ paddingTop: "1%" }}>
                         <Col
                             flex="auto"
-                            // style={{ height: "570px", }}
+                        // style={{ height: "570px", }}
 
                         >
                             {
@@ -212,27 +250,23 @@ const ExamCreate = () => {
 
                             }
                         </Col>
-                        <Col style={{ paddingLeft: "1%" }}>
-                            <Affix target={() => container} onChange={(affixed) => console.log(affixed)} >
+                        <Col style={{ paddingLeft: "1%" }} >
 
-                                <Card className="card-nlf">
-                                    <Row align={"middle"} justify={"center"} style={{ height: "100%" }}>
-                                        <Col flex={"auto"}>
-                                            <Row justify={"center"} >
-                                                <Button type="text" onClick={handleCreateContent} >New</Button>
-                                            </Row>
-                                            <Row justify={"center"}>
-                                                <Button type="text" >Link</Button>
-                                            </Row>
-                                            <Row justify={"center"}>
-                                                <Button type="text" >File</Button>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-
-                                </Card>
-
-                            </Affix>
+                            <Card className="card-nlf">
+                                <Row align={"middle"} justify={"center"} style={{ height: "100%" }}>
+                                    <Col flex={"auto"}>
+                                        <Row justify={"center"} >
+                                            <Button type="text" onClick={handleCreateContent} >New</Button>
+                                        </Row>
+                                        <Row justify={"center"}>
+                                            <Button type="text" >Link</Button>
+                                        </Row>
+                                        <Row justify={"center"}>
+                                            <Button type="text" >File</Button>
+                                        </Row>
+                                    </Col>
+                                </Row>
+                            </Card>
                         </Col>
                     </Row>
                 </Col>
@@ -240,10 +274,6 @@ const ExamCreate = () => {
 
         </Form>
     )
-
-
-    const [selected, setSelected] = useState([]);
-    const [currentSelected, setCurentSelected] = useState(null)
 
     const examInfo = (
         <Form
@@ -265,9 +295,9 @@ const ExamCreate = () => {
                             <Col style={{ width: "100%", height: "160px" }}>
                                 <Table
                                     dataSource={
-                                        currentSelected === null ? null : coursesData.slice(currentSelected, currentSelected + 1)
+                                        currentSelected === null ? null : cousresWithOutQuiz.slice(currentSelected, currentSelected + 1)
                                     }
-                                    columns={examInfoCol} pagination={false}
+                                    columns={coursesCol} pagination={false}
                                 />
                             </Col>
                         </Row>
@@ -275,7 +305,7 @@ const ExamCreate = () => {
                     </Form.Item>
 
                     <Form.Item label="Exam Name" required tooltip="This is a required field">
-                        <Input placeholder="input placeholder" />
+                        <Input placeholder="Exam name" />
                     </Form.Item>
 
                     <Form.Item
@@ -289,7 +319,7 @@ const ExamCreate = () => {
                             showCount
                             maxLength={250}
                             style={{ height: 120 }}
-                            placeholder="can resize"
+                            placeholder="Detail"
                         />
                     </Form.Item>
 
@@ -299,26 +329,29 @@ const ExamCreate = () => {
         </Form>
     )
 
-
-    const handleRadioChange = (e, index) => {
-        if (!currentSelected) {
-            selected.splice(index, 1, true)
-            setCurentSelected(index)
-            setSelected([...selected])
-        }
-        if (currentSelected !== index) {
-            selected.splice(currentSelected, 1, false)
-            selected.splice(index, 1, true)
-            setCurentSelected(index)
-            setSelected([...selected])
-        }
-
-    }
-
+    const examCreateFinished = (
+        <Row align={"middle"} justify={"center"} style={{ height: "400px" }}>
+            <Col >
+                <Result
+                    status="success"
+                    title="Successfully Purchased Cloud Server ECS!"
+                    subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+                    extra={[
+                        <Link to="/teacher/page/listexam">
+                            <Button type="primary" key="console">
+                                Back To List Exam
+                            </Button>
+                        </Link>,
+                        // <Button key="buy">Buy Again</Button>,
+                    ]}
+                />
+            </Col>
+        </Row>
+    )
 
     const handleRowSelect = (e, index) => {
         if (e.target.innerText === "Preview") return
-        handleRadioChange(null, index)
+        handleRadioChange({ _id: cousresWithOutQuiz[index]._id, index: index })
     }
 
     let courseAmount = coursesData.length;
@@ -330,10 +363,17 @@ const ExamCreate = () => {
         setCurrentCoursePage(1)
     }
 
-    const filterCourse = (data) => data.filter((item) => {
-        return item.course.toLowerCase().indexOf(keyword) >= 0;
-    }).slice(pageSize * (currentCoursePage - 1), (pageSize * (currentCoursePage - 1)) + pageSize)
+    const filterCourse = (data) => {
+        if (!data) return
+        return data.filter((item) => {
+            return item?.name?.toLowerCase().indexOf(keyword) >= 0;
+        }).slice(pageSize * (currentCoursePage - 1), (pageSize * (currentCoursePage - 1)) + pageSize)
+    }
 
+    // const filterCourse = (data) => {
+    //     if(!data) return
+    //     console.log(data)
+    // }
 
     const selectCourse = (
         <Form
@@ -348,10 +388,10 @@ const ExamCreate = () => {
         >
             <Row >
                 <Col style={{ width: "100%" }}>
-
                     <Form.Item label="Select Course" required tooltip="This is a required field">
                         <Input placeholder="Search course" prefix={<SearchOutlined />} onChange={handleSearch} />
-                        <Table style={{ paddingTop: "1%" }} dataSource={filterCourse(coursesData)} columns={coursesCol} onRow={(rec, index) => {
+                        <Table style={{ paddingTop: "1%" }} dataSource={filterCourse(cousresWithOutQuiz)} columns={coursesCol} onRow={(_, index) => {
+                            // console.log("sdd",rec, index)
                             return {
                                 onClick: (e) => handleRowSelect(e, index),
                             }
@@ -363,7 +403,7 @@ const ExamCreate = () => {
         </Form>
     )
 
-    const pageList = [selectCourse, examInfo, examContent, (<div>HI</div>)]
+    const pageList = [selectCourse, examInfo, examContent, examCreateFinished]
     const [currentDisplay, setCurrentDisplay] = useState(pageList[0]);
     const [currentPage, setCurrentPage] = useState(0);
     const steps = [
@@ -392,34 +432,54 @@ const ExamCreate = () => {
     const handleDisplay = (mode) => {
         if (mode) {
             if (mode.target.innerText === "Next") {
-
-                // if(currentPage + 1 <= pageList.length) {
-                // console.log(pageList[currentPage + 1])
-                setCurrentPage(currentPage + 1);
-                // }
+                if (currentPage + 1 <= pageList.length) {
+                    setCurrentPage(currentPage + 1);
+                }
                 setKeyword("")
-
+                
             }
             else if (mode.target.innerText === "Previous") {
-                // if(currentPage - 1 > 1) {
-                // console.log(pageList[currentPage - 1])
-                setCurrentPage(currentPage - 1);
-                // }
+                if (currentPage - 1 >= 0) {
+                    console.log(pageList[currentPage - 1])
+                    setCurrentPage(currentPage - 1);
+                }
                 setKeyword("")
 
             }
-
+            setHasChanged(true)
         }
         setCurrentDisplay(pageList[currentPage]);
     }
 
-    useEffect(() => {
-        handleDisplay()
-    }, [currentPage, selected, keyword, cardContentList])
+    const fetchCourseWoQuiz = async () => {
+        await getCourseWoQuiz(sessionStorage.getItem("token"))
+            .then(
+                (res) => {
+                    const data = res.data.data;
+                    setCousresWithOutQuiz(data);
+                    setFirstLoad(true);
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
 
     const renderDisplay = () => {
         return currentDisplay
     }
+
+    useEffect(() => {
+        if(currentPage === 0) fetchCourseWoQuiz()
+        handleDisplay()
+        return () => {
+            setHasChanged(false)
+        }
+    }, [hasChanged, firstLoad, selected])
+
+    
 
     const renderPageNav = () => {
         return (
@@ -434,7 +494,7 @@ const ExamCreate = () => {
                             <Button onClick={handleDisplay}>Previous</Button>
                         </Col>
                         <Col>
-                            <Button type="primary" onClick={handleDisplay}>{currentPage === pageList.length - 1 ? "Done" : "Next"}</Button>
+                            <Button type="primary" disabled={!selected} onClick={handleDisplay}>{currentPage === pageList.length - 1 ? "Done" : "Next"}</Button>
                         </Col>
                     </Row>
                 </Col>
@@ -444,7 +504,7 @@ const ExamCreate = () => {
 
 
     return (
-        <Layout  className="layout-content-create">
+        <Layout className="layout-content-create">
             {/* <NavBar page={"Exams"} /> */}
             <Row className="content">
 
@@ -456,10 +516,10 @@ const ExamCreate = () => {
                             <Steps items={items} current={currentPage} />
                         </Row>
                         <Row
-                         className="row-con"
-                        justify="center" style={{ paddingTop: "1%" }}>
+                            className="row-con"
+                            justify="center" style={{ paddingTop: "1%" }}>
                             <Col flex={"auto"} className="col-con"
-                             ref={setContainer}>
+                                ref={setContainer}>
                                 {renderDisplay()}
                             </Col>
                         </Row>

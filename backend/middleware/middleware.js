@@ -6,21 +6,26 @@ const fs = require("fs")
 exports.checkUser = (req, res, next) => {
     try {
         const token = req.headers["authtoken"]
+        let invalid = null
 
         if (!token) {
             return res.status(401).json({error: "No token, authorization denied"})
         }
 
         jwt.verify(token, "jwtSecret", (err, decoded) => {
-            if(err) return res.status(401).json({error: "Invalid token, authorization denied"})
-            req.user = decoded.user
+            if(err) {
+                invalid = err;
+                return res.status(401).json({error: "Invalid token, authorization denied"})
+            }
+            req.user = decoded.user;
         })
+        if(invalid) return 
         
         next()
     } 
     catch (err) {
         console.log(err)
-        res.status(500).json({ error: "Unxpected error on check user" })
+        return res.status(500).json({ error: "Unxpected error on check user" })
     }
 }
 
@@ -33,13 +38,13 @@ exports.checkTeacher = async (req, res, next) => {
             next()
         }
         else {
-            res.status(403).json({ error: "Teacher Access denied", role: teacherUser.role })
+            return res.status(403).json({ error: "Teacher Access denied", role: teacherUser.role })
         }
 
     }
     catch (err) {
         console.log(err)
-        res.status(500).json({ error: "Unxpected error on check teacher" })
+        return res.status(500).json({ error: "Unxpected error on check teacher" })
     }
 }
 
@@ -48,7 +53,7 @@ exports.checkAdmin = async (req, res, next) => {
         const { user_id } = req.user
         const adminUser = await User.findOne({ _id: user_id }).populate("role", "name -_id").exec();
         if (adminUser.role.name !== 'admin') {
-            res.status(403).send({ error: "Admin Access denied", role: adminUser.role })
+            return res.status(403).send({ error: "Admin Access denied", role: adminUser.role })
         }
         else {
             next()
@@ -57,7 +62,7 @@ exports.checkAdmin = async (req, res, next) => {
     } 
     catch (err) {
         console.log(err)
-        res.status(403).json({ error: "Unxpected error on check admin" })
+        return res.status(403).json({ error: "Unxpected error on check admin" })
     }
 }
 

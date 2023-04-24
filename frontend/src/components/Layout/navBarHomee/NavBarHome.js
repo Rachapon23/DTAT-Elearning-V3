@@ -3,6 +3,7 @@ import "./navbarhome.css";
 import LogAndRe from "./LogAndRe";
 import { Button, Modal } from "antd";
 import { BarsOutlined } from "@ant-design/icons";
+
 const NavBarHome = () => {
   const [openDrop, setOpenDrop] = useState(false);
   const [nextState, setNextState] = useState([]);
@@ -13,6 +14,7 @@ const NavBarHome = () => {
     setOpen(true);
     setOpenDrop(!openDrop);
   };
+
   const handleOk = () => {
     setLoading(true);
     setTimeout(() => {
@@ -20,6 +22,7 @@ const NavBarHome = () => {
       setOpen(false);
     }, 3000);
   };
+
   const handleCancel = () => {
     setOpen(false);
   };

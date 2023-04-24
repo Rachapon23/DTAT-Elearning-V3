@@ -64,11 +64,21 @@ exports.getCourse = async (req, res) => {
   }
 };
 
+// GET: /list-course
 exports.listCourse = async (req, res) => {
   try {
-    const courses = await Course.find({})
-
-    res.json({ data: courses });
+    switch (req?.user?.role) {
+      case "admin":
+        return res.json({ data: await Course.find({}) });
+        break;
+      case "teacher":
+        return res.json({ data: await Course.find({ teacher: user_id }) });
+        break;
+      case "student":
+        return res.status(403).json({ error: "Access denine for student" });
+        break;
+      default: return res.status(404).json({ error: "This role does not exist in system" });
+    }
   }
   catch (err) {
     console.log("fail to fetch courses");
@@ -151,6 +161,7 @@ exports.updateEnableCourse = async (req, res) => {
   }
 };
 
+// PUT: /update-course/:id/image
 exports.updateCourseImage = async (req, res) => {
   try {
     const image_data = await Course.findOne({ _id: req.params.id }).select("image -_id")
@@ -206,6 +217,7 @@ exports.updateCourseImage = async (req, res) => {
   }
 };
 
+// GET: /get-course/:id/image
 exports.getCourseImage = async (req, res) => {
   try {
     const image_data = await Course.findOne({ _id: req.params.id }).select("image -_id")
@@ -221,6 +233,50 @@ exports.getCourseImage = async (req, res) => {
   catch (err) {
     console.log(err);
     return res.status(500).json({ error: "Unexpected error on get course image" });
+  }
+};
+
+// GET: /get-course/sp/count
+exports.getCourseCount = async (req, res) => {
+  try {
+    switch (req?.user?.role) {
+      case "admin":
+        return res.json({ data: (await Course.find({})).length });
+        break;
+      case "teacher":
+        return res.json({ data: (await Course.find({ teacher: user_id })).length });
+        break;
+      case "student":
+        return res.status(403).json({ error: "Access denine for student" });
+        break;
+      default: return res.status(404).json({ error: "This role does not exist in system" });
+    }
+  }
+  catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Unexpected error on get course count" });
+  }
+};
+
+// GET: /list-course/sp/wo/quiz
+exports.listCourseWoQuiz = async (req, res) => {
+  try {
+    switch (req?.user?.role) {
+      case "admin":
+        return res.json({ data: await Course.find({ exam: null }) });
+        break;
+      case "teacher":
+        return res.json({ data: (await Course.find({ teacher: user_id, exam: null })).length });
+        break;
+      case "student":
+        return res.status(403).json({ error: "Access denine for student" });
+        break;
+      default: return res.status(404).json({ error: "This role does not exist in system" });
+    }
+  }
+  catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Unexpected error on get course count" });
   }
 };
 

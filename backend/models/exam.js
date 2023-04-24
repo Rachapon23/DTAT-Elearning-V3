@@ -17,6 +17,10 @@ const ExamSchema = new mongoose.Schema({
         type: ObjectId,
         ref:"quiz",
     }],
+    course: {
+        type: ObjectId,
+        ref:"course",
+    }
 }, { timestamps: true });
 
 module.exports = Quize = mongoose.model("exam", ExamSchema);

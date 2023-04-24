@@ -1,38 +1,105 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./adminhome.css";
-import { Button, Input, Select, Table, Typography, Breadcrumb } from "antd";
+import { Button, Input, Select, Table, Typography, Breadcrumb, Switch } from "antd";
+import { listUserRole, updateUserEnabled } from "../../../../function/Admin/adminFunction";
 const { Title } = Typography;
 const AdminManageTeacher = () => {
+  const role = "teacher";
+  const [hasChanged, setHasChanged] = useState(false);
+  const [users, setUsers] = useState([
+    {
+      _id: "",
+      employee: "",
+      department: { id: "" },
+      email: "",
+      enabled: null,
+      firstname: "",
+      lastname: "",
+      plant: { name: "" },
+      profile: null,
+      role: { name: "" },
+      verified: null
+    }
+  ]);
+
+  const handleChangeEnabled = async (id, enabled) => {
+    console.log(id, enabled)
+    await updateUserEnabled(sessionStorage.getItem("token"), id, { enabled: !enabled })
+      .then(
+        (res) => {
+          console.log(res)
+          setHasChanged(true)
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err)
+        }
+      )
+  }
+
   const columns = [
     {
       title: "No",
       align: "center",
-      dataIndex: "_id",
+      render: (data) => users.indexOf(data) + 1,
     },
     {
-      title: `course`,
+      title: `Plant`,
       align: "center",
-      dataIndex: "course",
+      render: (data) => data?.plant?.name,
     },
-
     {
-      title: `score`,
+      title: `Department ID`,
       align: "center",
-      dataIndex: "score",
+      render: (data) => data?.department?.id,
     },
-
     {
-      title: `max score`,
+      title: `Employee ID`,
       align: "center",
-      dataIndex: "maxscore",
+      dataIndex: "employee",
     },
-
     {
-      title: `result`,
+      title: `Name`,
       align: "center",
-      dataIndex: "result",
+      render: (data) => `${data?.firstname} ${data?.lastname}`,
+    },
+    // {
+    //   title: `role`,
+    //   align: "center",
+    //   render: (data) => data?.role?.name,
+    // },
+    {
+      title: `Status`,
+      align: "center",
+      render: (data) => {
+        return <Switch checked={data?.enabled} onChange={() => handleChangeEnabled(data?._id, data?.enabled)} />
+      },
     },
   ];
+
+  const fetchUsers = async () => {
+    await listUserRole(sessionStorage.getItem("token"), role)
+      .then(
+        (res) => {
+          const data = res.data.data
+          // console.log(data)
+          setUsers(data)
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err)
+        }
+      )
+  }
+
+  useEffect(() => {
+    fetchUsers()
+    return () => {
+      setHasChanged(false)
+    }
+  }, [hasChanged])
   return (
     <div>
       <Breadcrumb
@@ -55,7 +122,7 @@ const AdminManageTeacher = () => {
       />
       <Table
         columns={columns}
-        // dataSource={history}
+        dataSource={users}
         className="table-student"
         pagination={{
           defaultPageSize: 20,
