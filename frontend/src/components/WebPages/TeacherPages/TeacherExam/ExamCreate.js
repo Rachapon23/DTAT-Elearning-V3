@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, InfoCircleOutlined, CloseOutlined, PictureOutlined } from '@ant-design/icons';
-import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result} from 'antd';
+import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result } from 'antd';
 import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -17,7 +17,7 @@ const { TextArea } = Input;
 
 const ExamCreate = () => {
 
-    const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null |[{
+    const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null | [{
         enabled: null,
         name: "",
         teacher: "",
@@ -25,18 +25,21 @@ const ExamCreate = () => {
         type: null,
         _id: "",
     }])
-    const [inputData, setInputData] = useState({
-        head: {
-            name: "",
-            detail: "",
-            teacher: "",
-            course: "",
-            quiz: null
-        },
-        body: {
-
-        }
+    const [inputInfoData, setInputInfoData] = useState({
+        name: "",
+        detail: "",
+        teacher: "",
+        course: "",
+        quiz: null,
     })
+
+    const [inputContentData, setInputContentData] = useState({})
+
+    // const [payloadData, setPayloadData] = useState({
+    //     head: {},
+    //     body: {},
+    // })
+
     const [hasChanged, setHasChanged] = useState(false);
     const [firstLoad, setFirstLoad] = useState(false);
 
@@ -180,20 +183,59 @@ const ExamCreate = () => {
 
     const [container, setContainer] = useState(null);
     const [cardContentList, setCardContentList] = useState([])
+    const [selectedCard, setSelectedCard] = useState(null) 
 
 
     const onDeleteCardContent = (index) => {
         setCardContentList(cardContentList => cardContentList.filter(card => card.key !== String(index)))
         setHasChanged(true)
-        
+
+    }
+
+    const onChangeCardContent = (e) => {
+        console.log("eww")
+        setInputContentData((inputContentData) => ({...inputContentData, [e.target.id]: e.target.value}))
+        setHasChanged(true)
+    } 
+
+    const getCardContent = (cardContent) => {
+        const currentIndex = cardContentList.length;
+        console.log("cc: ",cardContent)
+        console.log("ccc:", inputContentData)
+        setInputContentData(inputContentData)
+        setInputContentData({...inputContentData, [`c${currentIndex}`]: cardContent})
+        return cardContent
+    }
+
+    const setCardContent = (data) => {
+        const currentIndex = cardContentList.length;
+        setInputContentData(data)
     }
 
     const handleCreateContent = () => {
         const currentIndex = cardContentList.length;
-        const newCardContentList = <CardContent key={currentIndex} index={currentIndex} onDelete={onDeleteCardContent}/>
+        setInputContentData({...inputContentData, [`c${currentIndex}`]: {name: null}})
+        const newCardContentList = (
+            <CardContent 
+                key={currentIndex} 
+                index={currentIndex} 
+                onDelete={onDeleteCardContent} 
+                data={inputContentData} 
+                onChange={setInputContentData}
+                onSelect={setSelectedCard}
+                onGetData={getCardContent}
+                onSetData={setCardContent}
+            />
+        )
         setCardContentList(cardContentList => [...cardContentList, newCardContentList])
         setHasChanged(true)
     }
+
+    /*
+        1. get ref of child card to determined what card to update
+        2. update child card via function in parent component
+        3. stroe updated value in child card
+    */
 
     const cardEmptyContent = (
         <Card>
@@ -231,6 +273,7 @@ const ExamCreate = () => {
         >
             <Row justify={"center"}>
                 {/* <Col style={{ width: "5%" }} /> */}
+                {/* {console.log(selectedCard)} */}
                 <Col style={{ width: "95%" }} >
                     <Row style={{ paddingTop: "1%" }}>
                         <Col
@@ -239,9 +282,10 @@ const ExamCreate = () => {
 
                         >
                             {
-                                cardContentList.length === 0 ? (
-                                    cardEmptyContent
-                                ) :
+                                cardContentList.length === 0 ?
+                                    (
+                                        cardEmptyContent
+                                    ) :
                                     (
                                         cardContentList.map((card) => (
                                             card
@@ -252,21 +296,31 @@ const ExamCreate = () => {
                         </Col>
                         <Col style={{ paddingLeft: "1%" }} >
 
-                            <Card className="card-nlf">
-                                <Row align={"middle"} justify={"center"} style={{ height: "100%" }}>
-                                    <Col flex={"auto"}>
-                                        <Row justify={"center"} >
-                                            <Button type="text" onClick={handleCreateContent} >New</Button>
-                                        </Row>
-                                        <Row justify={"center"}>
-                                            <Button type="text" >Link</Button>
-                                        </Row>
-                                        <Row justify={"center"}>
-                                            <Button type="text" >File</Button>
-                                        </Row>
-                                    </Col>
-                                </Row>
-                            </Card>
+                            {
+                                cardContentList.length !== 0 ?
+                                    (
+                                        <Card className="card-nlf">
+                                            <Row align={"middle"} justify={"center"} style={{ height: "100%" }}>
+                                                <Col flex={"auto"}>
+                                                    <Row justify={"center"} >
+                                                        <Button type="text" onClick={handleCreateContent} >New</Button>
+                                                    </Row>
+                                                    <Row justify={"center"}>
+                                                        <Button type="text" >Link</Button>
+                                                    </Row>
+                                                    <Row justify={"center"}>
+                                                        <Button type="text" >File</Button>
+                                                    </Row>
+                                                </Col>
+                                            </Row>
+                                        </Card>
+                                    )
+                                    :
+                                    (
+                                        null
+                                    )
+                            }
+
                         </Col>
                     </Row>
                 </Col>
@@ -274,6 +328,10 @@ const ExamCreate = () => {
 
         </Form>
     )
+
+    const handleInputData = (e) => {
+        setInputInfoData((inputInfoData) => ({ ...inputInfoData, [e.target.id]: e.target.value }))
+    }
 
     const examInfo = (
         <Form
@@ -305,7 +363,12 @@ const ExamCreate = () => {
                     </Form.Item>
 
                     <Form.Item label="Exam Name" required tooltip="This is a required field">
-                        <Input placeholder="Exam name" />
+                        <Input
+                            placeholder="Exam name"
+                            id="name"
+                            onChange={handleInputData}
+                            defaultValue={inputInfoData?.name}
+                        />
                     </Form.Item>
 
                     <Form.Item
@@ -319,7 +382,10 @@ const ExamCreate = () => {
                             showCount
                             maxLength={250}
                             style={{ height: 120 }}
+                            id="detail"
+                            onChange={handleInputData}
                             placeholder="Detail"
+                            defaultValue={inputInfoData?.detail}
                         />
                     </Form.Item>
 
@@ -436,7 +502,7 @@ const ExamCreate = () => {
                     setCurrentPage(currentPage + 1);
                 }
                 setKeyword("")
-                
+
             }
             else if (mode.target.innerText === "Previous") {
                 if (currentPage - 1 >= 0) {
@@ -472,20 +538,20 @@ const ExamCreate = () => {
     }
 
     useEffect(() => {
-        if(currentPage === 0) fetchCourseWoQuiz()
+        if (currentPage === 0) fetchCourseWoQuiz()
         handleDisplay()
         return () => {
             setHasChanged(false)
         }
-    }, [hasChanged, firstLoad, selected])
+    }, [hasChanged, firstLoad, selected,])
 
-    
+
 
     const renderPageNav = () => {
         return (
             <Row justify={"space-between"} style={{ height: "10%", }} >
                 <Col>
-                    <Button> Preview</Button>
+                    <Button onClick={() => console.log(inputContentData)}> Preview</Button>
                 </Col>
 
                 <Col>

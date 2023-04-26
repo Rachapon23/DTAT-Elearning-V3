@@ -7,13 +7,31 @@ import { Link, useSearchParams } from "react-router-dom";
 const { TextArea } = Input;
 
 
-const CardContent = ({ index = null, onDelete = null }) => {
+const CardContent = ({ index = null, onDelete = null, data = null, onChange = null, onSelect = null, onGetData = null, onSetData }) => {
     const lastCard = useRef(null)
-    console.log("index: ", index)
+
+    const [inputContentData, setInputContentData] = useState({
+        name: "",
+    })
 
     const scrollToBottom = () => {
         lastCard.current?.scrollIntoView({ behavior: "smooth" })
     }
+
+    onGetData(inputContentData)
+
+    const handleCardChange = (e) => {
+        setInputContentData({ ...inputContentData, [e.target.id]: e.target.value })
+        onChange({ ...data, [`c${index}`]: inputContentData })
+        onSetData(inputContentData)
+        // onChange(() => data.map((element, eIndex) => {
+        //     console.log("data",data)
+        //     console.log(element)
+        //     return eIndex === index ? ({ ...inputContentData ,[e.target.id]: e.target.value }):element
+        // }))
+
+    }
+
 
     useEffect(() => {
         scrollToBottom()
@@ -35,12 +53,17 @@ const CardContent = ({ index = null, onDelete = null }) => {
                             <Row justify={"space-between"} align={"middle"}>
                                 <Col style={{ width: "95%" }}>
                                     <Form.Item label={`Question ${index + 1}`} tooltip="This is a required field">
-                                        <Input placeholder="input placeholder" />
+                                        <Input
+                                            id="name"
+                                            placeholder="input placeholder"
+                                            onChange={handleCardChange}
+                                            defaultValue={data?.name}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col style={{ width: "5%", paddingTop: "0.5%", paddingLeft: "1%" }}>
                                     <Tooltip title="Add image" placement="bottom">
-                                        <Button type="text" style={{ height: "100%" }}>
+                                        <Button onClick={() => console.log(inputContentData)} type="text" style={{ height: "100%" }}>
                                             <PictureOutlined style={{ fontSize: "25px", display: "flex", justifyContent: "center" }} />
                                         </Button>
                                     </Tooltip>
