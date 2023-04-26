@@ -25,17 +25,21 @@ const ExamCreate = () => {
         type: null,
         _id: "",
     }])
-    const [dataPayload, setDataPayload] = useState({
-        head: {},
-        body: {},
-    })
-    const [inputData, setInputData] = useState({
+    const [inputInfoData, setInputInfoData] = useState({
         name: "",
         detail: "",
         teacher: "",
         course: "",
-        quiz: null
+        quiz: null,
     })
+
+    const [inputContentData, setInputContentData] = useState({})
+
+    // const [payloadData, setPayloadData] = useState({
+    //     head: {},
+    //     body: {},
+    // })
+
     const [hasChanged, setHasChanged] = useState(false);
     const [firstLoad, setFirstLoad] = useState(false);
 
@@ -179,6 +183,7 @@ const ExamCreate = () => {
 
     const [container, setContainer] = useState(null);
     const [cardContentList, setCardContentList] = useState([])
+    const [selectedCard, setSelectedCard] = useState(null) 
 
 
     const onDeleteCardContent = (index) => {
@@ -187,18 +192,51 @@ const ExamCreate = () => {
 
     }
 
+    const onChangeCardContent = (e) => {
+        console.log("eww")
+        setInputContentData((inputContentData) => ({...inputContentData, [e.target.id]: e.target.value}))
+        setHasChanged(true)
+    } 
+
+    const getCardContent = (cardContent) => {
+        const currentIndex = cardContentList.length;
+        console.log("cc: ",cardContent)
+        console.log("ccc:", inputContentData)
+        setInputContentData(inputContentData)
+        setInputContentData({...inputContentData, [`c${currentIndex}`]: cardContent})
+        return cardContent
+    }
+
+    const setCardContent = (data) => {
+        const currentIndex = cardContentList.length;
+        setInputContentData(data)
+    }
+
     const handleCreateContent = () => {
         const currentIndex = cardContentList.length;
-        const newCardContentList = <CardContent key={currentIndex} index={currentIndex} onDelete={onDeleteCardContent} />
+        setInputContentData({...inputContentData, [`c${currentIndex}`]: {name: null}})
+        const newCardContentList = (
+            <CardContent 
+                key={currentIndex} 
+                index={currentIndex} 
+                onDelete={onDeleteCardContent} 
+                data={inputContentData} 
+                onChange={setInputContentData}
+                onSelect={setSelectedCard}
+                onGetData={getCardContent}
+                onSetData={setCardContent}
+            />
+        )
         setCardContentList(cardContentList => [...cardContentList, newCardContentList])
         setHasChanged(true)
     }
 
-    const handleInputData = (e) => {
-        setInputData((inputData) =>({ ...inputData, [e.target.id]: e.target.value }))
-    }
-    
-    console.log(inputData)
+    /*
+        1. get ref of child card to determined what card to update
+        2. update child card via function in parent component
+        3. stroe updated value in child card
+    */
+
     const cardEmptyContent = (
         <Card>
             <Row justify={"center"}>
@@ -235,6 +273,7 @@ const ExamCreate = () => {
         >
             <Row justify={"center"}>
                 {/* <Col style={{ width: "5%" }} /> */}
+                {/* {console.log(selectedCard)} */}
                 <Col style={{ width: "95%" }} >
                     <Row style={{ paddingTop: "1%" }}>
                         <Col
@@ -243,9 +282,10 @@ const ExamCreate = () => {
 
                         >
                             {
-                                cardContentList.length === 0 ? (
-                                    cardEmptyContent
-                                ) :
+                                cardContentList.length === 0 ?
+                                    (
+                                        cardEmptyContent
+                                    ) :
                                     (
                                         cardContentList.map((card) => (
                                             card
@@ -256,21 +296,31 @@ const ExamCreate = () => {
                         </Col>
                         <Col style={{ paddingLeft: "1%" }} >
 
-                            <Card className="card-nlf">
-                                <Row align={"middle"} justify={"center"} style={{ height: "100%" }}>
-                                    <Col flex={"auto"}>
-                                        <Row justify={"center"} >
-                                            <Button type="text" onClick={handleCreateContent} >New</Button>
-                                        </Row>
-                                        <Row justify={"center"}>
-                                            <Button type="text" >Link</Button>
-                                        </Row>
-                                        <Row justify={"center"}>
-                                            <Button type="text" >File</Button>
-                                        </Row>
-                                    </Col>
-                                </Row>
-                            </Card>
+                            {
+                                cardContentList.length !== 0 ?
+                                    (
+                                        <Card className="card-nlf">
+                                            <Row align={"middle"} justify={"center"} style={{ height: "100%" }}>
+                                                <Col flex={"auto"}>
+                                                    <Row justify={"center"} >
+                                                        <Button type="text" onClick={handleCreateContent} >New</Button>
+                                                    </Row>
+                                                    <Row justify={"center"}>
+                                                        <Button type="text" >Link</Button>
+                                                    </Row>
+                                                    <Row justify={"center"}>
+                                                        <Button type="text" >File</Button>
+                                                    </Row>
+                                                </Col>
+                                            </Row>
+                                        </Card>
+                                    )
+                                    :
+                                    (
+                                        null
+                                    )
+                            }
+
                         </Col>
                     </Row>
                 </Col>
@@ -278,6 +328,10 @@ const ExamCreate = () => {
 
         </Form>
     )
+
+    const handleInputData = (e) => {
+        setInputInfoData((inputInfoData) => ({ ...inputInfoData, [e.target.id]: e.target.value }))
+    }
 
     const examInfo = (
         <Form
@@ -309,7 +363,12 @@ const ExamCreate = () => {
                     </Form.Item>
 
                     <Form.Item label="Exam Name" required tooltip="This is a required field">
-                        <Input placeholder="Exam name" id="name" onChange={handleInputData}/>
+                        <Input
+                            placeholder="Exam name"
+                            id="name"
+                            onChange={handleInputData}
+                            defaultValue={inputInfoData?.name}
+                        />
                     </Form.Item>
 
                     <Form.Item
@@ -326,6 +385,7 @@ const ExamCreate = () => {
                             id="detail"
                             onChange={handleInputData}
                             placeholder="Detail"
+                            defaultValue={inputInfoData?.detail}
                         />
                     </Form.Item>
 
@@ -483,7 +543,7 @@ const ExamCreate = () => {
         return () => {
             setHasChanged(false)
         }
-    }, [hasChanged, firstLoad, selected])
+    }, [hasChanged, firstLoad, selected,])
 
 
 
@@ -491,7 +551,7 @@ const ExamCreate = () => {
         return (
             <Row justify={"space-between"} style={{ height: "10%", }} >
                 <Col>
-                    <Button onClick={() => console.log(inputData)}> Preview</Button>
+                    <Button onClick={() => console.log(inputContentData)}> Preview</Button>
                 </Col>
 
                 <Col>
