@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, InfoCircleOutlined, CloseOutlined, PictureOutlined } from '@ant-design/icons';
-import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result} from 'antd';
+import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result } from 'antd';
 import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -17,7 +17,7 @@ const { TextArea } = Input;
 
 const ExamCreate = () => {
 
-    const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null |[{
+    const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null | [{
         enabled: null,
         name: "",
         teacher: "",
@@ -25,17 +25,16 @@ const ExamCreate = () => {
         type: null,
         _id: "",
     }])
+    const [dataPayload, setDataPayload] = useState({
+        head: {},
+        body: {},
+    })
     const [inputData, setInputData] = useState({
-        head: {
-            name: "",
-            detail: "",
-            teacher: "",
-            course: "",
-            quiz: null
-        },
-        body: {
-
-        }
+        name: "",
+        detail: "",
+        teacher: "",
+        course: "",
+        quiz: null
     })
     const [hasChanged, setHasChanged] = useState(false);
     const [firstLoad, setFirstLoad] = useState(false);
@@ -185,16 +184,21 @@ const ExamCreate = () => {
     const onDeleteCardContent = (index) => {
         setCardContentList(cardContentList => cardContentList.filter(card => card.key !== String(index)))
         setHasChanged(true)
-        
+
     }
 
     const handleCreateContent = () => {
         const currentIndex = cardContentList.length;
-        const newCardContentList = <CardContent key={currentIndex} index={currentIndex} onDelete={onDeleteCardContent}/>
+        const newCardContentList = <CardContent key={currentIndex} index={currentIndex} onDelete={onDeleteCardContent} />
         setCardContentList(cardContentList => [...cardContentList, newCardContentList])
         setHasChanged(true)
     }
 
+    const handleInputData = (e) => {
+        setInputData((inputData) =>({ ...inputData, [e.target.id]: e.target.value }))
+    }
+    
+    console.log(inputData)
     const cardEmptyContent = (
         <Card>
             <Row justify={"center"}>
@@ -305,7 +309,7 @@ const ExamCreate = () => {
                     </Form.Item>
 
                     <Form.Item label="Exam Name" required tooltip="This is a required field">
-                        <Input placeholder="Exam name" />
+                        <Input placeholder="Exam name" id="name" onChange={handleInputData}/>
                     </Form.Item>
 
                     <Form.Item
@@ -319,6 +323,8 @@ const ExamCreate = () => {
                             showCount
                             maxLength={250}
                             style={{ height: 120 }}
+                            id="detail"
+                            onChange={handleInputData}
                             placeholder="Detail"
                         />
                     </Form.Item>
@@ -436,7 +442,7 @@ const ExamCreate = () => {
                     setCurrentPage(currentPage + 1);
                 }
                 setKeyword("")
-                
+
             }
             else if (mode.target.innerText === "Previous") {
                 if (currentPage - 1 >= 0) {
@@ -472,20 +478,20 @@ const ExamCreate = () => {
     }
 
     useEffect(() => {
-        if(currentPage === 0) fetchCourseWoQuiz()
+        if (currentPage === 0) fetchCourseWoQuiz()
         handleDisplay()
         return () => {
             setHasChanged(false)
         }
     }, [hasChanged, firstLoad, selected])
 
-    
+
 
     const renderPageNav = () => {
         return (
             <Row justify={"space-between"} style={{ height: "10%", }} >
                 <Col>
-                    <Button> Preview</Button>
+                    <Button onClick={() => console.log(inputData)}> Preview</Button>
                 </Col>
 
                 <Col>
