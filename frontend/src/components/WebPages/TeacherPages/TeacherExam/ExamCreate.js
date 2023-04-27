@@ -183,51 +183,36 @@ const ExamCreate = () => {
 
     const [container, setContainer] = useState(null);
     const [cardContentList, setCardContentList] = useState([])
-    const [selectedCard, setSelectedCard] = useState(null) 
 
 
-    const onDeleteCardContent = (index) => {
-        setCardContentList(cardContentList => cardContentList.filter(card => card.key !== String(index)))
+    const onDeleteCardContent = (key) => {
+        
+        const { [key]: removedProperty, ...updateData } = inputContentData;
+
+        setInputContentData(() => updateData)
         setHasChanged(true)
+
+        // setCardContentList(cardContentList => cardContentList.filter(card => card.key !== String(index)))
 
     }
 
-    const onChangeCardContent = (e) => {
-        console.log("eww")
-        setInputContentData((inputContentData) => ({...inputContentData, [e.target.id]: e.target.value}))
+    const onChangeCardContent = (key, data) => {
+        setInputContentData((prev) => ({ ...prev, [key]: data }))
         setHasChanged(true)
-    } 
-
-    const getCardContent = (cardContent) => {
-        const currentIndex = cardContentList.length;
-        console.log("cc: ",cardContent)
-        console.log("ccc:", inputContentData)
-        setInputContentData(inputContentData)
-        setInputContentData({...inputContentData, [`c${currentIndex}`]: cardContent})
-        return cardContent
-    }
-
-    const setCardContent = (data) => {
-        const currentIndex = cardContentList.length;
-        setInputContentData(data)
     }
 
     const handleCreateContent = () => {
-        const currentIndex = cardContentList.length;
-        setInputContentData({...inputContentData, [`c${currentIndex}`]: {name: null}})
-        const newCardContentList = (
-            <CardContent 
-                key={currentIndex} 
-                index={currentIndex} 
-                onDelete={onDeleteCardContent} 
-                data={inputContentData} 
-                onChange={setInputContentData}
-                onSelect={setSelectedCard}
-                onGetData={getCardContent}
-                onSetData={setCardContent}
-            />
-        )
-        setCardContentList(cardContentList => [...cardContentList, newCardContentList])
+        const currentIndex = Object.keys(inputContentData).length;
+        console.log(currentIndex)
+        setInputContentData((prev) => ({ ...prev, [`${crypto.randomUUID()}`]: { name: null } }))
+
+        // <CardContent
+        //     key={currentIndex}
+        //     index={currentIndex}
+        //     onDelete={onDeleteCardContent}
+        //     data={inputContentData}
+        //     onChange={onChangeCardContent}
+        // />
         setHasChanged(true)
     }
 
@@ -271,6 +256,7 @@ const ExamCreate = () => {
             onValuesChange={onRequiredTypeChange}
             requiredMark={requiredMark}
         >
+            {JSON.stringify(Object.keys(inputContentData).length)}
             <Row justify={"center"}>
                 {/* <Col style={{ width: "5%" }} /> */}
                 {/* {console.log(selectedCard)} */}
@@ -282,13 +268,19 @@ const ExamCreate = () => {
 
                         >
                             {
-                                cardContentList.length === 0 ?
+                                Object.keys(inputContentData).length === 0 ?
                                     (
                                         cardEmptyContent
                                     ) :
                                     (
-                                        cardContentList.map((card) => (
-                                            card
+                                        Object.keys(inputContentData).map((key, index) => (
+                                            <CardContent
+                                                uuid={key}
+                                                index={index}
+                                                data={inputContentData[key]}
+                                                onDelete={onDeleteCardContent}
+                                                onChange={onChangeCardContent}
+                                            />
                                         ))
                                     )
 
@@ -297,7 +289,7 @@ const ExamCreate = () => {
                         <Col style={{ paddingLeft: "1%" }} >
 
                             {
-                                cardContentList.length !== 0 ?
+                                Object.keys(inputContentData).length !== 0 ?
                                     (
                                         <Card className="card-nlf">
                                             <Row align={"middle"} justify={"center"} style={{ height: "100%" }}>
@@ -506,7 +498,7 @@ const ExamCreate = () => {
             }
             else if (mode.target.innerText === "Previous") {
                 if (currentPage - 1 >= 0) {
-                    console.log(pageList[currentPage - 1])
+                    // console.log(pageList[currentPage - 1])
                     setCurrentPage(currentPage - 1);
                 }
                 setKeyword("")
@@ -544,7 +536,6 @@ const ExamCreate = () => {
             setHasChanged(false)
         }
     }, [hasChanged, firstLoad, selected,])
-
 
 
     const renderPageNav = () => {
