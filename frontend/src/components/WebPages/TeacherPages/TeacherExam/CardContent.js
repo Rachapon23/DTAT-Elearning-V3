@@ -7,7 +7,17 @@ import { Link, useSearchParams } from "react-router-dom";
 const { TextArea } = Input;
 
 
-const CardContent = ({ uuid = null, index = null, onDelete = null, data = null, onChange = null, onAddChoice = null, onRemoveChoice }) => {
+const CardContent = ({
+    // uuid = null,
+    index = null,
+    data = null,
+    onCreate=false,
+    onDelete = null,
+    onChange = null,
+    onAddChoice = null,
+    onRemoveChoice = null,
+
+}) => {
     const lastCard = useRef(null)
 
     const formItemLayout = {
@@ -49,19 +59,21 @@ const CardContent = ({ uuid = null, index = null, onDelete = null, data = null, 
 
     const handleCardChange = (e) => {
         // setInputContentData((prev) => ({ ...prev, [e.target.id]: e.target.value }))
-        onChange(uuid, { ...data, [e?.target?.id]: e?.target?.value })
+        onChange(index, { ...data, [e?.target?.id]: e?.target?.value })
     }
 
-    const handleAddChoice = () => {
-        onAddChoice(uuid)
+    const handleAddChoice = (choice_index) => {
+        onAddChoice(index, choice_index)
     }
 
-    const handleRemoveChoice = (choice_uuid) => {
-        onRemoveChoice(uuid, choice_uuid)
+    const handleRemoveChoice = (choice_index) => {
+        onRemoveChoice(index, choice_index)
     }
 
     useEffect(() => {
-        scrollToBottom()
+        if (onCreate) {
+            scrollToBottom()
+        }
     }, [lastCard])
 
     return (
@@ -70,12 +82,11 @@ const CardContent = ({ uuid = null, index = null, onDelete = null, data = null, 
         >
             <Col style={{ width: "100%" }}>
                 <Card >
-                    {/* {JSON.stringify(data)}
-                    {JSON.stringify(data.name)} */}
+                    {/* {JSON.stringify(data.name)} */}
                     <Row justify={"center"} align={"middle"}>
                         <Col style={{ width: "100%" }} >
                             <Row style={{ marginTop: "-0.5%", marginBottom: "-0.2%", marginRight: "-0.5%" }} justify={"end"} align={"middle"}>
-                                <Link onClick={() => onDelete(uuid)}>
+                                <Link onClick={() => onDelete(index)}>
                                     <CloseOutlined style={{ fontSize: "120%" }} />
                                 </Link>
                             </Row>
@@ -116,7 +127,7 @@ const CardContent = ({ uuid = null, index = null, onDelete = null, data = null, 
                             </Row> */}
                             <Row justify={"center"} align={"middle"}>
                                 <Col style={{ width: "100%" }}>
-                                    {Object.keys(data?.choices).map((choice, index) => (
+                                    {data[index]?.choices.map((choice, index) => (
                                         <Form.Item
                                             {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
                                             label={index === 0 ? 'Choices' : ''}
@@ -149,12 +160,12 @@ const CardContent = ({ uuid = null, index = null, onDelete = null, data = null, 
                                                     </Form.Item>
                                                 </Col>
                                                 <Col style={{ width: "5%", display: "flex", justifyContent: "center", paddingLeft: "0.7%" }}>
-                                                    {Object.keys(data?.choices).length > 0 ? (
+                                                    {data[index]?.choices.length > 0 ? (
                                                         <MinusCircleOutlined
                                                             key={choice}
                                                             style={{ fontSize: "130%" }}
                                                             className="dynamic-delete-button"
-                                                            onClick={() => handleRemoveChoice(choice)}
+                                                            onClick={() => handleRemoveChoice(data?.choices.indexOf(choice))}
                                                         />
                                                     ) : null}
                                                 </Col>

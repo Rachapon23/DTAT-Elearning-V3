@@ -33,12 +33,13 @@ const ExamCreate = () => {
         quiz: null,
     })
 
-    const cardContentTemplate = {
+    const inputContentTemplate = {
         name: "",
         detail: "",
-        choices: {},
+        choices: [],
     }
-    const [inputContentData, setInputContentData] = useState(null | cardContentTemplate)
+
+    const [inputContentData, setInputContentData] = useState([])
 
     // const [payloadData, setPayloadData] = useState({
     //     head: {},
@@ -47,6 +48,7 @@ const ExamCreate = () => {
 
     const [hasChanged, setHasChanged] = useState(false);
     const [firstLoad, setFirstLoad] = useState(false);
+    const [createdCard, setCreatedCard] = useState(false);
 
     const examCreateTitle = () => {
         return (
@@ -203,36 +205,56 @@ const ExamCreate = () => {
         setHasChanged(true)
     }
 
-    const onAddCardChoice = (uuid) => {
-        console.log(inputContentData[uuid])
-        setInputContentData((prev) => ({
+    const onAddCardChoice = (card_index, choice_index) => {
+        const prevCard = inputContentData.slice(0, inputContentData.length)
+        const currentCard = {
+            name: inputContentData[card_index].name,
+            detail: inputContentData[card_index].detail,
+            choices: [
+                ...inputContentData[card_index].choices.slice(0, inputContentData[card_index].choices.length),
+                ...inputContentData[card_index].choices.slice(choice_index + 1, inputContentData[card_index].choices.length),
+            ],
+        }
+        const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
+        setInputContentData((prev) => ([
             ...prev,
-            [uuid]: { 
-                choices: { ...prev[uuid].choices, [crypto.randomUUID()]: ""}
-            }
-        }))
-        
+            currentCard,
+            ...nextCard
+        ]))
+
         setHasChanged(true)
     }
 
-    const onRemoveCardChoice = (card_uuid, choice_uuid) => {
+    const getCurrentCardIndex = (card_uuid) => {
+        return inputContentData.indexOf(card_uuid)
+    }
+    const onRemoveCardChoice = (card_index, choice_index) => {
         // const { [key]: removedProperty, ...updateData } = inputContentData;
-        
-        const { [choice_uuid]: removedProperty, ...updateData } = inputContentData[card_uuid].choices
-        
-        setInputContentData((prev) => ({
-            [choice_uuid]: { 
-                choices: {...updateData}
-            }
-        }))
+
+        // const { [choice_uuid]: removedChoice, ...updatedChoice } = inputContentData[card_uuid].choices
+        // const { [card_uuid]: removedCard, ...updatedCard } = inputContentData
+        const prevCard = inputContentData.slice(0, inputContentData.length)
+        const currentCard = {
+            name: inputContentData[card_index].name,
+            detail: inputContentData[card_index].detail,
+            choices: [
+                ...inputContentData[card_index].choices.slice(0, inputContentData[card_index].choices.length),
+                ...inputContentData[card_index].choices.slice(choice_index + 1, inputContentData[card_index].choices.length),
+            ],
+        }
+        const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
+
+        setInputContentData(() => ([
+            ...prevCard,
+            currentCard,
+            ...nextCard
+        ]))
         setHasChanged(true)
     }
 
     const handleCreateContent = () => {
-        const currentIndex = Object.keys(inputContentData).length;
-        console.log(currentIndex)
-        setInputContentData((prev) => ({ ...prev, [`${crypto.randomUUID()}`]: cardContentTemplate }))
-
+        setInputContentData((prev) => [...prev, { name: "", detail: "", choices: [] }])
+        console.log(inputContentData)
         // <CardContent
         //     key={currentIndex}
         //     index={currentIndex}
@@ -241,6 +263,7 @@ const ExamCreate = () => {
         //     onChange={onChangeCardContent}
         // />
         setHasChanged(true)
+        setCreatedCard(true)
     }
 
     /*
@@ -306,6 +329,7 @@ const ExamCreate = () => {
                                                 uuid={key}
                                                 index={index}
                                                 data={inputContentData[key]}
+                                                onCreate={createdCard}
                                                 onDelete={onDeleteCardContent}
                                                 onChange={onChangeCardContent}
                                                 onAddChoice={onAddCardChoice}
@@ -564,6 +588,7 @@ const ExamCreate = () => {
         handleDisplay()
         return () => {
             setHasChanged(false)
+            setCreatedCard(false)
         }
     }, [hasChanged, firstLoad, selected,])
 
