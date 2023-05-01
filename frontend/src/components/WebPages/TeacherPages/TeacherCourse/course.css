@@ -9,3 +9,16 @@
     content: "";
     flex: 0 0 48.9%;
 }
+.content-steb-1{
+    padding: 30px 10px;
+    background-color:#f9f9f9 ;
+}
+.content-steb-2{
+    max-width: 500px;
+    border-radius: 10px;
+    background-color:#f5f5f5 ;
+}
+.content-steb-3{
+font-size: 30px;
+color: #939393;
+}

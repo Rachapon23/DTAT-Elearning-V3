@@ -17,6 +17,8 @@ import Exames from "./TeacherExam/Exames";
 import ExamCreate from "./TeacherExam/ExamCreate"
 import TeacherHome from "./TeacherHome/TeacherHome";
 
+import CourseCreateB from "./TeacherCourse/CourseCreateB";
+
 const { Header, Sider, Content } = Layout;
 
 const App = () => {
@@ -69,9 +71,9 @@ const App = () => {
       case 'home': 
         return <TeacherHome/>;
       case 'listcourse': 
-        return <Courses/>;
-      case 'createcourse': 
         return <CourseCreate/>;
+      case 'createcourse': 
+        return <CourseCreateB/>;
       case 'listexam': 
         return <Exames/>;
       case 'createexam': 
