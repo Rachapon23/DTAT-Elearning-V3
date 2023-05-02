@@ -34,8 +34,9 @@ const ExamCreate = () => {
     })
 
     const inputContentTemplate = {
-        name: "",
-        detail: "",
+        question: "",
+        answer: null,
+        image: null,
         choices: [],
     }
 
@@ -155,7 +156,7 @@ const ExamCreate = () => {
             align: "center",
             width: "10%",
             render: (data) => {
-                return <Radio checked={selected === data?._id} onChange={(e) => handleRadioChange({ checked: e?.target?.checked, _id: data?._id, index: cousresWithOutQuiz.indexOf(data) })}></Radio>
+                return <Radio checked={selected === data?._id} onChange={(e) => handleRadioChange({ checked: e?.target?.checked, _id: data?._id, index: cousresWithOutQuiz.indexOf(data) })} />
             },
         },
     ]
@@ -192,53 +193,112 @@ const ExamCreate = () => {
     // const [cardContentList, setCardContentList] = useState([])
 
 
-    const onDeleteCardContent = (key) => {
-        const { [key]: removedProperty, ...updateData } = inputContentData;
-        setInputContentData(() => updateData)
+    const onDeleteCardContent = (card_index) => {
+        // const { [key]: removedProperty, ...updateData } = inputContentData;
+        // setInputContentData(() => updateData)
+        const prevCard = inputContentData.slice(0, card_index)
+        const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
+
+        setInputContentData(() => ([
+            ...prevCard,
+            ...nextCard
+        ]))
         setHasChanged(true)
         // setCardContentList(cardContentList => cardContentList.filter(card => card.key !== String(index)))
 
     }
 
-    const onChangeCardContent = (key, data) => {
-        setInputContentData((prev) => ({ ...prev, [key]: data }))
+    const onChangeCardContent = (card_index, data) => {
+        const prevCard = inputContentData.slice(0, card_index)
+        const currentCard = {
+            question: data,
+            answer: inputContentData[card_index]?.answer,
+            image: inputContentData[card_index]?.image,
+            choices: inputContentData[card_index].choices,
+        }
+        const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
+        setInputContentData(() => [
+            ...prevCard,
+            currentCard,
+            ...nextCard,
+        ])
         setHasChanged(true)
     }
 
-    const onAddCardChoice = (card_index, choice_index) => {
-        const prevCard = inputContentData.slice(0, inputContentData.length)
+    const onAddCardChoice = (card_index) => {
+        const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
-            name: inputContentData[card_index].name,
-            detail: inputContentData[card_index].detail,
+            question: inputContentData[card_index]?.question,
+            answer: inputContentData[card_index]?.answer,
+            image: inputContentData[card_index]?.image,
             choices: [
-                ...inputContentData[card_index].choices.slice(0, inputContentData[card_index].choices.length),
-                ...inputContentData[card_index].choices.slice(choice_index + 1, inputContentData[card_index].choices.length),
+                ...inputContentData[card_index].choices,
+                "",
             ],
         }
         const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
-        setInputContentData((prev) => ([
-            ...prev,
+        setInputContentData(() => ([
+            ...prevCard,
             currentCard,
             ...nextCard
         ]))
-
         setHasChanged(true)
     }
 
-    const getCurrentCardIndex = (card_uuid) => {
-        return inputContentData.indexOf(card_uuid)
-    }
     const onRemoveCardChoice = (card_index, choice_index) => {
         // const { [key]: removedProperty, ...updateData } = inputContentData;
 
         // const { [choice_uuid]: removedChoice, ...updatedChoice } = inputContentData[card_uuid].choices
         // const { [card_uuid]: removedCard, ...updatedCard } = inputContentData
-        const prevCard = inputContentData.slice(0, inputContentData.length)
+        const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
-            name: inputContentData[card_index].name,
-            detail: inputContentData[card_index].detail,
+            question: inputContentData[card_index]?.question,
+            answer: inputContentData[card_index]?.answer,
+            image: inputContentData[card_index]?.image,
             choices: [
-                ...inputContentData[card_index].choices.slice(0, inputContentData[card_index].choices.length),
+                ...inputContentData[card_index].choices.slice(0, choice_index),
+                ...inputContentData[card_index].choices.slice(choice_index + 1, inputContentData[card_index].choices.length),
+            ],
+        }
+        const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
+
+        setInputContentData(() => ([
+            ...prevCard,
+            currentCard,
+            ...nextCard
+        ]))
+        setHasChanged(true)
+    }
+
+    const handleChangeChoiceAnswer = (card_index, choice_index) => {
+        const prevCard = inputContentData.slice(0, card_index)
+        const currentCard = {
+            question: inputContentData[card_index]?.question,
+            answer: choice_index,
+            image: inputContentData[card_index]?.image,
+            choices: [
+                ...inputContentData[card_index].choices
+            ],
+        }
+        const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
+
+        setInputContentData(() => ([
+            ...prevCard,
+            currentCard,
+            ...nextCard
+        ]))
+        setHasChanged(true)
+    }
+
+    const handleChangeChoiceQuestion = (card_index, choice_index, data) => {
+        const prevCard = inputContentData.slice(0, card_index)
+        const currentCard = {
+            question: inputContentData[card_index]?.question,
+            answer: inputContentData[card_index]?.answer,
+            image: inputContentData[card_index]?.image,
+            choices: [
+                ...inputContentData[card_index].choices.slice(0, choice_index),
+                data,
                 ...inputContentData[card_index].choices.slice(choice_index + 1, inputContentData[card_index].choices.length),
             ],
         }
@@ -253,7 +313,7 @@ const ExamCreate = () => {
     }
 
     const handleCreateContent = () => {
-        setInputContentData((prev) => [...prev, { name: "", detail: "", choices: [] }])
+        setInputContentData((prev) => [...prev, inputContentTemplate])
         console.log(inputContentData)
         // <CardContent
         //     key={currentIndex}
@@ -334,6 +394,8 @@ const ExamCreate = () => {
                                                 onChange={onChangeCardContent}
                                                 onAddChoice={onAddCardChoice}
                                                 onRemoveChoice={onRemoveCardChoice}
+                                                onChangeChoiceAnswer={handleChangeChoiceAnswer}
+                                                onChangeChoiceQuestion={handleChangeChoiceQuestion}
                                             />
                                         ))
                                     )

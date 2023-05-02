@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { useEffect, useRef } from "react"
 import { PictureOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Card, Col, Row, Tooltip, Button, Input, Form } from 'antd';
+import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image } from 'antd';
 import { Link, useSearchParams } from "react-router-dom";
 
 const { TextArea } = Input;
@@ -11,14 +11,18 @@ const CardContent = ({
     // uuid = null,
     index = null,
     data = null,
-    onCreate=false,
+    onCreate = false,
     onDelete = null,
     onChange = null,
     onAddChoice = null,
     onRemoveChoice = null,
+    onChangeChoiceAnswer = null,
+    onChangeChoiceQuestion = null
 
 }) => {
     const lastCard = useRef(null)
+    // const [radioSelected, setRadioSelected] = useState("");
+    const [currentRadioSelected, setRadioCurentSelected] = useState(null)
 
     const formItemLayout = {
         labelCol: {
@@ -51,7 +55,14 @@ const CardContent = ({
         },
     };
 
-    // console.log(Object.keys(data), data?.choices)
+    const handleRadioChange = (data) => {
+        setRadioCurentSelected(data?.index)
+        onChangeChoiceAnswer(index, data?.index)
+    }
+
+    const handleQuestionChange = (e, choice_index) => {
+        onChangeChoiceQuestion(index, choice_index, e?.target?.value)
+    }
 
     const scrollToBottom = () => {
         lastCard?.current?.scrollIntoView({ behavior: "smooth" })
@@ -59,15 +70,16 @@ const CardContent = ({
 
     const handleCardChange = (e) => {
         // setInputContentData((prev) => ({ ...prev, [e.target.id]: e.target.value }))
-        onChange(index, { ...data, [e?.target?.id]: e?.target?.value })
+        onChange(index, e?.target?.value)
     }
 
-    const handleAddChoice = (choice_index) => {
-        onAddChoice(index, choice_index)
+    const handleAddChoice = () => {
+        onAddChoice(index)
     }
 
     const handleRemoveChoice = (choice_index) => {
         onRemoveChoice(index, choice_index)
+        setRadioCurentSelected(null)
     }
 
     useEffect(() => {
@@ -82,7 +94,7 @@ const CardContent = ({
         >
             <Col style={{ width: "100%" }}>
                 <Card >
-                    {/* {JSON.stringify(data.name)} */}
+                    {/* {JSON.stringify(data.choices)} */}
                     <Row justify={"center"} align={"middle"}>
                         <Col style={{ width: "100%" }} >
                             <Row style={{ marginTop: "-0.5%", marginBottom: "-0.2%", marginRight: "-0.5%" }} justify={"end"} align={"middle"}>
@@ -94,7 +106,7 @@ const CardContent = ({
                                 <Col style={{ width: "95%" }}>
                                     <Form.Item label={`Question ${index + 1}`} tooltip="This is a required field">
                                         <Input
-                                            id="name"
+                                            id="question"
                                             placeholder="input placeholder"
                                             onChange={handleCardChange}
                                             defaultValue={data?.name}
@@ -103,42 +115,43 @@ const CardContent = ({
                                 </Col>
                                 <Col style={{ width: "5%", paddingTop: "0.5%", paddingLeft: "1%" }}>
                                     <Tooltip title="Add image" placement="bottom">
-                                        <Button onClick={() => console.log(data)} type="text" style={{ height: "100%" }}>
-                                            <PictureOutlined style={{ fontSize: "25px", display: "flex", justifyContent: "center" }} />
-                                        </Button>
+                                        <Upload showUploadList={true}>
+                                            <Button onClick={() => console.log(data)} type="text" style={{ height: "100%" }}>
+                                                <PictureOutlined style={{ fontSize: "25px", display: "flex", justifyContent: "center" }} />
+                                            </Button>
+                                        </Upload>
                                     </Tooltip>
                                 </Col>
 
                             </Row>
-                            {/* <Row>
+                            <Row>
                                 <Col flex={"auto"}>
-                                    <Form.Item label="Detail">
-                                        <TextArea
-                                            id="detail"
-                                            showCount
-                                            maxLength={250}
-                                            style={{ height: 120 }}
-                                            placeholder="can resize"
-                                            onChange={handleCardChange}
-                                            defaultValue={data?.detail}
-                                        />
+                                    <Form.Item label="Image">
+                                        <Row justify={"center"} align={"middle"}>
+                                            <Image
+                                                src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                                                height={"250px"}
+                                                width={"250px"}
+                                                preview={false}
+                                            />
+                                        </Row>
                                     </Form.Item>
                                 </Col>
-                            </Row> */}
+                            </Row>
                             <Row justify={"center"} align={"middle"}>
                                 <Col style={{ width: "100%" }}>
-                                    {data[index]?.choices.map((choice, index) => (
+                                    {data?.choices.map((item, choice_index) => (
                                         <Form.Item
-                                            {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                                            label={index === 0 ? 'Choices' : ''}
+                                            {...(choice_index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+                                            label={choice_index === 0 ? 'Choices' : ''}
                                             required={false}
-                                            key={choice}
+                                            key={choice_index}
                                         >
 
                                             <Row justify={"center"} align={"middle"}>
                                                 <Col style={{ width: "95%" }}>
                                                     <Form.Item
-                                                        {...choice}
+                                                        {...item}
                                                         validateTrigger={['onChange', 'onBlur']}
                                                         rules={[
                                                             {
@@ -149,23 +162,34 @@ const CardContent = ({
                                                         ]}
                                                         noStyle
                                                     >
-                                                        {choice}
-                                                        <Input
-                                                            key={choice}
-                                                            placeholder="passenger name"
-                                                            style={{
-                                                                width: '100%',
-                                                            }}
-                                                        />
+                                                        <Row justify={"center"} align={"middle"}>
+                                                            <Col style={{ width: "5%", display: "flex", justifyContent: "center" }}>
+                                                                <Radio
+                                                                    checked={currentRadioSelected === choice_index}
+                                                                    onChange={(e) => handleRadioChange({ checked: e?.target?.checked, index: choice_index })}
+                                                                />
+                                                            </Col>
+                                                            <Col style={{ width: "95%" }}>
+                                                                <Input
+                                                                    key={choice_index}
+                                                                    id="question"
+                                                                    placeholder="passenger name"
+                                                                    style={{
+                                                                        width: '100%',
+                                                                    }}
+                                                                    onChange={(e) => handleQuestionChange(e, choice_index)}
+                                                                />
+                                                            </Col>
+                                                        </Row>
                                                     </Form.Item>
                                                 </Col>
                                                 <Col style={{ width: "5%", display: "flex", justifyContent: "center", paddingLeft: "0.7%" }}>
-                                                    {data[index]?.choices.length > 0 ? (
+                                                    {data?.choices.length > 0 ? (
                                                         <MinusCircleOutlined
-                                                            key={choice}
+                                                            key={choice_index}
                                                             style={{ fontSize: "130%" }}
                                                             className="dynamic-delete-button"
-                                                            onClick={() => handleRemoveChoice(data?.choices.indexOf(choice))}
+                                                            onClick={() => handleRemoveChoice(choice_index)}
                                                         />
                                                     ) : null}
                                                 </Col>

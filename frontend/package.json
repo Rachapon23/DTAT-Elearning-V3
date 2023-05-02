@@ -12,6 +12,7 @@
     "antd-img-crop": "^4.10.2",
     "antd-old": "npm:antd@^4.6.3",
     "axios": "^1.3.5",
+    "bootstrap": "^5.2.3",
     "google-map-react": "^2.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
