@@ -1,8 +1,9 @@
 import React, { useState } from "react"
 import { useEffect, useRef } from "react"
-import { PictureOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { PictureOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image } from 'antd';
 import { Link, useSearchParams } from "react-router-dom";
+import { createFile } from "../../../../function/Teacher/exame";
 
 const { TextArea } = Input;
 
@@ -17,12 +18,14 @@ const CardContent = ({
     onAddChoice = null,
     onRemoveChoice = null,
     onChangeChoiceAnswer = null,
-    onChangeChoiceQuestion = null
+    onChangeChoiceQuestion = null,
+    onUploadImage = null,
 
 }) => {
     const lastCard = useRef(null)
     // const [radioSelected, setRadioSelected] = useState("");
     const [currentRadioSelected, setRadioCurentSelected] = useState(null)
+    const createFileField = "exam"
 
     const formItemLayout = {
         labelCol: {
@@ -82,6 +85,30 @@ const CardContent = ({
         setRadioCurentSelected(null)
     }
 
+    const handleAddImage = async (image) => {
+        let formData = new FormData()
+        formData.append("file", image?.file)
+        formData.append("original_name", image?.file?.name)
+
+        await createFile(sessionStorage.getItem("token"), formData, createFileField)
+            .then(
+                (res) => {
+                    const data = res.data.data
+                    onUploadImage(index ,data)
+                    // console.log(data)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
+
+    // const handleFetchImage = async () => {
+    //     await
+    // }
+
     useEffect(() => {
         if (onCreate) {
             scrollToBottom()
@@ -103,6 +130,7 @@ const CardContent = ({
                                 </Link>
                             </Row>
                             <Row justify={"space-between"} align={"middle"}>
+
                                 <Col style={{ width: "95%" }}>
                                     <Form.Item label={`Question ${index + 1}`} tooltip="This is a required field">
                                         <Input
@@ -113,28 +141,34 @@ const CardContent = ({
                                         />
                                     </Form.Item>
                                 </Col>
-                                <Col style={{ width: "5%", paddingTop: "0.5%", paddingLeft: "1%" }}>
-                                    <Tooltip title="Add image" placement="bottom">
-                                        <Upload showUploadList={true}>
-                                            <Button onClick={() => console.log(data)} type="text" style={{ height: "100%" }}>
-                                                <PictureOutlined style={{ fontSize: "25px", display: "flex", justifyContent: "center" }} />
-                                            </Button>
-                                        </Upload>
-                                    </Tooltip>
+                                <Col style={{ width: "5%", paddingLeft: "1%" }}>
+                                    <Form onFinish={handleAddImage}>
+                                        <Form.Item>
+                                            <Tooltip title="Add image" placement="bottom">
+                                                <Upload
+                                                    accept="image/*"
+                                                    showUploadList={false}
+                                                    customRequest={handleAddImage}
+                                                >
+                                                    <Button type="text" style={{ height: "100%" }}>
+                                                        <PictureOutlined style={{ fontSize: "25px", display: "flex", justifyContent: "center" }} />
+                                                    </Button>
+                                                </Upload>
+                                            </Tooltip>
+                                        </Form.Item>
+                                    </Form>
                                 </Col>
 
                             </Row>
+
                             <Row>
                                 <Col flex={"auto"}>
-                                    <Form.Item label="Image">
-                                        <Row justify={"center"} align={"middle"}>
-                                            <Image
-                                                src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-                                                height={"250px"}
-                                                width={"250px"}
-                                                preview={false}
-                                            />
-                                        </Row>
+                                    <Form.Item label="Image" >
+                                        <Upload
+                                            // fileList={}
+                                            listType="picture"
+                                            customRequest={handleAddImage}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -220,9 +254,9 @@ const CardContent = ({
                         </Col>
                     </Row>
                     {/* {renderCardExtarField()} */}
-                </Card>
-            </Col>
-        </Row>
+                </Card >
+            </Col >
+        </Row >
     )
 }
 

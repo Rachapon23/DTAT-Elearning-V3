@@ -3,6 +3,11 @@ const User = require('../models/user')
 const Multer = require("multer")
 const fs = require("fs")
 
+const allowedField = [
+    "exam",
+    "course",
+]
+
 exports.checkUser = (req, res, next) => {
     try {
         const token = req.headers["authtoken"]
@@ -74,22 +79,31 @@ const storagePublic = Multer.diskStorage({
         cb(null, "./public/uploads")
     },
     filename: (req, file, cb) => {
+        console.log(req.originalUrl.split("/")[2].split("-")[1])
         const uniqueStr = `${Date.now()}-${Math.round(Math.random() * 1E9)}`
         const splitedFileName = file.originalname.split(".")
         const fileExtension = splitedFileName[splitedFileName.length - 1]
         req.body["name"] = `${file.fieldname}-${uniqueStr}.${fileExtension}`
         req.body["upload_type"] = "public";
         cb(null, `${file.fieldname}-${uniqueStr}.${fileExtension}`)
+        
     }
 })
 exports.uploadPublic = Multer({storage: storagePublic}).single('file')
 
 const storagePrivate = Multer.diskStorage({
     destination: (req, file, cb) => {
+        let path = "./private/uploads"
         if(!fs.existsSync("./private/uploads")) {
             fs.mkdirSync("./private/uploads")
         }
-        cb(null, "./private/uploads")
+        if(req.params.field && allowedField.includes(req.params.field)) {
+            if(!fs.existsSync(`./private/uploads/${req.params.field}`)) {
+                fs.mkdirSync(`./private/uploads/${req.params.field}`)
+            }
+            path = `./private/uploads/${req.params.field}`
+        }
+        cb(null, path)
     },
     filename: (req, file, cb) => {
         const uniqueStr = `${Date.now()}-${Math.round(Math.random() * 1E9)}`

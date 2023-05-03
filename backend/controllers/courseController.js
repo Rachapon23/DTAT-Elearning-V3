@@ -169,7 +169,7 @@ exports.updateCourseImage = async (req, res) => {
     let error_deleteFile = false
 
     if (image_data.image) {
-
+      
       fs.unlink(`./${req.body.upload_type}/uploads/${image_data.image.name}`, (err) => {
         if (err) {
 
@@ -196,7 +196,7 @@ exports.updateCourseImage = async (req, res) => {
 
     if (error_deleteFile) return res.status(500).json({ error: "Cannot delete previous image before update" });
 
-
+    
     const course = await Course.findOneAndUpdate(
       { _id: req.params.id },
       {

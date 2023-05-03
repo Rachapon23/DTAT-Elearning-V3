@@ -39,8 +39,15 @@ const ExamCreate = () => {
         image: null,
         choices: [],
     }
-
     const [inputContentData, setInputContentData] = useState([])
+
+    const [image, setImage] = useState([{
+        uid: '0',
+        name: 'xxx.png',
+        status: "done",//'uploading',
+        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        // percent: 33,
+    }])
 
     // const [payloadData, setPayloadData] = useState({
     //     head: {},
@@ -315,22 +322,28 @@ const ExamCreate = () => {
     const handleCreateContent = () => {
         setInputContentData((prev) => [...prev, inputContentTemplate])
         console.log(inputContentData)
-        // <CardContent
-        //     key={currentIndex}
-        //     index={currentIndex}
-        //     onDelete={onDeleteCardContent}
-        //     data={inputContentData}
-        //     onChange={onChangeCardContent}
-        // />
         setHasChanged(true)
         setCreatedCard(true)
     }
 
-    /*
-        1. get ref of child card to determined what card to update
-        2. update child card via function in parent component
-        3. stroe updated value in child card
-    */
+    const handleUploadImage = (card_index, data) => {
+        
+        
+        const prevCard = inputContentData.slice(0, card_index)
+        const currentCard = {
+            question: data,
+            answer: inputContentData[card_index]?.answer,
+            image: data,
+            choices: inputContentData[card_index].choices,
+        }
+        const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
+        setInputContentData(() => [
+            ...prevCard,
+            currentCard,
+            ...nextCard,
+        ])
+        setHasChanged(true)
+    }
 
     const cardEmptyContent = (
         <Card>
@@ -396,6 +409,7 @@ const ExamCreate = () => {
                                                 onRemoveChoice={onRemoveCardChoice}
                                                 onChangeChoiceAnswer={handleChangeChoiceAnswer}
                                                 onChangeChoiceQuestion={handleChangeChoiceQuestion}
+                                                onUploadImage={handleUploadImage}
                                             />
                                         ))
                                     )

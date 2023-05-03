@@ -31,3 +31,19 @@ export const getCourseWoQuiz = async (authtoken) =>
             authtoken,
         }
     });
+
+// POST: /create-file/:field (exam)
+export const createFile = async (authtoken, data, field) =>
+    await axios.post(process.env.REACT_APP_API + `/create-file/${field}`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// POST: /get-exam/:id/image
+// export const getPrivateFile = async (authtoken, data, field) =>
+//     await axios.post(process.env.REACT_APP_API + `/create-file/${field}`, data, {
+//         headers: {
+//             authtoken,
+//         }
+//     });

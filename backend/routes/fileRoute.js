@@ -2,14 +2,14 @@ const express = require('express')
 const router = express.Router()
 
 //middleware
-const {checkUser, checkTeacher, upload } = require('../middleware/middleware')
-// const {
-//     uploadCourseCover,
-// } = require('../controllers/fileController')
+const {checkUser, checkTeacher, uploadPrivate, uploadPublic } = require('../middleware/middleware')
+const {
+    createFile,
+} = require('../controllers/fileController')
 
 // teacher
-// router.post("/update-course-cover", checkUser, checkTeacher, upload, updateCourseCover);
-// router.post("/upload-file", checkUser, checkTeacher, upload, uploadfile);
+router.post("/create-file/:field", checkUser, checkTeacher, uploadPrivate, createFile);
+// router.post("/upload-file", checkUser, checkTeacher, uploadPrivate, uploadfile);
 
 
 module.exports = router;
