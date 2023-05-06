@@ -89,7 +89,9 @@ const App = () => {
   return (
     <Layout className="layout-teacher">
       <Sider className="sider-teacher" collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-        <div className="logo" />
+      <div className="logo-teacher d-flex justify-content-center my-3">
+        <img alt="iconTeacher" className="w-75" src="/Teacher.png" />
+        </div>
         <Menu 
           onClick={(e)=>navigate(`/teacher/page/${e.key}`)}
           className="menu-teacher"
