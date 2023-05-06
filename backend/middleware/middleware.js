@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const Multer = require("multer")
+const { app, express } = require("../server")
 const fs = require("fs")
 
 const allowedField = [
@@ -14,20 +15,20 @@ exports.checkUser = (req, res, next) => {
         let invalid = null
 
         if (!token) {
-            return res.status(401).json({error: "No token, authorization denied"})
+            return res.status(401).json({ error: "No token, authorization denied" })
         }
 
         jwt.verify(token, "jwtSecret", (err, decoded) => {
-            if(err) {
+            if (err) {
                 invalid = err;
-                return res.status(401).json({error: "Invalid token, authorization denied"})
+                return res.status(401).json({ error: "Invalid token, authorization denied" })
             }
             req.user = decoded.user;
         })
-        if(invalid) return 
-        
+        if (invalid) return
+
         next()
-    } 
+    }
     catch (err) {
         console.log(err)
         return res.status(500).json({ error: "Unxpected error on check user" })
@@ -64,7 +65,7 @@ exports.checkAdmin = async (req, res, next) => {
             next()
         }
 
-    } 
+    }
     catch (err) {
         console.log(err)
         return res.status(403).json({ error: "Unxpected error on check admin" })
@@ -73,32 +74,32 @@ exports.checkAdmin = async (req, res, next) => {
 
 const storagePublic = Multer.diskStorage({
     destination: (req, file, cb) => {
-        if(!fs.existsSync("./public/uploads")) {
+        if (!fs.existsSync("./public/uploads")) {
             fs.mkdirSync("./public/uploads")
         }
         cb(null, "./public/uploads")
     },
     filename: (req, file, cb) => {
-        console.log(req.originalUrl.split("/")[2].split("-")[1])
+        // console.log(req.originalUrl.split("/")[2].split("-")[1])
         const uniqueStr = `${Date.now()}-${Math.round(Math.random() * 1E9)}`
         const splitedFileName = file.originalname.split(".")
         const fileExtension = splitedFileName[splitedFileName.length - 1]
         req.body["name"] = `${file.fieldname}-${uniqueStr}.${fileExtension}`
         req.body["upload_type"] = "public";
         cb(null, `${file.fieldname}-${uniqueStr}.${fileExtension}`)
-        
+
     }
 })
-exports.uploadPublic = Multer({storage: storagePublic}).single('file')
+exports.uploadPublic = Multer({ storage: storagePublic }).single('file')
 
 const storagePrivate = Multer.diskStorage({
     destination: (req, file, cb) => {
         let path = "./private/uploads"
-        if(!fs.existsSync("./private/uploads")) {
+        if (!fs.existsSync("./private/uploads")) {
             fs.mkdirSync("./private/uploads")
         }
-        if(req.params.field && allowedField.includes(req.params.field)) {
-            if(!fs.existsSync(`./private/uploads/${req.params.field}`)) {
+        if (req.params.field && allowedField.includes(req.params.field)) {
+            if (!fs.existsSync(`./private/uploads/${req.params.field}`)) {
                 fs.mkdirSync(`./private/uploads/${req.params.field}`)
             }
             path = `./private/uploads/${req.params.field}`
@@ -114,4 +115,25 @@ const storagePrivate = Multer.diskStorage({
         cb(null, `${file.fieldname}-${uniqueStr}.${fileExtension}`)
     }
 })
-exports.uploadPrivate = Multer({storage: storagePrivate}).single('file')
+exports.uploadPrivate = Multer({ storage: storagePrivate }).single('file')
+
+exports.downloadPrivate = async (req, res, next) => {
+    try {
+        // let path = "/private/uploads"
+        // if (!fs.existsSync("./private/uploads")) {
+        //     fs.mkdirSync("./private/uploads")
+        // }
+        // if (req?.params?.field && allowedField.includes(req?.params?.field)) {
+        //     if (!fs.existsSync(`./private/uploads/${req?.params?.field}`)) {
+        //         fs.mkdirSync(`./private/uploads/${req?.params?.field}`)
+        //     }
+        //     path = `/private/uploads/${req?.params?.field}`
+        // }
+        app.use(express.static('private'))
+        next()
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(403).json({ error: "Unxpected error on download private" })
+    }
+}

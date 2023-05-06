@@ -221,9 +221,9 @@ exports.loadData = async () => {
             enabled: true,
             teacher: await User.findOne({ employee: "6100319" }),
             condition: [
-                await Condition.findOne({_id: "64264e62440e75505b4d5032"}),
-                await Condition.findOne({_id: "64264e62440e75505b4d5035"}),
-                await Condition.findOne({_id: "64264e62440e75505b4d5038"}),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
             ],
             exam: null,
         },
@@ -241,9 +241,9 @@ exports.loadData = async () => {
             enabled: true,
             teacher: await User.findOne({ employee: "6100319" }),
             condition: [
-                await Condition.findOne({_id: "64264e62440e75505b4d5032"}),
-                await Condition.findOne({_id: "64264e62440e75505b4d5035"}),
-                await Condition.findOne({_id: "64264e62440e75505b4d5038"}),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
             ]
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -260,9 +260,9 @@ exports.loadData = async () => {
             enabled: true,
             teacher: await User.findOne({ employee: "6100319" }),
             condition: [
-                await Condition.findOne({_id: "64264e62440e75505b4d5032"}),
-                await Condition.findOne({_id: "64264e62440e75505b4d5035"}),
-                await Condition.findOne({_id: "64264e62440e75505b4d5038"}),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
             ]
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -279,9 +279,9 @@ exports.loadData = async () => {
             enabled: false,
             teacher: await User.findOne({ employee: "6100319" }),
             condition: [
-                await Condition.findOne({_id: "64264e62440e75505b4d5032"}),
-                await Condition.findOne({_id: "64264e62440e75505b4d5035"}),
-                await Condition.findOne({_id: "64264e62440e75505b4d5038"}),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
             ]
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -298,10 +298,59 @@ exports.loadData = async () => {
             enabled: true,
             teacher: await User.findOne({ employee: "6100319" }),
             condition: [
-                await Condition.findOne({_id: "64264e62440e75505b4d5032"}),
-                await Condition.findOne({_id: "64264e62440e75505b4d5035"}),
-                await Condition.findOne({_id: "64264e62440e75505b4d5038"}),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
             ]
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    // Quiz
+    const quiz1 = await Quiz.findOneAndUpdate(
+        { question: "What is docker?" },
+        {
+            question: "What is docker?",
+            choice: [
+                "Virtual machine",
+                "Operating system",
+                "Container technology",
+                "Database system"
+            ],
+            image: null,
+            answer: 2,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    const quiz2 = await Quiz.findOneAndUpdate(
+        { question: "10 + 20 = ?" },
+        {
+            question: "10 + 20 = ?",
+            choice: [
+                "10",
+                "20",
+                "30",
+                "40"
+            ],
+            image: null,
+            answer: 2,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    const quiz3 = await Quiz.findOneAndUpdate(
+        { question: "20 + 20 = ?" },
+        {
+            question: "20 + 20 = ?",
+            choice: [
+                "10",
+                "20",
+                "30",
+                "40"
+            ],
+            image: null,
+            answer: 3,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -314,9 +363,9 @@ exports.loadData = async () => {
             detail: "Introduction of Docker Final test Detail ",
             teacher: await User.findOne({ employee: "6100319" }),
             quiz: [
-                await Quiz.findOne({_id: "642ce32ed296e5733ca593df"}),
-                await Quiz.findOne({_id: "642ce32ed296e5733ca593e0"}),
-                await Quiz.findOne({_id: "642ce32ed296e5733ca593e1"}),
+                quiz1,
+                quiz2,
+                quiz3,
             ],
             course: course2,
         },
@@ -332,9 +381,9 @@ exports.loadData = async () => {
             detail: "Basic of IoT Final test Detail ",
             teacher: await User.findOne({ employee: "6100319" }),
             quiz: [
-                await Quiz.findOne({_id: "642ce32ed296e5733ca593df"}),
-                await Quiz.findOne({_id: "642ce32ed296e5733ca593e0"}),
-                await Quiz.findOne({_id: "642ce32ed296e5733ca593e1"}),
+                // await Quiz.findOne({ _id: "642ce32ed296e5733ca593df" }),
+                // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e0" }),
+                // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e1" }),
             ],
             course: course3,
         },
@@ -350,9 +399,9 @@ exports.loadData = async () => {
             detail: "Arduino Final test Detail ",
             teacher: await User.findOne({ employee: "6100319" }),
             quiz: [
-                await Quiz.findOne({_id: "642ce32ed296e5733ca593df"}),
-                await Quiz.findOne({_id: "642ce32ed296e5733ca593e0"}),
-                await Quiz.findOne({_id: "642ce32ed296e5733ca593e1"}),
+                // await Quiz.findOne({ _id: "642ce32ed296e5733ca593df" }),
+                // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e0" }),
+                // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e1" }),
             ],
             course: course4,
         },
@@ -368,12 +417,12 @@ exports.loadData = async () => {
             detail: "Software Engineer Final test Detail ",
             teacher: await User.findOne({ employee: "6100319" }),
             quiz: [
-                await Quiz.findOne({_id: "642ce32ed296e5733ca593df"}),
-                await Quiz.findOne({_id: "642ce32ed296e5733ca593e0"}),
-                await Quiz.findOne({_id: "642ce32ed296e5733ca593e1"}),
+                // await Quiz.findOne({ _id: "642ce32ed296e5733ca593df" }),
+                // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e0" }),
+                // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e1" }),
             ],
             course: course5,
-            
+
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )

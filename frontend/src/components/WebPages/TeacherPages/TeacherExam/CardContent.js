@@ -1,9 +1,9 @@
 import React, { useState } from "react"
 import { useEffect, useRef } from "react"
-import { PictureOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image } from 'antd';
+import { PictureOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined, UploadOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image, Badge, Space } from 'antd';
 import { Link, useSearchParams } from "react-router-dom";
-import { createFile } from "../../../../function/Teacher/exame";
+import { createFile, getPrivateFieldImage } from "../../../../function/Teacher/exame";
 
 const { TextArea } = Input;
 
@@ -20,12 +20,16 @@ const CardContent = ({
     onChangeChoiceAnswer = null,
     onChangeChoiceQuestion = null,
     onUploadImage = null,
+    onRefresh = null
 
 }) => {
     const lastCard = useRef(null)
     // const [radioSelected, setRadioSelected] = useState("");
     const [currentRadioSelected, setRadioCurentSelected] = useState(null)
+    const [imageData, setImageData] = useState(null)
+    const [imageExtension, setImageExtension] = useState(null)
     const createFileField = "exam"
+    const createFileParam = "file"
 
     const formItemLayout = {
         labelCol: {
@@ -94,8 +98,8 @@ const CardContent = ({
             .then(
                 (res) => {
                     const data = res.data.data
-                    onUploadImage(index ,data)
-                    // console.log(data)
+                    onUploadImage(index, data)
+
                 }
             )
             .catch(
@@ -105,15 +109,52 @@ const CardContent = ({
             )
     }
 
-    // const handleFetchImage = async () => {
-    //     await
-    // }
+    const handleFetchImage = async () => {
+        // console.log(data)
+        const image_name = data?.image?.name
+        if (!image_name) return
+        const split_image_name = data?.image?.name.split(".")
+        const split_image_name_lenght = split_image_name.length
+        const image_extension = split_image_name[split_image_name_lenght - 1]
+
+        setImageExtension(image_extension)
+
+        let response
+        await getPrivateFieldImage(sessionStorage.getItem("token"), createFileField, createFileParam, image_name)
+            .then(
+                (res) => {
+                    response = res
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+        // console.log(response.data)
+        // const blob = new Blob(response.data);
+        const objectUrl = URL.createObjectURL(response.data);
+        setImageData(objectUrl)
+
+        // const imageElement = document.getElementById("image");
+
+        // imageElement.src = objectUrl;
+        // console.log(imageElement)
+    }
+
+    const handelMouseOver = (e) => {
+
+    }
+
 
     useEffect(() => {
         if (onCreate) {
             scrollToBottom()
         }
-    }, [lastCard])
+        if (!imageData) {
+            handleFetchImage()
+        }
+    }, [lastCard, onUploadImage])
 
     return (
         <Row justify={"center"} style={{ paddingBottom: "1%" }} ref={lastCard}
@@ -142,9 +183,9 @@ const CardContent = ({
                                     </Form.Item>
                                 </Col>
                                 <Col style={{ width: "5%", paddingLeft: "1%" }}>
-                                    <Form onFinish={handleAddImage}>
+                                    <Form >
                                         <Form.Item>
-                                            <Tooltip title="Add image" placement="bottom">
+                                            <Tooltip title={imageExtension ? "Change image" : "Add image"} placement="bottom">
                                                 <Upload
                                                     accept="image/*"
                                                     showUploadList={false}
@@ -160,18 +201,39 @@ const CardContent = ({
                                 </Col>
 
                             </Row>
+                            {
+                                imageExtension ?
+                                    (
+                                        <Row justify={"center"} align={"middle"}>
+                                            <Col flex={"auto"}>
+                                                <Form.Item label="Image" >
+                                                    <Row justify={"center"} align={"middle"}>
+                                                        <Col>
+                                                            <Badge
+                                                                count={
+                                                                    <Row justify={"center"} align={"middle"}>
+                                                                        <DeleteOutlined style={{ fontSize: "120%", color: "white", backgroundColor: "#f5222d", borderRadius: "50%", padding: "20%"}} />
+                                                                    </Row>
+                                                                }
 
-                            <Row>
-                                <Col flex={"auto"}>
-                                    <Form.Item label="Image" >
-                                        <Upload
-                                            // fileList={}
-                                            listType="picture"
-                                            customRequest={handleAddImage}
-                                        />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
+                                                            >
+                                                                <Image
+                                                                    height={250}
+                                                                    src={imageData}
+                                                                />
+                                                            </Badge>
+                                                        </Col>
+
+                                                    </Row>
+                                                </Form.Item>
+                                            </Col>
+                                        </Row>
+                                    )
+                                    :
+                                    (
+                                        <>{imageData}</>
+                                    )
+                            }
                             <Row justify={"center"} align={"middle"}>
                                 <Col style={{ width: "100%" }}>
                                     {data?.choices.map((item, choice_index) => (

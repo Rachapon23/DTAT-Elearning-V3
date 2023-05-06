@@ -8,10 +8,10 @@ const { loadData } = require("./loader")
 require('dotenv').config()
 
 const app = express()
+module.exports = { app, express }
 
 // Static file
 app.use(express.static('public'))
-
 
 //connect cloud Database
 mongoose.connect(process.env.DATABASE2, {
@@ -30,13 +30,16 @@ app.use(express.json())
 app.use(cors())
 app.use(morgan('dev'))
 
+
+
 //route
 readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)))
+
+
 
 //run on PORT
 const port = process.env.PORT
 app.listen(port, () => {
     console.log("running on port", port)
 })
-
 
