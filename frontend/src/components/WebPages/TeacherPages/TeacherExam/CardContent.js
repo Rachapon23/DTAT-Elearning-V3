@@ -1,8 +1,9 @@
 import React, { useState } from "react"
 import { useEffect, useRef } from "react"
-import { PictureOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image } from 'antd';
+import { PictureOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined, UploadOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image, Badge, Space } from 'antd';
 import { Link, useSearchParams } from "react-router-dom";
+import { createFile, getPrivateFieldImage } from "../../../../function/Teacher/exame";
 
 const { TextArea } = Input;
 
@@ -17,12 +18,18 @@ const CardContent = ({
     onAddChoice = null,
     onRemoveChoice = null,
     onChangeChoiceAnswer = null,
-    onChangeChoiceQuestion = null
+    onChangeChoiceQuestion = null,
+    onUploadImage = null,
+    onRefresh = null
 
 }) => {
     const lastCard = useRef(null)
     // const [radioSelected, setRadioSelected] = useState("");
     const [currentRadioSelected, setRadioCurentSelected] = useState(null)
+    const [imageData, setImageData] = useState(null)
+    const [imageExtension, setImageExtension] = useState(null)
+    const createFileField = "exam"
+    const createFileParam = "file"
 
     const formItemLayout = {
         labelCol: {
@@ -82,11 +89,72 @@ const CardContent = ({
         setRadioCurentSelected(null)
     }
 
+    const handleAddImage = async (image) => {
+        let formData = new FormData()
+        formData.append("file", image?.file)
+        formData.append("original_name", image?.file?.name)
+
+        await createFile(sessionStorage.getItem("token"), formData, createFileField)
+            .then(
+                (res) => {
+                    const data = res.data.data
+                    onUploadImage(index, data)
+
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
+
+    const handleFetchImage = async () => {
+        // console.log(data)
+        const image_name = data?.image?.name
+        if (!image_name) return
+        const split_image_name = data?.image?.name.split(".")
+        const split_image_name_lenght = split_image_name.length
+        const image_extension = split_image_name[split_image_name_lenght - 1]
+
+        setImageExtension(image_extension)
+
+        let response
+        await getPrivateFieldImage(sessionStorage.getItem("token"), createFileField, createFileParam, image_name)
+            .then(
+                (res) => {
+                    response = res
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+        // console.log(response.data)
+        // const blob = new Blob(response.data);
+        const objectUrl = URL.createObjectURL(response.data);
+        setImageData(objectUrl)
+
+        // const imageElement = document.getElementById("image");
+
+        // imageElement.src = objectUrl;
+        // console.log(imageElement)
+    }
+
+    const handelMouseOver = (e) => {
+
+    }
+
+
     useEffect(() => {
         if (onCreate) {
             scrollToBottom()
         }
-    }, [lastCard])
+        if (!imageData) {
+            handleFetchImage()
+        }
+    }, [lastCard, onUploadImage])
 
     return (
         <Row justify={"center"} style={{ paddingBottom: "1%" }} ref={lastCard}
@@ -103,6 +171,7 @@ const CardContent = ({
                                 </Link>
                             </Row>
                             <Row justify={"space-between"} align={"middle"}>
+
                                 <Col style={{ width: "95%" }}>
                                     <Form.Item label={`Question ${index + 1}`} tooltip="This is a required field">
                                         <Input
@@ -113,31 +182,58 @@ const CardContent = ({
                                         />
                                     </Form.Item>
                                 </Col>
-                                <Col style={{ width: "5%", paddingTop: "0.5%", paddingLeft: "1%" }}>
-                                    <Tooltip title="Add image" placement="bottom">
-                                        <Upload showUploadList={true}>
-                                            <Button onClick={() => console.log(data)} type="text" style={{ height: "100%" }}>
-                                                <PictureOutlined style={{ fontSize: "25px", display: "flex", justifyContent: "center" }} />
-                                            </Button>
-                                        </Upload>
-                                    </Tooltip>
+                                <Col style={{ width: "5%", paddingLeft: "1%" }}>
+                                    <Form >
+                                        <Form.Item>
+                                            <Tooltip title={imageExtension ? "Change image" : "Add image"} placement="bottom">
+                                                <Upload
+                                                    accept="image/*"
+                                                    showUploadList={false}
+                                                    customRequest={handleAddImage}
+                                                >
+                                                    <Button type="text" style={{ height: "100%" }}>
+                                                        <PictureOutlined style={{ fontSize: "25px", display: "flex", justifyContent: "center" }} />
+                                                    </Button>
+                                                </Upload>
+                                            </Tooltip>
+                                        </Form.Item>
+                                    </Form>
                                 </Col>
 
                             </Row>
-                            <Row>
-                                <Col flex={"auto"}>
-                                    <Form.Item label="Image">
+                            {
+                                imageExtension ?
+                                    (
                                         <Row justify={"center"} align={"middle"}>
-                                            <Image
-                                                src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-                                                height={"250px"}
-                                                width={"250px"}
-                                                preview={false}
-                                            />
+                                            <Col flex={"auto"}>
+                                                <Form.Item label="Image" >
+                                                    <Row justify={"center"} align={"middle"}>
+                                                        <Col>
+                                                            <Badge
+                                                                count={
+                                                                    <Row justify={"center"} align={"middle"}>
+                                                                        <DeleteOutlined style={{ fontSize: "120%", color: "white", backgroundColor: "#f5222d", borderRadius: "50%", padding: "20%"}} />
+                                                                    </Row>
+                                                                }
+
+                                                            >
+                                                                <Image
+                                                                    height={250}
+                                                                    src={imageData}
+                                                                />
+                                                            </Badge>
+                                                        </Col>
+
+                                                    </Row>
+                                                </Form.Item>
+                                            </Col>
                                         </Row>
-                                    </Form.Item>
-                                </Col>
-                            </Row>
+                                    )
+                                    :
+                                    (
+                                        <>{imageData}</>
+                                    )
+                            }
                             <Row justify={"center"} align={"middle"}>
                                 <Col style={{ width: "100%" }}>
                                     {data?.choices.map((item, choice_index) => (
@@ -220,9 +316,9 @@ const CardContent = ({
                         </Col>
                     </Row>
                     {/* {renderCardExtarField()} */}
-                </Card>
-            </Col>
-        </Row>
+                </Card >
+            </Col >
+        </Row >
     )
 }
 

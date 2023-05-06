@@ -24,7 +24,7 @@ router.put("/update-course/:id", checkUser, checkTeacher, updateCourse);
 router.delete("/remove-course/:id", checkUser, checkTeacher, removeCourse);
 
 router.put("/update-course/:id/enabled", checkUser, checkTeacher, updateEnableCourse);
-router.put("/update-course/:id/image", checkUser, checkTeacher, uploadPublic, updateCourseImage);
+router.put("/update-course/:id/image", checkUser, checkTeacher, uploadPublic, updateCourseImage); // uploadPublic uploadPrivate
 router.get("/get-course/:id/image", checkUser, checkTeacher, getCourseImage);
 router.get("/get-course/sp/count", checkUser, checkTeacher, getCourseCount);
 router.get("/list-course/sp/wo/quiz", checkUser, checkTeacher, listCourseWoQuiz);

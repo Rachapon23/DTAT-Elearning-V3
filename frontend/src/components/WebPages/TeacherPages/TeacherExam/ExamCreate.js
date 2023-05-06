@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, InfoCircleOutlined, CloseOutlined, PictureOutlined } from '@ant-design/icons';
+import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, InfoCircleOutlined, CloseOutlined, PictureOutlined, UpOutlined, DownOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result } from 'antd';
 import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
@@ -39,8 +39,15 @@ const ExamCreate = () => {
         image: null,
         choices: [],
     }
-
     const [inputContentData, setInputContentData] = useState([])
+
+    const [image, setImage] = useState([{
+        uid: '0',
+        name: 'xxx.png',
+        status: "done",//'uploading',
+        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        // percent: 33,
+    }])
 
     // const [payloadData, setPayloadData] = useState({
     //     head: {},
@@ -314,23 +321,28 @@ const ExamCreate = () => {
 
     const handleCreateContent = () => {
         setInputContentData((prev) => [...prev, inputContentTemplate])
-        console.log(inputContentData)
-        // <CardContent
-        //     key={currentIndex}
-        //     index={currentIndex}
-        //     onDelete={onDeleteCardContent}
-        //     data={inputContentData}
-        //     onChange={onChangeCardContent}
-        // />
+        // console.log(inputContentData)
         setHasChanged(true)
         setCreatedCard(true)
     }
 
-    /*
-        1. get ref of child card to determined what card to update
-        2. update child card via function in parent component
-        3. stroe updated value in child card
-    */
+    const handleUploadImage = (card_index, data) => {
+        // console.log(data)
+        const prevCard = inputContentData.slice(0, card_index)
+        const currentCard = {
+            question: inputContentData[card_index]?.question,
+            answer: inputContentData[card_index]?.answer,
+            image: data,
+            choices: inputContentData[card_index].choices,
+        }
+        const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
+        setInputContentData(() => [
+            ...prevCard,
+            currentCard,
+            ...nextCard,
+        ])
+        setHasChanged(true)
+    }
 
     const cardEmptyContent = (
         <Card>
@@ -366,7 +378,7 @@ const ExamCreate = () => {
             onValuesChange={onRequiredTypeChange}
             requiredMark={requiredMark}
         >
-            {JSON.stringify(Object.keys(inputContentData).length)}
+            {/* {JSON.stringify(Object.keys(inputContentData).length)} */}
             <Row justify={"center"}>
                 {/* <Col style={{ width: "5%" }} /> */}
                 {/* {console.log(selectedCard)} */}
@@ -396,6 +408,7 @@ const ExamCreate = () => {
                                                 onRemoveChoice={onRemoveCardChoice}
                                                 onChangeChoiceAnswer={handleChangeChoiceAnswer}
                                                 onChangeChoiceQuestion={handleChangeChoiceQuestion}
+                                                onUploadImage={handleUploadImage}
                                             />
                                         ))
                                     )
@@ -411,13 +424,25 @@ const ExamCreate = () => {
                                             <Row align={"middle"} justify={"center"} style={{ height: "100%" }}>
                                                 <Col flex={"auto"}>
                                                     <Row justify={"center"} >
-                                                        <Button type="text" onClick={handleCreateContent} >New</Button>
+                                                        <Tooltip title={"Add topic"} placement="left">
+                                                            <Button type="text" onClick={handleCreateContent} >
+                                                                <PlusSquareOutlined style={{ fontSize: "140%" }} />
+                                                            </Button>
+                                                        </Tooltip>
                                                     </Row>
                                                     <Row justify={"center"}>
-                                                        <Button type="text" >Link</Button>
+                                                        <Tooltip title={"Go to top page"} placement="left" >
+                                                            <Button type="text" onClick={() => window.scrollTo(0, 0)}>
+                                                                <UpOutlined style={{ fontSize: "140%" }} />
+                                                            </Button>
+                                                        </Tooltip>
                                                     </Row>
                                                     <Row justify={"center"}>
-                                                        <Button type="text" >File</Button>
+                                                        <Tooltip title={"Go to buttom page"} placement="left">
+                                                            <Button type="text" onClick={() => window.scrollTo(0, document.body.scrollHeight)}>
+                                                                <DownOutlined style={{ fontSize: "140%" }} />
+                                                            </Button>
+                                                        </Tooltip>
                                                     </Row>
                                                 </Col>
                                             </Row>
@@ -454,7 +479,6 @@ const ExamCreate = () => {
         >
             <Row >
                 <Col style={{ width: "100%" }}>
-                    {console.log()}
                     <Form.Item label="Selected Course" required tooltip="This is a required field">
                         {/* <Card> */}
                         <Row align={"middle"} justify={"space-between"}>
@@ -657,7 +681,7 @@ const ExamCreate = () => {
 
     const renderPageNav = () => {
         return (
-            <Row justify={"space-between"} style={{ height: "10%", }} >
+            <Row justify={"space-between"} style={{ height: "10%", marginBottom: "1%"}} >
                 <Col>
                     <Button onClick={() => console.log(inputContentData)}> Preview</Button>
                 </Col>

@@ -9,6 +9,7 @@ const {
     removeExam,
     listExam,
     getExam,
+    getExamImage,
 } = require('../controllers/examController')
 
 // all
@@ -19,6 +20,7 @@ router.post("/create-exam", checkUser, checkTeacher, createExam);
 router.put("/update-exam/:id", checkUser, checkTeacher, updateExam);
 router.delete("/remove-exam/:id", checkUser, checkTeacher, removeExam);
 router.get("/list-exam", checkUser, checkTeacher, listExam);
+router.get("/get-exam/:id/image", checkUser, checkTeacher, getExamImage);
 
 // student
 // router.post("/send-exam", checkUser, sendExam); // move to activit update activity score

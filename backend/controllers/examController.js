@@ -151,7 +151,27 @@ exports.removeExam = async (req, res) => {
     }
 }
 
+// GET: /get-exam/:id/image
+exports.getExamImage = async (req, res) => {
+    try {
+      const image_data = await Exam.findOne({ _id: req.params.id }).select("image -_id")
+  
+      res.sendFile(`private/uploads/${image_data.image.name}`, { root: "." }, (err) => {
+        if (err) {
+          console.log(err)
+          return res.status(500).json({ error: "Cannot get course image" });
+        }
+      });
+  
+    }
+    catch (err) {
+      console.log(err);
+      return res.status(500).json({ error: "Unexpected error on get course image" });
+    }
+  };
 
+
+// ======================================================================================================
 // exports.listquizUser = async (req, res) => {
 //     try {
 //         const {params} = req.params

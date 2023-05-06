@@ -2,14 +2,22 @@ const express = require('express')
 const router = express.Router()
 
 //middleware
-const {checkUser, checkTeacher, upload } = require('../middleware/middleware')
-// const {
-//     uploadCourseCover,
-// } = require('../controllers/fileController')
+const { checkUser, checkTeacher, uploadPrivate, uploadPublic, downloadPrivate } = require('../middleware/middleware')
+const {
+    createPrivateFile,
+    getPrivateFieldImage,
+} = require('../controllers/fileController')
 
 // teacher
-// router.post("/update-course-cover", checkUser, checkTeacher, upload, updateCourseCover);
-// router.post("/upload-file", checkUser, checkTeacher, upload, uploadfile);
+// privates
+router.post("/create-file/:field", checkUser, checkTeacher, uploadPrivate, createPrivateFile);
+
+// GET: /get-image/:field?id=<ID> | for fetch data to display, edit
+// GET: /get-image/:field?file=<filename> | for fetch data in create process only
+router.get("/get-image/:field", checkUser, checkTeacher, getPrivateFieldImage);
+// router.use("/get-image", downloadPrivate);
+
+
 
 
 module.exports = router;

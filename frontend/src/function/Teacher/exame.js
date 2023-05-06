@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { Buffer } from "buffer";
 
 // GET: /list-exam
 export const listExam = async (authtoken) =>
@@ -30,4 +31,21 @@ export const getCourseWoQuiz = async (authtoken) =>
         headers: {
             authtoken,
         }
+    });
+
+// POST: /create-file/:field (exam)
+export const createFile = async (authtoken, data, field) =>
+    await axios.post(process.env.REACT_APP_API + `/create-file/${field}`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// POST: /get-image/:field/:id
+export const getPrivateFieldImage = async (authtoken, field, param, value) => 
+    await axios.get(process.env.REACT_APP_API + `/get-image/${field}?${param}=${value}`, {
+        headers: {
+            authtoken,
+        },
+        responseType: "blob"
     });
