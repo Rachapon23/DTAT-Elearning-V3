@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import CalendarCreate from "../../CalendarPage/CalendarCreate";
 
 const CourseCreateB = () => {
   const [courseInfo, setCourseInfo] = useState({
@@ -188,23 +189,55 @@ const CourseCreateB = () => {
             <>
               {indexStep === 2 ? (
                 <>
-                  <div className="">Time && Room</div>
+                  <div className="">
+                    <p>Time && Room</p>
+                    <CalendarCreate />
+                    <div className="form-group">
+                      <label htmlFor="" className="form-label">
+                        Room
+                      </label>
+                      <select name="" id="" className="form-select"></select>
+                    </div>
+                  </div>
                 </>
               ) : (
                 <>
                   {indexStep === 3 ? (
                     <>
-                      <div className="">manage Plant</div>
+                      <div className="">
+                        <p>manage Plant</p>
+                        <div className="form-group">
+                          <div className="row">
+                            <div className="col-sm-4">
+                              <select name="" id="" className="form-select">
+                                <option>Plant</option>
+                              </select>
+                            </div>
+                            <div className="col-sm-8 position-relative">
+                              <div class="position-absolute top-0 end-0">
+                                <button
+                                  className="btn text-muted me-2"
+                                  type="Button"
+                                >
+                                  <i className="bi bi-plus"></i>
+                                </button>
+                              </div>
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Amout"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </>
                   ) : (
                     <>
                       {indexStep === 4 ? (
                         <>
                           <div className="d-flex justify-content-end">
-                            <button
-                              className="btn"
-                              onClick={handleAddTopic}
-                            >
+                            <button className="btn" onClick={handleAddTopic}>
                               + topic
                             </button>
                           </div>
@@ -374,11 +407,15 @@ const CourseCreateB = () => {
                                       <li key={tdex} className="mb-3">
                                         <div className="">
                                           <div className="position-relative">
-                                          <div class="position-absolute top-0 end-0">
+                                            <div class="position-absolute top-0 end-0">
                                               <button
                                                 className="btn text-muted me-2"
                                                 onClick={(e) =>
-                                                  handleRemoveFile(e, index, tdex)
+                                                  handleRemoveFile(
+                                                    e,
+                                                    index,
+                                                    tdex
+                                                  )
                                                 }
                                                 type="Button"
                                               >

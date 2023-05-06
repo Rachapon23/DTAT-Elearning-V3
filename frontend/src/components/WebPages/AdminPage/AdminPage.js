@@ -77,7 +77,7 @@ const App = () => {
       <Sider className="sider-admin"
         collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="logo-admin">
-          <p>A D M I N</p>
+        <img alt="iconAdmin" className="w-100" src="/Admin.png" />
         </div>
         <Menu
           onClick={(e) => navigate(`/admin/page/${e.key}`)}
