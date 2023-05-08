@@ -216,12 +216,13 @@ const ExamCreate = () => {
     }
 
     const onChangeCardContent = (card_index, data) => {
+        console.log(data.image)
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
-            question: data,
-            answer: inputContentData[card_index]?.answer,
-            image: inputContentData[card_index]?.image,
-            choices: inputContentData[card_index].choices,
+            question: data.question !== undefined ? data.question : inputContentData[card_index]?.question,
+            answer: data?.answer !== undefined ? data?.answer : inputContentData[card_index]?.answer,
+            image: data?.image !== undefined ? data?.image : inputContentData[card_index]?.image,
+            choices: data?.choices !== undefined ? data?.choices : inputContentData[card_index]?.choices,
         }
         const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
         setInputContentData(() => [
@@ -257,6 +258,8 @@ const ExamCreate = () => {
 
         // const { [choice_uuid]: removedChoice, ...updatedChoice } = inputContentData[card_uuid].choices
         // const { [card_uuid]: removedCard, ...updatedCard } = inputContentData
+        console.log("delete:", choice_index)
+        console.log(inputContentData[card_index].choices.slice(0, choice_index), " to ", inputContentData[card_index].choices.slice(choice_index + 1, inputContentData[card_index].choices.length))
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: inputContentData[card_index]?.question,
@@ -267,6 +270,7 @@ const ExamCreate = () => {
                 ...inputContentData[card_index].choices.slice(choice_index + 1, inputContentData[card_index].choices.length),
             ],
         }
+        console.log(currentCard)
         const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
 
         setInputContentData(() => ([
@@ -277,11 +281,11 @@ const ExamCreate = () => {
         setHasChanged(true)
     }
 
-    const handleChangeChoiceAnswer = (card_index, choice_index) => {
+    const handleChangeChoiceAnswer = (card_index, data) => {
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: inputContentData[card_index]?.question,
-            answer: choice_index,
+            answer: data?.answer ? data?.answer : inputContentData[card_index]?.answer,
             image: inputContentData[card_index]?.image,
             choices: [
                 ...inputContentData[card_index].choices
@@ -681,7 +685,7 @@ const ExamCreate = () => {
 
     const renderPageNav = () => {
         return (
-            <Row justify={"space-between"} style={{ height: "10%", marginBottom: "1%"}} >
+            <Row justify={"space-between"} style={{ height: "10%", marginBottom: "1%" }} >
                 <Col>
                     <Button onClick={() => console.log(inputContentData)}> Preview</Button>
                 </Col>
