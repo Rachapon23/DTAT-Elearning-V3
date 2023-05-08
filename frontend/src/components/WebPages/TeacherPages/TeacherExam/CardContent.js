@@ -20,13 +20,13 @@ const CardContent = ({
     onChangeChoiceAnswer = null,
     onChangeChoiceQuestion = null,
     onUploadImage = null,
-    onRefresh = null
 
 }) => {
     const lastCard = useRef(null)
     // const [radioSelected, setRadioSelected] = useState("");
     const [currentRadioSelected, setRadioCurentSelected] = useState(null)
     const [imageData, setImageData] = useState(null)
+    const [selectedImage, setSelectedImage] = useState(null)
     const [imageExtension, setImageExtension] = useState(null)
     const createFileField = "exam"
     const createFileParam = "file"
@@ -64,7 +64,7 @@ const CardContent = ({
 
     const handleRadioChange = (data) => {
         setRadioCurentSelected(data?.index)
-        onChangeChoiceAnswer(index, data?.index)
+        onChangeChoiceAnswer(index, { answer: data?.index })
     }
 
     const handleQuestionChange = (e, choice_index) => {
@@ -77,7 +77,7 @@ const CardContent = ({
 
     const handleCardChange = (e) => {
         // setInputContentData((prev) => ({ ...prev, [e.target.id]: e.target.value }))
-        onChange(index, e?.target?.value)
+        onChange(index, { question: e?.target?.value })
     }
 
     const handleAddChoice = () => {
@@ -86,7 +86,7 @@ const CardContent = ({
 
     const handleRemoveChoice = (choice_index) => {
         onRemoveChoice(index, choice_index)
-        setRadioCurentSelected(null)
+        setRadioCurentSelected(data?.answer)
     }
 
     const handleAddImage = async (image) => {
@@ -94,19 +94,30 @@ const CardContent = ({
         formData.append("file", image?.file)
         formData.append("original_name", image?.file?.name)
 
-        await createFile(sessionStorage.getItem("token"), formData, createFileField)
-            .then(
-                (res) => {
-                    const data = res.data.data
-                    onUploadImage(index, data)
+        onChange(index, { image: formData })
 
-                }
-            )
-            .catch(
-                (err) => {
-                    console.log(err)
-                }
-            )
+        // create image for preview before upload to server
+        const objectUrl = URL.createObjectURL(image?.file)
+        setSelectedImage(objectUrl)
+
+        // await createFile(sessionStorage.getItem("token"), formData, createFileField)
+        //     .then(
+        //         (res) => {
+        //             const data = res.data.data
+        //             onUploadImage(index, data)
+
+        //         }
+        //     )
+        //     .catch(
+        //         (err) => {
+        //             console.log(err)
+        //         }
+        //     )
+    }
+
+    const handleRemoveSelectedImage = () => {
+        onChange(index, { image: null })
+        setSelectedImage(null)
     }
 
     const handleFetchImage = async () => {
@@ -142,11 +153,6 @@ const CardContent = ({
         // console.log(imageElement)
     }
 
-    const handelMouseOver = (e) => {
-
-    }
-
-
     useEffect(() => {
         if (onCreate) {
             scrollToBottom()
@@ -178,7 +184,7 @@ const CardContent = ({
                                             id="question"
                                             placeholder="input placeholder"
                                             onChange={handleCardChange}
-                                            defaultValue={data?.name}
+                                            value={data?.question}
                                         />
                                     </Form.Item>
                                 </Col>
@@ -202,7 +208,7 @@ const CardContent = ({
 
                             </Row>
                             {
-                                imageExtension ?
+                                imageExtension || selectedImage ?
                                     (
                                         <Row justify={"center"} align={"middle"}>
                                             <Col flex={"auto"}>
@@ -212,14 +218,24 @@ const CardContent = ({
                                                             <Badge
                                                                 count={
                                                                     <Row justify={"center"} align={"middle"}>
-                                                                        <DeleteOutlined style={{ fontSize: "120%", color: "white", backgroundColor: "#f5222d", borderRadius: "50%", padding: "20%"}} />
+                                                                        <DeleteOutlined
+                                                                            onClick={handleRemoveSelectedImage}
+                                                                            style={{
+                                                                                fontSize: "120%",
+                                                                                color: "white",
+                                                                                backgroundColor: "#f5222d",
+                                                                                borderRadius: "50%",
+                                                                                padding: "20%"
+                                                                            }}
+                                                                        />
                                                                     </Row>
                                                                 }
 
                                                             >
                                                                 <Image
                                                                     height={250}
-                                                                    src={imageData}
+                                                                    // src={imageData}
+                                                                    src={selectedImage}
                                                                 />
                                                             </Badge>
                                                         </Col>
@@ -231,7 +247,7 @@ const CardContent = ({
                                     )
                                     :
                                     (
-                                        <>{imageData}</>
+                                        null
                                     )
                             }
                             <Row justify={"center"} align={"middle"}>
@@ -268,12 +284,13 @@ const CardContent = ({
                                                             <Col style={{ width: "95%" }}>
                                                                 <Input
                                                                     key={choice_index}
-                                                                    id="question"
-                                                                    placeholder="passenger name"
+                                                                    id="choice"
+                                                                    placeholder="choice"
                                                                     style={{
                                                                         width: '100%',
                                                                     }}
                                                                     onChange={(e) => handleQuestionChange(e, choice_index)}
+                                                                    value={item}
                                                                 />
                                                             </Col>
                                                         </Row>
