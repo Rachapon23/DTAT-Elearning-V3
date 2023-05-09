@@ -42,10 +42,26 @@ export const createFile = async (authtoken, data, field) =>
     });
 
 // POST: /get-image/:field/:id
-export const getPrivateFieldImage = async (authtoken, field, param, value) => 
+export const getPrivateFieldImage = async (authtoken, field, param, value) =>
     await axios.get(process.env.REACT_APP_API + `/get-image/${field}?${param}=${value}`, {
         headers: {
             authtoken,
         },
         responseType: "blob"
+    });
+
+// POST: /create-exam
+export const createExam = async (authtoken, data) =>
+    await axios.post(process.env.REACT_APP_API + `/create-exam`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// POST: /create-exam
+export const updateExam = async (authtoken, id, data) =>
+    await axios.put(process.env.REACT_APP_API + `/update-exam/${id}`, data, {
+        headers: {
+            authtoken,
+        }
     });

@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 //middleware
-const { checkUser, checkTeacher, uploadPrivate, uploadPublic, downloadPrivate } = require('../middleware/middleware')
+const { checkUser, checkTeacher, uploadPrivate, uploadPublic } = require('../middleware/middleware')
 const {
     createPrivateFile,
     getPrivateFieldImage,

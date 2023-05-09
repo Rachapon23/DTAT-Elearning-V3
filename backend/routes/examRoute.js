@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 //middleware
-const { checkUser, checkTeacher, checkAdmin } = require('../middleware/middleware')
+const { checkUser, checkTeacher, checkAdmin, uploadPrivate, uploadPublic } = require('../middleware/middleware')
 const {
     createExam,
     updateExam,
@@ -16,7 +16,7 @@ const {
 router.get("/get-exam/:id", checkUser, getExam);
 
 // teacher
-router.post("/create-exam", checkUser, checkTeacher, createExam);
+router.post("/create-exam", checkUser, checkTeacher, uploadPrivate, createExam);
 router.put("/update-exam/:id", checkUser, checkTeacher, updateExam);
 router.delete("/remove-exam/:id", checkUser, checkTeacher, removeExam);
 router.get("/list-exam", checkUser, checkTeacher, listExam);

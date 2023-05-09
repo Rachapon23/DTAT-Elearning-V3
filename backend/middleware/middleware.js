@@ -74,6 +74,7 @@ exports.checkAdmin = async (req, res, next) => {
 
 const storagePublic = Multer.diskStorage({
     destination: (req, file, cb) => {
+
         if (!fs.existsSync("./public/uploads")) {
             fs.mkdirSync("./public/uploads")
         }
@@ -98,7 +99,7 @@ const storagePrivate = Multer.diskStorage({
         if (!fs.existsSync("./private/uploads")) {
             fs.mkdirSync("./private/uploads")
         }
-        if (req.params.field && allowedField.includes(req.params.field)) {
+        if (req?.params?.field && allowedField.includes(req?.params?.field)) {
             if (!fs.existsSync(`./private/uploads/${req.params.field}`)) {
                 fs.mkdirSync(`./private/uploads/${req.params.field}`)
             }
@@ -107,6 +108,8 @@ const storagePrivate = Multer.diskStorage({
         cb(null, path)
     },
     filename: (req, file, cb) => {
+        console.log("EUWHUSHDUSHDUSYDUSTDYSG")
+        // console.log(req.originalUrl.split("/")[2].split("-")[1])
         const uniqueStr = `${Date.now()}-${Math.round(Math.random() * 1E9)}`
         const splitedFileName = file.originalname.split(".")
         const fileExtension = splitedFileName[splitedFileName.length - 1]
@@ -116,24 +119,3 @@ const storagePrivate = Multer.diskStorage({
     }
 })
 exports.uploadPrivate = Multer({ storage: storagePrivate }).single('file')
-
-exports.downloadPrivate = async (req, res, next) => {
-    try {
-        // let path = "/private/uploads"
-        // if (!fs.existsSync("./private/uploads")) {
-        //     fs.mkdirSync("./private/uploads")
-        // }
-        // if (req?.params?.field && allowedField.includes(req?.params?.field)) {
-        //     if (!fs.existsSync(`./private/uploads/${req?.params?.field}`)) {
-        //         fs.mkdirSync(`./private/uploads/${req?.params?.field}`)
-        //     }
-        //     path = `/private/uploads/${req?.params?.field}`
-        // }
-        app.use(express.static('private'))
-        next()
-    }
-    catch (err) {
-        console.log(err)
-        return res.status(403).json({ error: "Unxpected error on download private" })
-    }
-}

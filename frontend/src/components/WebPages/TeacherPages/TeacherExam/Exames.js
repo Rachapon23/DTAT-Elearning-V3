@@ -42,7 +42,7 @@ const Quizes = () => {
                     />
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-                    <Link to="/teacher/page/createexam">
+                    <Link to="/teacher/page/createexam" state={{mode: "create"}}>
                         <Button>
                             Create
                         </Button>
@@ -72,46 +72,6 @@ const Quizes = () => {
             columnKey: 'age',
         });
     };
-
-    const data = [
-        {
-            key: '1',
-            name: 'Introduction of Docker',
-            // age: 32,
-            address: 'New York No. 1 Lake Park',
-            exam: "Introduction of Docker Final test",
-            edit: <Button>Edit</Button>,
-            delete: <Button>Delete</Button>,
-        },
-        {
-            key: '2',
-            name: 'Basic of IoT',
-            // age: 42,
-            address: 'London No. 1 Lake Park',
-            exam: "Basic of IoT Final test",
-            edit: <Button>Edit</Button>,
-            delete: <Button>Delete</Button>,
-        },
-        {
-            key: '3',
-            name: 'Arduino',
-            // age: 32,
-            address: 'Sydney No. 1 Lake Park',
-            exam: "Arduino Final test",
-            edit: <Button>Edit</Button>,
-            delete: <Button>Delete</Button>,
-        },
-        {
-            key: '4',
-            name: 'Software Engineer',
-            // age: 32,
-            address: 'London No. 2 Lake Park',
-            exam: "Software Engineer Final test",
-            status: "Enable",
-            edit: <Button>Edit</Button>,
-            delete: <Button>Delete</Button>,
-        },
-    ];
 
     const handleRemoveCourse = async (index) => {
         await removeExam(sessionStorage.getItem("token"), exams[index]?._id)
@@ -245,7 +205,7 @@ const Quizes = () => {
         </div>
     )
     const arrayCrad = [cardData, cardData, cardData, cardData, cardData, cardData, cardData, cardData, cardData, cardData]
-    const listDisplay = (<Table columns={columns} dataSource={data} onChange={handleChange} />);
+    const listDisplay = (<Table columns={columns} dataSource={exams} onChange={handleChange} />);
     const kanbanDisplay = (
         <div className="row">
             {
@@ -278,7 +238,6 @@ const Quizes = () => {
             .then(
                 (res) => {
                     const data = res.data.data;
-                    console.log(data);
                     setExams(data);
                     setExamCount(data?.length);
                 }
@@ -295,7 +254,6 @@ const Quizes = () => {
             .then(
                 (res) => {
                     const data = res.data.data;
-                    console.log(data);
                     setCourseCount(data);
                 }
             )
