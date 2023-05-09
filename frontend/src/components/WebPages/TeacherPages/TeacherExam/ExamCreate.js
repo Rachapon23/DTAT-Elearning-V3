@@ -3,10 +3,11 @@ import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, Bar
 import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result } from 'antd';
 import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import CardContent from "./CardContent";
 import "../teach.css"
-import { getCourseWoQuiz } from "../../../../function/Teacher/exame";
+import { createExam, getCourseWoQuiz, updateExam } from "../../../../function/Teacher/exame";
+
 
 const { Title } = Typography;
 const { Meta } = Card;
@@ -16,6 +17,9 @@ const { TextArea } = Input;
 
 
 const ExamCreate = () => {
+    const location = useLocation()
+    const managementMode = location?.state?.mode
+    const pageSize = 4
 
     const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null | [{
         enabled: null,
@@ -27,10 +31,9 @@ const ExamCreate = () => {
     }])
     const [inputInfoData, setInputInfoData] = useState({
         name: "",
-        detail: "",
-        teacher: "",
         course: "",
-        quiz: null,
+        detail: "",
+        // teacher: "",  teacher data will add in backend
     })
 
     const inputContentTemplate = {
@@ -41,22 +44,20 @@ const ExamCreate = () => {
     }
     const [inputContentData, setInputContentData] = useState([])
 
-    const [image, setImage] = useState([{
-        uid: '0',
-        name: 'xxx.png',
-        status: "done",//'uploading',
-        thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        // percent: 33,
-    }])
+    // const [image, setImage] = useState([{
+    //     uid: '0',
+    //     name: 'xxx.png',
+    //     status: "done",//'uploading',
+    //     thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    //     // percent: 33,
+    // }])
 
-    // const [payloadData, setPayloadData] = useState({
-    //     head: {},
-    //     body: {},
-    // })
 
     const [hasChanged, setHasChanged] = useState(false);
     const [firstLoad, setFirstLoad] = useState(false);
     const [createdCard, setCreatedCard] = useState(false);
+    const [examCreated, setExamCreated] = useState(false);
+    const [examId, setExamId] = useState(null);
 
     const examCreateTitle = () => {
         return (
@@ -93,39 +94,13 @@ const ExamCreate = () => {
         setRequiredMarkType(requiredMarkValue);
     };
 
-    const coursesData = [
-        {
-            id: "A",
-            course: "A",
-            type: "Public",
-            status: "Avialable",
-            image: (<Image height={80} src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />),
-            select: false
-        },
-        {
-            id: "B",
-            course: "B",
-            type: "Public",
-            status: "Avialable",
-            image: (<Image height={80} src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />),
-            select: false
-        },
-        {
-            id: "C",
-            course: "C",
-            type: "Private",
-            status: "Avialable",
-            image: (<Image height={80} src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />),
-            select: false
-        },
-    ]
-
     const [selected, setSelected] = useState("");
     const [currentSelected, setCurentSelected] = useState(null)
 
     const handleRadioChange = (data) => {
         setCurentSelected(data?.index)
-        setSelected(data?._id)
+        setSelected(data?._id) // may remove later
+        setInputInfoData(prev => ({ ...prev, course: data?._id }))
     }
 
 
@@ -167,38 +142,6 @@ const ExamCreate = () => {
             },
         },
     ]
-
-    const examInfoCol = [
-        {
-            title: "Image",
-            dataIndex: 'image',
-            key: 'image',
-            align: "center",
-            width: "15%",
-        },
-        {
-            title: "Course",
-            dataIndex: 'name',
-            key: 'name',
-            width: "50%"
-        },
-        {
-            title: "Type",
-            dataIndex: 'type',
-            key: 'type',
-            align: "center",
-        },
-        {
-            title: "Status",
-            dataIndex: 'status',
-            key: 'status',
-            align: "center",
-        },
-    ]
-
-    const [container, setContainer] = useState(null);
-    // const [cardContentList, setCardContentList] = useState([])
-
 
     const onDeleteCardContent = (card_index) => {
         // const { [key]: removedProperty, ...updateData } = inputContentData;
@@ -263,14 +206,13 @@ const ExamCreate = () => {
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: inputContentData[card_index]?.question,
-            answer: inputContentData[card_index]?.answer,
+            answer: choice_index === inputContentData[card_index]?.answer ? null : inputContentData[card_index]?.answer,
             image: inputContentData[card_index]?.image,
             choices: [
                 ...inputContentData[card_index].choices.slice(0, choice_index),
                 ...inputContentData[card_index].choices.slice(choice_index + 1, inputContentData[card_index].choices.length),
             ],
         }
-        console.log(currentCard)
         const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
 
         setInputContentData(() => ([
@@ -285,7 +227,7 @@ const ExamCreate = () => {
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: inputContentData[card_index]?.question,
-            answer: data?.answer ? data?.answer : inputContentData[card_index]?.answer,
+            answer: data?.answer !== undefined ? data?.answer : inputContentData[card_index]?.answer,
             image: inputContentData[card_index]?.image,
             choices: [
                 ...inputContentData[card_index].choices
@@ -404,7 +346,9 @@ const ExamCreate = () => {
                                                 key={key}
                                                 uuid={key}
                                                 index={index}
+                                                head={inputInfoData}
                                                 data={inputContentData[key]}
+                                                examID={examId}
                                                 onCreate={createdCard}
                                                 onDelete={onDeleteCardContent}
                                                 onChange={onChangeCardContent}
@@ -491,7 +435,8 @@ const ExamCreate = () => {
                                     dataSource={
                                         currentSelected === null ? null : cousresWithOutQuiz.slice(currentSelected, currentSelected + 1)
                                     }
-                                    columns={coursesCol} pagination={false}
+                                    columns={coursesCol}
+                                    pagination={false}
                                 />
                             </Col>
                         </Row>
@@ -540,7 +485,7 @@ const ExamCreate = () => {
                     subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
                     extra={[
                         <Link to="/teacher/page/listexam">
-                            <Button type="primary" key="console">
+                            <Button type="primary" key="console" onClick={() => setCurrentPage(0)}>
                                 Back To List Exam
                             </Button>
                         </Link>,
@@ -556,8 +501,7 @@ const ExamCreate = () => {
         handleRadioChange({ _id: cousresWithOutQuiz[index]._id, index: index })
     }
 
-    let courseAmount = coursesData.length;
-    let pageSize = 4
+
     const [currentCoursePage, setCurrentCoursePage] = useState(1);
     const [keyword, setKeyword] = useState("");
     const handleSearch = (e) => {
@@ -637,6 +581,10 @@ const ExamCreate = () => {
                 if (currentPage + 1 <= pageList.length) {
                     setCurrentPage(currentPage + 1);
                 }
+                if (currentPage === 1 && currentPage + 1 === 2 && !examCreated) {
+                    submmitCreateExam()
+                    setExamCreated(true)
+                }
                 setKeyword("")
 
             }
@@ -646,6 +594,14 @@ const ExamCreate = () => {
                     setCurrentPage(currentPage - 1);
                 }
                 setKeyword("")
+
+            }
+            else if (mode.target.innerText === "Done") {
+                let success = submmitUpdateExam()
+                setKeyword("")
+                if (success) {
+                    setCurrentPage(pageList.length - 1)
+                }
 
             }
             setHasChanged(true)
@@ -673,6 +629,46 @@ const ExamCreate = () => {
         return currentDisplay
     }
 
+    const submmitCreateExam = async () => {
+        const examData = {
+            head: inputInfoData,
+        }
+        await createExam(sessionStorage.getItem("token"), examData)
+            .then(
+                (res) => {
+                    // console.log(res.data.data._id)
+                    setExamId(res.data.data._id)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
+
+    const submmitUpdateExam = async () => {
+        let status;
+        const examData = {
+            head: inputInfoData,
+            body: inputContentData,
+        }
+        await updateExam(sessionStorage.getItem("token"), examId, examData)
+            .then(
+                (res) => {
+                    console.log(res.data.data)
+                    status = true
+                    // setExamId(res.data.data._id)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+        return status
+    }
+
     useEffect(() => {
         if (currentPage === 0) fetchCourseWoQuiz()
         handleDisplay()
@@ -686,20 +682,34 @@ const ExamCreate = () => {
     const renderPageNav = () => {
         return (
             <Row justify={"space-between"} style={{ height: "10%", marginBottom: "1%" }} >
-                <Col>
-                    <Button onClick={() => console.log(inputContentData)}> Preview</Button>
-                </Col>
+                {
+                    currentPage !== pageList.length - 1 ?
+                        (
+                            <>
+                                <Col>
+                                    <Button onClick={() => console.log(currentSelected, inputInfoData, inputContentData)}> Preview</Button>
+                                </Col>
 
-                <Col>
-                    <Row>
-                        <Col style={{ paddingRight: "10px", }}>
-                            <Button onClick={handleDisplay}>Previous</Button>
-                        </Col>
-                        <Col>
-                            <Button type="primary" disabled={!selected} onClick={handleDisplay}>{currentPage === pageList.length - 1 ? "Done" : "Next"}</Button>
-                        </Col>
-                    </Row>
-                </Col>
+                                <Col>
+                                    <Row>
+                                        <Col style={{ paddingRight: "10px", }}>
+                                            {
+                                                currentPage > 0 ? <Button onClick={handleDisplay}>Previous</Button> : null
+                                            }
+                                        </Col>
+                                        <Col>
+                                            <Button type="primary" disabled={!selected} onClick={handleDisplay}>{currentPage === pageList.length - 2 ? "Done" : "Next"}</Button>
+                                        </Col>
+                                    </Row>
+                                </Col>
+                            </>
+                        )
+                        :
+                        (
+                            null
+                        )
+                }
+
             </Row>
         )
     }
@@ -720,8 +730,7 @@ const ExamCreate = () => {
                         <Row
                             className="row-con"
                             justify="center" style={{ paddingTop: "1%" }}>
-                            <Col flex={"auto"} className="col-con"
-                                ref={setContainer}>
+                            <Col flex={"auto"} className="col-con">
                                 {renderDisplay()}
                             </Col>
                         </Row>

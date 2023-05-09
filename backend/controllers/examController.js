@@ -7,24 +7,49 @@ const Course = require("../models/course")
 // POST: /create-exam
 exports.createExam = async (req, res) => {
     try {
-        const { head, body } = req.body;
+        const { head, body } = req?.body;
+        const { user_id } = req?.user;
 
-        const quiz = await Quiz.insertMany(body);
-        const exam = await new Exam({
-            name: head.name,
-            detail: head.detail,
-            teacher: head.teacher,
-            quiz: quiz,
-        }).save();
+        if (head !== undefined) {
+            let quiz = null
+            if (body !== undefined) {
+                quiz = await Quiz.insertMany(body);
+            }
 
-        console.log(exam.quiz.length)
-        await Course.findOneAndUpdate({ _id: head.course }, { exam: exam });
+            const data = quiz ?
+                {
+                    name: head.name,
+                    course: head.course,
+                    detail: head.detail,
+                    teacher: user_id,
+                    quiz: quiz,
+                }
+                :
+                {
+                    name: head.name,
+                    course: head.course,
+                    detail: head.detail,
+                    teacher: user_id,
+                }
 
-        res.json({ data: exam });
+            const exam = await new Exam(data).save();
+
+            await Course.findOneAndUpdate({ _id: head.course }, { exam: exam });
+
+            return res.json({ data: exam });
+        }
+        // else if (body) {
+        //     let quiz = null
+        //     if (body !== undefined) {
+        //         quiz = await Quiz.insertMany(body);
+        //     }
+        // }
+
+        return res.status(400).json({ error: "Invalid data format" })
     }
     catch (err) {
         console.log(err)
-        res.status(500).json({ error: "Unexpeccted error on create exam" })
+        return res.status(500).json({ error: "Unexpeccted error on create exam" })
     }
 }
 
@@ -33,7 +58,7 @@ exports.getExam = async (req, res) => {
     try {
         switch (req.user.role) {
             case "admin":
-                return res.json({ data: await Exam.find({}) });
+                return res.json({ data: await Exam.findOne({ _id: req.params.id }).populate("quiz") });
                 break;
             case "teacher":
                 return res.json({ data: await Exam.findOne({ _id: req.params.id, teacher: user_id }) });
@@ -92,8 +117,14 @@ exports.updateExam = async (req, res) => {
     try {
         const { head, body } = req.body
 
+        // console.log(head, body)
+
         const exam_data = await Exam.findOne({ _id: req.params.id }).select("quiz -_id")
-        await Quiz.deleteMany({}, exam_data.quiz)
+        console.log(exam_data.quiz)
+        if(exam_data.quiz.length > 0) {
+            await Quiz.deleteMany({}, exam_data.quiz)
+        }
+
 
         let quiz = null
         if (body) {
@@ -103,6 +134,7 @@ exports.updateExam = async (req, res) => {
         const data = quiz ?
             {
                 name: head.name,
+                course: head.course,
                 detail: head.detail,
                 teacher: head.teacher,
                 quiz: quiz
@@ -110,6 +142,7 @@ exports.updateExam = async (req, res) => {
             :
             {
                 name: head.name,
+                course: head.course,
                 detail: head.detail,
                 teacher: head.teacher,
             }
@@ -132,12 +165,15 @@ exports.updateExam = async (req, res) => {
 exports.removeExam = async (req, res) => {
     try {
         const exam = await Exam.findOneAndRemove({ _id: req?.params?.id }) // 
+        
+
         await Quiz.deleteMany({}, exam?.quiz)
         const course = await Course.findOneAndUpdate(
             { exam: req?.params?.id },
             { exam: null },
             { new: true },
         )
+
 
         // .exec((err, res) => {
         //     return res.json({ warning: { exam, message: "Cannot delete quiz data of exam" } })
@@ -154,21 +190,21 @@ exports.removeExam = async (req, res) => {
 // GET: /get-exam/:id/image
 exports.getExamImage = async (req, res) => {
     try {
-      const image_data = await Exam.findOne({ _id: req.params.id }).select("image -_id")
-  
-      res.sendFile(`private/uploads/${image_data.image.name}`, { root: "." }, (err) => {
-        if (err) {
-          console.log(err)
-          return res.status(500).json({ error: "Cannot get course image" });
-        }
-      });
-  
+        const image_data = await Exam.findOne({ _id: req.params.id }).select("image -_id")
+
+        res.sendFile(`private/uploads/${image_data.image.name}`, { root: "." }, (err) => {
+            if (err) {
+                console.log(err)
+                return res.status(500).json({ error: "Cannot get course image" });
+            }
+        });
+
     }
     catch (err) {
-      console.log(err);
-      return res.status(500).json({ error: "Unexpected error on get course image" });
+        console.log(err);
+        return res.status(500).json({ error: "Unexpected error on get course image" });
     }
-  };
+};
 
 
 // ======================================================================================================
