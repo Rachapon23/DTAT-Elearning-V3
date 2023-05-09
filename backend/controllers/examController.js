@@ -1,4 +1,5 @@
 
+const fs = require("fs");
 const Exam = require('../models/exam')
 const User = require("../models/user")
 const Quiz = require("../models/quiz")
@@ -10,27 +11,21 @@ exports.createExam = async (req, res) => {
         const { head, body } = req?.body;
         const { user_id } = req?.user;
 
+        // console.log("create: ", head, body)
+
         if (head !== undefined) {
             let quiz = null
             if (body !== undefined) {
                 quiz = await Quiz.insertMany(body);
             }
 
-            const data = quiz ?
-                {
-                    name: head.name,
-                    course: head.course,
-                    detail: head.detail,
-                    teacher: user_id,
-                    quiz: quiz,
-                }
-                :
-                {
-                    name: head.name,
-                    course: head.course,
-                    detail: head.detail,
-                    teacher: user_id,
-                }
+            const data = {
+                name: head.name,
+                course: head.course,
+                detail: head.detail,
+                teacher: user_id,
+                quiz: quiz,
+            }
 
             const exam = await new Exam(data).save();
 
@@ -116,13 +111,13 @@ exports.listExam = async (req, res) => {
 exports.updateExam = async (req, res) => {
     try {
         const { head, body } = req.body
+        const { user_id } = req?.user;
 
-        // console.log(head, body)
+        console.log(head, body, req.params.id)
 
         const exam_data = await Exam.findOne({ _id: req.params.id }).select("quiz -_id")
-        console.log(exam_data.quiz)
-        if(exam_data.quiz.length > 0) {
-            await Quiz.deleteMany({}, exam_data.quiz)
+        if (exam_data) {
+            await Quiz.deleteMany({ _id: { $in: exam_data.quiz } })
         }
 
 
@@ -131,21 +126,13 @@ exports.updateExam = async (req, res) => {
             quiz = await Quiz.insertMany(body);
         }
 
-        const data = quiz ?
-            {
-                name: head.name,
-                course: head.course,
-                detail: head.detail,
-                teacher: head.teacher,
-                quiz: quiz
-            }
-            :
-            {
-                name: head.name,
-                course: head.course,
-                detail: head.detail,
-                teacher: head.teacher,
-            }
+        const data = {
+            name: head.name,
+            course: head.course,
+            detail: head.detail,
+            teacher: user_id,
+            quiz: quiz
+        }
 
         const exam = await Exam.findOneAndUpdate(
             { _id: req.params.id },
@@ -164,21 +151,31 @@ exports.updateExam = async (req, res) => {
 // DELETE: /remove-exam/:id
 exports.removeExam = async (req, res) => {
     try {
-        const exam = await Exam.findOneAndRemove({ _id: req?.params?.id }) // 
-        
+        const exam = await Exam.findOneAndRemove({ _id: req?.params?.id }).populate("quiz") // 
 
-        await Quiz.deleteMany({}, exam?.quiz)
+        let error_deleteFile = false
+        if (exam) {
+            await Quiz.deleteMany({ _id: { $in: exam?.quiz } })
+            if (exam?.quiz) {
+                exam?.quiz.forEach(item => {
+                    fs.unlink(`./private/uploads/exam/${item.image.name}`,
+                        (err) => {
+                            if (err) {
+                                console.log(err)
+                                error_deleteFile = true
+                            }
+                        }
+                    )
+                })
+            }
+        }
         const course = await Course.findOneAndUpdate(
             { exam: req?.params?.id },
             { exam: null },
             { new: true },
         )
 
-
-        // .exec((err, res) => {
-        //     return res.json({ warning: { exam, message: "Cannot delete quiz data of exam" } })
-        // })
-
+        if (error_deleteFile) return res.status(500).json({ error: "Cannot delete image in question" });
         return res.json({ data: { exam, course } })
     }
     catch (err) {

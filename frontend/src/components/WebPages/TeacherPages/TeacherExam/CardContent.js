@@ -35,6 +35,8 @@ const CardContent = ({
     const createFileField = "exam"
     const createFileParam = "file"
 
+    // console.log(data)
+
     const formItemLayout = {
         labelCol: {
             xs: {
@@ -126,7 +128,10 @@ const CardContent = ({
         const examData = {
             head: head,
             body: {
+                // question: data?.question,
+                // answer: data?.answer,
                 image: imageData,
+                // choices: data?.choice,
             }
         }
         await updateExam(sessionStorage.getItem("token"), examID, examData)
@@ -206,7 +211,7 @@ const CardContent = ({
                                             id="question"
                                             placeholder="input placeholder"
                                             onChange={handleCardChange}
-                                            value={data?.question}
+                                            defaultValue={data?.question}
                                         />
                                     </Form.Item>
                                 </Col>
@@ -316,7 +321,7 @@ const CardContent = ({
                                                                         width: '100%',
                                                                     }}
                                                                     onChange={(e) => handleQuestionChange(e, choice_index)}
-                                                                    value={item}
+                                                                    defaultValue={item}
                                                                 />
                                                             </Col>
                                                         </Row>

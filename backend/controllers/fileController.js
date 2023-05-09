@@ -17,6 +17,7 @@ exports.createPrivateFile = async (req, res) => {
         const payload = {
             name: req?.body?.name,
             original_name: req?.body?.original_name,
+            // upload_type: req?.body?.upload_type,
         }
         res.json({ data: payload });
     }

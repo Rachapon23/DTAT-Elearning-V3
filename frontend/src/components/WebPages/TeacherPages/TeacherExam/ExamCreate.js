@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback, useMemo } from "react";
 import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, InfoCircleOutlined, CloseOutlined, PictureOutlined, UpOutlined, DownOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result } from 'antd';
 import NavBar from "../../../Layout/NavBar"
@@ -36,12 +36,14 @@ const ExamCreate = () => {
         // teacher: "",  teacher data will add in backend
     })
 
-    const inputContentTemplate = {
-        question: "",
-        answer: null,
-        image: null,
-        choices: [],
-    }
+    const inputContentTemplate = useMemo(() => (
+        {
+            question: "",
+            answer: null,
+            image: null,
+            choices: [],
+        }
+    ), [])
     const [inputContentData, setInputContentData] = useState([])
 
     // const [image, setImage] = useState([{
@@ -105,7 +107,7 @@ const ExamCreate = () => {
 
 
 
-    const coursesCol = [
+    const coursesCol = useMemo(() => ([
         {
             title: "Image",
             dataIndex: 'image',
@@ -141,9 +143,9 @@ const ExamCreate = () => {
                 return <Radio checked={selected === data?._id} onChange={(e) => handleRadioChange({ checked: e?.target?.checked, _id: data?._id, index: cousresWithOutQuiz.indexOf(data) })} />
             },
         },
-    ]
+    ]), [cousresWithOutQuiz, selected])
 
-    const onDeleteCardContent = (card_index) => {
+    const onDeleteCardContent = useCallback((card_index) => {
         // const { [key]: removedProperty, ...updateData } = inputContentData;
         // setInputContentData(() => updateData)
         const prevCard = inputContentData.slice(0, card_index)
@@ -156,10 +158,9 @@ const ExamCreate = () => {
         setHasChanged(true)
         // setCardContentList(cardContentList => cardContentList.filter(card => card.key !== String(index)))
 
-    }
+    }, [inputContentData])
 
-    const onChangeCardContent = (card_index, data) => {
-        console.log(data.image)
+    const onChangeCardContent = useCallback((card_index, data) => {
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: data.question !== undefined ? data.question : inputContentData[card_index]?.question,
@@ -174,9 +175,10 @@ const ExamCreate = () => {
             ...nextCard,
         ])
         setHasChanged(true)
-    }
+    }, [inputContentData])
 
-    const onAddCardChoice = (card_index) => {
+    const onAddCardChoice = useCallback(async (card_index) => {
+
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: inputContentData[card_index]?.question,
@@ -193,10 +195,12 @@ const ExamCreate = () => {
             currentCard,
             ...nextCard
         ]))
-        setHasChanged(true)
-    }
 
-    const onRemoveCardChoice = (card_index, choice_index) => {
+        setHasChanged(true)
+        // console.log("add", inputContentData)
+    }, [inputContentData])
+
+    const onRemoveCardChoice = useCallback((card_index, choice_index) => {
         // const { [key]: removedProperty, ...updateData } = inputContentData;
 
         // const { [choice_uuid]: removedChoice, ...updatedChoice } = inputContentData[card_uuid].choices
@@ -221,9 +225,9 @@ const ExamCreate = () => {
             ...nextCard
         ]))
         setHasChanged(true)
-    }
+    }, [inputContentData])
 
-    const handleChangeChoiceAnswer = (card_index, data) => {
+    const handleChangeChoiceAnswer = useCallback((card_index, data) => {
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: inputContentData[card_index]?.question,
@@ -241,9 +245,9 @@ const ExamCreate = () => {
             ...nextCard
         ]))
         setHasChanged(true)
-    }
+    }, [inputContentData])
 
-    const handleChangeChoiceQuestion = (card_index, choice_index, data) => {
+    const handleChangeChoiceQuestion = useCallback((card_index, choice_index, data) => {
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: inputContentData[card_index]?.question,
@@ -263,16 +267,16 @@ const ExamCreate = () => {
             ...nextCard
         ]))
         setHasChanged(true)
-    }
+    }, [inputContentData])
 
-    const handleCreateContent = () => {
+    const handleCreateContent = useCallback(() => {
         setInputContentData((prev) => [...prev, inputContentTemplate])
         // console.log(inputContentData)
         setHasChanged(true)
         setCreatedCard(true)
-    }
+    }, [inputContentTemplate])
 
-    const handleUploadImage = (card_index, data) => {
+    const handleUploadImage = useCallback((card_index, data) => {
         // console.log(data)
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
@@ -288,9 +292,9 @@ const ExamCreate = () => {
             ...nextCard,
         ])
         setHasChanged(true)
-    }
+    }, [inputContentData])
 
-    const cardEmptyContent = (
+    const cardEmptyContent = useMemo(() => (
         <Card>
             <Row justify={"center"}>
                 <Col>
@@ -311,9 +315,9 @@ const ExamCreate = () => {
                 </Col>
             </Row>
         </Card >
-    )
+    ), [handleCreateContent])
 
-    const examContent = (
+    const examContent = useMemo(() => (
         <Form
             style={{ paddingTop: "2%" }}
             form={form}
@@ -408,75 +412,77 @@ const ExamCreate = () => {
             </Row>
 
         </Form>
-    )
+    ), [cardEmptyContent, createdCard, examId, form, handleChangeChoiceAnswer, handleChangeChoiceQuestion, handleCreateContent, handleUploadImage, inputContentData, inputInfoData, onAddCardChoice, onChangeCardContent, onDeleteCardContent, onRemoveCardChoice, requiredMark])
 
     const handleInputData = (e) => {
         setInputInfoData((inputInfoData) => ({ ...inputInfoData, [e.target.id]: e.target.value }))
     }
 
-    const examInfo = (
-        <Form
-            style={{ paddingTop: "2%" }}
-            form={form}
-            layout="vertical"
-            initialValues={{
-                requiredMarkValue: requiredMark,
-            }}
-            onValuesChange={onRequiredTypeChange}
-            requiredMark={requiredMark}
-        >
-            <Row >
-                <Col style={{ width: "100%" }}>
-                    <Form.Item label="Selected Course" required tooltip="This is a required field">
-                        {/* <Card> */}
-                        <Row align={"middle"} justify={"space-between"}>
-                            <Col style={{ width: "100%", height: "160px" }}>
-                                <Table
-                                    dataSource={
-                                        currentSelected === null ? null : cousresWithOutQuiz.slice(currentSelected, currentSelected + 1)
-                                    }
-                                    columns={coursesCol}
-                                    pagination={false}
-                                />
-                            </Col>
-                        </Row>
-                        {/* </Card> */}
-                    </Form.Item>
+    const examInfo = useMemo(() => (
+        (
+            <Form
+                style={{ paddingTop: "2%" }}
+                form={form}
+                layout="vertical"
+                initialValues={{
+                    requiredMarkValue: requiredMark,
+                }}
+                onValuesChange={onRequiredTypeChange}
+                requiredMark={requiredMark}
+            >
+                <Row >
+                    <Col style={{ width: "100%" }}>
+                        <Form.Item label="Selected Course" required tooltip="This is a required field">
+                            {/* <Card> */}
+                            <Row align={"middle"} justify={"space-between"}>
+                                <Col style={{ width: "100%", height: "160px" }}>
+                                    <Table
+                                        dataSource={
+                                            currentSelected === null ? null : cousresWithOutQuiz.slice(currentSelected, currentSelected + 1)
+                                        }
+                                        columns={coursesCol}
+                                        pagination={false}
+                                    />
+                                </Col>
+                            </Row>
+                            {/* </Card> */}
+                        </Form.Item>
 
-                    <Form.Item label="Exam Name" required tooltip="This is a required field">
-                        <Input
-                            placeholder="Exam name"
-                            id="name"
-                            onChange={handleInputData}
-                            defaultValue={inputInfoData?.name}
-                        />
-                    </Form.Item>
+                        <Form.Item label="Exam Name" required tooltip="This is a required field">
+                            <Input
+                                placeholder="Exam name"
+                                id="name"
+                                onChange={handleInputData}
+                                defaultValue={inputInfoData?.name}
+                            />
+                        </Form.Item>
 
-                    <Form.Item
-                        label="Detail"
-                        tooltip={{
-                            title: 'Tooltip with customize icon',
-                            icon: <InfoCircleOutlined />,
-                        }}
-                    >
-                        <TextArea
-                            showCount
-                            maxLength={250}
-                            style={{ height: 120 }}
-                            id="detail"
-                            onChange={handleInputData}
-                            placeholder="Detail"
-                            defaultValue={inputInfoData?.detail}
-                        />
-                    </Form.Item>
+                        <Form.Item
+                            label="Detail"
+                            tooltip={{
+                                title: 'Tooltip with customize icon',
+                                icon: <InfoCircleOutlined />,
+                            }}
+                        >
+                            <TextArea
+                                showCount
+                                maxLength={250}
+                                style={{ height: 120 }}
+                                id="detail"
+                                onChange={handleInputData}
+                                placeholder="Detail"
+                                defaultValue={inputInfoData?.detail}
+                            />
+                        </Form.Item>
 
-                </Col>
-            </Row>
+                    </Col>
+                </Row>
 
-        </Form>
-    )
+            </Form>
+        )
+    ), [coursesCol, cousresWithOutQuiz, currentSelected, form, inputInfoData?.detail, inputInfoData?.name, requiredMark])
 
-    const examCreateFinished = (
+    const examCreateFinished = useMemo(() => (
         <Row align={"middle"} justify={"center"} style={{ height: "400px" }}>
             <Col >
                 <Result
@@ -494,12 +500,12 @@ const ExamCreate = () => {
                 />
             </Col>
         </Row>
-    )
+    ), [])
 
-    const handleRowSelect = (e, index) => {
+    const handleRowSelect = useCallback((e, index) => {
         if (e.target.innerText === "Preview") return
         handleRadioChange({ _id: cousresWithOutQuiz[index]._id, index: index })
-    }
+    }, [cousresWithOutQuiz])
 
 
     const [currentCoursePage, setCurrentCoursePage] = useState(1);
@@ -509,19 +515,19 @@ const ExamCreate = () => {
         setCurrentCoursePage(1)
     }
 
-    const filterCourse = (data) => {
+    const filterCourse = useCallback((data) => {
         if (!data) return
         return data.filter((item) => {
             return item?.name?.toLowerCase().indexOf(keyword) >= 0;
         }).slice(pageSize * (currentCoursePage - 1), (pageSize * (currentCoursePage - 1)) + pageSize)
-    }
+    }, [currentCoursePage, keyword])
 
     // const filterCourse = (data) => {
     //     if(!data) return
     //     console.log(data)
     // }
 
-    const selectCourse = (
+    const selectCourse = useMemo(() => (
         <Form
             style={{ paddingTop: "2%" }}
             form={form}
@@ -547,9 +553,9 @@ const ExamCreate = () => {
             </Row>
 
         </Form>
-    )
+    ), [coursesCol, cousresWithOutQuiz, filterCourse, form, handleRowSelect, requiredMark])
 
-    const pageList = [selectCourse, examInfo, examContent, examCreateFinished]
+    const pageList = useMemo(() => [selectCourse, examInfo, examContent, examCreateFinished], [examContent, examCreateFinished, examInfo, selectCourse])
     const [currentDisplay, setCurrentDisplay] = useState(pageList[0]);
     const [currentPage, setCurrentPage] = useState(0);
     const steps = [
@@ -575,7 +581,69 @@ const ExamCreate = () => {
 
     // const [displayMode, setDisplayMode] = useState("List");
 
-    const handleDisplay = (mode) => {
+    const fetchCourseWoQuiz = async () => {
+        await getCourseWoQuiz(sessionStorage.getItem("token"))
+            .then(
+                (res) => {
+                    const data = res.data.data;
+                    setCousresWithOutQuiz(data);
+                    setFirstLoad(true);
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
+
+    const renderDisplay = () => {
+        return currentDisplay
+    }
+
+    const submmitCreateExam = useCallback(async () => {
+        const examData = {
+            head: inputInfoData,
+        }
+        console.log(examData)
+        await createExam(sessionStorage.getItem("token"), examData)
+            .then(
+                (res) => {
+                    // console.log(res.data.data._id)
+                    setExamId(res.data.data._id)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }, [inputInfoData])
+
+    const submmitUpdateExam = useCallback(async () => {
+        let status;
+        const examData = {
+            head: inputInfoData,
+            body: inputContentData,
+        }
+        console.log(examId)
+        await updateExam(sessionStorage.getItem("token"), examId, examData)
+            .then(
+                (res) => {
+                    console.log(res.data.data)
+                    status = true
+                    // setExamId(res.data.data._id)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+        return status
+    }, [examId, inputContentData, inputInfoData])
+
+    const handleDisplay = useCallback((mode) => {
         if (mode) {
             if (mode.target.innerText === "Next") {
                 if (currentPage + 1 <= pageList.length) {
@@ -604,79 +672,22 @@ const ExamCreate = () => {
                 }
 
             }
-            setHasChanged(true)
+            // setHasChanged(true)
         }
         setCurrentDisplay(pageList[currentPage]);
-    }
+    }, [currentPage, examCreated, pageList, submmitCreateExam, submmitUpdateExam])
 
-    const fetchCourseWoQuiz = async () => {
-        await getCourseWoQuiz(sessionStorage.getItem("token"))
-            .then(
-                (res) => {
-                    const data = res.data.data;
-                    setCousresWithOutQuiz(data);
-                    setFirstLoad(true);
-                }
-            )
-            .catch(
-                (err) => {
-                    console.log(err)
-                }
-            )
-    }
-
-    const renderDisplay = () => {
-        return currentDisplay
-    }
-
-    const submmitCreateExam = async () => {
-        const examData = {
-            head: inputInfoData,
-        }
-        await createExam(sessionStorage.getItem("token"), examData)
-            .then(
-                (res) => {
-                    // console.log(res.data.data._id)
-                    setExamId(res.data.data._id)
-                }
-            )
-            .catch(
-                (err) => {
-                    console.log(err)
-                }
-            )
-    }
-
-    const submmitUpdateExam = async () => {
-        let status;
-        const examData = {
-            head: inputInfoData,
-            body: inputContentData,
-        }
-        await updateExam(sessionStorage.getItem("token"), examId, examData)
-            .then(
-                (res) => {
-                    console.log(res.data.data)
-                    status = true
-                    // setExamId(res.data.data._id)
-                }
-            )
-            .catch(
-                (err) => {
-                    console.log(err)
-                }
-            )
-        return status
-    }
+    // console.log(currentPage, examCreated, pageList)
 
     useEffect(() => {
-        if (currentPage === 0) fetchCourseWoQuiz()
+        if(currentPage === 0) fetchCourseWoQuiz()
         handleDisplay()
         return () => {
             setHasChanged(false)
             setCreatedCard(false)
         }
-    }, [hasChanged, firstLoad, selected,])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hasChanged, firstLoad, selected, currentPage])
 
 
     const renderPageNav = () => {
