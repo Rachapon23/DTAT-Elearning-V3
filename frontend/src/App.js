@@ -17,6 +17,7 @@ function App() {
 
 
         <Route path="/teacher/page/:params" element={<TeacherPage/>} />
+        <Route path="/teacher/page/:params/:id" element={<TeacherPage/>} />
         <Route path="/admin/page/:params" element={<AdminPage/>} />
         {/* <Route path="/teacher/courses" element={<Courses/>} /> */}
         {/* <Route path="/teacher/exams" element={<Exames/>} /> */}
