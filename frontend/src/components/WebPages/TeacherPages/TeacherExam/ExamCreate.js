@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import CardContent from "./CardContent";
 import "../teach.css"
-import { createExam, getCourseWoQuiz, updateExam } from "../../../../function/Teacher/exame";
+import { createExam, getCourseWoQuiz, getExam, updateExam } from "../../../../function/Teacher/exame";
 
 
 const { Title } = Typography;
@@ -19,7 +19,18 @@ const { TextArea } = Input;
 const ExamCreate = ({ mode = null }) => {
     const location = useLocation()
     const managementMode = mode ? mode : location?.state?.mode
+    const exam_edit_name = location?.state?.exam_name
+    const [examEditId, setExamEditId] = useState(null)
     const pageSize = 4
+
+    // const [exam, setExam] = useState({
+    //     _id: null,
+    //     course: null,
+    //     name: null,
+    //     detail: null,
+    //     quiz: [],
+    //     teacher: null,
+    // })
 
     const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null | [{
         enabled: null,
@@ -67,16 +78,33 @@ const ExamCreate = ({ mode = null }) => {
                 <Col>
                     <Breadcrumb
                         separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
-                        items={[
-                            {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><p >Exam</p></Title>,
-                                key: "courses"
-                            },
-                            {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><p>Create Exam</p></Title>,
-                                key: "courses_create",
-                            },
-                        ]}
+                        items={managementMode === "Edit" ?
+                            [
+                                {
+                                    title: <Title level={5} style={{ marginTop: "10px" }}><p >Exam</p></Title>,
+                                    key: "courses"
+                                },
+                                {
+                                    title: <Title level={5} style={{ marginTop: "10px" }}><p>{managementMode} Exam</p></Title>,
+                                    key: "courses_action",
+                                },
+                                {
+                                    title: <Title level={5} style={{ marginTop: "10px" }}><p>{exam_edit_name}</p></Title>,
+                                    key: "courses_param",
+                                }
+                            ]
+                            :
+                            [
+                                {
+                                    title: <Title level={5} style={{ marginTop: "10px" }}><p >Exam</p></Title>,
+                                    key: "courses"
+                                },
+                                {
+                                    title: <Title level={5} style={{ marginTop: "10px" }}><p>{managementMode} Exam</p></Title>,
+                                    key: "courses_action",
+                                },
+                            ]
+                        }
                     />
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
@@ -202,7 +230,6 @@ const ExamCreate = ({ mode = null }) => {
 
     const onRemoveCardChoice = useCallback((card_index, choice_index) => {
         // const { [key]: removedProperty, ...updateData } = inputContentData;
-
         // const { [choice_uuid]: removedChoice, ...updatedChoice } = inputContentData[card_uuid].choices
         // const { [card_uuid]: removedCard, ...updatedCard } = inputContentData
         // console.log("delete:", choice_index)
@@ -343,12 +370,13 @@ const ExamCreate = ({ mode = null }) => {
                                 Object.keys(inputContentData).length === 0 ?
                                     (
                                         cardEmptyContent
-                                    ) :
+                                    )
+                                    :
                                     (
                                         Object.keys(inputContentData).map((key, index) => (
                                             <CardContent
                                                 key={key}
-                                                uuid={key}
+                                                // uuid={key}
                                                 index={index}
                                                 head={inputInfoData}
                                                 data={inputContentData[key]}
@@ -364,7 +392,6 @@ const ExamCreate = ({ mode = null }) => {
                                             />
                                         ))
                                     )
-
                             }
                         </Col>
                         <Col style={{ paddingLeft: "1%" }} >
@@ -431,28 +458,33 @@ const ExamCreate = ({ mode = null }) => {
         >
             <Row >
                 <Col style={{ width: "100%" }}>
-                    <Form.Item label="Selected Course" required tooltip="This is a required field">
-                        {/* <Card> */}
-                        <Row align={"middle"} justify={"space-between"}>
-                            <Col style={{ width: "100%", height: "160px" }}>
-                                <Table
-                                    dataSource={
-                                        currentSelected === null ? null : cousresWithOutQuiz.slice(currentSelected, currentSelected + 1)
-                                    }
-                                    columns={coursesCol}
-                                    pagination={false}
-                                />
-                            </Col>
-                        </Row>
-                        {/* </Card> */}
-                    </Form.Item>
+                    {
+                        managementMode === "Create" ?
+                            (
+                                <Form.Item label="Selected Course" required tooltip="This is a required field">
+                                    {/* <Card> */}
+                                    <Row align={"middle"} justify={"space-between"}>
+                                        <Col style={{ width: "100%", height: "160px" }}>
+                                            <Table
+                                                dataSource={
+                                                    currentSelected === null ? null : cousresWithOutQuiz.slice(currentSelected, currentSelected + 1)
+                                                }
+                                                columns={coursesCol}
+                                                pagination={false}
+                                            />
+                                        </Col>
+                                    </Row>
+                                    {/* </Card> */}
+                                </Form.Item>
+                            ) : (null)
+                    }
 
                     <Form.Item label="Exam Name" required tooltip="This is a required field">
                         <Input
                             placeholder="Exam name"
                             id="name"
                             onChange={handleInputData}
-                            defaultValue={inputInfoData?.name}
+                            value={inputInfoData?.name}
                         />
                     </Form.Item>
 
@@ -470,7 +502,7 @@ const ExamCreate = ({ mode = null }) => {
                             id="detail"
                             onChange={handleInputData}
                             placeholder="Detail"
-                            defaultValue={inputInfoData?.detail}
+                            value={inputInfoData?.detail}
                         />
                     </Form.Item>
 
@@ -478,7 +510,7 @@ const ExamCreate = ({ mode = null }) => {
             </Row>
 
         </Form>
-    ), [coursesCol, cousresWithOutQuiz, currentSelected, form, inputInfoData?.detail, inputInfoData?.name, requiredMark])
+    ), [coursesCol, cousresWithOutQuiz, currentSelected, form, inputInfoData?.detail, inputInfoData?.name, managementMode, requiredMark])
 
     const examCreateFinished = useMemo(() => (
         <Row align={"middle"} justify={"center"} style={{ height: "400px" }}>
@@ -540,8 +572,9 @@ const ExamCreate = ({ mode = null }) => {
                 <Col style={{ width: "100%" }}>
                     <Form.Item label="Select Course" required tooltip="This is a required field">
                         <Input placeholder="Search course" prefix={<SearchOutlined />} onChange={handleSearch} />
+                        {console.log("select rendered")}
                         <Table style={{ paddingTop: "1%" }} dataSource={filterCourse(cousresWithOutQuiz)} columns={coursesCol} onRow={(_, index) => {
-                            // console.log("sdd",rec, index)
+                            
                             return {
                                 onClick: (e) => handleRowSelect(e, index),
                             }
@@ -554,22 +587,39 @@ const ExamCreate = ({ mode = null }) => {
     ), [coursesCol, cousresWithOutQuiz, filterCourse, form, handleRowSelect, requiredMark])
 
     const [currentPage, setCurrentPage] = useState(0);
-    const pageList = useMemo(() => [selectCourse, examInfo, examContent, examCreateFinished], [examContent, examCreateFinished, examInfo, selectCourse])
+    const [pageList, setPageList] = useState([selectCourse, examInfo, examContent, examCreateFinished])
     const [currentDisplay, setCurrentDisplay] = useState(pageList[0]);
-    const steps = [
-        {
-            title: 'Select Course',
-            content: 'First-content',
-        },
-        {
-            title: 'Exam Info',
-            content: 'Second-content',
-        },
-        {
-            title: 'Content',
-            content: 'Last-content',
-        },
-    ];
+
+    const steps = useMemo(() => {
+        if (managementMode === "Create") {
+            return [
+                {
+                    title: 'Select Course',
+                    content: 'First-content',
+                },
+                {
+                    title: 'Exam Info',
+                    content: 'Second-content',
+                },
+                {
+                    title: 'Content',
+                    content: 'Last-content',
+                },
+            ];
+        }
+        if (managementMode === "Edit") {
+            return [
+                {
+                    title: 'Exam Info',
+                    content: 'Second-content',
+                },
+                {
+                    title: 'Content',
+                    content: 'Last-content',
+                },
+            ];
+        }
+    }, [managementMode])
     const items = steps.map((item) => ({
         key: item.title,
         title: item.title,
@@ -594,6 +644,28 @@ const ExamCreate = ({ mode = null }) => {
                 }
             )
     }
+
+    const fetchExam = useCallback(async () => {
+        await getExam(sessionStorage.getItem("token"), examEditId)
+            .then(
+                (res) => {
+                    const data = res.data.data
+                    setInputInfoData(() => ({
+                        course: data?.course,
+                        detail: data?.detail,
+                        name: data?.name,
+                    }))
+                    // console.log(data?.quiz)
+                    setInputContentData(data?.quiz)
+
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }, [examEditId])
 
     const renderDisplay = () => {
         return currentDisplay
@@ -670,22 +742,34 @@ const ExamCreate = ({ mode = null }) => {
                 }
 
             }
-            // setHasChanged(true)
         }
         setCurrentDisplay(pageList[currentPage]);
+        console.log("SSS")
+
     }, [currentPage, examCreated, pageList, submmitCreateExam, submmitUpdateExam])
 
     // console.log(currentPage, examCreated, pageList)
 
     useEffect(() => {
-        if (currentPage === 0 && currentDisplay === pageList[0]) fetchCourseWoQuiz()
+        // if (currentPage === 0 && currentDisplay === pageList[0]) {
+        //     if (managementMode === "Create") {
+        fetchCourseWoQuiz()
+        // setPageList(() => [selectCourse, examInfo, examContent, examCreateFinished])
+
+        //     }
+        //     if (managementMode === "Edit" ) {
+        if (examEditId) fetchExam()
+        //         
+        // setPageList(() => [examInfo, examContent, examCreateFinished])
+        //     }
+        //     setCurrentDisplay(pageList[0])
+        // }
         handleDisplay()
         return () => {
             setHasChanged(false)
             setCreatedCard(false)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hasChanged, firstLoad, selected, currentPage, handleDisplay])
+    }, [hasChanged, firstLoad, selected, currentPage, managementMode, handleDisplay, fetchExam, examEditId])
 
 
     const renderPageNav = () => {
@@ -707,7 +791,21 @@ const ExamCreate = ({ mode = null }) => {
                                             }
                                         </Col>
                                         <Col>
-                                            <Button type="primary" disabled={!selected} onClick={handleDisplay}>{currentPage === pageList.length - 2 ? "Done" : "Next"}</Button>
+                                            {
+                                                managementMode === "Create" ?
+                                                    (
+                                                        <Button type="primary" disabled={!selected} onClick={handleDisplay}>{currentPage === pageList.length - 2 ? "Done" : "Next"}</Button>
+                                                    )
+                                                    :
+                                                    (
+                                                        managementMode === "Edit" ?
+                                                            (
+                                                                <Button type="primary" onClick={handleDisplay}>{currentPage === pageList.length - 2 ? "Done" : "Next"}</Button>
+                                                            )
+                                                            :
+                                                            ("Action mode not found")
+                                                    )
+                                            }
                                         </Col>
                                     </Row>
                                 </Col>
@@ -718,7 +816,6 @@ const ExamCreate = ({ mode = null }) => {
                             null
                         )
                 }
-
             </Row>
         )
     }

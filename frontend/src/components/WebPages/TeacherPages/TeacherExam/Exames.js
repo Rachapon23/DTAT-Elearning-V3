@@ -42,7 +42,7 @@ const Quizes = () => {
                     />
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-                    <Link to="/teacher/page/create-exam" state={{ mode: "create" }}>
+                    <Link to="/teacher/page/create-exam" state={{ mode: "Create" }}>
                         <Button>
                             Create
                         </Button>
@@ -165,7 +165,7 @@ const Quizes = () => {
                 const index = exams.indexOf(data);
                 console.log()
                 return (
-                    <Link to={`/teacher/page/edit-exam/${data?._id}`} state={{mode: "edit"}}>
+                    <Link to={`/teacher/page/edit-exam/${data?._id}`} state={{mode: "Edit", exam_name: data?.name}}>
                         <Button onClick={() => null}>
                             <EditOutlined />
                         </Button>

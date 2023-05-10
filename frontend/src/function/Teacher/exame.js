@@ -9,6 +9,14 @@ export const listExam = async (authtoken) =>
         }
     });
 
+// GET: /get-exam/:id
+export const getExam = async (authtoken, id) =>
+    await axios.get(process.env.REACT_APP_API + `/get-exam/${id}`, {
+        headers: {
+            authtoken,
+        }
+    });
+
 // DELETE: /remove-exam
 export const removeExam = async (authtoken, id) =>
     await axios.delete(process.env.REACT_APP_API + `/remove-exam/${id}`, {
