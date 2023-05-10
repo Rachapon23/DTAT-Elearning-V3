@@ -156,6 +156,7 @@ exports.removeExam = async (req, res) => {
         let error_deleteFile = false
         if (exam) {
             await Quiz.deleteMany({ _id: { $in: exam?.quiz } })
+            console.log(exam?.quiz)
             if (exam?.quiz) {
                 exam?.quiz.forEach(item => {
                     fs.unlink(`./private/uploads/exam/${item.image.name}`,

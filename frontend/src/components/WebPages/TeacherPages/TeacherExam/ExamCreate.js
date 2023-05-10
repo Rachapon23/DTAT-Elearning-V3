@@ -419,67 +419,65 @@ const ExamCreate = () => {
     }
 
     const examInfo = useMemo(() => (
-        (
-            <Form
-                style={{ paddingTop: "2%" }}
-                form={form}
-                layout="vertical"
-                initialValues={{
-                    requiredMarkValue: requiredMark,
-                }}
-                onValuesChange={onRequiredTypeChange}
-                requiredMark={requiredMark}
-            >
-                <Row >
-                    <Col style={{ width: "100%" }}>
-                        <Form.Item label="Selected Course" required tooltip="This is a required field">
-                            {/* <Card> */}
-                            <Row align={"middle"} justify={"space-between"}>
-                                <Col style={{ width: "100%", height: "160px" }}>
-                                    <Table
-                                        dataSource={
-                                            currentSelected === null ? null : cousresWithOutQuiz.slice(currentSelected, currentSelected + 1)
-                                        }
-                                        columns={coursesCol}
-                                        pagination={false}
-                                    />
-                                </Col>
-                            </Row>
-                            {/* </Card> */}
-                        </Form.Item>
+        <Form
+            style={{ paddingTop: "2%" }}
+            form={form}
+            layout="vertical"
+            initialValues={{
+                requiredMarkValue: requiredMark,
+            }}
+            onValuesChange={onRequiredTypeChange}
+            requiredMark={requiredMark}
+        >
+            <Row >
+                <Col style={{ width: "100%" }}>
+                    <Form.Item label="Selected Course" required tooltip="This is a required field">
+                        {/* <Card> */}
+                        <Row align={"middle"} justify={"space-between"}>
+                            <Col style={{ width: "100%", height: "160px" }}>
+                                <Table
+                                    dataSource={
+                                        currentSelected === null ? null : cousresWithOutQuiz.slice(currentSelected, currentSelected + 1)
+                                    }
+                                    columns={coursesCol}
+                                    pagination={false}
+                                />
+                            </Col>
+                        </Row>
+                        {/* </Card> */}
+                    </Form.Item>
 
-                        <Form.Item label="Exam Name" required tooltip="This is a required field">
-                            <Input
-                                placeholder="Exam name"
-                                id="name"
-                                onChange={handleInputData}
-                                defaultValue={inputInfoData?.name}
-                            />
-                        </Form.Item>
+                    <Form.Item label="Exam Name" required tooltip="This is a required field">
+                        <Input
+                            placeholder="Exam name"
+                            id="name"
+                            onChange={handleInputData}
+                            defaultValue={inputInfoData?.name}
+                        />
+                    </Form.Item>
 
-                        <Form.Item
-                            label="Detail"
-                            tooltip={{
-                                title: 'Tooltip with customize icon',
-                                icon: <InfoCircleOutlined />,
-                            }}
-                        >
-                            <TextArea
-                                showCount
-                                maxLength={250}
-                                style={{ height: 120 }}
-                                id="detail"
-                                onChange={handleInputData}
-                                placeholder="Detail"
-                                defaultValue={inputInfoData?.detail}
-                            />
-                        </Form.Item>
+                    <Form.Item
+                        label="Detail"
+                        tooltip={{
+                            title: 'Tooltip with customize icon',
+                            icon: <InfoCircleOutlined />,
+                        }}
+                    >
+                        <TextArea
+                            showCount
+                            maxLength={250}
+                            style={{ height: 120 }}
+                            id="detail"
+                            onChange={handleInputData}
+                            placeholder="Detail"
+                            defaultValue={inputInfoData?.detail}
+                        />
+                    </Form.Item>
 
-                    </Col>
-                </Row>
+                </Col>
+            </Row>
 
-            </Form>
-        )
+        </Form>
     ), [coursesCol, cousresWithOutQuiz, currentSelected, form, inputInfoData?.detail, inputInfoData?.name, requiredMark])
 
     const examCreateFinished = useMemo(() => (
@@ -555,9 +553,9 @@ const ExamCreate = () => {
         </Form>
     ), [coursesCol, cousresWithOutQuiz, filterCourse, form, handleRowSelect, requiredMark])
 
+    const [currentPage, setCurrentPage] = useState(0);
     const pageList = useMemo(() => [selectCourse, examInfo, examContent, examCreateFinished], [examContent, examCreateFinished, examInfo, selectCourse])
     const [currentDisplay, setCurrentDisplay] = useState(pageList[0]);
-    const [currentPage, setCurrentPage] = useState(0);
     const steps = [
         {
             title: 'Select Course',
@@ -680,14 +678,14 @@ const ExamCreate = () => {
     // console.log(currentPage, examCreated, pageList)
 
     useEffect(() => {
-        if(currentPage === 0) fetchCourseWoQuiz()
+        if (currentPage === 0 && currentDisplay === pageList[0]) fetchCourseWoQuiz()
         handleDisplay()
         return () => {
             setHasChanged(false)
             setCreatedCard(false)
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hasChanged, firstLoad, selected, currentPage])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hasChanged, firstLoad, selected, currentPage, handleDisplay])
 
 
     const renderPageNav = () => {
