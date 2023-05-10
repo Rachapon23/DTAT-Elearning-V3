@@ -16,9 +16,9 @@ const { TextArea } = Input;
 
 
 
-const ExamCreate = () => {
+const ExamCreate = ({ mode = null }) => {
     const location = useLocation()
-    const managementMode = location?.state?.mode
+    const managementMode = mode ? mode : location?.state?.mode
     const pageSize = 4
 
     const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null | [{
@@ -66,7 +66,7 @@ const ExamCreate = () => {
             <Row align={"middle"} justify={"space-between"} >
                 <Col>
                     <Breadcrumb
-                        separator={<Title level={5} style={{ marginTop: "15px" }}> {">"} </Title>}
+                        separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
                         items={[
                             {
                                 title: <Title level={5} style={{ marginTop: "10px" }}><p >Exam</p></Title>,
@@ -80,7 +80,7 @@ const ExamCreate = () => {
                     />
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-                    <Link to="/teacher/page/listexam">
+                    <Link to="/teacher/page/list-exam">
                         <Button>
                             Back
                         </Button>
@@ -205,7 +205,7 @@ const ExamCreate = () => {
 
         // const { [choice_uuid]: removedChoice, ...updatedChoice } = inputContentData[card_uuid].choices
         // const { [card_uuid]: removedCard, ...updatedCard } = inputContentData
-        console.log("delete:", choice_index)
+        // console.log("delete:", choice_index)
         console.log(inputContentData[card_index].choices.slice(0, choice_index), " to ", inputContentData[card_index].choices.slice(choice_index + 1, inputContentData[card_index].choices.length))
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
@@ -727,6 +727,7 @@ const ExamCreate = () => {
     return (
         <Layout className="layout-content-create">
             {/* <NavBar page={"Exams"} /> */}
+            {JSON.stringify(managementMode)}
             <Row className="content">
 
                 <Col flex="auto" style={{ justifyContent: "center" }}>

@@ -49,12 +49,12 @@ const App = () => {
   const items = [
     getItem('Home', 'home', <HomeOutlined />),
     getItem('Course', 'course', <ReadOutlined />, [
-      getItem('List Course', 'listcourse'),
-      getItem('Create Course', 'createcourse'),
+      getItem('List Course', 'list-course'),
+      getItem('Create Course', 'create-course'),
     ]),
     getItem('Exam', 'exam', <ScheduleOutlined />, [
-      getItem('List Exam', 'listexam'),
-      getItem('Create Exam', 'createexam'),
+      getItem('List Exam', 'list-exam'),
+      getItem('Create Exam', 'create-exam'),
     ]),
     getItem('Calendar', 'calendar', <CalendarOutlined />),
   ];
@@ -70,14 +70,16 @@ const App = () => {
     switch(params) {
       case 'home': 
         return <TeacherHome/>;
-      case 'listcourse': 
+      case 'list-course': 
         return <CourseCreate/>;
-      case 'createcourse': 
+      case 'create-course': 
         return <CourseCreateB/>;
-      case 'listexam': 
+      case 'list-exam': 
         return <Exames/>;
-      case 'createexam': 
-        return <ExamCreate/>;
+      case 'create-exam': 
+        return <ExamCreate mode={"create"}/>;
+      case 'edit-exam':
+        return <ExamCreate mode={"edit"}/>;
       case 'calendar': 
         return <p className="success">Calendar</p>;
       default: 
@@ -97,6 +99,7 @@ const App = () => {
           className="menu-teacher"
           mode="inline"
           defaultSelectedKeys={[`${params}`]}
+          selectedKeys={[`${params}`]}
           items={items}
 
         />

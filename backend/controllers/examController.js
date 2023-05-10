@@ -159,14 +159,16 @@ exports.removeExam = async (req, res) => {
             console.log(exam?.quiz)
             if (exam?.quiz) {
                 exam?.quiz.forEach(item => {
-                    fs.unlink(`./private/uploads/exam/${item.image.name}`,
-                        (err) => {
-                            if (err) {
-                                console.log(err)
-                                error_deleteFile = true
+                    if (item?.image?.name) {
+                        fs.unlink(`./private/uploads/exam/${item.image.name}`,
+                            (err) => {
+                                if (err) {
+                                    console.log(err)
+                                    error_deleteFile = true
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 })
             }
         }

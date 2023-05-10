@@ -28,7 +28,7 @@ const Quizes = () => {
             <Row align={"middle"} justify={"space-between"} >
                 <Col>
                     <Breadcrumb
-                        separator={<Title level={5} style={{ marginTop: "15px" }}> {">"} </Title>}
+                        separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
                         items={[
                             {
                                 title: <Title level={5} style={{ marginTop: "10px" }}><p >Exam</p></Title>,
@@ -42,7 +42,7 @@ const Quizes = () => {
                     />
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-                    <Link to="/teacher/page/createexam" state={{mode: "create"}}>
+                    <Link to="/teacher/page/create-exam" state={{ mode: "create" }}>
                         <Button>
                             Create
                         </Button>
@@ -163,10 +163,13 @@ const Quizes = () => {
             width: '10%',
             render: (data) => {
                 const index = exams.indexOf(data);
+                console.log()
                 return (
-                    <Button onClick={() => null}>
-                        <EditOutlined />
-                    </Button>
+                    <Link to={`/teacher/page/edit-exam/${data?._id}`} state={{mode: "edit"}}>
+                        <Button onClick={() => null}>
+                            <EditOutlined />
+                        </Button>
+                    </Link>
                 )
             },
 
