@@ -8,6 +8,11 @@ import CardContent from "./CardContent";
 import "../teach.css"
 import { createExam, getCourseWoQuiz, getExam, updateExam } from "../../../../function/Teacher/exame";
 
+import ExamInfo from "./ExamInfo";
+import ExamSelectCourse from "./ExamSelectCourse";
+import ExamContent from "./ExamContent";
+import ExamCreateFinished from "./ExamCreateFinished";
+
 
 const { Title } = Typography;
 const { Meta } = Card;
@@ -21,7 +26,18 @@ const ExamCreate = ({ mode = null }) => {
     const managementMode = mode ? mode : location?.state?.mode
     const exam_edit_name = location?.state?.exam_name
     const [examEditId, setExamEditId] = useState(null)
-    const pageSize = 4
+
+    const [currentSelectedRadio, setCurentSelectedRadio] = useState(null)
+
+    const [cousreWithOutQuiz, setCourseWithOutQuiz] = useState(null | {
+        enabled: null,
+        name: "",
+        teacher: "",
+        image: null,
+        type: null,
+        _id: "",
+    })
+
 
     // const [exam, setExam] = useState({
     //     _id: null,
@@ -32,14 +48,7 @@ const ExamCreate = ({ mode = null }) => {
     //     teacher: null,
     // })
 
-    const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null | [{
-        enabled: null,
-        name: "",
-        teacher: "",
-        image: null,
-        type: null,
-        _id: "",
-    }])
+
     const [inputInfoData, setInputInfoData] = useState({
         name: "",
         course: "",
@@ -67,7 +76,7 @@ const ExamCreate = ({ mode = null }) => {
 
 
     const [hasChanged, setHasChanged] = useState(false);
-    const [firstLoad, setFirstLoad] = useState(false);
+
     const [createdCard, setCreatedCard] = useState(false);
     const [examCreated, setExamCreated] = useState(false);
     const [examId, setExamId] = useState(null);
@@ -124,54 +133,11 @@ const ExamCreate = ({ mode = null }) => {
         setRequiredMarkType(requiredMarkValue);
     };
 
-    const [selected, setSelected] = useState("");
-    const [currentSelected, setCurentSelected] = useState(null)
-
-    const handleRadioChange = (data) => {
-        setCurentSelected(data?.index)
-        setSelected(data?._id) // may remove later
-        setInputInfoData(prev => ({ ...prev, course: data?._id }))
-    }
 
 
 
-    const coursesCol = useMemo(() => ([
-        {
-            title: "Image",
-            dataIndex: 'image',
-            key: 'image',
-            align: "center",
-            width: "15%",
-        },
-        {
-            title: "Course",
-            dataIndex: 'name',
-            key: 'name',
-            width: "50%",
-        },
-        {
-            title: "Type",
-            dataIndex: 'type',
-            key: 'type',
-            align: "center",
-            render: (type) => type === true ? "Public" : "Private",
-        },
-        {
-            title: "Status",
-            dataIndex: 'status',
-            key: 'status',
-            align: "center",
-            render: (status) => status === true ? "Disable" : "Eanble",
-        },
-        {
-            title: "Select",
-            align: "center",
-            width: "10%",
-            render: (data) => {
-                return <Radio checked={selected === data?._id} onChange={(e) => handleRadioChange({ checked: e?.target?.checked, _id: data?._id, index: cousresWithOutQuiz.indexOf(data) })} />
-            },
-        },
-    ]), [cousresWithOutQuiz, selected])
+
+
 
     const onDeleteCardContent = useCallback((card_index) => {
         // const { [key]: removedProperty, ...updateData } = inputContentData;
@@ -296,12 +262,7 @@ const ExamCreate = ({ mode = null }) => {
         setHasChanged(true)
     }, [inputContentData])
 
-    const handleCreateContent = useCallback(() => {
-        setInputContentData((prev) => [...prev, inputContentTemplate])
-        // console.log(inputContentData)
-        setHasChanged(true)
-        setCreatedCard(true)
-    }, [inputContentTemplate])
+
 
     const handleUploadImage = useCallback((card_index, data) => {
         // console.log(data)
@@ -321,273 +282,39 @@ const ExamCreate = ({ mode = null }) => {
         setHasChanged(true)
     }, [inputContentData])
 
-    const cardEmptyContent = useMemo(() => (
-        <Card>
-            <Row justify={"center"}>
-                <Col>
-                    <Empty
-                        image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                        imageStyle={{
-                            height: 60,
-                        }}
-                        // style={{height: "100%"}}
-                        description={
-                            <span>
-                                No Content
-                            </span>
-                        }
-                    >
-                        <Button type="primary" onClick={handleCreateContent}>Create Now</Button>
-                    </Empty>
-                </Col>
-            </Row>
-        </Card >
-    ), [handleCreateContent])
 
-    const examContent = useMemo(() => (
-        <Form
-            style={{ paddingTop: "2%" }}
-            form={form}
-            layout="vertical"
-            initialValues={{
-                requiredMarkValue: requiredMark,
-            }}
-            onValuesChange={onRequiredTypeChange}
-            requiredMark={requiredMark}
-        >
-            {/* {JSON.stringify(Object.keys(inputContentData).length)} */}
-            <Row justify={"center"}>
-                {/* <Col style={{ width: "5%" }} /> */}
-                {/* {console.log(selectedCard)} */}
-                <Col style={{ width: "95%" }} >
-                    <Row style={{ paddingTop: "1%" }}>
-                        <Col
-                            flex="auto"
-                        // style={{ height: "570px", }}
-
-                        >
-                            {
-                                Object.keys(inputContentData).length === 0 ?
-                                    (
-                                        cardEmptyContent
-                                    )
-                                    :
-                                    (
-                                        Object.keys(inputContentData).map((key, index) => (
-                                            <CardContent
-                                                key={key}
-                                                // uuid={key}
-                                                index={index}
-                                                head={inputInfoData}
-                                                data={inputContentData[key]}
-                                                examID={examId}
-                                                onCreate={createdCard}
-                                                onDelete={onDeleteCardContent}
-                                                onChange={onChangeCardContent}
-                                                onAddChoice={onAddCardChoice}
-                                                onRemoveChoice={onRemoveCardChoice}
-                                                onChangeChoiceAnswer={handleChangeChoiceAnswer}
-                                                onChangeChoiceQuestion={handleChangeChoiceQuestion}
-                                                onUploadImage={handleUploadImage}
-                                            />
-                                        ))
-                                    )
-                            }
-                        </Col>
-                        <Col style={{ paddingLeft: "1%" }} >
-
-                            {
-                                Object.keys(inputContentData).length !== 0 ?
-                                    (
-                                        <Card className="card-nlf">
-                                            <Row align={"middle"} justify={"center"} style={{ height: "100%" }}>
-                                                <Col flex={"auto"}>
-                                                    <Row justify={"center"} >
-                                                        <Tooltip title={"Add topic"} placement="left">
-                                                            <Button type="text" onClick={handleCreateContent} >
-                                                                <PlusSquareOutlined style={{ fontSize: "140%" }} />
-                                                            </Button>
-                                                        </Tooltip>
-                                                    </Row>
-                                                    <Row justify={"center"}>
-                                                        <Tooltip title={"Go to top page"} placement="left" >
-                                                            <Button type="text" onClick={() => window.scrollTo(0, 0)}>
-                                                                <UpOutlined style={{ fontSize: "140%" }} />
-                                                            </Button>
-                                                        </Tooltip>
-                                                    </Row>
-                                                    <Row justify={"center"}>
-                                                        <Tooltip title={"Go to buttom page"} placement="left">
-                                                            <Button type="text" onClick={() => window.scrollTo(0, document.body.scrollHeight)}>
-                                                                <DownOutlined style={{ fontSize: "140%" }} />
-                                                            </Button>
-                                                        </Tooltip>
-                                                    </Row>
-                                                </Col>
-                                            </Row>
-                                        </Card>
-                                    )
-                                    :
-                                    (
-                                        null
-                                    )
-                            }
-
-                        </Col>
-                    </Row>
-                </Col>
-            </Row>
-
-        </Form>
-    ), [cardEmptyContent, createdCard, examId, form, handleChangeChoiceAnswer, handleChangeChoiceQuestion, handleCreateContent, handleUploadImage, inputContentData, inputInfoData, onAddCardChoice, onChangeCardContent, onDeleteCardContent, onRemoveCardChoice, requiredMark])
 
     const handleInputData = (e) => {
         setInputInfoData((inputInfoData) => ({ ...inputInfoData, [e.target.id]: e.target.value }))
     }
 
-    const examInfo = useMemo(() => (
-        <Form
-            style={{ paddingTop: "2%" }}
-            form={form}
-            layout="vertical"
-            initialValues={{
-                requiredMarkValue: requiredMark,
-            }}
-            onValuesChange={onRequiredTypeChange}
-            requiredMark={requiredMark}
-        >
-            <Row >
-                <Col style={{ width: "100%" }}>
-                    {
-                        managementMode === "Create" ?
-                            (
-                                <Form.Item label="Selected Course" required tooltip="This is a required field">
-                                    {/* <Card> */}
-                                    <Row align={"middle"} justify={"space-between"}>
-                                        <Col style={{ width: "100%", height: "160px" }}>
-                                            <Table
-                                                dataSource={
-                                                    currentSelected === null ? null : cousresWithOutQuiz.slice(currentSelected, currentSelected + 1)
-                                                }
-                                                columns={coursesCol}
-                                                pagination={false}
-                                            />
-                                        </Col>
-                                    </Row>
-                                    {/* </Card> */}
-                                </Form.Item>
-                            ) : (null)
-                    }
-
-                    <Form.Item label="Exam Name" required tooltip="This is a required field">
-                        <Input
-                            placeholder="Exam name"
-                            id="name"
-                            onChange={handleInputData}
-                            value={inputInfoData?.name}
-                        />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Detail"
-                        tooltip={{
-                            title: 'Tooltip with customize icon',
-                            icon: <InfoCircleOutlined />,
-                        }}
-                    >
-                        <TextArea
-                            showCount
-                            maxLength={250}
-                            style={{ height: 120 }}
-                            id="detail"
-                            onChange={handleInputData}
-                            placeholder="Detail"
-                            value={inputInfoData?.detail}
-                        />
-                    </Form.Item>
-
-                </Col>
-            </Row>
-
-        </Form>
-    ), [coursesCol, cousresWithOutQuiz, currentSelected, form, inputInfoData?.detail, inputInfoData?.name, managementMode, requiredMark])
-
-    const examCreateFinished = useMemo(() => (
-        <Row align={"middle"} justify={"center"} style={{ height: "400px" }}>
-            <Col >
-                <Result
-                    status="success"
-                    title="Successfully Purchased Cloud Server ECS!"
-                    subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
-                    extra={[
-                        <Link to="/teacher/page/listexam">
-                            <Button type="primary" key="console" onClick={() => setCurrentPage(0)}>
-                                Back To List Exam
-                            </Button>
-                        </Link>,
-                        // <Button key="buy">Buy Again</Button>,
-                    ]}
-                />
-            </Col>
-        </Row>
-    ), [])
-
-    const handleRowSelect = useCallback((e, index) => {
-        if (e.target.innerText === "Preview") return
-        handleRadioChange({ _id: cousresWithOutQuiz[index]._id, index: index })
-    }, [cousresWithOutQuiz])
-
-
-    const [currentCoursePage, setCurrentCoursePage] = useState(1);
-    const [keyword, setKeyword] = useState("");
-    const handleSearch = (e) => {
-        setKeyword(`${e.target.value.toLowerCase()}`)
-        setCurrentCoursePage(1)
-    }
-
-    const filterCourse = useCallback((data) => {
-        if (!data) return
-        return data.filter((item) => {
-            return item?.name?.toLowerCase().indexOf(keyword) >= 0;
-        }).slice(pageSize * (currentCoursePage - 1), (pageSize * (currentCoursePage - 1)) + pageSize)
-    }, [currentCoursePage, keyword])
 
     // const filterCourse = (data) => {
     //     if(!data) return
     //     console.log(data)
     // }
 
-    const selectCourse = useMemo(() => (
-        <Form
-            style={{ paddingTop: "2%" }}
-            form={form}
-            layout="vertical"
-            initialValues={{
-                requiredMarkValue: requiredMark,
-            }}
-            onValuesChange={onRequiredTypeChange}
-            requiredMark={requiredMark}
-        >
-            <Row >
-                <Col style={{ width: "100%" }}>
-                    <Form.Item label="Select Course" required tooltip="This is a required field">
-                        <Input placeholder="Search course" prefix={<SearchOutlined />} onChange={handleSearch} />
-                        {console.log("select rendered")}
-                        <Table style={{ paddingTop: "1%" }} dataSource={filterCourse(cousresWithOutQuiz)} columns={coursesCol} onRow={(_, index) => {
-                            
-                            return {
-                                onClick: (e) => handleRowSelect(e, index),
-                            }
-                        }} />
-                    </Form.Item>
-                </Col>
-            </Row>
+    // const selectCourse = useMemo(() => (
 
-        </Form>
-    ), [coursesCol, cousresWithOutQuiz, filterCourse, form, handleRowSelect, requiredMark])
+    // ), [form, requiredMark])
 
     const [currentPage, setCurrentPage] = useState(0);
-    const [pageList, setPageList] = useState([selectCourse, examInfo, examContent, examCreateFinished])
+    const [pageList, setPageList] = useState([
+        <ExamSelectCourse
+            onSetCousreWithOutQuiz={setCourseWithOutQuiz}
+            onSetInputInfoData={setInputInfoData}
+            onSetCurentSelectedRadio={setCurentSelectedRadio}
+
+        />,
+        <ExamInfo
+            actionMode={"Create"}
+            cousreWithOutQuiz={cousreWithOutQuiz}
+            onSetInputInfoData={setInputInfoData}
+            currentSelectedRadio={currentSelectedRadio}
+        />,
+        <ExamContent />,
+        <ExamCreateFinished />
+    ])
     const [currentDisplay, setCurrentDisplay] = useState(pageList[0]);
 
     const steps = useMemo(() => {
@@ -629,21 +356,6 @@ const ExamCreate = ({ mode = null }) => {
 
     // const [displayMode, setDisplayMode] = useState("List");
 
-    const fetchCourseWoQuiz = async () => {
-        await getCourseWoQuiz(sessionStorage.getItem("token"))
-            .then(
-                (res) => {
-                    const data = res.data.data;
-                    setCousresWithOutQuiz(data);
-                    setFirstLoad(true);
-                }
-            )
-            .catch(
-                (err) => {
-                    console.log(err)
-                }
-            )
-    }
 
     const fetchExam = useCallback(async () => {
         await getExam(sessionStorage.getItem("token"), examEditId)
@@ -668,7 +380,28 @@ const ExamCreate = ({ mode = null }) => {
     }, [examEditId])
 
     const renderDisplay = () => {
-        return currentDisplay
+        switch (currentPage) {
+            case 0: return (
+                <ExamSelectCourse
+                    inputInfoData={inputInfoData}
+                    onSetCousreWithOutQuiz={setCourseWithOutQuiz}
+                    onSetInputInfoData={setInputInfoData}
+                    onSetCurentSelectedRadio={setCurentSelectedRadio}
+                />
+            );
+            case 1: return (
+                <ExamInfo
+                    actionMode={"Create"}
+                    cousreWithOutQuiz={cousreWithOutQuiz}
+                    onSetInputInfoData={setInputInfoData}
+                    inputInfoData={inputInfoData}
+                    currentSelectedRadio={currentSelectedRadio}
+                />
+            );
+            case 2: return (< ExamContent />);
+            case 3: return (<ExamCreateFinished />);
+            default: return (<>404 Not Found...</>);
+        }
     }
 
     const submmitCreateExam = useCallback(async () => {
@@ -718,12 +451,13 @@ const ExamCreate = ({ mode = null }) => {
             if (mode.target.innerText === "Next") {
                 if (currentPage + 1 <= pageList.length) {
                     setCurrentPage(currentPage + 1);
+                    console.log("mext")
                 }
-                if (currentPage === 1 && currentPage + 1 === 2 && !examCreated) {
-                    submmitCreateExam()
-                    setExamCreated(true)
-                }
-                setKeyword("")
+                // if (currentPage === 1 && currentPage + 1 === 2 && !examCreated) {
+                //     submmitCreateExam()
+                //     setExamCreated(true)
+                // }
+                // setKeyword("")
 
             }
             else if (mode.target.innerText === "Previous") {
@@ -731,29 +465,31 @@ const ExamCreate = ({ mode = null }) => {
                     // console.log(pageList[currentPage - 1])
                     setCurrentPage(currentPage - 1);
                 }
-                setKeyword("")
+                // setKeyword("")
 
             }
             else if (mode.target.innerText === "Done") {
                 let success = submmitUpdateExam()
-                setKeyword("")
+                // setKeyword("")
                 if (success) {
                     setCurrentPage(pageList.length - 1)
                 }
 
             }
+            setHasChanged(true)
         }
-        setCurrentDisplay(pageList[currentPage]);
-        console.log("SSS")
+        // console.log("HEY UPDATED")
+        // setCurrentDisplay(pageList[currentPage]);
 
-    }, [currentPage, examCreated, pageList, submmitCreateExam, submmitUpdateExam])
+    }, [currentPage, pageList, submmitUpdateExam])
 
     // console.log(currentPage, examCreated, pageList)
 
     useEffect(() => {
+        handleDisplay()
         // if (currentPage === 0 && currentDisplay === pageList[0]) {
         //     if (managementMode === "Create") {
-        fetchCourseWoQuiz()
+        // fetchCourseWoQuiz()
         // setPageList(() => [selectCourse, examInfo, examContent, examCreateFinished])
 
         //     }
@@ -764,12 +500,12 @@ const ExamCreate = ({ mode = null }) => {
         //     }
         //     setCurrentDisplay(pageList[0])
         // }
-        handleDisplay()
+
         return () => {
             setHasChanged(false)
             setCreatedCard(false)
         }
-    }, [hasChanged, firstLoad, selected, currentPage, managementMode, handleDisplay, fetchExam, examEditId])
+    }, [hasChanged, currentPage, managementMode, handleDisplay, fetchExam, examEditId])
 
 
     const renderPageNav = () => {
@@ -780,7 +516,7 @@ const ExamCreate = ({ mode = null }) => {
                         (
                             <>
                                 <Col>
-                                    <Button onClick={() => console.log(currentSelected, inputInfoData, inputContentData)}> Preview</Button>
+                                    <Button onClick={() => console.log(cousreWithOutQuiz, inputInfoData, inputContentData)}> Preview</Button>
                                 </Col>
 
                                 <Col>
@@ -794,7 +530,8 @@ const ExamCreate = ({ mode = null }) => {
                                             {
                                                 managementMode === "Create" ?
                                                     (
-                                                        <Button type="primary" disabled={!selected} onClick={handleDisplay}>{currentPage === pageList.length - 2 ? "Done" : "Next"}</Button>
+                                                        <Button type="primary" //disabled={!selected} 
+                                                            onClick={handleDisplay}>{currentPage === pageList.length - 2 ? "Done" : "Next"}</Button>
                                                     )
                                                     :
                                                     (
