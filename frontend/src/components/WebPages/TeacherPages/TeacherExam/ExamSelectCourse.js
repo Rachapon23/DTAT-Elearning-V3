@@ -23,7 +23,7 @@ const ExamSelectCourse = ({
     const [selectedRadio, setSelectedRadio] = useState(inputInfoData?.course);
     
     // const [firstLoad, setFirstLoad] = useState(false);
-    console.log("course must be: ",selectedRadio,  " END")
+    // console.log("course must be: ",selectedRadio,  " END")
     
     const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null | [{
         enabled: null,
@@ -67,7 +67,6 @@ const ExamSelectCourse = ({
             align: "center",
             width: "10%",
             render: (data) => {
-                console.log(data._id, selectedRadio)
                 return <Radio checked={selectedRadio === data?._id} onChange={(e) => handleRadioChange({ checked: e?.target?.checked, _id: data?._id, index: cousresWithOutQuiz.indexOf(data) })} />
             },
         },
@@ -112,7 +111,7 @@ const ExamSelectCourse = ({
     const handleRowSelect = (e, index) => {
         // console.log(e, index)
         if (e.target.innerText === "Preview") return
-        handleRadioChange({ _id: cousresWithOutQuiz[index]._id, index: index })
+        handleRadioChange({ _id: cousresWithOutQuiz[index]?._id, index: index })
     }
 
     const handleRadioChange = (data) => {

@@ -15,8 +15,8 @@ const AdminHomePage = () => {
         }}
       >
         <Redirect />
-        <Plant />
-        <Room/>
+        <Plant key={"Plant"} />
+        <Room key={"Room"}/>
       </Space>
     </div>
   );

@@ -66,8 +66,6 @@ const App = () => {
     // getItem('Contact', '#',),
   ];
 
-  const [actionModeExam, setActionModeExam] = useState("Create")
-
   const renderContent = React.useCallback(() => {
     switch(params) {
       case 'home': 
@@ -82,6 +80,8 @@ const App = () => {
         return <ExamCreate mode={"Create"}/>;
       case 'edit-exam':
         return <ExamCreate mode={"Edit"}/>;
+      // case 'preview-exam':
+      //   return <ExamCreate mode={"Preview"}/>;
       case 'calendar': 
         return <p className="success">Calendar</p>;
       default: 

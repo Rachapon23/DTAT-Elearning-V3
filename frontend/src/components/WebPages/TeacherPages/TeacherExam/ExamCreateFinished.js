@@ -19,7 +19,7 @@ const ExamCreateFinished = ({
                     title="Successfully Purchased Cloud Server ECS!"
                     subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
                     extra={[
-                        <Link to="/teacher/page/listexam">
+                        <Link to="/teacher/page/list-exam">
                             <Button type="primary" key="console" onClick={() => setCurrentPage(0)}>
                                 Back To List Exam
                             </Button>

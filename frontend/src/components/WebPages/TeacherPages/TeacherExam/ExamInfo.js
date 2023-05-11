@@ -15,17 +15,20 @@ const { TextArea } = Input;
 const ExamInfo = ({
     actionMode = null,
     inputInfoData = null,
-    currentSelectedRadio = null,
     cousreWithOutQuiz = null,
     onSetInputInfoData = null,
 }) => {
 
-    console.log("course:", cousreWithOutQuiz)
+    console.log(actionMode)
     const [form] = Form.useForm();
     const [requiredMark, setRequiredMarkType] = useState('optional');
     const onRequiredTypeChange = ({ requiredMarkValue }) => {
         setRequiredMarkType(requiredMarkValue);
     };
+    const createMode = actionMode === "Create"
+    const editMode = actionMode === "Edit"
+    const previewMode = actionMode === "Preview"
+
 
     const coursesCol = [
         {
@@ -69,8 +72,6 @@ const ExamInfo = ({
         onSetInputInfoData((inputInfoData) => ({ ...inputInfoData, [e.target.id]: e.target.value }))
     }
 
-
-
     return (
         <Form
             style={{ paddingTop: "2%" }}
@@ -85,10 +86,9 @@ const ExamInfo = ({
             <Row >
                 <Col style={{ width: "100%" }}>
                     {
-                        actionMode === "Create" ?
+                        createMode ?
                             (
                                 <Form.Item label="Selected Course" required tooltip="This is a required field">
-                                    {/* <Card> */}
                                     <Row align={"middle"} justify={"space-between"}>
                                         <Col style={{ width: "100%", height: "160px" }}>
                                             {
@@ -102,36 +102,58 @@ const ExamInfo = ({
                                             }
                                         </Col>
                                     </Row>
-                                    {/* </Card> */}
                                 </Form.Item>
                             ) : (null)
                     }
 
-                    <Form.Item label="Exam Name" required tooltip="This is a required field">
-                        <Input
-                            placeholder="Exam name"
-                            id="name"
-                            onChange={handleInputInfoData}
-                            value={inputInfoData?.name}
-                        />
+                    <Form.Item
+                        label="Exam Name"
+                        required
+                        tooltip={editMode ? "This is a required field" : null}
+                    >
+                        {
+                            editMode || createMode ?
+                                (
+                                    <Input
+                                        placeholder="Exam name"
+                                        id="name"
+                                        onChange={handleInputInfoData}
+                                        value={inputInfoData?.name}
+                                    />
+                                )
+                                :
+                                (
+                                    previewMode ? (<> {inputInfoData?.name} </>) : (null)
+                                )
+                        }
                     </Form.Item>
 
                     <Form.Item
                         label="Detail"
-                        tooltip={{
+                        required={previewMode}
+                        tooltip={editMode ? {
                             title: 'Tooltip with customize icon',
                             icon: <InfoCircleOutlined />,
-                        }}
+                        } : null}
                     >
-                        <TextArea
-                            showCount
-                            maxLength={250}
-                            style={{ height: 120 }}
-                            id="detail"
-                            onChange={handleInputInfoData}
-                            placeholder="Detail"
-                            value={inputInfoData?.detail}
-                        />
+                        {
+                            editMode || createMode ?
+                                (
+                                    <TextArea
+                                        showCount
+                                        maxLength={250}
+                                        style={{ height: 120 }}
+                                        id="detail"
+                                        onChange={handleInputInfoData}
+                                        placeholder="Detail"
+                                        value={inputInfoData?.detail}
+                                    />
+                                )
+                                :
+                                (
+                                    previewMode ? (<> {inputInfoData?.detail} </>) : (null)
+                                )
+                        }
                     </Form.Item>
 
                 </Col>

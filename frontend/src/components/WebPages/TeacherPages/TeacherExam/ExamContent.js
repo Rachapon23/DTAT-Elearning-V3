@@ -11,21 +11,23 @@ import { createExam, getCourseWoQuiz, getExam, updateExam } from "../../../../fu
 import CardEmptyContent from "./CardEmptyContent";
 
 const ExamContent = ({
-    inputInfoData=null,
-    inputContentData={},
-    examId=null,
-    onCreatedCard=null,
-    onDeleteCardContent=null,
-    onChangeCardContent=null,
-    onAddCardChoice=null,
-    onRemoveCardChoice=null,
-    handleChangeChoiceAnswer=null,
-    handleChangeChoiceQuestion=null,
-    handleUploadImage=null,
-    handleCreateContent=null,
+    actionMode=null,
+    inputInfoData = null,
+    inputContentData = [],
+    examId = null,
+    onCreatedCard = null,
+    onDeleteCardContent = null,
+    onChangeCardContent = null,
+    onAddCardChoice = null,
+    onRemoveCardChoice = null,
+    handleChangeChoiceAnswer = null,
+    handleChangeChoiceQuestion = null,
+    handleUploadImage = null,
+    handleCreateContent = null,
+    inputContentTemplate = null,
+    onAddCardContent = null,
 
 }) => {
-
 
     const [form] = Form.useForm();
     const [requiredMark, setRequiredMarkType] = useState('optional');
@@ -60,7 +62,10 @@ const ExamContent = ({
                             {
                                 Object.keys(inputContentData).length === 0 ?
                                     (
-                                        <CardEmptyContent/>
+                                        <CardEmptyContent
+                                            inputContentTemplate={inputContentTemplate}
+                                            onAddCardContent={onAddCardContent}
+                                        />
                                     )
                                     :
                                     (
@@ -70,6 +75,7 @@ const ExamContent = ({
                                                 // uuid={key}
                                                 index={index}
                                                 head={inputInfoData}
+                                                actionMode={actionMode}
                                                 data={inputContentData[key]}
                                                 examID={examId}
                                                 onCreate={onCreatedCard}
@@ -95,7 +101,7 @@ const ExamContent = ({
                                                 <Col flex={"auto"}>
                                                     <Row justify={"center"} >
                                                         <Tooltip title={"Add topic"} placement="left">
-                                                            <Button type="text" onClick={handleCreateContent} >
+                                                            <Button type="text" onClick={onAddCardContent} >
                                                                 <PlusSquareOutlined style={{ fontSize: "140%" }} />
                                                             </Button>
                                                         </Tooltip>

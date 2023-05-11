@@ -10,16 +10,11 @@ import { createExam, getCourseWoQuiz, getExam, updateExam } from "../../../../fu
 
 const CardEmptyContent = ({
     inputContentTemplate=null,
-    onInputContentData=null,
+    onAddCardContent=null,
 
 }) => {
 
-    const handleCreateContent = () => {
-        onInputContentData((prev) => [...prev, inputContentTemplate])
-        // console.log(inputContentData)
-        // setHasChanged(true)
-        // setCreatedCard(true)
-    }
+    
 
     return (
         <Card>
@@ -37,7 +32,7 @@ const CardEmptyContent = ({
                             </span>
                         }
                     >
-                        <Button type="primary" onClick={handleCreateContent}>Create Now</Button>
+                        <Button type="primary" onClick={onAddCardContent}>Create Now</Button>
                     </Empty>
                 </Col>
             </Row>

@@ -1,31 +1,56 @@
-import React, { useEffect, useRef, useCallback, useMemo } from "react";
-import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, InfoCircleOutlined, CloseOutlined, PictureOutlined, UpOutlined, DownOutlined, PlusSquareOutlined } from '@ant-design/icons';
-import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result } from 'antd';
-import NavBar from "../../../Layout/NavBar"
+import React, { useEffect, useCallback, useMemo } from "react";
+import { Card, Col, Layout, Row, Button, Typography, Breadcrumb, Steps, Form, } from 'antd';
 import { useState } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
-import CardContent from "./CardContent";
+import { Link, useLocation } from "react-router-dom";
 import "../teach.css"
-import { createExam, getCourseWoQuiz, getExam, updateExam } from "../../../../function/Teacher/exame";
+import { createExam, getExam, updateExam } from "../../../../function/Teacher/exame";
 
 import ExamInfo from "./ExamInfo";
 import ExamSelectCourse from "./ExamSelectCourse";
 import ExamContent from "./ExamContent";
 import ExamCreateFinished from "./ExamCreateFinished";
 
-
 const { Title } = Typography;
-const { Meta } = Card;
-const { Header, Content, Footer, Sider } = Layout;
-const { TextArea } = Input;
-
-
 
 const ExamCreate = ({ mode = null }) => {
     const location = useLocation()
-    const managementMode = mode ? mode : location?.state?.mode
-    const exam_edit_name = location?.state?.exam_name
-    const [examEditId, setExamEditId] = useState(null)
+    const [managementMode, setManagementMode] = useState(mode ? mode : location?.state?.mode)
+    const examEditName = location?.state?.exam_name
+
+    const [editExamLoaeded, setEditExamLoaeded] = useState(false)
+
+    // do not use these variable to check before change mode, it may cause to mode cannot change 
+    const createMode = mode && mode === "Create"
+    const editMode = mode && mode === "Edit"
+    const previewMode = mode && mode === "Preview"
+
+    const examEditId = editMode ? location.pathname.split("/")[location.pathname.split("/").length - 1] : null
+    const createSteps = useMemo(() => [
+        {
+            title: 'Select Course',
+            content: 'First-content',
+        },
+        {
+            title: 'Exam Info',
+            content: 'Second-content',
+        },
+        {
+            title: 'Content',
+            content: 'Last-content',
+        },
+    ], [])
+    const editSteps = useMemo(() => [
+        {
+            title: 'Exam Info',
+            content: 'Second-content',
+        },
+        {
+            title: 'Content',
+            content: 'Last-content',
+        },
+    ], [])
+    const pageStepLength = createMode ? createSteps.length + 1 : editMode ? editSteps.length + 1 : 0
+
 
     const [currentSelectedRadio, setCurentSelectedRadio] = useState(null)
 
@@ -37,16 +62,6 @@ const ExamCreate = ({ mode = null }) => {
         type: null,
         _id: "",
     })
-
-
-    // const [exam, setExam] = useState({
-    //     _id: null,
-    //     course: null,
-    //     name: null,
-    //     detail: null,
-    //     quiz: [],
-    //     teacher: null,
-    // })
 
 
     const [inputInfoData, setInputInfoData] = useState({
@@ -66,14 +81,6 @@ const ExamCreate = ({ mode = null }) => {
     ), [])
     const [inputContentData, setInputContentData] = useState([])
 
-    // const [image, setImage] = useState([{
-    //     uid: '0',
-    //     name: 'xxx.png',
-    //     status: "done",//'uploading',
-    //     thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    //     // percent: 33,
-    // }])
-
 
     const [hasChanged, setHasChanged] = useState(false);
 
@@ -87,7 +94,7 @@ const ExamCreate = ({ mode = null }) => {
                 <Col>
                     <Breadcrumb
                         separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
-                        items={managementMode === "Edit" ?
+                        items={editMode || previewMode ?
                             [
                                 {
                                     title: <Title level={5} style={{ marginTop: "10px" }}><p >Exam</p></Title>,
@@ -98,7 +105,7 @@ const ExamCreate = ({ mode = null }) => {
                                     key: "courses_action",
                                 },
                                 {
-                                    title: <Title level={5} style={{ marginTop: "10px" }}><p>{exam_edit_name}</p></Title>,
+                                    title: <Title level={5} style={{ marginTop: "10px" }}><p>{examEditName}</p></Title>,
                                     key: "courses_param",
                                 }
                             ]
@@ -127,17 +134,13 @@ const ExamCreate = ({ mode = null }) => {
         )
     }
 
-    const [form] = Form.useForm();
-    const [requiredMark, setRequiredMarkType] = useState('optional');
-    const onRequiredTypeChange = ({ requiredMarkValue }) => {
-        setRequiredMarkType(requiredMarkValue);
-    };
 
-
-
-
-
-
+    const handleAddCardContent = useCallback(() => {
+        setInputContentData((prev) => [...prev, inputContentTemplate])
+        // console.log(inputContentData)
+        // setHasChanged(true)
+        setCreatedCard(true)
+    }, [inputContentTemplate])
 
     const onDeleteCardContent = useCallback((card_index) => {
         // const { [key]: removedProperty, ...updateData } = inputContentData;
@@ -150,6 +153,7 @@ const ExamCreate = ({ mode = null }) => {
             ...nextCard
         ]))
         setHasChanged(true)
+        setCreatedCard(false)
         // setCardContentList(cardContentList => cardContentList.filter(card => card.key !== String(index)))
 
     }, [inputContentData])
@@ -191,7 +195,6 @@ const ExamCreate = ({ mode = null }) => {
         ]))
 
         setHasChanged(true)
-        // console.log("add", inputContentData)
     }, [inputContentData])
 
     const onRemoveCardChoice = useCallback((card_index, choice_index) => {
@@ -265,7 +268,6 @@ const ExamCreate = ({ mode = null }) => {
 
 
     const handleUploadImage = useCallback((card_index, data) => {
-        // console.log(data)
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: inputContentData[card_index]?.question,
@@ -284,9 +286,9 @@ const ExamCreate = ({ mode = null }) => {
 
 
 
-    const handleInputData = (e) => {
-        setInputInfoData((inputInfoData) => ({ ...inputInfoData, [e.target.id]: e.target.value }))
-    }
+    // const handleInputInfoData = (e) => {
+    //     setInputInfoData((inputInfoData) => ({ ...inputInfoData, [e.target.id]: e.target.value }))
+    // }
 
 
     // const filterCourse = (data) => {
@@ -294,63 +296,22 @@ const ExamCreate = ({ mode = null }) => {
     //     console.log(data)
     // }
 
-    // const selectCourse = useMemo(() => (
-
-    // ), [form, requiredMark])
 
     const [currentPage, setCurrentPage] = useState(0);
-    const [pageList, setPageList] = useState([
-        <ExamSelectCourse
-            onSetCousreWithOutQuiz={setCourseWithOutQuiz}
-            onSetInputInfoData={setInputInfoData}
-            onSetCurentSelectedRadio={setCurentSelectedRadio}
-
-        />,
-        <ExamInfo
-            actionMode={"Create"}
-            cousreWithOutQuiz={cousreWithOutQuiz}
-            onSetInputInfoData={setInputInfoData}
-            currentSelectedRadio={currentSelectedRadio}
-        />,
-        <ExamContent />,
-        <ExamCreateFinished />
-    ])
-    const [currentDisplay, setCurrentDisplay] = useState(pageList[0]);
 
     const steps = useMemo(() => {
-        if (managementMode === "Create") {
-            return [
-                {
-                    title: 'Select Course',
-                    content: 'First-content',
-                },
-                {
-                    title: 'Exam Info',
-                    content: 'Second-content',
-                },
-                {
-                    title: 'Content',
-                    content: 'Last-content',
-                },
-            ];
-        }
-        if (managementMode === "Edit") {
-            return [
-                {
-                    title: 'Exam Info',
-                    content: 'Second-content',
-                },
-                {
-                    title: 'Content',
-                    content: 'Last-content',
-                },
-            ];
-        }
-    }, [managementMode])
-    const items = steps.map((item) => ({
+        const createMode = mode && mode === "Create"
+        const editMode = mode && mode === "Edit"
+        const previewMode = mode && mode === "Preview"
+
+        if (createMode) return createSteps
+        if (editMode) return editSteps
+    }, [mode, createSteps, editSteps])
+
+    const items = steps ? steps.map((item) => ({
         key: item.title,
         title: item.title,
-    }));
+    })) : null
 
 
 
@@ -368,7 +329,8 @@ const ExamCreate = ({ mode = null }) => {
                         name: data?.name,
                     }))
                     // console.log(data?.quiz)
-                    setInputContentData(data?.quiz)
+                    setInputContentData(data?.quiz ? data?.quiz : [])
+                    setEditExamLoaeded(true)
 
                 }
             )
@@ -379,36 +341,105 @@ const ExamCreate = ({ mode = null }) => {
             )
     }, [examEditId])
 
-    const renderDisplay = () => {
+    const renderDisplay = useCallback(() => {
+        const createMode = mode && mode === "Create"
+        const editMode = mode && mode === "Edit"
+        const previewMode = mode && mode === "Preview"
+        const actioModeNotFound = <>Action mode does not exit</>
         switch (currentPage) {
-            case 0: return (
-                <ExamSelectCourse
-                    inputInfoData={inputInfoData}
-                    onSetCousreWithOutQuiz={setCourseWithOutQuiz}
-                    onSetInputInfoData={setInputInfoData}
-                    onSetCurentSelectedRadio={setCurentSelectedRadio}
-                />
-            );
-            case 1: return (
-                <ExamInfo
-                    actionMode={"Create"}
-                    cousreWithOutQuiz={cousreWithOutQuiz}
-                    onSetInputInfoData={setInputInfoData}
-                    inputInfoData={inputInfoData}
-                    currentSelectedRadio={currentSelectedRadio}
-                />
-            );
-            case 2: return (< ExamContent />);
-            case 3: return (<ExamCreateFinished />);
+            case 0:
+                if (createMode) {
+                    return (
+                        <ExamSelectCourse
+                            inputInfoData={inputInfoData}
+                            onSetCousreWithOutQuiz={setCourseWithOutQuiz}
+                            // onSetInputInfoData={handleInputInfoData}
+                            onSetInputInfoData={setInputInfoData}
+                            onSetCurentSelectedRadio={setCurentSelectedRadio}
+                        />
+                    );
+                }
+                else if (editMode || previewMode) {
+                    // console.log("dispaly: ", managementMode)
+                    return (
+                        <ExamInfo
+                            actionMode={managementMode}
+                            cousreWithOutQuiz={cousreWithOutQuiz}
+                            onSetInputInfoData={setInputInfoData}
+                            inputInfoData={inputInfoData}
+                            currentSelectedRadio={currentSelectedRadio}
+                        />
+                    );
+                }
+                else return actioModeNotFound
+            case 1:
+                if (createMode) {
+                    return (
+                        <ExamInfo
+                            actionMode={managementMode}
+                            cousreWithOutQuiz={cousreWithOutQuiz}
+                            onSetInputInfoData={setInputInfoData}
+                            inputInfoData={inputInfoData}
+                            currentSelectedRadio={currentSelectedRadio}
+                        />
+                    );
+                }
+                else if (editMode || previewMode) {
+                    return (
+                        <ExamContent
+                            examId={examEditId}
+                            actionMode={managementMode}
+                            onCreatedCard={createdCard}
+                            inputInfoData={inputInfoData}
+                            inputContentData={inputContentData}
+                            onAddCardContent={handleAddCardContent}
+                            onDeleteCardContent={onDeleteCardContent}
+                            onChangeCardContent={onChangeCardContent}
+                            onAddCardChoice={onAddCardChoice}
+                            onRemoveCardChoice={onRemoveCardChoice}
+                            handleChangeChoiceAnswer={handleChangeChoiceAnswer}
+                            handleChangeChoiceQuestion={handleChangeChoiceQuestion}
+                            handleUploadImage={handleUploadImage}
+                            inputContentTemplate={inputContentTemplate}
+                        />
+                    );
+                }
+                else return actioModeNotFound
+            case 2:
+                if (createMode) {
+                    return (
+                        <ExamContent
+                            examId={examId}
+                            actionMode={managementMode}
+                            onCreatedCard={createdCard}
+                            inputInfoData={inputInfoData}
+                            inputContentData={inputContentData}
+                            onAddCardContent={handleAddCardContent}
+                            onDeleteCardContent={onDeleteCardContent}
+                            onChangeCardContent={onChangeCardContent}
+                            onAddCardChoice={onAddCardChoice}
+                            onRemoveCardChoice={onRemoveCardChoice}
+                            handleChangeChoiceAnswer={handleChangeChoiceAnswer}
+                            handleChangeChoiceQuestion={handleChangeChoiceQuestion}
+                            handleUploadImage={handleUploadImage}
+                            inputContentTemplate={inputContentTemplate}
+                        />
+                    )
+                }
+                else if (editMode) return <ExamCreateFinished setCurrentPage={setCurrentPage} />
+                else return actioModeNotFound
+            case 3:
+                if (createMode) return (<ExamCreateFinished setCurrentPage={setCurrentPage} />)
+                else return
             default: return (<>404 Not Found...</>);
         }
-    }
+    }, [mode, currentPage, inputInfoData, managementMode, cousreWithOutQuiz, currentSelectedRadio, examEditId, createdCard, inputContentData, handleAddCardContent, onDeleteCardContent, onChangeCardContent, onAddCardChoice, onRemoveCardChoice, handleChangeChoiceAnswer, handleChangeChoiceQuestion, handleUploadImage, inputContentTemplate, examId])
 
     const submmitCreateExam = useCallback(async () => {
         const examData = {
             head: inputInfoData,
         }
-        console.log(examData)
+        // console.log(examData)
         await createExam(sessionStorage.getItem("token"), examData)
             .then(
                 (res) => {
@@ -429,8 +460,8 @@ const ExamCreate = ({ mode = null }) => {
             head: inputInfoData,
             body: inputContentData,
         }
-        console.log(examId)
-        await updateExam(sessionStorage.getItem("token"), examId, examData)
+        // console.log(examId)
+        await updateExam(sessionStorage.getItem("token"), examEditId, examData)
             .then(
                 (res) => {
                     console.log(res.data.data)
@@ -444,23 +475,28 @@ const ExamCreate = ({ mode = null }) => {
                 }
             )
         return status
-    }, [examId, inputContentData, inputInfoData])
+    }, [examEditId, examId, inputContentData, inputInfoData])
 
-    const handleDisplay = useCallback((mode) => {
-        if (mode) {
-            if (mode.target.innerText === "Next") {
-                if (currentPage + 1 <= pageList.length) {
+    const handleDisplay = useCallback((e) => {
+        const createMode = managementMode === "Create"
+        const editMode = managementMode === "Edit"
+        const previewMode = managementMode === "Preview"
+
+        if (e) {
+            const action = e.target.innerText
+
+            if (action === "Next" || action === "Create") {
+                if (currentPage + 1 <= pageStepLength) {
                     setCurrentPage(currentPage + 1);
-                    console.log("mext")
                 }
-                // if (currentPage === 1 && currentPage + 1 === 2 && !examCreated) {
-                //     submmitCreateExam()
-                //     setExamCreated(true)
-                // }
+                if (createMode && createSteps[currentPage].title === "Exam Info" && !examCreated) {
+                    submmitCreateExam()
+                    setExamCreated(true)
+                }
                 // setKeyword("")
 
             }
-            else if (mode.target.innerText === "Previous") {
+            else if (action === "Previous") {
                 if (currentPage - 1 >= 0) {
                     // console.log(pageList[currentPage - 1])
                     setCurrentPage(currentPage - 1);
@@ -468,11 +504,11 @@ const ExamCreate = ({ mode = null }) => {
                 // setKeyword("")
 
             }
-            else if (mode.target.innerText === "Done") {
+            else if ((createMode || editMode) && action === "Done") {
                 let success = submmitUpdateExam()
                 // setKeyword("")
                 if (success) {
-                    setCurrentPage(pageList.length - 1)
+                    setCurrentPage(pageStepLength - 1)
                 }
 
             }
@@ -481,42 +517,56 @@ const ExamCreate = ({ mode = null }) => {
         // console.log("HEY UPDATED")
         // setCurrentDisplay(pageList[currentPage]);
 
-    }, [currentPage, pageList, submmitUpdateExam])
+    }, [createSteps, currentPage, examCreated, managementMode, pageStepLength, submmitCreateExam, submmitUpdateExam])
 
     // console.log(currentPage, examCreated, pageList)
 
     useEffect(() => {
+        // console.log("re render")
         handleDisplay()
-        // if (currentPage === 0 && currentDisplay === pageList[0]) {
-        //     if (managementMode === "Create") {
-        // fetchCourseWoQuiz()
-        // setPageList(() => [selectCourse, examInfo, examContent, examCreateFinished])
-
-        //     }
-        //     if (managementMode === "Edit" ) {
-        if (examEditId) fetchExam()
-        //         
-        // setPageList(() => [examInfo, examContent, examCreateFinished])
-        //     }
-        //     setCurrentDisplay(pageList[0])
-        // }
+        if (examEditId && !editExamLoaeded) fetchExam()
 
         return () => {
             setHasChanged(false)
             setCreatedCard(false)
         }
-    }, [hasChanged, currentPage, managementMode, handleDisplay, fetchExam, examEditId])
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hasChanged, currentPage, managementMode, examEditId, editMode, editExamLoaeded])
+
+    // in the future may use this
+    // const isExamValid = useCallback(() => {
+    //     let result = true
+    //     result &&= (currentSelectedRadio !== null)
+
+    //     return result
+    // }, [])
+
+    console.log(managementMode)
+    const handleRenderPagebyMode = () => {
+        // console.log(managementMode)
+
+        console.log(inputContentData, inputInfoData)
+        if (managementMode === "Preview") return setManagementMode(() => "Edit")
+        if (managementMode === "Edit") return setManagementMode(() => "Preview")
+    }
 
     const renderPageNav = () => {
         return (
             <Row justify={"space-between"} style={{ height: "10%", marginBottom: "1%" }} >
+                {/* {JSON.stringify(currentPage)} */}
                 {
-                    currentPage !== pageList.length - 1 ?
+                    currentPage !== pageStepLength - 1 ?
                         (
                             <>
                                 <Col>
-                                    <Button onClick={() => console.log(cousreWithOutQuiz, inputInfoData, inputContentData)}> Preview</Button>
+                                    <Button onClick={handleRenderPagebyMode}>
+                                        {
+                                            managementMode === "Edit" ? "Preview" :
+                                                managementMode === "Preview" ? "Edit" :
+                                                    "Preview"
+                                        }
+                                    </Button>
                                 </Col>
 
                                 <Col>
@@ -528,16 +578,25 @@ const ExamCreate = ({ mode = null }) => {
                                         </Col>
                                         <Col>
                                             {
-                                                managementMode === "Create" ?
+                                                createMode ?
                                                     (
-                                                        <Button type="primary" //disabled={!selected} 
-                                                            onClick={handleDisplay}>{currentPage === pageList.length - 2 ? "Done" : "Next"}</Button>
+                                                        <Button type="primary"
+                                                            disabled={currentSelectedRadio === null}
+                                                            onClick={handleDisplay}
+                                                        >
+                                                            {currentPage === pageStepLength - 2 ? "Done" : createSteps[currentPage].title === "Exam Info" ? "Create" : "Next"}
+                                                        </Button>
                                                     )
                                                     :
                                                     (
-                                                        managementMode === "Edit" ?
+                                                        editMode ?
                                                             (
-                                                                <Button type="primary" onClick={handleDisplay}>{currentPage === pageList.length - 2 ? "Done" : "Next"}</Button>
+                                                                <Button
+                                                                    type="primary"
+                                                                    onClick={handleDisplay}
+                                                                >
+                                                                    {currentPage === pageStepLength - 2 ? "Done" : "Next"}
+                                                                </Button>
                                                             )
                                                             :
                                                             ("Action mode not found")
@@ -553,27 +612,32 @@ const ExamCreate = ({ mode = null }) => {
                             null
                         )
                 }
-            </Row>
+            </Row >
         )
     }
 
 
     return (
         <Layout className="layout-content-create">
-            {/* <NavBar page={"Exams"} /> */}
-            {JSON.stringify(managementMode)}
             <Row className="content">
 
                 <Col flex="auto" style={{ justifyContent: "center" }}>
                     <Card title={examCreateTitle()} className="card-create">
-                        <Row justify="space-between">
-                        </Row>
-                        <Row>
-                            <Steps items={items} current={currentPage} />
-                        </Row>
+                        {
+                            editMode || createMode ?
+                                (
+                                    <Row>
+                                        <Steps items={items} current={currentPage} />
+                                    </Row>
+                                )
+                                :
+                                (null)
+                        }
                         <Row
                             className="row-con"
-                            justify="center" style={{ paddingTop: "1%" }}>
+                            justify="center"
+                        // style={{ paddingTop: "0.5%" }}
+                        >
                             <Col flex={"auto"} className="col-con">
                                 {renderDisplay()}
                             </Col>
@@ -584,7 +648,7 @@ const ExamCreate = ({ mode = null }) => {
             </Row>
             <Row className="btn-bottom">
                 <Col flex={"auto"}>
-                    {currentPage < pageList.length ? renderPageNav() : null}
+                    {currentPage < pageStepLength ? renderPageNav() : null}
                 </Col>
             </Row>
 

@@ -311,7 +311,7 @@ exports.loadData = async () => {
         { question: "What is docker?" },
         {
             question: "What is docker?",
-            choice: [
+            choices: [
                 "Virtual machine",
                 "Operating system",
                 "Container technology",
@@ -327,7 +327,7 @@ exports.loadData = async () => {
         { question: "10 + 20 = ?" },
         {
             question: "10 + 20 = ?",
-            choice: [
+            choices: [
                 "10",
                 "20",
                 "30",
@@ -343,7 +343,7 @@ exports.loadData = async () => {
         { question: "20 + 20 = ?" },
         {
             question: "20 + 20 = ?",
-            choice: [
+            choices: [
                 "10",
                 "20",
                 "30",
