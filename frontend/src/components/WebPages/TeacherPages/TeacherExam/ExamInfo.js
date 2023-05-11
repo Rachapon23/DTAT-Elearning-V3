@@ -19,7 +19,7 @@ const ExamInfo = ({
     onSetInputInfoData = null,
 }) => {
 
-    console.log(actionMode)
+    // console.log(actionMode)
     const [form] = Form.useForm();
     const [requiredMark, setRequiredMarkType] = useState('optional');
     const onRequiredTypeChange = ({ requiredMarkValue }) => {

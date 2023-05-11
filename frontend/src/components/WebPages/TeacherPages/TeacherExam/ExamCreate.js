@@ -12,9 +12,11 @@ import ExamCreateFinished from "./ExamCreateFinished";
 
 const { Title } = Typography;
 
-const ExamCreate = ({ mode = null }) => {
+const ExamCreate = ({ mode = null, resetData = false }) => {
+
     const location = useLocation()
     const [managementMode, setManagementMode] = useState(mode ? mode : location?.state?.mode)
+    const [mainManagementMode] = useState(managementMode)
     const examEditName = location?.state?.exam_name
 
     const [editExamLoaeded, setEditExamLoaeded] = useState(false)
@@ -354,6 +356,7 @@ const ExamCreate = ({ mode = null }) => {
                             inputInfoData={inputInfoData}
                             onSetCousreWithOutQuiz={setCourseWithOutQuiz}
                             // onSetInputInfoData={handleInputInfoData}
+                            onSetInputContentData={setInputContentData}
                             onSetInputInfoData={setInputInfoData}
                             onSetCurentSelectedRadio={setCurentSelectedRadio}
                         />
@@ -460,8 +463,12 @@ const ExamCreate = ({ mode = null }) => {
             head: inputInfoData,
             body: inputContentData,
         }
-        // console.log(examId)
-        await updateExam(sessionStorage.getItem("token"), examEditId, examData)
+        const id = mainManagementMode === "Edit" ? examEditId :
+            mainManagementMode === "Create" ? examId : null
+
+        if (!id) return
+
+        await updateExam(sessionStorage.getItem("token"), id, examData)
             .then(
                 (res) => {
                     console.log(res.data.data)
@@ -521,6 +528,7 @@ const ExamCreate = ({ mode = null }) => {
 
     // console.log(currentPage, examCreated, pageList)
 
+
     useEffect(() => {
         // console.log("re render")
         handleDisplay()
@@ -542,13 +550,23 @@ const ExamCreate = ({ mode = null }) => {
     //     return result
     // }, [])
 
-    console.log(managementMode)
+    // console.log(managementMode)
     const handleRenderPagebyMode = () => {
-        // console.log(managementMode)
+        // console.log(managementMode, mainManagementMode)
 
-        console.log(inputContentData, inputInfoData)
-        if (managementMode === "Preview") return setManagementMode(() => "Edit")
-        if (managementMode === "Edit") return setManagementMode(() => "Preview")
+
+        switch (managementMode) {
+            case "Edit":
+                // console.log("set to preview")
+                return setManagementMode("Preview")
+            case "Create":
+                // console.log("set to preview")
+                return setManagementMode("Preview")
+            case "Preview":
+                // console.log("set to",mainManagementMode)
+                return setManagementMode(mainManagementMode)
+            default:
+        }
     }
 
     const renderPageNav = () => {
@@ -566,6 +584,14 @@ const ExamCreate = ({ mode = null }) => {
                                                 managementMode === "Preview" ? "Edit" :
                                                     "Preview"
                                         }
+                                    </Button>
+                                </Col>
+
+                                <Col>
+                                    <Button
+                                        onClick={() => console.log(inputInfoData, inputContentData)}
+                                    >
+                                        Debug
                                     </Button>
                                 </Col>
 

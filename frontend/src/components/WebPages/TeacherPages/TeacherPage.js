@@ -77,9 +77,9 @@ const App = () => {
       case 'list-exam': 
         return <Exames/>;
       case 'create-exam': 
-        return <ExamCreate mode={"Create"}/>;
+        return <ExamCreate mode={"Create"} />;
       case 'edit-exam':
-        return <ExamCreate mode={"Edit"}/>;
+        return <ExamCreate mode={"Edit"} />;
       // case 'preview-exam':
       //   return <ExamCreate mode={"Preview"}/>;
       case 'calendar': 

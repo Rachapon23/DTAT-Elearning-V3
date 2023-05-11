@@ -14,17 +14,18 @@ const { TextArea } = Input;
 const ExamSelectCourse = ({
     // cousresWithOutQuiz = null,
     // coursesCol = null,
-    inputInfoData=null,
+    onSetInputContentData=null,
+    inputInfoData = null,
     onSetInputInfoData = null,
     onSetCurentSelectedRadio = null,
-    onSetCousreWithOutQuiz=null,
+    onSetCousreWithOutQuiz = null,
 }) => {
     const pageSize = 4
     const [selectedRadio, setSelectedRadio] = useState(inputInfoData?.course);
-    
+
     // const [firstLoad, setFirstLoad] = useState(false);
     // console.log("course must be: ",selectedRadio,  " END")
-    
+
     const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null | [{
         enabled: null,
         name: "",
@@ -115,17 +116,26 @@ const ExamSelectCourse = ({
     }
 
     const handleRadioChange = (data) => {
+        onSetInputInfoData(() => ({
+            name: "",
+            course: "",
+            detail: "",
+        }))
+        onSetInputContentData([])
+
         onSetCurentSelectedRadio(data?.index)
         setSelectedRadio(data?._id) // may remove later
         onSetInputInfoData(prev => ({ ...prev, course: data?._id }))
-        
+
         onSetCousreWithOutQuiz(cousresWithOutQuiz[data?.index])
+
+        
     }
 
     useEffect(() => {
         fetchCourseWoQuiz()
         return () => {
-            
+
         }
     }, [])
 
