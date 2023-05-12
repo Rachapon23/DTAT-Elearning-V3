@@ -10,7 +10,7 @@ const { Title } = Typography;
 const { Meta } = Card;
 const { Header, Content, Footer, Sider } = Layout;
 
-const Quizes = () => {
+const Exams = () => {
 
     const [exams, setExams] = useState(null | [{
         _id: "",
@@ -336,4 +336,4 @@ const Quizes = () => {
     )
 }
 
-export default Quizes;
+export default Exams;

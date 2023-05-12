@@ -46,10 +46,12 @@ const App = () => {
 
   const items = [
     getItem('Home', 'home', <HomeOutlined />),
-    getItem('Manage Home', 'managehome', <HomeOutlined />),
+    getItem('Manage Home', 'managehome', <HomeOutlined />, [
+      getItem('Acnounce', 'acnounce'),
+    ]),
     getItem('List User', 'listuser', <HomeOutlined />),
-    getItem('List Teacher', 'manageteacher', <HomeOutlined />),
-    getItem('List Student', 'managestudent', <CalendarOutlined />),
+    getItem('Manage Teacher', 'manageteacher', <HomeOutlined />),
+    getItem('Manage Student', 'managestudent', <CalendarOutlined />),
   ];
 
   const renderContent = React.useCallback(() => {
@@ -57,6 +59,8 @@ const App = () => {
       case 'home':
         return <AdminHomePage />;
       case 'managehome':
+        return <AdminManageHome />;
+      case 'acnounce':
         return <AdminManageHome />;
       case 'listuser':
         return <AdminListUser />;
@@ -77,7 +81,7 @@ const App = () => {
       <Sider className="sider-admin"
         collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="logo-admin">
-        <img alt="iconAdmin" className="w-100" src="/Admin.png" />
+          <img alt="iconAdmin" className="w-100" src="/Admin.png" />
         </div>
         <Menu
           onClick={(e) => navigate(`/admin/page/${e.key}`)}

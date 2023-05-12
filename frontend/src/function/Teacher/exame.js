@@ -41,9 +41,9 @@ export const getCourseWoQuiz = async (authtoken) =>
         }
     });
 
-// POST: /create-file/:field (exam)
+// POST: /create-file/private/:field (exam)
 export const createFile = async (authtoken, data, field) =>
-    await axios.post(process.env.REACT_APP_API + `/create-file/${field}`, data, {
+    await axios.post(process.env.REACT_APP_API + `/create-file/private/${field}`, data, {
         headers: {
             authtoken,
         }
@@ -51,7 +51,7 @@ export const createFile = async (authtoken, data, field) =>
 
 // POST: /get-image/:field/:id
 export const getPrivateFieldImage = async (authtoken, field, param, value) =>
-    await axios.get(process.env.REACT_APP_API + `/get-image/${field}?${param}=${value}`, {
+    await axios.get(process.env.REACT_APP_API + `/get-image/private/${field}?${param}=${value}`, {
         headers: {
             authtoken,
         },

@@ -5,9 +5,6 @@ import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image, Bad
 import { Link } from "react-router-dom";
 import { createFile, getPrivateFieldImage, updateExam } from "../../../../function/Teacher/exame";
 
-const { TextArea } = Input;
-
-
 const CardContent = ({
     // uuid = null,
 

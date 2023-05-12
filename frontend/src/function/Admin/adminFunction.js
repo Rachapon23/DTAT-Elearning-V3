@@ -67,3 +67,11 @@ export const updateUserEnabled = async (authtoken, id, data) =>
             authtoken,
         }
     });
+
+// POST: /create-file/public/:field
+export const createFilePublic = async (authtoken, data, field) =>
+    await axios.post(process.env.REACT_APP_API + `/create-file/public/${field}`, data, {
+        headers: {
+            authtoken,
+        }
+    });

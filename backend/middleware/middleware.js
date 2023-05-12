@@ -7,6 +7,7 @@ const fs = require("fs")
 const allowedField = [
     "exam",
     "course",
+    "acnounce"
 ]
 
 exports.checkUser = (req, res, next) => {
@@ -78,7 +79,13 @@ const storagePublic = Multer.diskStorage({
         if (!fs.existsSync("./public/uploads")) {
             fs.mkdirSync("./public/uploads")
         }
-        cb(null, "./public/uploads")
+        if (req?.params?.field && allowedField.includes(req?.params?.field)) {
+            if (!fs.existsSync(`./public/uploads/${req.params.field}`)) {
+                fs.mkdirSync(`./public/uploads/${req.params.field}`)
+            }
+            path = `./public/uploads/${req.params.field}`
+        }
+        cb(null, `./public/uploads/${req.params.field}`)
     },
     filename: (req, file, cb) => {
         // console.log(req.originalUrl.split("/")[2].split("-")[1])
@@ -108,7 +115,6 @@ const storagePrivate = Multer.diskStorage({
         cb(null, path)
     },
     filename: (req, file, cb) => {
-        console.log("EUWHUSHDUSHDUSYDUSTDYSG")
         // console.log(req.originalUrl.split("/")[2].split("-")[1])
         const uniqueStr = `${Date.now()}-${Math.round(Math.random() * 1E9)}`
         const splitedFileName = file.originalname.split(".")
