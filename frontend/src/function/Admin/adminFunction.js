@@ -88,3 +88,10 @@ export const createAcnounce = async (authtoken, data) =>
 export const getHome = async () =>
     await axios.get(process.env.REACT_APP_API + `/get-home`);
 
+// DELETE: /update-acnounce
+export const updateAcnounce = async (authtoken, data) =>
+    await axios.put(process.env.REACT_APP_API + `/update-acnounce`, data,{
+        headers: {
+            authtoken,
+        }
+    });

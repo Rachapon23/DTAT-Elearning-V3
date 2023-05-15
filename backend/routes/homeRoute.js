@@ -6,11 +6,13 @@ const { checkUser, checkTeacher, checkAdmin ,uploadPublic } = require('../middle
 const {
     createAcnounce,
     getHome,
+    updateAcnounce,
 } = require('../controllers/homeController')
 
 
 // carousel wait for upload file system
 router.post('/create-acnounce', checkUser, checkAdmin, uploadPublic, createAcnounce)
+router.put('/update-acnounce', checkUser, checkAdmin, uploadPublic, updateAcnounce)
 // router.put('/remove-carousel', checkUser, checkAdmin, removeCarousel)
 
 // public course

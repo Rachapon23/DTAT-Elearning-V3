@@ -6,7 +6,7 @@ exports.createAcnounce = async (req, res) => {
     try {
         const { name, original_name } = req?.body
 
-        console.log(req?.body)
+        // console.log(req?.body)
         const dataBaseAcnounce = await Home.find({})
         if (Array.isArray(dataBaseAcnounce) && name && original_name) {
             if (dataBaseAcnounce.length === 0) {
@@ -25,9 +25,9 @@ exports.createAcnounce = async (req, res) => {
                     original_name: original_name,
                     url: `/acnounce/${name}`
                 })
-                dataBaseAcnounce[0].save()
+                await dataBaseAcnounce[0].save()
 
-                return res.status(200).json({ data: dataBaseAcnounce })
+                return res.status(200).json({ data: dataBaseAcnounce[0] })
             }
             else {
                 return res.status(500).json({ error: "Unexpected error on create carousel" })
@@ -64,6 +64,61 @@ exports.getHome = async (req, res) => {
     }
 }
 
+exports.updateAcnounce = async (req, res) => {
+    try {
+        const { acnounce, remove } = req?.body
+
+        const dataBaseAcnounce = await Home.find({})
+        if (Array.isArray(dataBaseAcnounce)) {
+            if (dataBaseAcnounce.length === 0) {
+
+                const payload = await new Home({
+                    acnounce: acnounce
+                }).save()
+
+                if (remove) {
+                    fs.unlink(`./public/uploads${remove?.url}`,
+                        (err) => {
+                            if (err) {
+                                console.log(err)
+                                error_deleteFile = true
+                            }
+                        }
+                    )
+
+                }
+
+
+                return res.status(200).json({ data: payload })
+                // return res.status(500).json({ error: "Cannot find acnounce to update" })
+            }
+            else if (dataBaseAcnounce.length === 1) {
+                const payload = await Home.findOneAndUpdate({}, { acnounce: acnounce }, { new: true })
+
+
+                if (remove) {
+                    fs.unlink(`./public/uploads${remove?.url}`,
+                        (err) => {
+                            if (err) {
+                                console.log(err)
+                            }
+                        }
+                    )
+                }
+
+                return res.status(200).json({ data: payload })
+            }
+            else {
+                return res.status(500).json({ error: "Unexpected error on update acnounce" })
+            }
+        }
+        return res.status(500).json({ error: "Unexpected error on update acnounce" })
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).json({ error: "Unexpected error on update acnounce" })
+    }
+}
 
 exports.addCoursePublic = async (req, res) => {
     try {

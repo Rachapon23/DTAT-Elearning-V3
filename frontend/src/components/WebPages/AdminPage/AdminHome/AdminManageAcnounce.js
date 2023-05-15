@@ -11,7 +11,7 @@ import {
 } from '@dnd-kit/sortable';
 import { DndContext } from '@dnd-kit/core';
 import { Link } from 'react-router-dom';
-import { createAcnounce, createFilePublic } from '../../../../function/Admin/adminFunction';
+import { createAcnounce, createFilePublic, updateAcnounce } from '../../../../function/Admin/adminFunction';
 import { AdminContext } from './AdminContext';
 import ImgCrop from 'antd-img-crop';
 
@@ -41,7 +41,7 @@ const RowTable = ({ children, ...props }) => {
       isDragging ?
         {
           position: 'relative',
-          zIndex: 9999,
+          zIndex: 1,
         } : {}
     ),
   };
@@ -51,14 +51,24 @@ const RowTable = ({ children, ...props }) => {
         if (child.key === 'sort') {
           return React.cloneElement(child, {
             children: (
-              <MenuOutlined
-                ref={setActivatorNodeRef}
+              <Row
+                justify={"center"}
+                align={"middle"}
                 style={{
+                  height: "150px",
+                  // backgroundColor: "aqua",
                   touchAction: 'none',
                   cursor: 'move',
                 }}
+                ref={setActivatorNodeRef}
                 {...listeners}
-              />
+              >
+                <Col flex={"auto"}>
+                  <MenuOutlined
+                    style={{ fontSize: "120%", }}
+                  />
+                </Col>
+              </Row>
             ),
           });
         }
@@ -68,31 +78,17 @@ const RowTable = ({ children, ...props }) => {
   );
 };
 
-const itemPage = [
-  {
-    key: '1',
-    label: `Overview`,
-    // children: overviewProgress(),
-  },
-  {
-    key: '2',
-    label: `Detailed`,
-    // children: detailedProgress(),
-  },
-];
-
-
-
-
 
 const AdminManageHome = () => {
 
   const [imageData, setImageData] = useState(null)
   const [selectedImage, setSelectedImage] = useState(null)
   const { acnounce, setAcnounce } = useContext(AdminContext)
+  const [actionMode, setActionMode] = useState("Edit")
 
   const handleAddImage = async (image) => {
     let formData = new FormData()
+    console.log(image?.file)
     formData.append("file", image?.file)
     formData.append("original_name", image?.file?.name)
     const createFileField = "acnounce"
@@ -129,6 +125,7 @@ const AdminManageHome = () => {
         (res) => {
           const data = res.data.data
           console.log(data)
+          setAcnounce(() => data.acnounce)
         }
       )
       .catch(
@@ -138,35 +135,6 @@ const AdminManageHome = () => {
       )
 
   }
-
-  const [acnounceData, setAcnounceData] = useState({
-    _id: null,
-    urlImage: null,
-    image: null,
-    age: null,
-  })
-  const [dataSource, setDataSource] = useState([
-    {
-      _id: '1',
-      urlImage: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-      image: "test1.png",
-    },
-    {
-      _id: '2',
-      urlImage: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-      image: "test2.png",
-    },
-    {
-      _id: '3',
-      urlImage: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-      image: "test3.png",
-    },
-    {
-      _id: "4",
-      urlImage: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-      image: "test4.png",
-    },
-  ]);
 
   const onPreview = async (file) => {
     let src = file.url;
@@ -203,51 +171,73 @@ const AdminManageHome = () => {
           />
         </Col>
         <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-          <ImgCrop rotationSlider>
-            {/* <Upload
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              listType="picture-card"
-              fileList={fileList}
+          {
+            actionMode === "Preview" ?
+              (
+                <Button icon={<UploadOutlined />} onClick={() => setActionMode("Edit")}>Edit</Button>
+              )
+              :
+              (
+                actionMode === "Edit" ?
+                  (
+                    <Row>
 
-            > */}
-            <Upload
-              accept="image/*"
-              showUploadList={false}
-              customRequest={handleAddImage}
-              onPreview={onPreview}
-            >
-              <Button icon={<UploadOutlined />}>Upload</Button>
-
-            </Upload>
-          </ImgCrop>
-
+                      <ImgCrop
+                        showReset
+                        aspect={2.63 / 1}
+                      // https://www.digitalrebellion.com/webapps/aspectcalc <- use to calculate aspect ratio
+                      // rotationSlider
+                      >
+                        <Upload
+                          accept="image/*"
+                          showUploadList={false}
+                          customRequest={handleAddImage}
+                          onPreview={onPreview}
+                        >
+                          <Button icon={<UploadOutlined />}>Upload</Button>
+                        </Upload>
+                      </ImgCrop>
+                      {/* <Button color="primary" onClick={() => setActionMode("Preview")}>Save</Button> */}
+                    </Row>
+                  )
+                  :
+                  (
+                    null
+                  )
+              )
+          }
 
         </Col>
       </Row >
     )
   }
 
-  function handleDeleteAcnounce(index) {
-    const length = dataSource.length
-    const prevData = dataSource.slice(0, index)
-    const nextData = dataSource.slice(index + 1, length)
-    setDataSource(() => [...prevData, ...nextData])
+  async function handleDeleteAcnounce(index) {
+    const length = acnounce.length
+    const prevData = acnounce.slice(0, index)
+    const nextData = acnounce.slice(index + 1, length)
+    const currData = acnounce[index]
+
+    await updateAcnounce(sessionStorage.getItem("token"), {
+      acnounce: [...prevData, ...nextData],
+      remove: currData
+    })
+      .then(
+        (res) => {
+          const data = res.data.data
+          console.log(res.data)
+          setAcnounce(() => data.acnounce)
+
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err)
+        }
+      )
   }
 
-  const columns = [
-    {
-      key: 'sort',
-      align: "center",
-      width: "5%",
-    },
-    // {
-    //   title: 'Order',
-    //   width: "5%",
-    //   fixed: 'left',
-    //   render: (data) => {
-    //     return acnounce.indexOf(data) + 1
-    //   }
-    // },
+  const columnsPreview = [
     {
       title: 'Image',
       dataIndex: 'url',
@@ -266,16 +256,75 @@ const AdminManageHome = () => {
       title: 'File Name',
       dataIndex: 'original_name',
     },
+  ];
+
+
+  const onDragEnd = async ({ active, over }) => {
+    if (active.id !== over?.id) {
+      let updatedData = null
+      setAcnounce((previous) => {
+        const activeIndex = previous.findIndex((i) => i.name === active.id);
+        const overIndex = previous.findIndex((i) => i.name === over?.id);
+        updatedData = arrayMove(previous, activeIndex, overIndex);
+        return updatedData
+      });
+
+      if (updatedData) {
+        await updateAcnounce(sessionStorage.getItem("token"), {
+          acnounce: updatedData
+        })
+          .then(
+            (res) => {
+              const data = res.data.data
+              console.log(data)
+              setAcnounce(() => data.acnounce)
+
+            }
+          )
+          .catch(
+            (err) => {
+              console.log(err)
+            }
+          )
+      }
+
+    }
+  };
+
+  const columnsEdit = [
     {
-      title: 'Edit',
+      key: 'sort',
       align: "center",
       width: "5%",
-      render: (data) => (
-        <Button onClick={() => null}>
-          <EditOutlined style={{ fontSize: "120%" }} />
-        </Button>
-      )
     },
+    {
+      title: 'Image',
+      dataIndex: 'url',
+      align: "center",
+      width: "10%",
+      render: (data) => {
+        return (
+          <Image
+            width={150}
+            src={process.env.REACT_APP_IMG + data}
+          />
+        )
+      }
+    },
+    {
+      title: 'File Name',
+      dataIndex: 'original_name',
+    },
+    // {
+    //   title: 'Edit',
+    //   align: "center",
+    //   width: "5%",
+    //   render: (data) => (
+    //     <Button onClick={() => null}>
+    //       <EditOutlined style={{ fontSize: "120%" }} />
+    //     </Button>
+    //   )
+    // },
     {
       title: 'Delete',
       align: "center",
@@ -287,18 +336,6 @@ const AdminManageHome = () => {
       )
     },
   ];
-
-
-  const onDragEnd = ({ active, over }) => {
-    if (active.id !== over?.id) {
-      setAcnounce((previous) => {
-        const activeIndex = previous.findIndex((i) => i.name === active.id);
-        const overIndex = previous.findIndex((i) => i.name === over?.id);
-        return arrayMove(previous, activeIndex, overIndex);
-      });
-    }
-  };
-
 
   return (
     <Card title={manageHomeTitle()} style={{ width: "100%" }}>
@@ -320,7 +357,7 @@ const AdminManageHome = () => {
                         },
                       }}
                       rowKey="name"
-                      columns={columns}
+                      columns={columnsEdit}
                       dataSource={acnounce}
                     />
                   </SortableContext>
@@ -329,7 +366,7 @@ const AdminManageHome = () => {
               :
               (
                 <Table
-                  columns={columns}
+                  columns={columnsPreview}
                   dataSource={null}
                 />
               )

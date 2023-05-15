@@ -11,12 +11,13 @@ import React, { useState, useEffect } from "react";
 import "./adminpage.css";
 import { useParams, useNavigate } from "react-router-dom";
 import AdminHomePage from "./AdminHome/AdminHomePage";
-import AdminManageHome from "./AdminHome/AdminManageHome";
+import AdminManageAcnounce from "./AdminHome/AdminManageAcnounce";
 import AdminListUser from "./AdminHome/AdminListUser";
 import AdminManageTeacher from "./AdminHome/AdminManageTeacher";
 import AdminManageStudent from "./AdminHome/AdminManageStudent";
 
 import { AdminProvider } from "./AdminHome/AdminContext";
+import AdminManageCourse from "./AdminHome/AdminManageCourse";
 
 const { Header, Sider, Content } = Layout;
 
@@ -50,6 +51,8 @@ const App = () => {
     getItem('Home', 'home', <HomeOutlined />),
     getItem('Manage Home', 'managehome', <HomeOutlined />, [
       getItem('Acnounce', 'acnounce'),
+      getItem('Public Course', 'public-course'),
+      getItem('Private Course', 'private-course'),
     ]),
     getItem('List User', 'listuser', <HomeOutlined />),
     getItem('Manage Teacher', 'manageteacher', <HomeOutlined />),
@@ -61,11 +64,23 @@ const App = () => {
       case 'home':
         return <AdminHomePage />;
       case 'managehome':
-        return <AdminManageHome />;
+        return <AdminManageAcnounce />;
       case 'acnounce':
         return (
           <AdminProvider>
-            <AdminManageHome />
+            <AdminManageAcnounce />
+          </AdminProvider>
+        );
+      case 'public-course':
+        return (
+          <AdminProvider>
+            <AdminManageCourse courseType={"Public"}/>
+          </AdminProvider>
+        );
+      case 'private-course':
+        return (
+          <AdminProvider>
+            <AdminManageCourse courseType={"Private"} />
           </AdminProvider>
         );
       case 'listuser':
