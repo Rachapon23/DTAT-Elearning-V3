@@ -73,6 +73,7 @@ exports.createPublicFile = (req, res) => {
     try {
         // this API take action like acknowledge from server thst file has been created
         // real action of save file to backend are in middleware 
+        console.log(req?.body)
         const payload = {
             name: req?.body?.name,
             original_name: req?.body?.original_name,

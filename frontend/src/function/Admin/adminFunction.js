@@ -75,3 +75,16 @@ export const createFilePublic = async (authtoken, data, field) =>
             authtoken,
         }
     });
+
+// POST: /create-acnounce
+export const createAcnounce = async (authtoken, data) =>
+    await axios.post(process.env.REACT_APP_API + `/create-acnounce`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// GET: /get-home
+export const getHome = async () =>
+    await axios.get(process.env.REACT_APP_API + `/get-home`);
+

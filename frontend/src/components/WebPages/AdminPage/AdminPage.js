@@ -16,6 +16,8 @@ import AdminListUser from "./AdminHome/AdminListUser";
 import AdminManageTeacher from "./AdminHome/AdminManageTeacher";
 import AdminManageStudent from "./AdminHome/AdminManageStudent";
 
+import { AdminProvider } from "./AdminHome/AdminContext";
+
 const { Header, Sider, Content } = Layout;
 
 const App = () => {
@@ -61,7 +63,11 @@ const App = () => {
       case 'managehome':
         return <AdminManageHome />;
       case 'acnounce':
-        return <AdminManageHome />;
+        return (
+          <AdminProvider>
+            <AdminManageHome />
+          </AdminProvider>
+        );
       case 'listuser':
         return <AdminListUser />;
       case 'manageteacher':

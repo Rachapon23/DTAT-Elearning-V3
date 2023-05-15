@@ -1,26 +1,66 @@
-
 const Home = require('../models/home')
 const fs = require("fs");
 
 
-exports.createCarousel = async (req, res) => {
+exports.createAcnounce = async (req, res) => {
     try {
+        const { name, original_name } = req?.body
 
+        console.log(req?.body)
+        const dataBaseAcnounce = await Home.find({})
+        if (Array.isArray(dataBaseAcnounce) && name && original_name) {
+            if (dataBaseAcnounce.length === 0) {
+                const acnounce = await new Home({
+                    acnounce: {
+                        name: name,
+                        original_name: original_name,
+                        url: `/acnounce/${name}`
+                    }
+                }).save()
+                return res.status(200).json({ data: acnounce })
+            }
+            else if (dataBaseAcnounce.length === 1) {
+                dataBaseAcnounce[0].acnounce.push({
+                    name: name,
+                    original_name: original_name,
+                    url: `/acnounce/${name}`
+                })
+                dataBaseAcnounce[0].save()
+
+                return res.status(200).json({ data: dataBaseAcnounce })
+            }
+            else {
+                return res.status(500).json({ error: "Unexpected error on create carousel" })
+            }
+        }
+        return res.status(400).json({ error: "Invalid data fomat" })
     }
     catch (err) {
         console.log(err)
-        res.status(500).json({ error: "Unexpected error on create carousel" })
+        return res.status(500).json({ error: "Unexpected error on create carousel" })
     }
 }
 
 
-exports.listHome = async (req, res) => {
+exports.getHome = async (req, res) => {
     try {
-
+        const dataBaseAcnounce = await Home.find({})
+        if (Array.isArray(dataBaseAcnounce)) {
+            if (dataBaseAcnounce.length === 0) {
+                return res.status(200).json({ data: null })
+            }
+            else if (dataBaseAcnounce.length === 1) {
+                return res.status(200).json({ data: dataBaseAcnounce[0] })
+            }
+            else {
+                return res.status(500).json({ error: "Unexpected error on get home" })
+            }
+        }
+        return res.status(500).json({ error: "Unexpected error on get home" })
     }
     catch (err) {
         console.log(err)
-        res.status(500).json({ error: "Unexpected error on list home" })
+        res.status(500).json({ error: "Unexpected error on get home" })
     }
 }
 
