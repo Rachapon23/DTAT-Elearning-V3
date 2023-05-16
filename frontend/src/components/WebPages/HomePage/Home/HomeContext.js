@@ -1,17 +1,15 @@
 import React, { createContext, useEffect, useState } from "react";
-import { getHome } from "../../../../function/Admin/adminFunction";
+import { getHome } from "../../../../function/func.js";
 
-export const AdminContext = createContext();
+export const HomeContext = createContext();
 
-export const AdminProvider = ({ children }) => {
+export const HomeProvider = ({ children }) => {
     const [home, setHome] = useState(null | {
         acnounce: [],
         course_public: [],
         course_private: [],
     })
     const [acnounce, setAcnounce] = useState([])
-    const [ coursePublic, setCoursePublic ] = useState([])
-    const [ coursePrivate, setCoursePrivate ] = useState([])
 
     const fetchHome = async () => {
         await getHome()
@@ -20,8 +18,7 @@ export const AdminProvider = ({ children }) => {
                     const data = res.data.data
                     setHome(data)
                     setAcnounce(() => data.acnounce)
-                    setCoursePublic(() => data.course_public)
-                    setCoursePrivate(() => data.course_private)
+                    // console.log(data.acnounce)
                 }
             )
             .catch(
@@ -36,18 +33,14 @@ export const AdminProvider = ({ children }) => {
     }, [])
 
     return (
-        <AdminContext.Provider
+        <HomeContext.Provider
             value={{
                 home,
                 setHome,
                 acnounce,
-                setAcnounce,
-                coursePublic,
-                setCoursePublic,
-                coursePrivate,
-                setCoursePrivate,
+                setAcnounce
             }}>
             {children}
-        </AdminContext.Provider >
+        </HomeContext.Provider >
     );
 }

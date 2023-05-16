@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import HomePrivate from "./HomePrivate";
 import HomePublic from "./HomePublic";
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 import Contact from "./Contact";
 
 import "./home.css";
+import HomeAcnounce from "./HomeAcnounce";
+import { HomeContext, HomeProvider } from "./HomeContext";
 const Home = () => {
+
   return (
     // <div className="bg-test">
     <div className="body-home">
@@ -32,13 +35,17 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <div className="content"></div>
-          <div className="content">
-            <HomePublic />
-          </div>
-          <div className="content">
-            <HomePrivate />
-          </div>
+          <HomeProvider>
+            <div className="content">
+              <HomeAcnounce />
+            </div>
+            <div className="content">
+              <HomePublic />
+            </div>
+            <div className="content">
+              <HomePrivate />
+            </div>
+          </HomeProvider>
           {/* <div className="contact" id="contact">
           <Contact />
         </div> */}

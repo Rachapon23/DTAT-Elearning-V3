@@ -68,19 +68,19 @@ const App = () => {
       case 'acnounce':
         return (
           <AdminProvider>
-            <AdminManageAcnounce />
+            <AdminManageAcnounce manage={"Acnounce"}/>
           </AdminProvider>
         );
       case 'public-course':
         return (
           <AdminProvider>
-            <AdminManageCourse courseType={"Public"}/>
+            <AdminManageAcnounce manage={"Public Course"}/>
           </AdminProvider>
         );
       case 'private-course':
         return (
           <AdminProvider>
-            <AdminManageCourse courseType={"Private"} />
+            <AdminManageAcnounce manage={"Private Course"} />
           </AdminProvider>
         );
       case 'listuser':

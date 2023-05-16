@@ -55,7 +55,7 @@ const RowTable = ({ children, ...props }) => {
                 justify={"center"}
                 align={"middle"}
                 style={{
-                  height: "150px",
+                  height: "70px",
                   // backgroundColor: "aqua",
                   touchAction: 'none',
                   cursor: 'move',
@@ -79,11 +79,21 @@ const RowTable = ({ children, ...props }) => {
 };
 
 
-const AdminManageHome = () => {
+const AdminManageHome = ({ manage = null }) => {
 
   const [imageData, setImageData] = useState(null)
   const [selectedImage, setSelectedImage] = useState(null)
   const { acnounce, setAcnounce } = useContext(AdminContext)
+  const { coursePublic, setCoursePublic } = useContext(AdminContext)
+  const { coursePrivate, setCoursePrivate } = useContext(AdminContext)
+
+  const [manageHomeData, setManageHomeData] = manage === "Acnounce" ?
+    acnounce :
+    manage === "Public Course" ?
+      coursePublic :
+      manage === "Private Course" ?
+        coursePrivate : null
+
   const [actionMode, setActionMode] = useState("Edit")
 
   const handleAddImage = async (image) => {
@@ -164,48 +174,32 @@ const AdminManageHome = () => {
                 key: "courses"
               },
               {
-                title: <Title level={5} style={{ marginTop: "10px" }}><p>Acnounce</p></Title>,
+                title: <Title level={5} style={{ marginTop: "10px" }}><p>{manage}</p></Title>,
                 key: "courses_create",
               },
             ]}
           />
         </Col>
         <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-          {
-            actionMode === "Preview" ?
-              (
-                <Button icon={<UploadOutlined />} onClick={() => setActionMode("Edit")}>Edit</Button>
-              )
-              :
-              (
-                actionMode === "Edit" ?
-                  (
-                    <Row>
+          <Row>
 
-                      <ImgCrop
-                        showReset
-                        aspect={2.63 / 1}
-                      // https://www.digitalrebellion.com/webapps/aspectcalc <- use to calculate aspect ratio
-                      // rotationSlider
-                      >
-                        <Upload
-                          accept="image/*"
-                          showUploadList={false}
-                          customRequest={handleAddImage}
-                          onPreview={onPreview}
-                        >
-                          <Button icon={<UploadOutlined />}>Upload</Button>
-                        </Upload>
-                      </ImgCrop>
-                      {/* <Button color="primary" onClick={() => setActionMode("Preview")}>Save</Button> */}
-                    </Row>
-                  )
-                  :
-                  (
-                    null
-                  )
-              )
-          }
+            <ImgCrop
+              showReset
+              aspect={2.63 / 1}
+            // https://www.digitalrebellion.com/webapps/aspectcalc <- use to calculate aspect ratio
+            // rotationSlider
+            >
+              <Upload
+                accept="image/*"
+                showUploadList={false}
+                customRequest={handleAddImage}
+                onPreview={onPreview}
+              >
+                <Button icon={<UploadOutlined />}>Upload</Button>
+              </Upload>
+            </ImgCrop>
+            {/* <Button color="primary" onClick={() => setActionMode("Preview")}>Save</Button> */}
+          </Row>
 
         </Col>
       </Row >
@@ -342,7 +336,7 @@ const AdminManageHome = () => {
       <Row style={{ width: "100%" }}>
         <Col flex={"auto"}>
           {
-            acnounce ?
+            manageHomeData ?
               (
                 <DndContext onDragEnd={onDragEnd}>
                   <SortableContext
