@@ -9,7 +9,7 @@ import {
 import { Layout, Menu, theme } from "antd";
 import React, { useState, useEffect } from "react";
 import "./teach.css";
-import { useParams,useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import Courses from "./TeacherCourse/Courses";
 import CourseCreate from "./TeacherCourse/CourseCreate"
@@ -18,6 +18,7 @@ import ExamCreate from "./TeacherExam/ExamCreate"
 import TeacherHome from "./TeacherHome/TeacherHome";
 
 import CourseCreateB from "./TeacherCourse/CourseCreateB";
+import { TeacherHomeProvider } from "./TeacherHome/TeacherHomeContext";
 
 const { Header, Sider, Content } = Layout;
 
@@ -45,7 +46,7 @@ const App = () => {
       type,
     };
   }
-  
+
   const items = [
     getItem('Home', 'home', <HomeOutlined />),
     getItem('Course', 'course', <ReadOutlined />, [
@@ -67,37 +68,41 @@ const App = () => {
   ];
 
   const renderContent = React.useCallback(() => {
-    switch(params) {
-      case 'home': 
-        return <TeacherHome/>;
-      case 'list-course': 
-        return <CourseCreate/>;
-      case 'create-course': 
-        return <CourseCreateB/>;
-      case 'list-exam': 
-        return <Exames/>;
-      case 'create-exam': 
+    switch (params) {
+      case 'home':
+        return (
+          <TeacherHomeProvider>
+            <TeacherHome />
+          </TeacherHomeProvider>
+        );
+      case 'list-course':
+        return <CourseCreate />;
+      case 'create-course':
+        return <CourseCreateB />;
+      case 'list-exam':
+        return <Exames />;
+      case 'create-exam':
         return <ExamCreate mode={"Create"} />;
       case 'edit-exam':
         return <ExamCreate mode={"Edit"} />;
       // case 'preview-exam':
       //   return <ExamCreate mode={"Preview"}/>;
-      case 'calendar': 
+      case 'calendar':
         return <p className="success">Calendar</p>;
-      default: 
+      default:
         return <p className="success">404 not found ... </p>;
-      
+
     }
   }, [params]);
 
   return (
     <Layout className="layout-teacher">
       <Sider className="sider-teacher" collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-      <div className="logo-teacher d-flex justify-content-center my-3">
-        <img alt="iconTeacher" className="w-75" src="/Teacher.png" />
+        <div className="logo-teacher d-flex justify-content-center my-3">
+          <img alt="iconTeacher" className="w-75" src="/Teacher.png" />
         </div>
-        <Menu 
-          onClick={(e)=>navigate(`/teacher/page/${e.key}`)}
+        <Menu
+          onClick={(e) => navigate(`/teacher/page/${e.key}`)}
           className="menu-teacher"
           mode="inline"
           defaultSelectedKeys={[`${params}`]}
@@ -108,14 +113,14 @@ const App = () => {
       </Sider>
       <Layout className="site-layout-teacher">
         <Header className="header-teacher">
-        <Menu className="header-menu"
-         onClick={(e)=>navigate(`${e.key}`)}
-          mode="horizontal" items={items2} />
+          <Menu className="header-menu"
+            onClick={(e) => navigate(`${e.key}`)}
+            mode="horizontal" items={items2} />
         </Header>
         <Content
           className="contentTeacher"
         >
-           {renderContent()}
+          {renderContent()}
         </Content>
       </Layout>
     </Layout>

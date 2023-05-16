@@ -1,10 +1,11 @@
 import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons';
 import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Column, Pie } from '@ant-design/plots';
 import { Link, useNavigate } from 'react-router-dom';
 import NavBar from "../../../Layout/NavBar"
 import "../teach.css"
+import { TeacherHomeContext } from './TeacherHomeContext';
 
 const { Title } = Typography;
 
@@ -12,8 +13,13 @@ const TeacherHome = () => {
   // Variable-Start
   const [current, setCurrent] = useState(1);
   let courseAmount = 32;
-  let pageSize = 4
+  let pageSize = 5
   const [keyword, setKeyword] = useState("");
+
+  const { profile, setProfile } = useContext(TeacherHomeContext)
+  const { course, setCourse } = useContext(TeacherHomeContext)
+  
+  const [target, setTarget] = useState(1000)
   // Variable-End -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -52,9 +58,9 @@ const TeacherHome = () => {
   // Data-Page-Start
   const config = {
     appendPadding: 10,
-    data: pieData,
-    angleField: 'value',
-    colorField: 'type',
+    data: course,
+    angleField: 'video',
+    colorField: 'name',
     radius: 0.8,
     label: {
       type: 'outer',
@@ -78,7 +84,7 @@ const TeacherHome = () => {
   };
 
   const handleSearch = (e) => {
-    setKeyword(`${e.target.value.toLowerCase()}`)
+    setKeyword(e.target.value.toLowerCase())
     setCurrent(1)
   }
 
@@ -91,14 +97,15 @@ const TeacherHome = () => {
 
 
   // Sub-Component-Page-Start
-  const courseProgressCard = (index, last_index) => {
+  const courseProgressCard = (course, last_index) => {
     return (
       <div>
-        <Row>
+        <Row style={{paddingTop: "3.5%"}}>
           <Col flex={"auto"}>
             <Row justify={"space-between"}>
               <Col>
-                {`${index}`}
+                {`${course.name}`}
+                {console.log(course)}
               </Col>
               <Col style={{ marginRight: "2.5%" }}>
                 126 / 250
@@ -117,20 +124,20 @@ const TeacherHome = () => {
             <Button> More </Button>
           </Col>
         </Row>
-        {index !== last_index ? <Divider /> : null}
+        {/* {index !== last_index ? <Divider /> : null} */}
       </div>
     )
   }
 
   const courseProgress = keyword === "" ?
-    createCourseProcess(courseAmount).slice(4 * (current - 1), (4 * (current - 1)) + 4).map((key) => (
+    course.slice(pageSize * (current - 1), (pageSize * (current - 1)) + pageSize).map((key) => (
       courseProgressCard(key, courseAmount)
     ))
     :
     getArrayLength(
-      createCourseProcess(courseAmount)
+      course
         .filter((item) => {
-          return item.toLowerCase().indexOf(keyword) >= 0;
+          return item.name.toLowerCase().indexOf(keyword) >= 0;
         })
     )
       .slice(pageSize * (current - 1), (pageSize * (current - 1)) + pageSize)
@@ -146,7 +153,7 @@ const TeacherHome = () => {
           <Card title={renderCourseProcessTitle()} style={{ minHeight: "557px" }}>
             <Col flex={"auto"}>
               <Row><Col flex={"auto"} >{courseProgress}</Col></Row>
-              <Row justify={"center"}><Pagination current={current} onChange={onChange} total={courseAmount} defaultPageSize={pageSize} /></Row>
+              <Row justify={"center"}><Pagination current={current} onChange={onChange} total={course.length} pageSize={pageSize} /></Row>
             </Col>
           </Card>
         </Col>
@@ -171,7 +178,15 @@ const TeacherHome = () => {
     return (
       <Row align={"top"}>
         <Col flex={"auto"}>
-          <Card title={<Title level={5} style={{ marginTop: "10px" }}>Main Target Number of All Trainee</Title>}>
+          <Card title={
+            <Row justify={'space-between'} align={'middle'}>
+              <Col>
+                <Title level={5} style={{ marginTop: "10px" }}>
+                  Main Target Number of All Trainee
+                </Title>
+              </Col>
+            </Row>
+          }>
             <Col flex={"auto"}>
               <Row>
                 <Col flex={"auto"}>
@@ -180,14 +195,16 @@ const TeacherHome = () => {
                       Total
                     </Col>
                     <Col>
-                      504 / 1000
+                      504 / {target}
                     </Col>
                   </Row>
-                  <Col>
-                    <Tooltip title="600 / 1000">
-                      <Progress percent={50} />
-                    </Tooltip>
-                  </Col>
+                  <Row justify={"space-between"}>
+                    <Col flex={"auto"}>
+                      <Tooltip title={`600 / ${target}`}>
+                        <Progress percent={50} />
+                      </Tooltip>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
               <Row align={"middle"} justify={"center"}>
@@ -249,25 +266,43 @@ const TeacherHome = () => {
 
 
   return (
-    <Layout  className="layout-content">
+    <Layout className="layout-content">
       {/* <NavBar page={"logo--------------"} /> */}
       <Row>
         {/* <Col sm={2} /> */}
         <Col flex="auto">
-          <Card title="Teacher">
+          <Card title="Home">
             <Row justify={"space-between"} >
 
               <Col flex={"auto"} style={{ paddingRight: "2%" }}>
-                <Row justify={"center"}>
-                  <Avatar shape="square" size={200} icon={<UserOutlined />} />
-                </Row>
-                <Row style={{ marginTop: "5%" }} />
+
+                <Row style={{ marginTop: "2%" }} />
+
                 <Row>
                   <Col flex={"auto"}>
-                    <Card title="Profile" style={{ minWidth: "400px" }}>
-                      <p>Name: Lorem ipsum</p>
-                      <p>Email: dolor sit amet consectetur</p>
-                      <p>Tel: 0999999999</p>
+
+                    <Card
+                      title={
+                        <Row justify={'space-between'} align={'middle'}>
+                          <Col>
+                            <Title level={5} style={{ marginTop: "10px" }}>
+                              Profile
+                            </Title>
+                          </Col>
+                          <Col>
+                            <Button>Edit</Button>
+                          </Col>
+                        </Row>
+                      }
+                      style={{ minWidth: "400px" }}
+                    >
+                      <Row justify={"center"}>
+                        <Avatar shape="square" size={200} icon={<UserOutlined />} />
+                      </Row>
+                      <Row style={{ marginTop: "5%" }} />
+                      <p>Name: {profile.firstname} {profile.lastname}</p>
+                      <p>Email: {profile.email}</p>
+                      <p>Tel: {profile.tel}</p>
                     </Card>
                   </Col>
                 </Row>

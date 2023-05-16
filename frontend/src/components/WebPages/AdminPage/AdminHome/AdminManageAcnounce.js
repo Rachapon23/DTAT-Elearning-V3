@@ -87,21 +87,26 @@ const AdminManageHome = ({ manage = null }) => {
   const { coursePublic, setCoursePublic } = useContext(AdminContext)
   const { coursePrivate, setCoursePrivate } = useContext(AdminContext)
 
-  const [manageHomeData, setManageHomeData] = manage === "Acnounce" ?
-    acnounce :
-    manage === "Public Course" ?
-      coursePublic :
-      manage === "Private Course" ?
-        coursePrivate : null
+  const [manageHomeData, setManageHomeData] = useState()
 
   const [actionMode, setActionMode] = useState("Edit")
 
   const handleAddImage = async (image) => {
+    
+    let createFileField = null
+
+    switch(manage) {
+      case "Acnounce": createFileField = "acnounce"; break;
+      default: return;
+    }
+    // if (manage === "Public Course") createFileField = "publicCourse"
+    // if (manage === "Private Course") createFileField = "acnounce"
+
     let formData = new FormData()
     console.log(image?.file)
     formData.append("file", image?.file)
     formData.append("original_name", image?.file?.name)
-    const createFileField = "acnounce"
+    
 
     // onChange(index, { image: formData })
 
@@ -331,17 +336,24 @@ const AdminManageHome = ({ manage = null }) => {
     },
   ];
 
+  useEffect(() => {
+    if (manage === "Acnounce")  setManageHomeData(acnounce)
+    if (manage === "Public Course") setManageHomeData(coursePublic)
+    if (manage === "Private Course") setManageHomeData(coursePrivate)
+  }, [acnounce, coursePrivate, coursePublic, manage])
+
   return (
     <Card title={manageHomeTitle()} style={{ width: "100%" }}>
       <Row style={{ width: "100%" }}>
         <Col flex={"auto"}>
+          {console.log(manageHomeData)}
           {
             manageHomeData ?
               (
                 <DndContext onDragEnd={onDragEnd}>
                   <SortableContext
                     // rowKey array
-                    items={acnounce.map((i) => i.name)}
+                    items={manageHomeData.map((i) => i.name)}
                     strategy={verticalListSortingStrategy}
                   >
                     <Table
@@ -352,7 +364,7 @@ const AdminManageHome = ({ manage = null }) => {
                       }}
                       rowKey="name"
                       columns={columnsEdit}
-                      dataSource={acnounce}
+                      dataSource={manageHomeData}
                     />
                   </SortableContext>
                 </DndContext>

@@ -6,7 +6,7 @@ import Contact from "./Contact";
 
 import "./home.css";
 import HomeAcnounce from "./HomeAcnounce";
-import { HomeContext, HomeProvider } from "./HomeContext";
+import { HomeProvider } from "./HomeContext";
 const Home = () => {
 
   return (
@@ -36,7 +36,7 @@ const Home = () => {
             </div>
           </div>
           <HomeProvider>
-            <div className="content">
+            <div>
               <HomeAcnounce />
             </div>
             <div className="content">

@@ -10,6 +10,7 @@ exports.loadData = async () => {
     const Condition = require('./models/condition');
     const Exam = require("./models/exam");
     const Quiz = require("./models/quiz");
+    const Profile = require("./models/profile")
 
     // Plant
     await Plant.findOneAndUpdate({ name: "A" }, { name: "A" }, { upsert: true, new: true, setDefaultsOnInsert: true })
@@ -118,6 +119,19 @@ exports.loadData = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
+    
+    // Profile
+    const profile1 = await Profile.findOneAndUpdate(
+        { _id: "64352ed5080e1f3e74e19004" },
+        {
+            _id: "64352ed5080e1f3e74e19004",
+            image: null,
+            tel: "0999999999",
+            target: 200,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
     // User
     // Admin
     await User.findOneAndUpdate(
@@ -127,7 +141,7 @@ exports.loadData = async () => {
             department: await Department.findOne({ id: "919323" }).select("_id"),
             firstname: "Rachapon",
             lastname: "Pongkittisak",
-            profile: null,
+            profile: profile1,
             role: await Role.findOne({ name: "admin" }).select("_id"),
             plant: await Plant.findOne({ name: "A" }).select("_id"),
             verified: false,
@@ -137,6 +151,8 @@ exports.loadData = async () => {
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
+
+    
 
     // Teacher
     await User.findOneAndUpdate(

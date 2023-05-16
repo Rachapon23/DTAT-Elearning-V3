@@ -4,13 +4,13 @@ const router = express.Router()
 //middleware
 const { checkUser, checkTeacher, checkAdmin } = require('../middleware/middleware')
 const {
-    getProfile,
+    getProfileByUserId,
     updateProfile,
     // updateTarget,
 } = require('../controllers/profileController')
 
 // teacher
-router.get("/get-profile/:id", checkUser, checkTeacher, getProfile);
+router.get("/get-profile/user/:id", checkUser, checkTeacher, getProfileByUserId);
 router.put("/update-profile/:id", checkUser, checkTeacher, updateProfile);
 
 // wait for review

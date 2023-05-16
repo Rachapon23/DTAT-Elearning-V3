@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { Buffer } from "buffer";
 
 // GET: /list-exam
 export const listExam = async (authtoken) =>
