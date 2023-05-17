@@ -11,36 +11,44 @@ const Condition = require("../models/condition");
 // POST: /create-course
 exports.createCourse = async (req, res) => {
   try {
-    const { head, body } = req.body;
+    const {name,detail,type,teacher} = req.body
+    // const { head, body } = req.body;
 
-    // find plant
-    const plant = Plant.findOne({ _id: head.plant })
-    if (!plant) return res.status(404).json({ error: "Plant not found" });
+    // // find plant
+    // const plant = Plant.findOne({ _id: head.plant })
+    // if (!plant) return res.status(404).json({ error: "Plant not found" });
 
-    // find room
-    const room = Room.findOne({ _id: head.room })
-    if (!room) return res.status(404).json({ error: "Room not found" });
+    // // find room
+    // const room = Room.findOne({ _id: head.room })
+    // if (!room) return res.status(404).json({ error: "Room not found" });
 
-    // create codition
-    const condition = await Condition.insertMany(head.condition);
+    // // create codition
+    // const condition = await Condition.insertMany(head.condition);
 
-    // create course
+    // // create course
+    // const course = await new Course({
+    //   name: head.name,
+    //   detail: head.detail,
+    //   room: head.room,
+    //   video: head.video,
+    //   type: head.type,
+    //   enabled: head.enabled,
+    //   teacher: head.teacher,
+    //   calendar: null,
+    //   exam: null,
+    //   topic: null,
+    //   image: {
+    //     original_name: null,
+    //     name: null,
+    //   },
+    //   condition: condition,
+    // }).save();
     const course = await new Course({
-      name: head.name,
-      detail: head.detail,
-      room: head.room,
-      video: head.video,
-      type: head.type,
-      enabled: head.enabled,
-      teacher: head.teacher,
-      calendar: null,
-      exam: null,
-      topic: null,
-      image: {
-        original_name: null,
-        name: null,
-      },
-      condition: condition,
+      name: name,
+      detail: detail,
+      type: type,
+      enabled: false,
+      teacher: teacher,
     }).save();
 
     res.json({ data: course });
