@@ -10,7 +10,8 @@ exports.loadData = async () => {
     const Condition = require('./models/condition');
     const Exam = require("./models/exam");
     const Quiz = require("./models/quiz");
-    const Profile = require("./models/profile")
+    const Profile = require("./models/profile");
+    const Activity = require("./models/activity");
 
     // Plant
     await Plant.findOneAndUpdate({ name: "A" }, { name: "A" }, { upsert: true, new: true, setDefaultsOnInsert: true })
@@ -152,8 +153,6 @@ exports.loadData = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
-    
-
     // Teacher
     await User.findOneAndUpdate(
         { employee: "6100999" },
@@ -174,7 +173,7 @@ exports.loadData = async () => {
     )
 
     // Student
-    await User.findOneAndUpdate(
+    const student1 = await User.findOneAndUpdate(
         { employee: "6100888" },
         {
             employee: "6100888",
@@ -444,5 +443,94 @@ exports.loadData = async () => {
     )
     course5.exam = exam4
     course5.save()
+
+    // Activity
+   const activity1 =  await Activity.findOneAndUpdate(
+        { course: course1 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            socre_max: null,
+            score_value: null,
+            student: student1,
+            course: course1,
+            activity: null,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course1.activity = activity1
+    course1.save()
+
+    const activity2 = await Activity.findOneAndUpdate(
+        { course: course2 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            socre_max: null,
+            score_value: null,
+            student: student1,
+            course: course2,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course2.activity = activity2
+    course2.save()
+
+    const activity3 = await Activity.findOneAndUpdate(
+        { course: course3 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            socre_max: null,
+            score_value: null,
+            student: student1,
+            course: course3,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course3.activity = activity3
+    course3.save()
+
+    const activity4 = await Activity.findOneAndUpdate(
+        { course: course4 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            socre_max: null,
+            score_value: null,
+            student: student1,
+            course: course4,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course4.activity = activity4
+    course4.save()
+
+    const activity5 = await Activity.findOneAndUpdate(
+        { course: course5 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            socre_max: null,
+            score_value: null,
+            student: student1,
+            course: course5,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course5.activity = activity5
+    course5.save()
+    
+    
 
 }

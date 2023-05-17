@@ -56,12 +56,12 @@ const TeacherHome = () => {
   // Data-Mockup-End ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
+  console.log(...graphData)
   // Data-Page-Start
   const config = {
     appendPadding: 10,
-    data: course,
-    angleField: 'maximum',
+    data: graphData,//[{name: "HI",maximum: 10 },{name: "HIT",maximum: 10 }],//,
+    angleField: 'current',
     colorField: 'name',
     radius: 0.8,
     label: {
@@ -109,13 +109,13 @@ const TeacherHome = () => {
                 {`${course.name}`}
               </Col>
               <Col style={{ marginRight: "2.5%" }}>
-                126 / 250
+                {course.current} / {course.maximum}
               </Col>
             </Row>
             <Row>
               <Col flex={"auto"} style={{ marginRight: "1%", display: "flex", alignSelf: "center" }}>
                 <Tooltip title="600 / 1000">
-                  <Progress percent={50} />
+                  <Progress percent={Math.round(course.current * 100 / course.maximum * 100) / 100} />
                 </Tooltip>
               </Col>
 
@@ -131,12 +131,12 @@ const TeacherHome = () => {
   }
 
   const courseProgress = keyword === "" ?
-    course.slice(pageSize * (current - 1), (pageSize * (current - 1)) + pageSize).map((key) => (
+    graphData.slice(pageSize * (current - 1), (pageSize * (current - 1)) + pageSize).map((key) => (
       courseProgressCard(key, courseAmount)
     ))
     :
     getArrayLength(
-      course
+      graphData
         .filter((item) => {
           return item.name.toLowerCase().indexOf(keyword) >= 0;
         })
@@ -154,7 +154,7 @@ const TeacherHome = () => {
           <Card title={renderCourseProcessTitle()} style={{ minHeight: "557px" }}>
             <Col flex={"auto"}>
               <Row><Col flex={"auto"} >{courseProgress}</Col></Row>
-              <Row justify={"center"}><Pagination current={current} onChange={onChange} total={course.length} pageSize={pageSize} /></Row>
+              <Row justify={"center"}><Pagination current={current} onChange={onChange} total={graphData.length} pageSize={pageSize} /></Row>
             </Col>
           </Card>
         </Col>
@@ -191,41 +191,104 @@ const TeacherHome = () => {
             <Col flex={"auto"}>
               <Row>
                 <Col flex={"auto"}>
-                  <Row justify={"space-between"}>
-                    <Col>
-                      Total
-                    </Col>
-                    <Col>
-                      504 / {target}
-                    </Col>
-                  </Row>
-                  <Row justify={"space-between"}>
-                    <Col flex={"auto"}>
-                      <Tooltip title={`600 / ${target}`}>
-                        <Progress percent={50} />
-                      </Tooltip>
-                    </Col>
-                  </Row>
+
+                  <p>
+                    <Row justify={"space-between"}>
+                      <Col>
+                        Target
+                      </Col>
+                      <Col>
+                        {graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0)} / {target}
+                      </Col>
+                    </Row>
+                    <Row justify={"space-between"}>
+                      <Col flex={"auto"}>
+                        <Tooltip title={`600 / ${target}`}>
+                          {/* graphData.map((data) => data.maximum).reduce((prev, curr) => prev + curr, 0) */}
+                          <Progress percent={Math.round(graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0) * 100 / target * 100) / 100} />
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                  </p>
+
+                  <p>
+                    <Row justify={"space-between"}>
+                      <Col>
+                        Total
+                      </Col>
+                      <Col>
+                        {graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0)} / {graphData.map((data) => data.maximum).reduce((prev, curr) => prev + curr, 0)}
+                      </Col>
+                    </Row>
+                    <Row justify={"space-between"}>
+                      <Col flex={"auto"}>
+                        <Tooltip title={`600 / ${target}`}>
+                          <Progress percent={Math.round(graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0) * 100 / graphData.map((data) => data.maximum).reduce((prev, curr) => prev + curr, 0) * 100) / 100} />
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                  </p>
+
                 </Col>
               </Row>
-              <Row align={"middle"} justify={"center"}>
-                <Col>
+              <Row align={"middle"} justify={"center"} style={{ marginTop: "-13.5%", marginBottom: "-13.5%" }}>
+
+                <Col >
                   <Pie {...config} />
                 </Col>
 
                 <Col flex="auto">
-                  <Row style={{ display: "flex", justifyContent: "space-between", }}>
-                    <Col >
-                      Thai Plant
-                    </Col>
-                    <Col style={{ marginRight: "2.5%", paddingLeft: "1%" }}>
-                      250 / 500
-                    </Col>
-                    <Tooltip title="250 / 500">
-                      <Progress percent={50} />
-                    </Tooltip>
-                  </Row>
-                  <Row style={{ paddingTop: "10%", display: "flex", justifyContent: "space-between", }}>
+                  {
+                    graphData.map((course, index) => {
+                      if (course.plant[index]) {
+                        return (
+                          <p>
+                            <Row justify={"space-between"}>
+                              <Col >
+                                {
+                                  course.plant[index]
+                                }
+                              </Col>
+                              <Col style={{ marginRight: "2.5%", paddingLeft: "1%" }}>
+                                {
+                                  `${course.current} 
+                                    / 
+                                    ${graphData.map(
+                                    (item) => {
+                                      if (course.plant[index]) {
+                                        return (item.plant_amount[index])
+                                      }
+                                      return null
+                                    }).reduce((prev, curr) => prev + curr, 0)
+                                  }
+                                    `
+                                }
+                              </Col>
+                              <Tooltip
+                                title={
+                                  `${course.current} / ${graphData.map(
+                                    (item) => {
+                                      if (course.plant[index]) {
+                                        return (item.plant_amount[index])
+                                      }
+                                      return null
+                                    }).reduce((prev, curr) => prev + curr, 0)}`}>
+                                <Progress percent={Math.round((course.current * 100 / graphData.map(
+                                  (item) => {
+                                    if (course.plant[index]) {
+                                      return (item.plant_amount[index])
+                                    }
+                                    return null
+                                  }).reduce((prev, curr) => prev + curr, 0)) * 100) / 100} />
+                              </Tooltip>
+                            </Row>
+                          </p>
+                        )
+                      }
+                      return null
+                    })
+                  }
+                  {/* <Row style={{ paddingTop: "10%", display: "flex", justifyContent: "space-between", }}>
                     <Col>
                       Regional Plant
                     </Col>
@@ -235,7 +298,7 @@ const TeacherHome = () => {
                     <Tooltip title="350 / 500">
                       <Progress percent={70} />
                     </Tooltip>
-                  </Row>
+                  </Row> */}
                 </Col>
               </Row>
 
@@ -294,8 +357,8 @@ const TeacherHome = () => {
                             <Button
                               onClick={
                                 () => {
-                                  if(actionMode === "Preview") return setActionMode("Edit")
-                                  if(actionMode === "Edit") return setActionMode("Preview")
+                                  if (actionMode === "Preview") return setActionMode("Edit")
+                                  if (actionMode === "Edit") return setActionMode("Preview")
                                 }
                               }
                             >

@@ -15,3 +15,12 @@ export const listCourse = async (authtoken, query) =>
             authtoken,
         }
     });
+
+// GET: /list-course/sp/graph
+export const listCourseGraphData = async (authtoken) =>
+    await axios.get(process.env.REACT_APP_API + `/list-course/sp/graph`, {
+        headers: {
+            authtoken,
+        }
+    });
+    

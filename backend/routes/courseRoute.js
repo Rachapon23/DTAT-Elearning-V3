@@ -13,6 +13,7 @@ const {
     getCourseImage,
     getCourseCount,
     listCourseWoQuiz,
+    listCourseGraphData,
 } = require("../controllers/courseController");
 
 
@@ -28,6 +29,8 @@ router.put("/update-course/:id/image", checkUser, checkTeacher, uploadPublic, up
 router.get("/get-course/:id/image", checkUser, checkTeacher, getCourseImage);
 router.get("/get-course/sp/count", checkUser, checkTeacher, getCourseCount);
 router.get("/list-course/sp/wo/quiz", checkUser, checkTeacher, listCourseWoQuiz);
+router.get("/list-course/sp/graph", checkUser, checkTeacher, listCourseGraphData);
+
 
 
 // === waite for review =========================================================

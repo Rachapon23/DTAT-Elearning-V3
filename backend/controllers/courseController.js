@@ -5,7 +5,7 @@ const Plant = require("../models/plant");
 const Calendar = require("../models/calendar");
 const User = require("../models/user");
 
-const studentActivity = require('../models/activity')
+const Activity = require('../models/activity')
 const Condition = require("../models/condition");
 
 // POST: /create-course
@@ -70,7 +70,7 @@ exports.listCourse = async (req, res) => {
   try {
     const fields = req?.query?.field
     let populateField = null
-    
+
     if (fields && Array.isArray(fields)) {
       if (fields.length > allowField.length) return res.status(400).json({ error: "Invalid query parameter(s)" });
       if (fields.length > 1) {
@@ -80,15 +80,15 @@ exports.listCourse = async (req, res) => {
       }
       populateField = fields.join(" ")
     }
-    else if(fields){
+    else if (fields) {
       if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid query parameter(s)" });
       populateField = fields
     }
-    console.log(populateField)
 
     switch (req?.user?.role) {
       case "admin":
-        return res.json({ data: await Course.find({}).populate(populateField) });
+        const searchedData = await Course.find({}).populate(populateField)
+        return res.json({ data: searchedData });
         break;
       case "teacher":
         return res.json({ data: await Course.find({ teacher: user_id }).populate(populateField) });
@@ -296,6 +296,49 @@ exports.listCourseWoQuiz = async (req, res) => {
   catch (err) {
     console.log(err);
     return res.status(500).json({ error: "Unexpected error on get course count" });
+  }
+};
+
+// GET: /list-course/sp/graph
+exports.listCourseGraphData = async (req, res) => {
+
+  try {
+    switch (req?.user?.role) {
+      case "admin":
+        const searchedCourse = await Course.find({})
+          .populate({
+            path: "condition",
+            populate: {
+              path: "plant"
+              // select: ""
+            }
+          })
+        const payload = searchedCourse.map(
+          (item) => (
+            {
+              name: item.name,
+              plant: item.condition.map((item) => item.plant.name),
+              plant_amount: item.condition.map((amount) => amount.maximum),
+              current: item.activity.length,
+              maximum: item.condition.map((amount) => amount.maximum).reduce((prev, curr) => prev + curr, 0),
+            }
+          )
+        )
+        console.log(payload)
+        return res.json({ data: payload });
+        break;
+      case "teacher":
+        return res.json({ data: await Course.find({ teacher: user_id }).populate("condition") });
+        break;
+      case "student":
+        return res.status(403).json({ error: "Access denine for student" });
+        break;
+      default: return res.status(404).json({ error: "This role does not exist in system" });
+    }
+  }
+  catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Unexpected error on list courses" });
   }
 };
 

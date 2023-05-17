@@ -1,15 +1,10 @@
 import React, { createContext, useEffect, useState } from "react";
 import { getHome } from "../../../../function/Admin/adminFunction";
-import { getProfile, listCourse } from "../../../../function/Teacher/home";
+import { getProfile, listCourse, listCourseGraphData } from "../../../../function/Teacher/home";
 
 export const TeacherHomeContext = createContext();
 
 export const TeacherHomeProvider = ({ children }) => {
-    const [home, setHome] = useState(null | {
-        acnounce: [],
-        course_public: [],
-        course_private: [],
-    })
     const [profile, setProfile] = useState({})
     const [course, setCourse] = useState([])
     const [graphData, setGraphData] = useState([])
@@ -32,13 +27,13 @@ export const TeacherHomeProvider = ({ children }) => {
     }
 
     const fetchCourse = async () => {
-        await listCourse(sessionStorage.getItem("token"), "?field=condition")
+        await listCourseGraphData(sessionStorage.getItem("token"))
             .then(
                 (res) => {
                     const data = res.data.data
-                    setCourse(data)
-                    setGraphData(() => [data.map(item => ({ name: item.name, maximum: item.condition.map((i => i.maximum)) }))])
-                    
+                    console.log(data)
+                    setGraphData(data)
+
                 }
             )
             .catch(
@@ -58,13 +53,10 @@ export const TeacherHomeProvider = ({ children }) => {
             value={{
                 profile,
                 setProfile,
-                course,
-                setCourse,
                 graphData,
                 setGraphData
             }}>
             {children}
-            {console.log(graphData)}
         </TeacherHomeContext.Provider >
     );
 }

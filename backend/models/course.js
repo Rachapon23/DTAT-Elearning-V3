@@ -49,6 +49,10 @@ const CourseSchema = new mongoose.Schema(
       type: ObjectId,
       ref: "exam",
     },
+    activity: [{
+      type: ObjectId,
+      ref: "activity",
+    }],
   },
   { timestamps: true }
 );
