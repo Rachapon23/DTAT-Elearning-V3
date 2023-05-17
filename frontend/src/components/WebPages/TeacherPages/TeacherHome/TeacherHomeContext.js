@@ -12,6 +12,7 @@ export const TeacherHomeProvider = ({ children }) => {
     })
     const [profile, setProfile] = useState({})
     const [course, setCourse] = useState([])
+    const [graphData, setGraphData] = useState([])
     // const [coursePrivate, setCoursePrivate] = useState([])
 
     const fetchProfile = async () => {
@@ -20,7 +21,7 @@ export const TeacherHomeProvider = ({ children }) => {
                 (res) => {
                     const data = res.data.data
                     setProfile(data)
-                    console.log(data)
+                    // console.log(data)
                 }
             )
             .catch(
@@ -31,12 +32,13 @@ export const TeacherHomeProvider = ({ children }) => {
     }
 
     const fetchCourse = async () => {
-        await listCourse(sessionStorage.getItem("token"))
+        await listCourse(sessionStorage.getItem("token"), "?field=condition")
             .then(
                 (res) => {
                     const data = res.data.data
                     setCourse(data)
-                    console.log(data)
+                    setGraphData(() => [data.map(item => ({ name: item.name, maximum: item.condition.map((i => i.maximum)) }))])
+                    
                 }
             )
             .catch(
@@ -58,8 +60,11 @@ export const TeacherHomeProvider = ({ children }) => {
                 setProfile,
                 course,
                 setCourse,
+                graphData,
+                setGraphData
             }}>
             {children}
+            {console.log(graphData)}
         </TeacherHomeContext.Provider >
     );
 }

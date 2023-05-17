@@ -3,7 +3,7 @@ const {ObjectId} = mongoose.Schema
 
 const ConditionSchema = new mongoose.Schema({
     maximum: {
-        type: String,
+        type: Number,
         require: true,
     },
     plant: {

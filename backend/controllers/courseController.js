@@ -66,13 +66,32 @@ exports.getCourse = async (req, res) => {
 
 // GET: /list-course
 exports.listCourse = async (req, res) => {
+  const allowField = ["condition", "room", "teacher", "exam"]
   try {
+    const fields = req?.query?.field
+    let populateField = null
+    
+    if (fields && Array.isArray(fields)) {
+      if (fields.length > allowField.length) return res.status(400).json({ error: "Invalid query parameter(s)" });
+      if (fields.length > 1) {
+        for (let i = 0; i < fields.length; i++) {
+          if (!allowField.includes(fields[i])) return res.status(400).json({ error: "Invalid query parameter(s)" });
+        }
+      }
+      populateField = fields.join(" ")
+    }
+    else if(fields){
+      if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid query parameter(s)" });
+      populateField = fields
+    }
+    console.log(populateField)
+
     switch (req?.user?.role) {
       case "admin":
-        return res.json({ data: await Course.find({}) });
+        return res.json({ data: await Course.find({}).populate(populateField) });
         break;
       case "teacher":
-        return res.json({ data: await Course.find({ teacher: user_id }) });
+        return res.json({ data: await Course.find({ teacher: user_id }).populate(populateField) });
         break;
       case "student":
         return res.status(403).json({ error: "Access denine for student" });
@@ -169,7 +188,7 @@ exports.updateCourseImage = async (req, res) => {
     let error_deleteFile = false
 
     if (image_data.image) {
-      
+
       fs.unlink(`./${req.body.upload_type}/uploads/${image_data.image.name}`, (err) => {
         if (err) {
 
@@ -196,7 +215,7 @@ exports.updateCourseImage = async (req, res) => {
 
     if (error_deleteFile) return res.status(500).json({ error: "Cannot delete previous image before update" });
 
-    
+
     const course = await Course.findOneAndUpdate(
       { _id: req.params.id },
       {

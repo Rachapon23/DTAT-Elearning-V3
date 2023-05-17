@@ -1,5 +1,5 @@
 import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons';
-import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography } from 'antd';
+import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Descriptions } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { Column, Pie } from '@ant-design/plots';
 import { Link, useNavigate } from 'react-router-dom';
@@ -18,8 +18,10 @@ const TeacherHome = () => {
 
   const { profile, setProfile } = useContext(TeacherHomeContext)
   const { course, setCourse } = useContext(TeacherHomeContext)
-  
+  const { graphData, setGraphData } = useContext(TeacherHomeContext)
+
   const [target, setTarget] = useState(1000)
+  const [actionMode, setActionMode] = useState("Preview")
   // Variable-End -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -59,7 +61,7 @@ const TeacherHome = () => {
   const config = {
     appendPadding: 10,
     data: course,
-    angleField: 'video',
+    angleField: 'maximum',
     colorField: 'name',
     radius: 0.8,
     label: {
@@ -100,12 +102,11 @@ const TeacherHome = () => {
   const courseProgressCard = (course, last_index) => {
     return (
       <div>
-        <Row style={{paddingTop: "3.5%"}}>
+        <Row style={{ paddingTop: "3.5%" }}>
           <Col flex={"auto"}>
             <Row justify={"space-between"}>
               <Col>
                 {`${course.name}`}
-                {console.log(course)}
               </Col>
               <Col style={{ marginRight: "2.5%" }}>
                 126 / 250
@@ -290,7 +291,19 @@ const TeacherHome = () => {
                             </Title>
                           </Col>
                           <Col>
-                            <Button>Edit</Button>
+                            <Button
+                              onClick={
+                                () => {
+                                  if(actionMode === "Preview") return setActionMode("Edit")
+                                  if(actionMode === "Edit") return setActionMode("Preview")
+                                }
+                              }
+                            >
+                              {
+                                actionMode === "Preview" ?
+                                  "Edit" : actionMode === "Edit" ? "Save" : null
+                              }
+                            </Button>
                           </Col>
                         </Row>
                       }
@@ -300,9 +313,36 @@ const TeacherHome = () => {
                         <Avatar shape="square" size={200} icon={<UserOutlined />} />
                       </Row>
                       <Row style={{ marginTop: "5%" }} />
-                      <p>Name: {profile.firstname} {profile.lastname}</p>
-                      <p>Email: {profile.email}</p>
-                      <p>Tel: {profile.tel}</p>
+                      {
+                        actionMode === "Preview" ?
+                          (
+                            <>
+                              <p>Name: {profile.firstname} {profile.lastname}</p>
+                              <p>Email: {profile.email}</p>
+                              <p>Tel: {profile.tel}</p>
+                              <p>Target: {target}</p>
+                            </>
+                          )
+                          :
+                          (
+                            <>
+                              <p>
+                                <Row justify={'space-between'}>
+                                  <Col flex={"auto"}>
+                                    First Name: <Input defaultValue={profile.firstname} />
+                                  </Col>
+                                  <Col style={{ marginLeft: "0.5%", marginRight: "0.5%" }} />
+                                  <Col flex={"auto"}>
+                                    Last Name: <Input defaultValue={profile.lastname} />
+                                  </Col>
+                                </Row>
+                              </p>
+                              <p>Email: <Input defaultValue={profile.email} /></p>
+                              <p>Tel: <Input defaultValue={profile.tel} /></p>
+                              <p>Target: <Input defaultValue={target} /></p>
+                            </>
+                          )
+                      }
                     </Card>
                   </Col>
                 </Row>
