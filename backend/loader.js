@@ -453,7 +453,7 @@ exports.loadData = async () => {
             completed: false,
             socre_max: null,
             score_value: null,
-            student: student1,
+            user: student1,
             course: course1,
             activity: null,
 
@@ -471,7 +471,7 @@ exports.loadData = async () => {
             completed: false,
             socre_max: null,
             score_value: null,
-            student: student1,
+            user: student1,
             course: course2,
 
         },
@@ -488,7 +488,7 @@ exports.loadData = async () => {
             completed: false,
             socre_max: null,
             score_value: null,
-            student: student1,
+            user: student1,
             course: course3,
 
         },
@@ -505,7 +505,7 @@ exports.loadData = async () => {
             completed: false,
             socre_max: null,
             score_value: null,
-            student: student1,
+            user: student1,
             course: course4,
 
         },
@@ -522,7 +522,7 @@ exports.loadData = async () => {
             completed: false,
             socre_max: null,
             score_value: null,
-            student: student1,
+            user: student1,
             course: course5,
 
         },

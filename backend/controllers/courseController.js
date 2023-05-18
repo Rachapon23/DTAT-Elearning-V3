@@ -313,12 +313,27 @@ exports.listCourseGraphData = async (req, res) => {
               // select: ""
             }
           })
+          .populate({
+            path: "activity",
+            populate: {
+              path: "user",
+              populate: {
+                path: "plant"
+                // select: ""
+              }
+            }
+          })
+
+        const searchedActivity = await Activity.find({})
+        
+        // console.log(searchedCourse.map((item) => item.activity.map((item) => item.user.plant.name)))
         const payload = searchedCourse.map(
           (item) => (
             {
               name: item.name,
               plant: item.condition.map((item) => item.plant.name),
               plant_amount: item.condition.map((amount) => amount.maximum),
+              plant_current: item.activity,
               current: item.activity.length,
               maximum: item.condition.map((amount) => amount.maximum).reduce((prev, curr) => prev + curr, 0),
             }
