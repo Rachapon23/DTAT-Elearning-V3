@@ -324,7 +324,11 @@ exports.listCourseGraphData = async (req, res) => {
             }
           })
 
-        const searchedActivity = await Activity.find({})
+        const searchedActivity = await Activity.find({}).populate("user")
+        console.log(searchedActivity.map((item) =>{
+          if(item.completed && item.user) return item.user
+          else return 0
+        }))
         
         // console.log(searchedCourse.map((item) => item.activity.map((item) => item.user.plant.name)))
         const payload = searchedCourse.map(
