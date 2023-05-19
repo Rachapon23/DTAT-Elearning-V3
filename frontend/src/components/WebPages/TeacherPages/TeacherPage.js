@@ -17,8 +17,7 @@ import Exames from "./TeacherExam/Exames";
 import ExamCreate from "./TeacherExam/ExamCreate"
 import TeacherHome from "./TeacherHome/TeacherHome";
 
-import CourseCreateB from "./TeacherCourse/CourseCreateB";
-import CourseCreateA from "./TeacherCourse/CourseCreate/CourseCreateA";
+
 
 const { Header, Sider, Content } = Layout;
 
@@ -49,10 +48,11 @@ const App = () => {
   
   const items = [
     getItem('Home', 'home', <HomeOutlined />),
-    getItem('Course', 'course', <ReadOutlined />, [
-      getItem('List Course', 'list-course'),
-      getItem('Create Course', 'create-course'),
-    ]),
+    getItem('List Course', 'list-course', <ReadOutlined />),
+    // getItem('Course', 'course', <ReadOutlined />, [
+    //   getItem('List Course', 'list-course'),
+    //   // getItem('Create Course', 'create-course'),
+    // ]),
     getItem('Exam', 'exam', <ScheduleOutlined />, [
       getItem('List Exam', 'list-exam'),
       getItem('Create Exam', 'create-exam'),
@@ -72,9 +72,9 @@ const App = () => {
       case 'home': 
         return <TeacherHome/>;
       case 'list-course': 
-        return <CourseCreate/>;
-      case 'create-course': 
-        return <CourseCreateA/>;
+        return <Courses/>;
+      // case 'create-course': 
+      //   return <CourseCreateA/>;
       case 'list-exam': 
         return <Exames/>;
       case 'create-exam': 
@@ -82,7 +82,7 @@ const App = () => {
       case 'edit-exam':
         return <ExamCreate mode={"edit"}/>;
       case 'calendar': 
-        return <p className="success">Calendar</p>;
+        return   <CourseCreate/>;
       default: 
         return <p className="success">404 not found ... </p>;
       

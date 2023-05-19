@@ -14,6 +14,13 @@ export const listCourse = async (authtoken) =>
             authtoken,
         }
     });
+// GET: /get-course
+export const getCourse = async (authtoken,id) =>
+    await axios.get(process.env.REACT_APP_API + `/get-course/${id}`, {
+        headers: {
+            authtoken,
+        }
+    });
 
 // DELETE: /remove-course
 export const removeCourse = async (authtoken, id) =>
