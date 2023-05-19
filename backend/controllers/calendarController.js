@@ -21,7 +21,7 @@ exports.createCalendar = async (req, res) => {
         //     { new: true },
         // )
 
-        res.json({ data: { "calendar, course" } });
+        res.json({ data:  "calendar, course"  });
     }
     catch (err) {
         console.log(err);
@@ -38,6 +38,15 @@ exports.listCalendarRole = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(500).send("Server Error!!! on list calendar");
+    }
+};
+exports.listCalendar = async (req, res) => {
+    try {
+        const calendar = await Calendar.find()
+        res.send(calendar);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Server Error!!! on list calendar ",rr);
     }
 };
 // exports.listCalendarUser = async (req, res) => {

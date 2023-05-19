@@ -1,62 +1,63 @@
 import React from "react";
-import { useState } from 'react';
-import {
-  InfoCircleOutlined,
-  EditTwoTone,
-  DeleteTwoTone,
-  BorderOutlined,
-  PlusOutlined,
-  LoadingOutlined,
-} from "@ant-design/icons";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {
   Card,
   Col,
-  Layout,
   Row,
-  Tooltip,
   Button,
   Input,
-  Typography,
-  Table,
-  Breadcrumb,
-  Steps,
   Form,
   Radio,
   Upload,
-  message,
   Image,
-  Select,
-  Calendar,
-  Empty,
-  Tree,
-  Result,
 } from "antd";
-import AntdImgCrop from "antd-img-crop";
+import {
+  InfoCircleOutlined,
+  PlusOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 
+// function get
+import { getCourse } from "../../../../../function/Teacher/course";
 
-const { Title } = Typography;
-const { Meta } = Card;
-const { Header, Content, Footer, Sider } = Layout;
 const { TextArea } = Input;
 
 const CourseInfo = ({
-  setCourseType,
   courseType,
+  setCourseType,
   setCourseInfo,
   courseInfo,
 }) => {
-
-  const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
+  const [loading, setLoading] = useState(false);
+
+  const { course_id } = useParams();
+  const [courseData, setCourseData] = useState({});
+
+  const loadDataCourse = () => {
+    getCourse(sessionStorage.getItem("token"), course_id)
+      .then((res) => {
+        console.log(res);
+        setCourseData(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
+  };
+
+  // for load data
+  useEffect(() => {
+    loadDataCourse();
+  }, []);
 
   const handleChangeType = (type) => {
     setCourseType(type);
-    // console.log(type)
-  };
-  const hadleChangeInfo = (e) => {
     setCourseInfo((courseInfo) => ({
       ...courseInfo,
-      [e.target.name]: e.target.value,
+      "type": type,
     }));
   };
 
@@ -73,17 +74,25 @@ const CourseInfo = ({
     </div>
   );
 
+  const handleChangeInfo = (e) => {
+    setCourseInfo((courseInfo) => ({
+      ...courseInfo,
+      [e.target.name]: e.target.value,
+    }));
+  };
+// console.log(courseData.type,courseType)
   return (
-    <Form
-      style={{ paddingTop: "2%" }}
-      layout="vertical"
-      // form={form}
-      // initialValues={{
-      //   requiredMarkValue: requiredMark,
-      // }}
-      // onValuesChange={onRequiredTypeChange}
-      // requiredMark={requiredMark}
-      // onFinish={OnFF}
+    <Form style={{ paddingTop: "2%" }} layout="vertical"
+    fields={[
+      {
+        name: ["fieldName"],
+        value: courseData?.name,
+      },
+      {
+        name: ["fieldDetail"],
+        value: courseData?.detail,
+      },
+    ]}
     >
       <Row>
         <Col style={{ width: "100%" }}>
@@ -91,18 +100,19 @@ const CourseInfo = ({
             label="Course Name"
             required
             tooltip="This is a required field"
-            name={"name"}
+            name="fieldName"
           >
             <Input
               placeholder="input placeholder"
               name="name"
-              onChange={hadleChangeInfo}
+              onChange={handleChangeInfo}
+              // defaultValue={courseData?.name}
             />
           </Form.Item>
 
           <Form.Item
             label="Detail"
-            name={"detail"}
+            name="fieldDetail"
             required
             tooltip={{
               title: "Tooltip with customize icon",
@@ -113,18 +123,14 @@ const CourseInfo = ({
               showCount
               maxLength={250}
               style={{ height: 120 }}
-              // onChange={onChange}
               placeholder="can resize"
               name="detail"
-              onChange={hadleChangeInfo}
+              onChange={handleChangeInfo}
+              // defaultValue={courseData?.detail}
             />
           </Form.Item>
 
-          <Form.Item
-            label="Course Type"
-            required
-            // tooltip={tooltipCourseType()}
-          >
+          <Form.Item label="Course Type" required>
             <Radio.Group defaultValue={courseType} buttonStyle="solid">
               <Radio.Button value={true} onClick={() => handleChangeType(true)}>
                 Public
@@ -161,7 +167,6 @@ const CourseInfo = ({
                     uploadButton
                   )}
                 </Upload>
-
               </Col>
             </Row>
           </Form.Item>

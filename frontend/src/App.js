@@ -8,6 +8,10 @@ import Home from "./components/WebPages/HomePage/Home/Home";
 import StudentHomePage from "./components/WebPages/StudentPage/StudentHome/StudentHomePage";
 import AdminPage from "./components/WebPages/AdminPage/AdminPage"
 import TeacherPage from "./components/WebPages/TeacherPages/TeacherPage";
+
+//test page
+import CourseMain from "./components/WebPages/TeacherPages/TeacherCourse/Course/CourseMain";
+
 function App() {
   return (
     <div>
@@ -18,6 +22,7 @@ function App() {
 
         <Route path="/teacher/page/:params" element={<TeacherPage/>} />
         <Route path="/teacher/page/:params/:id" element={<TeacherPage/>} />
+        <Route path="/teacher/course/:course_id" element={<CourseMain/>} />
         <Route path="/admin/page/:params" element={<AdminPage/>} />
         {/* <Route path="/teacher/courses" element={<Courses/>} /> */}
         {/* <Route path="/teacher/exams" element={<Exames/>} /> */}

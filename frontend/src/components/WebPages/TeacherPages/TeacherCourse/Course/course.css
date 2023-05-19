@@ -1,0 +1,12 @@
+.course-main-layout{
+    background-image: url("../../../../../../public/background-teacher.jpg");
+    min-height: 100vh;
+    /* max-height: 3000px; */
+    /* height: max-content; */
+}
+.course-main-content{
+    margin: 30px;
+}
+.course-main-btn-bottom{
+    margin: 0px 30px 30px 30px;
+}
