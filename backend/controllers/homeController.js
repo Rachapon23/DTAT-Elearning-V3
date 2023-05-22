@@ -120,13 +120,65 @@ exports.updateAcnounce = async (req, res) => {
     }
 }
 
-exports.addCoursePublic = async (req, res) => {
+exports.updateCoursePublic = async (req, res) => {
     try {
-        await Home.findOneAndUpdate(
-            { _id: req.params.id },
-            { $push: { course_public: req.body.course_public } },
-            { new: true },
-        )
+        // await Home.findOneAndUpdate(
+        //     { _id: req.params.id },
+        //     { $push: { course_public: req.body.course_public } },
+        //     { new: true },
+        // )
+
+        const { course_public, remove } = req?.body
+        console.log(req?.body)
+
+        const dataBaseCoursePublic = await Home.find({})
+        if (Array.isArray(dataBaseCoursePublic)) {
+            if (dataBaseCoursePublic.length === 0) {
+
+                const payload = await new Home({
+                    course_public: course_public
+                }).save()
+
+                if (remove) {
+                    fs.unlink(`./public/uploads${remove?.url}`,
+                        (err) => {
+                            if (err) {
+                                console.log(err)
+                                error_deleteFile = true
+                            }
+                        }
+                    )
+
+                }
+
+
+                return res.status(200).json({ data: payload })
+                // return res.status(500).json({ error: "Cannot find acnounce to update" })
+            }
+            else if (dataBaseCoursePublic.length === 1) {
+                const payload = await Home.findOneAndUpdate({}, { course_public: course_public }, { new: true })
+
+
+                if (remove) {
+                    fs.unlink(`./public/uploads${remove?.url}`,
+                        (err) => {
+                            if (err) {
+                                console.log(err)
+                            }
+                        }
+                    )
+                }
+
+                return res.status(200).json({ data: payload })
+            }
+            else {
+                return res.status(500).json({ error: "Unexpected error on update course public" })
+            }
+        }
+        return res.status(500).json({ error: "Unexpected error on update course public" })
+
+
+        
     }
     catch (err) {
         console.log(err)

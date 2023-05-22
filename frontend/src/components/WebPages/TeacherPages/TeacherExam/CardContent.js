@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react"
 import { PictureOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined, UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image, Badge, Space } from 'antd';
 import { Link } from "react-router-dom";
-import { createFile, getPrivateFieldImage, updateExam } from "../../../../function/Teacher/exame";
+import { createFile, getPrivateFieldImage, updateExam } from "../../../../function/Teacher/exam";
 
 const CardContent = ({
     // uuid = null,

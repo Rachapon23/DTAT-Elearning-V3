@@ -4,7 +4,7 @@ import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress
 import NavBar from "../../../Layout/NavBar"
 import CardContent from "./CardContent";
 import "../teach.css"
-import { createExam, getCourseWoQuiz, getExam, updateExam } from "../../../../function/Teacher/exame";
+import { createExam, getCourseWoQuiz, getExam, updateExam } from "../../../../function/Teacher/exam";
 
 const { Title } = Typography;
 const { Meta } = Card;

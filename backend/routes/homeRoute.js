@@ -7,6 +7,8 @@ const {
     createAcnounce,
     getHome,
     updateAcnounce,
+    updateCoursePublic,
+    removeCoursePublic,
 } = require('../controllers/homeController')
 
 
@@ -16,8 +18,8 @@ router.put('/update-acnounce', checkUser, checkAdmin, uploadPublic, updateAcnoun
 // router.put('/remove-carousel', checkUser, checkAdmin, removeCarousel)
 
 // public course
-// router.post('/add-course-public', checkUser, checkAdmin, addCoursePublic)
-// router.post('/remove-course-public', checkUser, checkAdmin, removeCoursePublic)
+router.put('/update-course-public', checkUser, checkAdmin, updateCoursePublic)
+router.delete('/remove-course-public', checkUser, checkAdmin, removeCoursePublic)
 
 // private course
 // router.post('/add-course-private', checkUser, checkAdmin, addCoursePrivate)

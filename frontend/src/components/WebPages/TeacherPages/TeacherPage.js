@@ -13,7 +13,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import Courses from "./TeacherCourse/Courses";
 import CourseCreate from "./TeacherCourse/CourseCreate"
-import Exames from "./TeacherExam/Exames";
+import Exames from "./TeacherExam/Exams";
 import ExamCreate from "./TeacherExam/ExamCreate"
 import TeacherHome from "./TeacherHome/TeacherHome";
 

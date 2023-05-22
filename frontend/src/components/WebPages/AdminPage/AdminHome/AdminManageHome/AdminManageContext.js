@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { getHome } from "../../../../function/Admin/adminFunction";
+import { getHome } from "../../../../../function/Admin/adminFunction";
 
 export const AdminContext = createContext();
 
@@ -22,6 +22,7 @@ export const AdminProvider = ({ children }) => {
                     setAcnounce(() => data.acnounce)
                     setCoursePublic(() => data.course_public)
                     setCoursePrivate(() => data.course_private)
+                    // console.log("HIT")
                 }
             )
             .catch(

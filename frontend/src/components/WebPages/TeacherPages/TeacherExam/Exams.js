@@ -5,7 +5,7 @@ import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../teach.css"
-import { getCourseCount, listExam, removeExam } from "../../../../function/Teacher/exame";
+import { getCourseCount, listExam, removeExam } from "../../../../function/Teacher/exam";
 const { Title } = Typography;
 const { Meta } = Card;
 const { Header, Content, Footer, Sider } = Layout;

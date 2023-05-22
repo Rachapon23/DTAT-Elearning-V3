@@ -11,8 +11,8 @@ import {
 } from '@dnd-kit/sortable';
 import { DndContext } from '@dnd-kit/core';
 import { Link } from 'react-router-dom';
-import { createAcnounce, createFilePublic, updateAcnounce } from '../../../../function/Admin/adminFunction';
-import { AdminContext } from './AdminContext';
+import { createAcnounce, createFilePublic, updateAcnounce } from '../../../../../function/Admin/adminFunction';
+import { AdminContext } from './AdminManageContext';
 import ImgCrop from 'antd-img-crop';
 
 const { Title } = Typography;

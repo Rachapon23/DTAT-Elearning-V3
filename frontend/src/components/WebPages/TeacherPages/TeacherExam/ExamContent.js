@@ -6,7 +6,6 @@ import { useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import CardContent from "./CardContent";
 import "../teach.css"
-import { createExam, getCourseWoQuiz, getExam, updateExam } from "../../../../function/Teacher/exame";
 
 import CardEmptyContent from "./CardEmptyContent";
 
