@@ -17,7 +17,6 @@ import Exames from "./TeacherExam/Exams";
 import ExamCreate from "./TeacherExam/ExamCreate"
 import TeacherHome from "./TeacherHome/TeacherHome";
 
-import CourseCreateB from "./TeacherCourse/CourseCreateB";
 import { TeacherHomeProvider } from "./TeacherHome/TeacherHomeContext";
 
 const { Header, Sider, Content } = Layout;
@@ -49,7 +48,7 @@ const App = () => {
 
   const items = [
     getItem('Home', 'home', <HomeOutlined />),
-    getItem('List Course', 'list-course', <ReadOutlined />),
+    getItem('Course', 'list-course', <ReadOutlined />),
     // getItem('Course', 'course', <ReadOutlined />, [
     //   getItem('List Course', 'list-course'),
     //   // getItem('Create Course', 'create-course'),
@@ -77,9 +76,9 @@ const App = () => {
           </TeacherHomeProvider>
         );
       case 'list-course':
-        return <CourseCreate />;
+        return <Courses  />;
       case 'create-course':
-        return <CourseCreateB />;
+        return <CourseCreate />;
       case 'list-exam':
         return <Exames />;
       case 'create-exam':

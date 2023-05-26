@@ -17,7 +17,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     const location = useLocation()
     const [managementMode, setManagementMode] = useState(mode ? mode : location?.state?.mode)
     const [mainManagementMode] = useState(managementMode)
-    const examEditName = location?.state?.exam_name
+    const [examEditName] = useState(location?.state?.exam_name)
 
     const [editExamLoaeded, setEditExamLoaeded] = useState(false)
 

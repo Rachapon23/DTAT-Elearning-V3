@@ -236,7 +236,7 @@ const Courses = () => {
     return (
       <Row align={"middle"} justify={"space-between"}>
         <Col>
-          <p style={{ marginTop: "10px" }}>List Course</p>
+          <p style={{ marginTop: "10px" }}>Course</p>
           {/* <Breadcrumb
             separator={
               <Title level={5} style={{ marginTop: "10px" }}>

@@ -20,6 +20,7 @@ const CourseSchema = new mongoose.Schema(
     image: {
       original_name: { type: String },
       name: { type: String },
+      url: { type: String },
     },
     enabled: {
       type: Boolean,

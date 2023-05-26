@@ -6,7 +6,7 @@ import CardContent from "./CardContent";
 import "../teach.css"
 import { createExam, getCourseWoQuiz, getExam, updateExam } from "../../../../function/Teacher/exam";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { Meta } = Card;
 const { Header, Content, Footer, Sider } = Layout;
 const { TextArea } = Input;
@@ -107,7 +107,7 @@ const ExamInfo = ({
                     }
 
                     <Form.Item
-                        label="Exam Name"
+                        label={<Text strong> Exam Name </Text>}
                         required
                         tooltip={editMode ? "This is a required field" : null}
                     >
@@ -129,7 +129,7 @@ const ExamInfo = ({
                     </Form.Item>
 
                     <Form.Item
-                        label="Detail"
+                        label={<Text strong> Detail </Text>}
                         required={previewMode}
                         tooltip={editMode ? {
                             title: 'Tooltip with customize icon',

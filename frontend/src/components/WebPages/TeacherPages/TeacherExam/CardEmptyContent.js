@@ -10,10 +10,9 @@ import "../teach.css"
 const CardEmptyContent = ({
     inputContentTemplate=null,
     onAddCardContent=null,
+    actionMode = null,
 
 }) => {
-
-    
 
     return (
         <Card>
@@ -31,7 +30,12 @@ const CardEmptyContent = ({
                             </span>
                         }
                     >
-                        <Button type="primary" onClick={onAddCardContent}>Create Now</Button>
+                        {
+                            actionMode === "Edit" ?
+                            (
+                                <Button type="primary" onClick={onAddCardContent}>Create Now</Button>
+                            ):(null)
+                        }
                     </Empty>
                 </Col>
             </Row>

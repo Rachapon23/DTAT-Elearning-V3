@@ -64,6 +64,7 @@ const ExamContent = ({
                                         <CardEmptyContent
                                             inputContentTemplate={inputContentTemplate}
                                             onAddCardContent={onAddCardContent}
+                                            actionMode={actionMode}
                                         />
                                     )
                                     :

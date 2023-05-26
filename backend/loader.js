@@ -24,6 +24,7 @@ exports.loadData = async () => {
     await Role.findOneAndUpdate({ name: "student" }, { name: "student" }, { upsert: true, new: true, setDefaultsOnInsert: true })
     await Role.findOneAndUpdate({ name: "teacher" }, { name: "teacher" }, { upsert: true, new: true, setDefaultsOnInsert: true })
     await Role.findOneAndUpdate({ name: "admin" }, { name: "admin" }, { upsert: true, new: true, setDefaultsOnInsert: true })
+    // await Role.findOneAndUpdate({ name: "dev" }, { name: "dev" }, { upsert: true, new: true, setDefaultsOnInsert: true })
 
     // Department
     await Department.findOneAndUpdate({ id: "919323" }, { id: "919323" }, { upsert: true, new: true, setDefaultsOnInsert: true })
@@ -251,6 +252,11 @@ exports.loadData = async () => {
             name: "Introduction of Docker",
             detail: "Introduction of Docker Detail ",
             room: await Room.findOne({ name: "Technical Skill 2" }).select("_id"),
+            image: {
+                original_name: "course-pic1",
+                name: "file-1684511836883-779460665.png",
+                url: `/course/file-1684511836883-779460665.png`,
+            },
             video: 2,
             type: true,
             enabled: true,

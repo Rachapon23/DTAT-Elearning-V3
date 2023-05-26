@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from "react"
 import { useEffect, useRef } from "react"
 import { PictureOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined, UploadOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image, Badge, Space } from 'antd';
+import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image, Badge, Space, Typography } from 'antd';
 import { Link } from "react-router-dom";
 import { createFile, getPrivateFieldImage, updateExam } from "../../../../function/Teacher/exam";
+
+const { Text } = Typography
 
 const CardContent = ({
     // uuid = null,
@@ -224,7 +226,7 @@ const CardContent = ({
 
                                 <Col style={{ width: "95%" }}>
                                     <Form.Item
-                                        label={`Question ${index + 1}`}
+                                        label={<Text strong>{`Question ${index + 1}`}</Text>}
                                         required={previewMode}
                                         tooltip={editMode || createMode ? "This is a required field" : null}
                                     >
@@ -233,7 +235,7 @@ const CardContent = ({
                                                 (
                                                     <Input
                                                         id="question"
-                                                        placeholder="input placeholder"
+                                                        placeholder="Question"
                                                         onChange={handleCardChange}
                                                         defaultValue={data?.question}
                                                     />
@@ -300,7 +302,7 @@ const CardContent = ({
                                                                                 <Image
                                                                                     height={250}
                                                                                     src={imageData}
-                                                                                    // src={data?.image ? URL.createObjectURL(data?.image.get("file")) : null}
+                                                                                // src={data?.image ? URL.createObjectURL(data?.image.get("file")) : null}
                                                                                 />
                                                                             </Badge>
                                                                         )
