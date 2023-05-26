@@ -11,9 +11,10 @@ import {
 } from '@dnd-kit/sortable';
 import { DndContext } from '@dnd-kit/core';
 import { Link } from 'react-router-dom';
-import { createAcnounce, createFilePublic, updateAcnounce } from '../../../../function/Admin/adminFunction';
-import { AdminContext } from './AdminContext';
+import { createAcnounce, createFilePublic, updateAcnounce, updateCoursePublic } from '../../../../../function/Admin/adminFunction';
+import { AdminContext } from './AdminManageContext';
 import ImgCrop from 'antd-img-crop';
+import CourseTable from './CourseTable';
 
 const { Title } = Typography;
 
@@ -79,7 +80,7 @@ const RowTable = ({ children, ...props }) => {
 };
 
 
-const AdminManageHome = ({ manage = null }) => {
+const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
 
   const [imageData, setImageData] = useState(null)
   const [selectedImage, setSelectedImage] = useState(null)
@@ -89,13 +90,13 @@ const AdminManageHome = ({ manage = null }) => {
 
   const [manageHomeData, setManageHomeData] = useState()
 
-  const [actionMode, setActionMode] = useState("Edit")
+  const [actionMode, setActionMode] = useState(initAction)
 
   const handleAddImage = async (image) => {
-    
+
     let createFileField = null
 
-    switch(manage) {
+    switch (manage) {
       case "Acnounce": createFileField = "acnounce"; break;
       default: return;
     }
@@ -106,7 +107,7 @@ const AdminManageHome = ({ manage = null }) => {
     console.log(image?.file)
     formData.append("file", image?.file)
     formData.append("original_name", image?.file?.name)
-    
+
 
     // onChange(index, { image: formData })
 
@@ -166,6 +167,46 @@ const AdminManageHome = ({ manage = null }) => {
     imgWindow?.document.write(image.outerHTML);
   };
 
+  const renderButton = (actionMode, manage) => {
+    if (actionMode === "Preview" && manage === "Acnounce") {
+      return (
+        <ImgCrop
+          showReset
+          aspect={2.63 / 1}
+        >
+          <Upload
+            accept="image/*"
+            showUploadList={false}
+            customRequest={handleAddImage}
+            onPreview={onPreview}
+          >
+            <Button icon={<UploadOutlined />}>Upload</Button>
+          </Upload>
+        </ImgCrop>
+      )
+    }
+
+    if (manage === "Public Course" || manage === "Private Course") {
+      if (actionMode === "Preview") {
+        return (
+          <Button color="primary" onClick={() => setActionMode("Add")} >Add</Button>
+        )
+      }
+      if (actionMode === "Add") {
+        return (
+          <Button
+            color="primary"
+            onClick={() => {
+              setActionMode("Preview")
+              handleUpdateCourse()
+            }}>
+            Save
+          </Button>
+        )
+      }
+    }
+  }
+
 
   const manageHomeTitle = () => {
     return (
@@ -187,28 +228,28 @@ const AdminManageHome = ({ manage = null }) => {
         </Col>
         <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
           <Row>
-
-            <ImgCrop
-              showReset
-              aspect={2.63 / 1}
-            // https://www.digitalrebellion.com/webapps/aspectcalc <- use to calculate aspect ratio
-            // rotationSlider
-            >
-              <Upload
-                accept="image/*"
-                showUploadList={false}
-                customRequest={handleAddImage}
-                onPreview={onPreview}
-              >
-                <Button icon={<UploadOutlined />}>Upload</Button>
-              </Upload>
-            </ImgCrop>
-            {/* <Button color="primary" onClick={() => setActionMode("Preview")}>Save</Button> */}
+            {
+              renderButton(actionMode, manage)
+            }
           </Row>
-
         </Col>
       </Row >
     )
+  }
+
+  async function handleUpdateCourse() {
+    await updateCoursePublic(sessionStorage.getItem("token"), { course_public: coursePublic })
+      .then(
+        (res) => {
+          const data = res.data.data
+          console.log(data)
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err)
+        }
+      )
   }
 
   async function handleDeleteAcnounce(index) {
@@ -337,16 +378,30 @@ const AdminManageHome = ({ manage = null }) => {
   ];
 
   useEffect(() => {
-    if (manage === "Acnounce")  setManageHomeData(acnounce)
-    if (manage === "Public Course") setManageHomeData(coursePublic)
-    if (manage === "Private Course") setManageHomeData(coursePrivate)
+    switch (manage) {
+      case "Acnounce":
+        setManageHomeData(acnounce);
+        setActionMode("Preview");
+        break;
+      case "Public Course":
+        setManageHomeData(coursePublic);
+        // setActionMode("Preview");
+        break;
+      case "Private Course":
+        setManageHomeData(coursePrivate);
+        // setActionMode("Preview");
+        break;
+      default:
+        setManageHomeData(null);
+      // setActionMode("Preview");
+    }
   }, [acnounce, coursePrivate, coursePublic, manage])
 
-  return (
-    <Card title={manageHomeTitle()} style={{ width: "100%" }}>
-      <Row style={{ width: "100%" }}>
+  const renderContent = (actionMode, manage) => {
+    // console.log(actionMode, manage)
+    if (actionMode === "Preview" && (manage === "Acnounce" || manage === "Public Course" || manage === "Private Course")) {
+      return (
         <Col flex={"auto"}>
-          {console.log(manageHomeData)}
           {
             manageHomeData ?
               (
@@ -378,6 +433,25 @@ const AdminManageHome = ({ manage = null }) => {
               )
           }
         </Col>
+      )
+    }
+    if (manage === "Public Course" || manage === "Private Course") {
+      if (actionMode === "Add") {
+        return (
+          <Col flex={"auto"}>
+            <CourseTable />
+          </Col>
+        )
+      }
+    }
+  }
+
+  return (
+    <Card title={manageHomeTitle()} style={{ width: "100%" }}>
+      <Row style={{ width: "100%" }}>
+        {
+          renderContent(actionMode, manage)
+        }
       </Row>
     </Card>
 

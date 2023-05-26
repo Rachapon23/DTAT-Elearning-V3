@@ -3,7 +3,7 @@ import { Card, Col, Layout, Row, Button, Typography, Breadcrumb, Steps, Form, } 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "../teach.css"
-import { createExam, getExam, updateExam } from "../../../../function/Teacher/exame";
+import { createExam, getExam, updateExam } from "../../../../function/Teacher/exam";
 
 import ExamInfo from "./ExamInfo";
 import ExamSelectCourse from "./ExamSelectCourse";

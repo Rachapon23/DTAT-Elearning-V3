@@ -62,7 +62,7 @@ export const removeRoom = async (authtoken, id) =>
 
 // PUT: /update-user/:id/enabled
 export const updateUserEnabled = async (authtoken, id, data) =>
-    await axios.put(process.env.REACT_APP_API + `/update-user/${id}/enable`, data, { 
+    await axios.put(process.env.REACT_APP_API + `/update-user/${id}/enable`, data, {
         headers: {
             authtoken,
         }
@@ -90,8 +90,25 @@ export const getHome = async () =>
 
 // DELETE: /update-acnounce
 export const updateAcnounce = async (authtoken, data) =>
-    await axios.put(process.env.REACT_APP_API + `/update-acnounce`, data,{
+    await axios.put(process.env.REACT_APP_API + `/update-acnounce`, data, {
         headers: {
             authtoken,
         }
     });
+
+// GET: /list-course
+export const listCourse = async (authtoken) =>
+    await axios.get(process.env.REACT_APP_API + `/list-course`, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// DELETE: /update-course-public
+export const updateCoursePublic = async (authtoken, data) =>
+    await axios.put(process.env.REACT_APP_API + `/update-course-public`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+

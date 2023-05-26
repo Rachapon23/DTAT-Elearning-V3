@@ -11,13 +11,13 @@ import React, { useState, useEffect } from "react";
 import "./adminpage.css";
 import { useParams, useNavigate } from "react-router-dom";
 import AdminHomePage from "./AdminHome/AdminHomePage";
-import AdminManageAcnounce from "./AdminHome/AdminManageAcnounce";
+import AdminManageAcnounce from "./AdminHome/AdminManageHome/AdminManageAcnounce";
 import AdminListUser from "./AdminHome/AdminListUser";
 import AdminManageTeacher from "./AdminHome/AdminManageTeacher";
 import AdminManageStudent from "./AdminHome/AdminManageStudent";
 
-import { AdminProvider } from "./AdminHome/AdminContext";
-import AdminManageCourse from "./AdminHome/AdminManageCourse";
+import { AdminProvider } from "./AdminHome/AdminManageHome/AdminManageContext";
+import AdminManageCourse from "./AdminHome/AdminManageHome/AdminManageCourse";
 
 const { Header, Sider, Content } = Layout;
 
@@ -68,19 +68,19 @@ const App = () => {
       case 'acnounce':
         return (
           <AdminProvider>
-            <AdminManageAcnounce manage={"Acnounce"}/>
+            <AdminManageAcnounce manage={"Acnounce"} initAction={"Preview"}/>
           </AdminProvider>
         );
       case 'public-course':
         return (
           <AdminProvider>
-            <AdminManageAcnounce manage={"Public Course"}/>
+            <AdminManageAcnounce manage={"Public Course"} initAction={"Preview"}/>
           </AdminProvider>
         );
       case 'private-course':
         return (
           <AdminProvider>
-            <AdminManageAcnounce manage={"Private Course"} />
+            <AdminManageAcnounce manage={"Private Course"} initAction={"Preview"}/>
           </AdminProvider>
         );
       case 'listuser':
