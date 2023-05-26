@@ -325,20 +325,20 @@ exports.listCourseGraphData = async (req, res) => {
           })
 
         const searchedActivity = await Activity.find({}).populate("user")
-        console.log(searchedActivity.map((item) =>{
-          if(item.completed && item.user) return item.user
-          else return 0
-        }))
+        // console.log(searchedActivity.map((item) =>{
+        //   if(item.completed && item.user) return item.user
+        //   else return 0
+        // }))
         
         // console.log(searchedCourse.map((item) => item.activity.map((item) => item.user.plant.name)))
         const payload = searchedCourse.map(
           (item) => (
             {
               name: item.name,
-              plant: item.condition.map((item) => item.plant.name),
+              plant: item.condition.map((citem) => citem.plant.name),
               plant_amount: item.condition.map((amount) => amount.maximum),
-              plant_current: item.activity,
-              current: item.activity.length,
+              plant_current: item.condition.map((citem) =>  item.activity.map((aitem) => citem.plant.name === aitem.user.plant.name && aitem.completed ? 1:0)[0]) ,
+              current: item.activity.map((aitem) => aitem.completed ? 1:0)[0],
               maximum: item.condition.map((amount) => amount.maximum).reduce((prev, curr) => prev + curr, 0),
             }
           )

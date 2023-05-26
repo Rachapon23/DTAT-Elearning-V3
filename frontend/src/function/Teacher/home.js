@@ -24,3 +24,11 @@ export const listCourseGraphData = async (authtoken) =>
         }
     });
     
+// PUT: /update-profile/:id
+export const updateProfile = async (authtoken, id, data) =>
+    await axios.put(process.env.REACT_APP_API + `/update-profile/${id}`, data,{
+        headers: {
+            authtoken,
+        }
+    });
+    

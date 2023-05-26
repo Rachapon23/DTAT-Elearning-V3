@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import NavBar from "../../../Layout/NavBar"
 import "../teach.css"
 import { TeacherHomeContext } from './TeacherHomeContext';
+import TeacherHomeProfile from './TeacherHomeProfile';
 
 const { Title } = Typography;
 
@@ -16,11 +17,11 @@ const TeacherHome = () => {
   let pageSize = 5
   const [keyword, setKeyword] = useState("");
 
-  const { profile, setProfile } = useContext(TeacherHomeContext)
+
   const { course, setCourse } = useContext(TeacherHomeContext)
   const { graphData, setGraphData } = useContext(TeacherHomeContext)
+  const { profile } = useContext(TeacherHomeContext)
 
-  const [target, setTarget] = useState(1000)
   const [actionMode, setActionMode] = useState("Preview")
   const [dataMode, setDataMode] = useState("Overview")
   const [selectedCourseIndex, setSelectedCourseIndex] = useState(-1)
@@ -201,8 +202,8 @@ const TeacherHome = () => {
                                     <Pie
                                       appendPadding={10}
                                       data={[
-                                        {name: "Completed", current: graphData[selectedCourseIndex].current}, 
-                                        {name: "Not Completed", current: graphData[selectedCourseIndex].maximum - graphData[selectedCourseIndex].current}
+                                        { name: "Completed", current: graphData[selectedCourseIndex].current },
+                                        { name: "Not Completed", current: graphData[selectedCourseIndex].maximum - graphData[selectedCourseIndex].current }
                                       ]}
                                       angleField='current'
                                       colorField='name'
@@ -298,14 +299,14 @@ const TeacherHome = () => {
                         Target
                       </Col>
                       <Col>
-                        {graphData ? graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0) : 0} / {target}
+                        {graphData ? graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0) : 0} / {profile.target}
                       </Col>
                     </Row>
                     <Row justify={"space-between"}>
                       <Col flex={"auto"}>
-                        <Tooltip title={`600 / ${target}`}>
+                        <Tooltip title={`600 / ${profile.target}`}>
                           {/* graphData.map((data) => data.maximum).reduce((prev, curr) => prev + curr, 0) */}
-                          <Progress percent={Math.round(graphData ? graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0) : 0 * 100 / target * 100) / 100} />
+                          <Progress percent={Math.round((graphData ? graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0) : 0) * 100 / profile.target * 100) / 100} />
                         </Tooltip>
                       </Col>
                     </Row>
@@ -322,7 +323,7 @@ const TeacherHome = () => {
                     </Row>
                     <Row justify={"space-between"}>
                       <Col flex={"auto"}>
-                        <Tooltip title={`600 / ${target}`}>
+                        <Tooltip title={`600 / ${profile.target}`}>
                           <Progress percent={Math.round(graphData ? graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0) * 100 / graphData.map((data) => data.maximum).reduce((prev, curr) => prev + curr, 0) * 100 : 0) / 100} />
                         </Tooltip>
                       </Col>
@@ -352,8 +353,16 @@ const TeacherHome = () => {
                               <Col style={{ marginRight: "2.5%", paddingLeft: "1%" }}>
                                 {
                                   `
-                                   ${course.current} / 
-                                   ${graphData.map(
+                                  ${graphData.map(
+                                    (item) => {
+                                      if (course.plant[index]) {
+                                        return (item.plant_current[index])
+                                      }
+                                      return null
+                                    }).reduce((prev, curr) => prev + curr, 0)
+                                  } 
+                                  /
+                                  ${graphData.map(
                                     (item) => {
                                       if (course.plant[index]) {
                                         return (item.plant_amount[index])
@@ -361,7 +370,7 @@ const TeacherHome = () => {
                                       return null
                                     }).reduce((prev, curr) => prev + curr, 0)
                                   }
-                                  `
+                                `
                                 }
                               </Col>
                               <Tooltip
@@ -373,13 +382,28 @@ const TeacherHome = () => {
                                       }
                                       return null
                                     }).reduce((prev, curr) => prev + curr, 0)}`}>
-                                <Progress percent={Math.round((course.current * 100 / graphData.map(
-                                  (item) => {
-                                    if (course.plant[index]) {
-                                      return (item.plant_amount[index])
-                                    }
-                                    return null
-                                  }).reduce((prev, curr) => prev + curr, 0)) * 100) / 100} />
+                                <Progress
+                                  percent={
+                                    // Math.round(
+                                    graphData.map(
+                                      (item) => {
+                                        if (course.plant[index]) {
+                                          return (item.plant_current[index])
+                                        }
+                                        return null
+                                      }).reduce((prev, curr) => prev + curr, 0)
+                                    * 100 /
+                                    graphData.map(
+                                      (item) => {
+                                        if (course.plant[index]) {
+                                          return (item.plant_amount[index])
+                                        }
+                                        return null
+                                      }).reduce((prev, curr) => prev + curr, 0)
+
+                                    // )
+                                  }
+                                />
                               </Tooltip>
                             </Row>
                           </p>
@@ -438,82 +462,15 @@ const TeacherHome = () => {
           <Card title="Home">
             <Row justify={"space-between"} >
 
-              <Col flex={"auto"} style={{ paddingRight: "2%" }}>
-
+              <Col flex={"auto"} style={{ paddingRight: "1.5%", width: "25%" }}>
                 <Row style={{ marginTop: "2%" }} />
-
-                <Row>
-                  <Col flex={"auto"}>
-
-                    <Card
-                      title={
-                        <Row justify={'space-between'} align={'middle'}>
-                          <Col>
-                            <Title level={5} style={{ marginTop: "10px" }}>
-                              Profile
-                            </Title>
-                          </Col>
-                          <Col>
-                            <Button
-                              onClick={
-                                () => {
-                                  if (actionMode === "Preview") return setActionMode("Edit")
-                                  if (actionMode === "Edit") return setActionMode("Preview")
-                                }
-                              }
-                            >
-                              {
-                                actionMode === "Preview" ?
-                                  "Edit" : actionMode === "Edit" ? "Save" : null
-                              }
-                            </Button>
-                          </Col>
-                        </Row>
-                      }
-                      style={{ minWidth: "400px" }}
-                    >
-                      <Row justify={"center"}>
-                        <Avatar shape="square" size={200} icon={<UserOutlined />} />
-                      </Row>
-                      <Row style={{ marginTop: "5%" }} />
-                      {
-                        actionMode === "Preview" ?
-                          (
-                            <>
-                              <p>Name: {profile.firstname} {profile.lastname}</p>
-                              <p>Email: {profile.email}</p>
-                              <p>Tel: {profile.tel}</p>
-                              <p>Target: {target}</p>
-                            </>
-                          )
-                          :
-                          (
-                            <>
-                              <p>
-                                <Row justify={'space-between'}>
-                                  <Col flex={"auto"}>
-                                    First Name: <Input defaultValue={profile.firstname} />
-                                  </Col>
-                                  <Col style={{ marginLeft: "0.5%", marginRight: "0.5%" }} />
-                                  <Col flex={"auto"}>
-                                    Last Name: <Input defaultValue={profile.lastname} />
-                                  </Col>
-                                </Row>
-                              </p>
-                              <p>Email: <Input defaultValue={profile.email} /></p>
-                              <p>Tel: <Input defaultValue={profile.tel} /></p>
-                              <p>Target: <Input defaultValue={target} /></p>
-                            </>
-                          )
-                      }
-                    </Card>
-                  </Col>
-                </Row>
+                <TeacherHomeProfile actionMode={actionMode} setActionMode={setActionMode} />
               </Col>
 
               <Col flex={"auto"} style={{ width: "50%" }}>
                 <Tabs defaultActiveKey="1" items={ProgressSumPage} />
               </Col>
+
             </Row>
           </Card>
         </Col>

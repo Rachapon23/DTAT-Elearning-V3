@@ -9,9 +9,9 @@ const {
     // updateTarget,
 } = require('../controllers/profileController')
 
-// teacher
-router.get("/get-profile/user/:id", checkUser, checkTeacher, getProfileByUserId);
-router.put("/update-profile/:id", checkUser, checkTeacher, updateProfile);
+// user
+router.get("/get-profile/user/:id", checkUser, getProfileByUserId);
+router.put("/update-profile/:id", checkUser, updateProfile);
 
 // wait for review
 // router.put("/update-target", checkUser, checkTeacher, updateTarget);
