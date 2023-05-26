@@ -49,10 +49,11 @@ const App = () => {
 
   const items = [
     getItem('Home', 'home', <HomeOutlined />),
-    getItem('Course', 'course', <ReadOutlined />, [
-      getItem('List Course', 'list-course'),
-      getItem('Create Course', 'create-course'),
-    ]),
+    getItem('List Course', 'list-course', <ReadOutlined />),
+    // getItem('Course', 'course', <ReadOutlined />, [
+    //   getItem('List Course', 'list-course'),
+    //   // getItem('Create Course', 'create-course'),
+    // ]),
     getItem('Exam', 'exam', <ScheduleOutlined />, [
       getItem('List Exam', 'list-exam'),
       getItem('Create Exam', 'create-exam'),

@@ -7,19 +7,21 @@ const User = require("../models/user")
 
 exports.createCalendar = async (req, res) => {
     try {
-        const calendar = await new Calendar({
-            start: req.body.start,
-            end: req.body.end,
-            color: req.body.color,
-        }).save()
+        console.log(req.body)
+        console.log(req.params)
+        // const calendar = await new Calendar({
+        //     start: req.body.start,
+        //     end: req.body.end,
+        //     color: req.body.color,
+        // }).save()
 
-        const course = await Course.findOneAndUpdate(
-            { _id: req.params.id },
-            { calendar: calendar },
-            { new: true },
-        )
+        // const course = await Course.findOneAndUpdate(
+        //     { _id: req.params.id },
+        //     { calendar: calendar },
+        //     { new: true },
+        // )
 
-        res.json({ data: { calendar, course } });
+        res.json({ data:  "calendar, course"  });
     }
     catch (err) {
         console.log(err);
@@ -36,6 +38,15 @@ exports.listCalendarRole = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(500).send("Server Error!!! on list calendar");
+    }
+};
+exports.listCalendar = async (req, res) => {
+    try {
+        const calendar = await Calendar.find()
+        res.send(calendar);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Server Error!!! on list calendar ",rr);
     }
 };
 // exports.listCalendarUser = async (req, res) => {

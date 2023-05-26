@@ -11,42 +11,50 @@ const Condition = require("../models/condition");
 // POST: /create-course
 exports.createCourse = async (req, res) => {
   try {
-    const { head, body } = req.body;
+    const { name, detail, type, teacher } = req.body;
+    const { user_id } = req.user;
+    // const { head, body } = req.body;
 
-    // find plant
-    const plant = Plant.findOne({ _id: head.plant })
-    if (!plant) return res.status(404).json({ error: "Plant not found" });
+    // // find plant
+    // const plant = Plant.findOne({ _id: head.plant })
+    // if (!plant) return res.status(404).json({ error: "Plant not found" });
 
-    // find room
-    const room = Room.findOne({ _id: head.room })
-    if (!room) return res.status(404).json({ error: "Room not found" });
+    // // find room
+    // const room = Room.findOne({ _id: head.room })
+    // if (!room) return res.status(404).json({ error: "Room not found" });
 
-    // create codition
-    const condition = await Condition.insertMany(head.condition);
+    // // create codition
+    // const condition = await Condition.insertMany(head.condition);
 
-    // create course
+    // // create course
+    // const course = await new Course({
+    //   name: head.name,
+    //   detail: head.detail,
+    //   room: head.room,
+    //   video: head.video,
+    //   type: head.type,
+    //   enabled: head.enabled,
+    //   teacher: head.teacher,
+    //   calendar: null,
+    //   exam: null,
+    //   topic: null,
+    //   image: {
+    //     original_name: null,
+    //     name: null,
+    //   },
+    //   condition: condition,
+    // }).save();
+
     const course = await new Course({
-      name: head.name,
-      detail: head.detail,
-      room: head.room,
-      video: head.video,
-      type: head.type,
-      enabled: head.enabled,
-      teacher: head.teacher,
-      calendar: null,
-      exam: null,
-      topic: null,
-      image: {
-        original_name: null,
-        name: null,
-      },
-      condition: condition,
+      // name: name,
+      // detail: detail,
+      // type: type,
+      // enabled: false,
+      teacher: user_id,
     }).save();
 
     res.json({ data: course });
-
-  }
-  catch (err) {
+  } catch (err) {
     console.log("fail to create the course : ", err);
     res.status(500).json({ error: "Unexpected error on create course" });
   }
@@ -56,9 +64,10 @@ exports.createCourse = async (req, res) => {
 exports.getCourse = async (req, res) => {
   try {
     const course = await Course.findOne({ _id: req.params.id })
+    .populate("teacher room calendar condition");
+
     res.json({ data: course });
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Unexpected error on get course" });
   }
@@ -96,10 +105,12 @@ exports.listCourse = async (req, res) => {
       case "student":
         return res.status(403).json({ error: "Access denine for student" });
         break;
-      default: return res.status(404).json({ error: "This role does not exist in system" });
+      default:
+        return res
+          .status(404)
+          .json({ error: "This role does not exist in system" });
     }
-  }
-  catch (err) {
+  } catch (err) {
     console.log("fail to fetch courses");
     res.status(500).json({ error: "Unexpected error on list courses" });
   }
@@ -112,36 +123,33 @@ exports.updateCourse = async (req, res) => {
     const { body } = req.body;
 
     // find plant
-    const plant = Plant.findOne({ _id: head.plant })
+    const plant = Plant.findOne({ _id: head.plant });
     if (!plant) return res.status(404).json({ error: "Plant not found" });
 
     // find room
-    const room = Room.findOne({ _id: head.room })
+    const room = Room.findOne({ _id: head.room });
     if (!room) return res.status(404).json({ error: "Room not found" });
 
     // find course
-    const condition = Course.findOne({ _id: req.params.id }).condition
+    const condition = Course.findOne({ _id: req.params.id }).condition;
     if (!room) return res.status(404).json({ error: "Room not found" });
 
     // check if condition in not the same as before
     if (head.condition !== condition) {
-      // remove old codition 
-      await Condition.deleteMany({}, { plant: head.condition })
+      // remove old codition
+      await Condition.deleteMany({}, { plant: head.condition });
 
       // create codition
       head.condition = await Condition.insertMany(head.condition);
     }
 
     // update course
-    const course = await Course.findOneAndUpdate(
-      { _id: req.params.id },
-      head,
-      { new: true },
-    )
+    const course = await Course.findOneAndUpdate({ _id: req.params.id }, head, {
+      new: true,
+    });
 
     res.json({ data: course });
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Unexpected error on update course" });
   }
@@ -150,12 +158,11 @@ exports.updateCourse = async (req, res) => {
 // DELETE: /remove-course/:id
 exports.removeCourse = async (req, res) => {
   try {
-    const courses = await Course.findOneAndDelete({ _id: req.params.id })
-    await Condition.deleteMany({}, { plant: courses.condition })
+    const courses = await Course.findOneAndDelete({ _id: req.params.id });
+    await Condition.deleteMany({}, { plant: courses.condition });
 
     res.json({ data: courses });
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Unexpected error on remove courses" });
   }
@@ -169,12 +176,11 @@ exports.updateEnableCourse = async (req, res) => {
     const course = await Course.findOneAndUpdate(
       { _id: req.params.id },
       { enabled: enabled },
-      { new: true },
+      { new: true }
     );
 
     res.json({ data: course });
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Unexpected error on change enable course" });
   }
@@ -183,9 +189,11 @@ exports.updateEnableCourse = async (req, res) => {
 // PUT: /update-course/:id/image
 exports.updateCourseImage = async (req, res) => {
   try {
-    const image_data = await Course.findOne({ _id: req.params.id }).select("image -_id")
+    const image_data = await Course.findOne({ _id: req.params.id }).select(
+      "image -_id"
+    );
 
-    let error_deleteFile = false
+    let error_deleteFile = false;
 
     if (image_data.image) {
 
@@ -208,50 +216,64 @@ exports.updateCourseImage = async (req, res) => {
           }
           else error_deleteFile = false;
 
+            if (req.body.upload_type === "private") {
+              fs.unlink(`./public/uploads/${image_data.image.name}`, (err) => {
+                if (err) error_deleteFile = true;
+                else error_deleteFile = false;
+              });
+            } else error_deleteFile = false;
+          } else error_deleteFile = false;
         }
-        else error_deleteFile = false;
-      });
+      );
     }
 
-    if (error_deleteFile) return res.status(500).json({ error: "Cannot delete previous image before update" });
-
+    if (error_deleteFile)
+      return res
+        .status(500)
+        .json({ error: "Cannot delete previous image before update" });
 
     const course = await Course.findOneAndUpdate(
       { _id: req.params.id },
       {
         image: {
           original_name: req.body.original_name,
-          name: req.body.name
-        }
+          name: req.body.name,
+        },
       },
-      { new: true },
-    )
+      { new: true }
+    );
 
     return res.json({ data: course });
-
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Unexpected error on upload course image" });
+    return res
+      .status(500)
+      .json({ error: "Unexpected error on upload course image" });
   }
 };
 
 // GET: /get-course/:id/image
 exports.getCourseImage = async (req, res) => {
   try {
-    const image_data = await Course.findOne({ _id: req.params.id }).select("image -_id")
+    const image_data = await Course.findOne({ _id: req.params.id }).select(
+      "image -_id"
+    );
 
-    res.sendFile(`private/uploads/${image_data.image.name}`, { root: "." }, (err) => {
-      if (err) {
-        console.log(err)
-        return res.status(500).json({ error: "Cannot get course image" });
+    res.sendFile(
+      `private/uploads/${image_data.image.name}`,
+      { root: "." },
+      (err) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ error: "Cannot get course image" });
+        }
       }
-    });
-
-  }
-  catch (err) {
+    );
+  } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Unexpected error on get course image" });
+    return res
+      .status(500)
+      .json({ error: "Unexpected error on get course image" });
   }
 };
 
@@ -263,17 +285,23 @@ exports.getCourseCount = async (req, res) => {
         return res.json({ data: (await Course.find({})).length });
         break;
       case "teacher":
-        return res.json({ data: (await Course.find({ teacher: user_id })).length });
+        return res.json({
+          data: (await Course.find({ teacher: user_id })).length,
+        });
         break;
       case "student":
         return res.status(403).json({ error: "Access denine for student" });
         break;
-      default: return res.status(404).json({ error: "This role does not exist in system" });
+      default:
+        return res
+          .status(404)
+          .json({ error: "This role does not exist in system" });
     }
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Unexpected error on get course count" });
+    return res
+      .status(500)
+      .json({ error: "Unexpected error on get course count" });
   }
 };
 
@@ -285,17 +313,23 @@ exports.listCourseWoQuiz = async (req, res) => {
         return res.json({ data: await Course.find({ exam: null }) });
         break;
       case "teacher":
-        return res.json({ data: (await Course.find({ teacher: user_id, exam: null })).length });
+        return res.json({
+          data: (await Course.find({ teacher: user_id, exam: null })).length,
+        });
         break;
       case "student":
         return res.status(403).json({ error: "Access denine for student" });
         break;
-      default: return res.status(404).json({ error: "This role does not exist in system" });
+      default:
+        return res
+          .status(404)
+          .json({ error: "This role does not exist in system" });
     }
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Unexpected error on get course count" });
+    return res
+      .status(500)
+      .json({ error: "Unexpected error on get course count" });
   }
 };
 
@@ -367,13 +401,14 @@ exports.getUserCourse = async (req, res) => {
   try {
     // console.log(req.params)
     const { id } = req.params;
-    console.log(id)
-    const data = await studentActivity.find({ coursee: id })
+    console.log(id);
+    const data = await studentActivity
+      .find({ coursee: id })
       .populate("user coursee quiz")
-      .exec()
+      .exec();
     // console.log(data)
     // res.send({user:data.user,course:data.coursee,quiz:data.quiz,data:data});
-    res.send(data)
+    res.send(data);
   } catch (err) {
     console.log("fail to get courses");
     res.status(500).json({ error: "Unexpected error on get getUserCourse" });
@@ -407,21 +442,22 @@ exports.addCourse = async (req, res) => {
     const course = await Coursee.findOne({ _id: id }).exec();
 
     let plus = false;
-    console.log(course, user)
+    console.log(course, user);
     for (let i = 0; i < course.member.length; i++) {
       if (course.member[i].plant == user.plant) {
         // console.log(course.member[i].plant, user.plant)
-        plus = true
+        plus = true;
         if (course.member[i].amount <= course.member[i].registerd) {
-          return res.status(400).send(`amount ${course.member[i].plant} is max`)
+          return res
+            .status(400)
+            .send(`amount ${course.member[i].plant} is max`);
         } else {
-          course.member[i].registerd = course.member[i].registerd + 1
+          course.member[i].registerd = course.member[i].registerd + 1;
         }
-
       }
     }
     if (!plus) {
-      return res.status(400).send(`plant not math`)
+      return res.status(400).send(`plant not math`);
     }
 
     for (let i = 0; i < user.coursee.length; i++) {
@@ -435,15 +471,14 @@ exports.addCourse = async (req, res) => {
     user.coursee.push(id);
     const user_push = user.coursee;
 
-
-    console.log(course)
+    console.log(course);
     const activity = new studentActivity({
       user: user_id,
       coursee: id,
-      quiz: course.quiz
-    })
+      quiz: course.quiz,
+    });
 
-    await activity.save()
+    await activity.save();
 
     // console.log(course.member)
     const newCourse = await Coursee.findOneAndUpdate(
@@ -507,17 +542,15 @@ exports.getMyHistoryTeacher = async (req, res) => {
 };
 exports.removeHistory = async (req, res) => {
   try {
-
-    const history = await History.deleteMany({ teacher: req.user.user_id })
-      .exec();
+    const history = await History.deleteMany({
+      teacher: req.user.user_id,
+    }).exec();
     res.send(history);
-
   } catch (err) {
     console.log(err);
     res.status(500).send("Server Error!!! on getMyHistoryTeacher");
   }
 };
-
 
 exports.deleteMyCourse = async (req, res) => {
   try {
@@ -568,7 +601,6 @@ exports.getMyCourseTeacher = async (req, res) => {
   }
 };
 
-
 exports.deleteCourse = async (req, res) => {
   try {
     const course = await Coursee.findOne({ _id: req.params.id }).exec();
@@ -593,21 +625,25 @@ exports.deleteCourse = async (req, res) => {
       });
     }
 
-    const deleteActivity = await studentActivity.deleteMany({ coursee: req.params.id })
+    const deleteActivity = await studentActivity.deleteMany({
+      coursee: req.params.id,
+    });
 
     // TODO: if file not found in course it cannot delete course
     for (let i = 0; i < course.topic.length; i++) {
       for (let j = 0; j < course.topic[i].file.length; j++) {
-        console.log("name : ", course.topic[i].file[j].filename)
-        await fs.unlink("./public/uploads/" + course.topic[i].file[j].filename, (err) => {
-          if (err) {
-            console.log(err);
-            res.status(400).send('err on delete file')
-          } else {
-            console.log("remove file Success");
+        console.log("name : ", course.topic[i].file[j].filename);
+        await fs.unlink(
+          "./public/uploads/" + course.topic[i].file[j].filename,
+          (err) => {
+            if (err) {
+              console.log(err);
+              res.status(400).send("err on delete file");
+            } else {
+              console.log("remove file Success");
+            }
           }
-
-        });
+        );
       }
     }
 
@@ -723,7 +759,6 @@ exports.uploadfile = async (req, res) => {
   }
 };
 
-
 exports.getCourseHome = async (req, res) => {
   try {
     const close = await Coursee.find({ statuscourse: true })
@@ -742,10 +777,10 @@ exports.getCourseHome = async (req, res) => {
 
 exports.updateCourseVideoAmount = async (req, res) => {
   try {
-    const { id } = req.body
-    const { data } = req.body
-    console.log("-->>> ", req.body)
-    await Coursee.findOneAndUpdate({ _id: id }, { $inc: data })
+    const { id } = req.body;
+    const { data } = req.body;
+    console.log("-->>> ", req.body);
+    await Coursee.findOneAndUpdate({ _id: id }, { $inc: data });
 
     res.send("update course data success");
   } catch (err) {
@@ -756,12 +791,12 @@ exports.updateCourseVideoAmount = async (req, res) => {
 
 exports.CourseSuccess = async (req, res) => {
   try {
-    const { course, user, activity } = req.body
+    const { course, user, activity } = req.body;
 
-    const Course = await Coursee.findOne({ _id: course }).exec()
-    const Userr = await User.findOne({ _id: user }).exec()
-    const teacher = await User.findOne({ _id: req.user.user_id }).exec()
-    const Activity = await studentActivity.findOne({ _id: activity }).exec()
+    const Course = await Coursee.findOne({ _id: course }).exec();
+    const Userr = await User.findOne({ _id: user }).exec();
+    const teacher = await User.findOne({ _id: req.user.user_id }).exec();
+    const Activity = await studentActivity.findOne({ _id: activity }).exec();
 
     const history = new History({
       result: req.body.result,
@@ -769,10 +804,10 @@ exports.CourseSuccess = async (req, res) => {
       maxscore: Activity.max_score,
       course: Course.name,
       teacher: req.user.user_id,
-      student: user
-    })
-    console.log(history)
-    await history.save()
+      student: user,
+    });
+    console.log(history);
+    await history.save();
 
     for (let i = 0; i < Course.user.length; i++) {
       if (Course.user[i] == user) {
@@ -781,7 +816,7 @@ exports.CourseSuccess = async (req, res) => {
     }
     for (let i = 0; i < Course.member.length; i++) {
       if (Course.member[i].plant == Userr.plant) {
-        Course.member[i].registerd = Course.member[i].registerd - 1
+        Course.member[i].registerd = Course.member[i].registerd - 1;
       }
     }
 
@@ -791,23 +826,23 @@ exports.CourseSuccess = async (req, res) => {
       }
     }
 
-    const activity_delete = await studentActivity.findOneAndDelete(
-      { _id: Activity }
-    ).exec()
+    const activity_delete = await studentActivity
+      .findOneAndDelete({ _id: Activity })
+      .exec();
 
     const update_course = await Coursee.findOneAndUpdate(
       { _id: course },
       {
         user: Course.user,
-        member: Course.member
+        member: Course.member,
       }
-    ).exec()
+    ).exec();
 
     // Userr.history.push(history._id)
     const update_user = await User.findOneAndUpdate(
       { _id: user },
       { coursee: Userr.coursee }
-    ).exec()
+    ).exec();
 
     // const update_teacher = await User.findOneAndUpdate(
     //   { _id: req.user.user_id },
