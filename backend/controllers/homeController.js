@@ -1,37 +1,184 @@
-
 const Home = require('../models/home')
 const fs = require("fs");
 
 
-exports.createCarousel = async (req, res) => {
+exports.createAcnounce = async (req, res) => {
     try {
+        const { name, original_name } = req?.body
 
+        // console.log(req?.body)
+        const dataBaseAcnounce = await Home.find({})
+        if (Array.isArray(dataBaseAcnounce) && name && original_name) {
+            if (dataBaseAcnounce.length === 0) {
+                const acnounce = await new Home({
+                    acnounce: {
+                        name: name,
+                        original_name: original_name,
+                        url: `/acnounce/${name}`
+                    }
+                }).save()
+                return res.status(200).json({ data: acnounce })
+            }
+            else if (dataBaseAcnounce.length === 1) {
+                dataBaseAcnounce[0].acnounce.push({
+                    name: name,
+                    original_name: original_name,
+                    url: `/acnounce/${name}`
+                })
+                await dataBaseAcnounce[0].save()
+
+                return res.status(200).json({ data: dataBaseAcnounce[0] })
+            }
+            else {
+                return res.status(500).json({ error: "Unexpected error on create carousel" })
+            }
+        }
+        return res.status(400).json({ error: "Invalid data fomat" })
     }
     catch (err) {
         console.log(err)
-        res.status(500).json({ error: "Unexpected error on create carousel" })
+        return res.status(500).json({ error: "Unexpected error on create carousel" })
     }
 }
 
 
-exports.listHome = async (req, res) => {
+exports.getHome = async (req, res) => {
     try {
-
+        const dataBaseAcnounce = await Home.find({})
+        if (Array.isArray(dataBaseAcnounce)) {
+            if (dataBaseAcnounce.length === 0) {
+                return res.status(200).json({ data: null })
+            }
+            else if (dataBaseAcnounce.length === 1) {
+                return res.status(200).json({ data: dataBaseAcnounce[0] })
+            }
+            else {
+                return res.status(500).json({ error: "Unexpected error on get home" })
+            }
+        }
+        return res.status(500).json({ error: "Unexpected error on get home" })
     }
     catch (err) {
         console.log(err)
-        res.status(500).json({ error: "Unexpected error on list home" })
+        res.status(500).json({ error: "Unexpected error on get home" })
     }
 }
 
-
-exports.addCoursePublic = async (req, res) => {
+exports.updateAcnounce = async (req, res) => {
     try {
-        await Home.findOneAndUpdate(
-            { _id: req.params.id },
-            { $push: { course_public: req.body.course_public } },
-            { new: true },
-        )
+        const { acnounce, remove } = req?.body
+
+        const dataBaseAcnounce = await Home.find({})
+        if (Array.isArray(dataBaseAcnounce)) {
+            if (dataBaseAcnounce.length === 0) {
+
+                const payload = await new Home({
+                    acnounce: acnounce
+                }).save()
+
+                if (remove) {
+                    fs.unlink(`./public/uploads${remove?.url}`,
+                        (err) => {
+                            if (err) {
+                                console.log(err)
+                                error_deleteFile = true
+                            }
+                        }
+                    )
+
+                }
+
+
+                return res.status(200).json({ data: payload })
+                // return res.status(500).json({ error: "Cannot find acnounce to update" })
+            }
+            else if (dataBaseAcnounce.length === 1) {
+                const payload = await Home.findOneAndUpdate({}, { acnounce: acnounce }, { new: true })
+
+
+                if (remove) {
+                    fs.unlink(`./public/uploads${remove?.url}`,
+                        (err) => {
+                            if (err) {
+                                console.log(err)
+                            }
+                        }
+                    )
+                }
+
+                return res.status(200).json({ data: payload })
+            }
+            else {
+                return res.status(500).json({ error: "Unexpected error on update acnounce" })
+            }
+        }
+        return res.status(500).json({ error: "Unexpected error on update acnounce" })
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).json({ error: "Unexpected error on update acnounce" })
+    }
+}
+
+exports.updateCoursePublic = async (req, res) => {
+    try {
+        // await Home.findOneAndUpdate(
+        //     { _id: req.params.id },
+        //     { $push: { course_public: req.body.course_public } },
+        //     { new: true },
+        // )
+
+        const { course_public, remove } = req?.body
+        console.log(req?.body)
+
+        const dataBaseCoursePublic = await Home.find({})
+        if (Array.isArray(dataBaseCoursePublic)) {
+            if (dataBaseCoursePublic.length === 0) {
+
+                const payload = await new Home({
+                    course_public: course_public
+                }).save()
+
+                if (remove) {
+                    fs.unlink(`./public/uploads${remove?.url}`,
+                        (err) => {
+                            if (err) {
+                                console.log(err)
+                                error_deleteFile = true
+                            }
+                        }
+                    )
+
+                }
+
+
+                return res.status(200).json({ data: payload })
+                // return res.status(500).json({ error: "Cannot find acnounce to update" })
+            }
+            else if (dataBaseCoursePublic.length === 1) {
+                const payload = await Home.findOneAndUpdate({}, { course_public: course_public }, { new: true })
+
+
+                if (remove) {
+                    fs.unlink(`./public/uploads${remove?.url}`,
+                        (err) => {
+                            if (err) {
+                                console.log(err)
+                            }
+                        }
+                    )
+                }
+
+                return res.status(200).json({ data: payload })
+            }
+            else {
+                return res.status(500).json({ error: "Unexpected error on update course public" })
+            }
+        }
+        return res.status(500).json({ error: "Unexpected error on update course public" })
+
+
+        
     }
     catch (err) {
         console.log(err)

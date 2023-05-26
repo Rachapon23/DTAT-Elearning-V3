@@ -105,15 +105,14 @@ const AdminManageTeacher = () => {
       <Breadcrumb
         separator={
           <Title level={5} style={{ marginTop: "10px" }}>
-            {" "}
-            {">"}{" "}
+            {" "}{">"}{" "}
           </Title>
         }
         items={[
           {
             title: (
               <Title level={5} style={{ marginTop: "10px" }}>
-                <p>List User</p>
+                <p>Manage Teacher</p>
               </Title>
             ),
             key: "listuser",

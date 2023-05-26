@@ -5,12 +5,12 @@ import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../teach.css"
-import { getCourseCount, listExam, removeExam } from "../../../../function/Teacher/exame";
+import { getCourseCount, listExam, removeExam } from "../../../../function/Teacher/exam";
 const { Title } = Typography;
 const { Meta } = Card;
 const { Header, Content, Footer, Sider } = Layout;
 
-const Quizes = () => {
+const Exams = () => {
 
     const [exams, setExams] = useState(null | [{
         _id: "",
@@ -42,7 +42,7 @@ const Quizes = () => {
                     />
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-                    <Link to="/teacher/page/create-exam" state={{ mode: "create" }}>
+                    <Link to="/teacher/page/create-exam" state={{ mode: "Create" }}>
                         <Button>
                             Create
                         </Button>
@@ -165,7 +165,7 @@ const Quizes = () => {
                 const index = exams.indexOf(data);
                 console.log()
                 return (
-                    <Link to={`/teacher/page/edit-exam/${data?._id}`} state={{mode: "edit"}}>
+                    <Link to={`/teacher/page/edit-exam/${data?._id}`} state={{mode: "Edit", exam_name: data?.name}}>
                         <Button onClick={() => null}>
                             <EditOutlined />
                         </Button>
@@ -336,4 +336,4 @@ const Quizes = () => {
     )
 }
 
-export default Quizes;
+export default Exams;

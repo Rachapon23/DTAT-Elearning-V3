@@ -10,6 +10,8 @@ exports.loadData = async () => {
     const Condition = require('./models/condition');
     const Exam = require("./models/exam");
     const Quiz = require("./models/quiz");
+    const Profile = require("./models/profile");
+    const Activity = require("./models/activity");
 
     // Plant
     await Plant.findOneAndUpdate({ name: "A" }, { name: "A" }, { upsert: true, new: true, setDefaultsOnInsert: true })
@@ -22,6 +24,7 @@ exports.loadData = async () => {
     await Role.findOneAndUpdate({ name: "student" }, { name: "student" }, { upsert: true, new: true, setDefaultsOnInsert: true })
     await Role.findOneAndUpdate({ name: "teacher" }, { name: "teacher" }, { upsert: true, new: true, setDefaultsOnInsert: true })
     await Role.findOneAndUpdate({ name: "admin" }, { name: "admin" }, { upsert: true, new: true, setDefaultsOnInsert: true })
+    // await Role.findOneAndUpdate({ name: "dev" }, { name: "dev" }, { upsert: true, new: true, setDefaultsOnInsert: true })
 
     // Department
     await Department.findOneAndUpdate({ id: "919323" }, { id: "919323" }, { upsert: true, new: true, setDefaultsOnInsert: true })
@@ -118,6 +121,19 @@ exports.loadData = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
+    
+    // Profile
+    const profile1 = await Profile.findOneAndUpdate(
+        { _id: "64352ed5080e1f3e74e19004" },
+        {
+            _id: "64352ed5080e1f3e74e19004",
+            image: null,
+            tel: "0999999999",
+            target: 200,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
     // User
     // Admin
     await User.findOneAndUpdate(
@@ -127,7 +143,7 @@ exports.loadData = async () => {
             department: await Department.findOne({ id: "919323" }).select("_id"),
             firstname: "Rachapon",
             lastname: "Pongkittisak",
-            profile: null,
+            profile: profile1,
             role: await Role.findOne({ name: "admin" }).select("_id"),
             plant: await Plant.findOne({ name: "A" }).select("_id"),
             verified: false,
@@ -158,7 +174,7 @@ exports.loadData = async () => {
     )
 
     // Student
-    await User.findOneAndUpdate(
+    const student1 = await User.findOneAndUpdate(
         { employee: "6100888" },
         {
             employee: "6100888",
@@ -236,6 +252,11 @@ exports.loadData = async () => {
             name: "Introduction of Docker",
             detail: "Introduction of Docker Detail ",
             room: await Room.findOne({ name: "Technical Skill 2" }).select("_id"),
+            image: {
+                original_name: "course-pic1",
+                name: "file-1684511836883-779460665.png",
+                url: `/course/file-1684511836883-779460665.png`,
+            },
             video: 2,
             type: true,
             enabled: true,
@@ -311,7 +332,7 @@ exports.loadData = async () => {
         { question: "What is docker?" },
         {
             question: "What is docker?",
-            choice: [
+            choices: [
                 "Virtual machine",
                 "Operating system",
                 "Container technology",
@@ -327,7 +348,7 @@ exports.loadData = async () => {
         { question: "10 + 20 = ?" },
         {
             question: "10 + 20 = ?",
-            choice: [
+            choices: [
                 "10",
                 "20",
                 "30",
@@ -343,7 +364,7 @@ exports.loadData = async () => {
         { question: "20 + 20 = ?" },
         {
             question: "20 + 20 = ?",
-            choice: [
+            choices: [
                 "10",
                 "20",
                 "30",
@@ -428,5 +449,94 @@ exports.loadData = async () => {
     )
     course5.exam = exam4
     course5.save()
+
+    // Activity
+   const activity1 =  await Activity.findOneAndUpdate(
+        { course: course1 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            socre_max: null,
+            score_value: null,
+            user: student1,
+            course: course1,
+            activity: null,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course1.activity = activity1
+    course1.save()
+
+    const activity2 = await Activity.findOneAndUpdate(
+        { course: course2 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            socre_max: null,
+            score_value: null,
+            user: student1,
+            course: course2,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course2.activity = activity2
+    course2.save()
+
+    const activity3 = await Activity.findOneAndUpdate(
+        { course: course3 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            socre_max: null,
+            score_value: null,
+            user: student1,
+            course: course3,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course3.activity = activity3
+    course3.save()
+
+    const activity4 = await Activity.findOneAndUpdate(
+        { course: course4 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            socre_max: null,
+            score_value: null,
+            user: student1,
+            course: course4,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course4.activity = activity4
+    course4.save()
+
+    const activity5 = await Activity.findOneAndUpdate(
+        { course: course5 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            socre_max: null,
+            score_value: null,
+            user: student1,
+            course: course5,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course5.activity = activity5
+    course5.save()
+    
+    
 
 }

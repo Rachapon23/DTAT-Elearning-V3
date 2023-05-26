@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const {ObjectId} = mongoose.Schema;
 
 const HomeSchema = new mongoose.Schema({
-    carousel: [],
+    acnounce: [],
     course_public: [{
         type: ObjectId,
         ref:"course"

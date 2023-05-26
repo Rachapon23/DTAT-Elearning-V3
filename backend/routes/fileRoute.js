@@ -5,17 +5,27 @@ const router = express.Router()
 const { checkUser, checkTeacher, uploadPrivate, uploadPublic } = require('../middleware/middleware')
 const {
     createPrivateFile,
+    createPublicFile,
     getPrivateFieldImage,
+    getPublicFieldImage,
 } = require('../controllers/fileController')
 
 // teacher
 // privates
-router.post("/create-file/:field", checkUser, checkTeacher, uploadPrivate, createPrivateFile);
+router.post("/create-file/private/:field", checkUser, checkTeacher, uploadPrivate, createPrivateFile);
+// GET: /get-image/private/:field?id=<ID> | for fetch data to display, edit
+// GET: /get-image/private/:field?file=<filename> | for fetch data in create process only
+router.get("/get-image/private/:field", checkUser, checkTeacher, getPrivateFieldImage);
 
-// GET: /get-image/:field?id=<ID> | for fetch data to display, edit
-// GET: /get-image/:field?file=<filename> | for fetch data in create process only
-router.get("/get-image/:field", checkUser, checkTeacher, getPrivateFieldImage);
-// router.use("/get-image", downloadPrivate);
+// admin
+// public
+router.post("/create-file/public/:field", checkUser, checkTeacher, uploadPublic, createPublicFile);
+
+// GET: /get-image/public/:field?id=<ID> | for fetch data to display, edit
+// GET: /get-image/public/:field?file=<filename> | for fetch data in create process only
+// router.get("/get-image/public/:field", checkUser, checkTeacher, getPublicFieldImage);
+
+
 
 
 

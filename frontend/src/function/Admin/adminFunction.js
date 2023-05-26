@@ -62,8 +62,53 @@ export const removeRoom = async (authtoken, id) =>
 
 // PUT: /update-user/:id/enabled
 export const updateUserEnabled = async (authtoken, id, data) =>
-    await axios.put(process.env.REACT_APP_API + `/update-user/${id}/enable`, data, { 
+    await axios.put(process.env.REACT_APP_API + `/update-user/${id}/enable`, data, {
         headers: {
             authtoken,
         }
     });
+
+// POST: /create-file/public/:field
+export const createFilePublic = async (authtoken, data, field) =>
+    await axios.post(process.env.REACT_APP_API + `/create-file/public/${field}`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// POST: /create-acnounce
+export const createAcnounce = async (authtoken, data) =>
+    await axios.post(process.env.REACT_APP_API + `/create-acnounce`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// GET: /get-home
+export const getHome = async () =>
+    await axios.get(process.env.REACT_APP_API + `/get-home`);
+
+// DELETE: /update-acnounce
+export const updateAcnounce = async (authtoken, data) =>
+    await axios.put(process.env.REACT_APP_API + `/update-acnounce`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// GET: /list-course
+export const listCourse = async (authtoken) =>
+    await axios.get(process.env.REACT_APP_API + `/list-course`, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// DELETE: /update-course-public
+export const updateCoursePublic = async (authtoken, data) =>
+    await axios.put(process.env.REACT_APP_API + `/update-course-public`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+

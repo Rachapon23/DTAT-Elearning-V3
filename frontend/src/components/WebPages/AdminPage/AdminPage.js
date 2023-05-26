@@ -11,10 +11,13 @@ import React, { useState, useEffect } from "react";
 import "./adminpage.css";
 import { useParams, useNavigate } from "react-router-dom";
 import AdminHomePage from "./AdminHome/AdminHomePage";
-import AdminManageHome from "./AdminHome/AdminManageHome";
+import AdminManageAcnounce from "./AdminHome/AdminManageHome/AdminManageAcnounce";
 import AdminListUser from "./AdminHome/AdminListUser";
 import AdminManageTeacher from "./AdminHome/AdminManageTeacher";
 import AdminManageStudent from "./AdminHome/AdminManageStudent";
+
+import { AdminProvider } from "./AdminHome/AdminManageHome/AdminManageContext";
+import AdminManageCourse from "./AdminHome/AdminManageHome/AdminManageCourse";
 
 const { Header, Sider, Content } = Layout;
 
@@ -46,10 +49,14 @@ const App = () => {
 
   const items = [
     getItem('Home', 'home', <HomeOutlined />),
-    getItem('Manage Home', 'managehome', <HomeOutlined />),
+    getItem('Manage Home', 'managehome', <HomeOutlined />, [
+      getItem('Acnounce', 'acnounce'),
+      getItem('Public Course', 'public-course'),
+      getItem('Private Course', 'private-course'),
+    ]),
     getItem('List User', 'listuser', <HomeOutlined />),
-    getItem('List Teacher', 'manageteacher', <HomeOutlined />),
-    getItem('List Student', 'managestudent', <CalendarOutlined />),
+    getItem('Manage Teacher', 'manageteacher', <HomeOutlined />),
+    getItem('Manage Student', 'managestudent', <CalendarOutlined />),
   ];
 
   const renderContent = React.useCallback(() => {
@@ -57,7 +64,25 @@ const App = () => {
       case 'home':
         return <AdminHomePage />;
       case 'managehome':
-        return <AdminManageHome />;
+        return <AdminManageAcnounce />;
+      case 'acnounce':
+        return (
+          <AdminProvider>
+            <AdminManageAcnounce manage={"Acnounce"} initAction={"Preview"}/>
+          </AdminProvider>
+        );
+      case 'public-course':
+        return (
+          <AdminProvider>
+            <AdminManageAcnounce manage={"Public Course"} initAction={"Preview"}/>
+          </AdminProvider>
+        );
+      case 'private-course':
+        return (
+          <AdminProvider>
+            <AdminManageAcnounce manage={"Private Course"} initAction={"Preview"}/>
+          </AdminProvider>
+        );
       case 'listuser':
         return <AdminListUser />;
       case 'manageteacher':
@@ -77,7 +102,7 @@ const App = () => {
       <Sider className="sider-admin"
         collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="logo-admin">
-        <img alt="iconAdmin" className="w-100" src="/Admin.png" />
+          <img alt="iconAdmin" className="w-100" src="/Admin.png" />
         </div>
         <Menu
           onClick={(e) => navigate(`/admin/page/${e.key}`)}

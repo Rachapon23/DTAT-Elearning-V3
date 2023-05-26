@@ -20,6 +20,7 @@ const CourseSchema = new mongoose.Schema(
     image: {
       original_name: { type: String },
       name: { type: String },
+      url: { type: String },
     },
     enabled: {
       type: Boolean,
@@ -49,6 +50,10 @@ const CourseSchema = new mongoose.Schema(
       type: ObjectId,
       ref: "exam",
     },
+    activity: [{
+      type: ObjectId,
+      ref: "activity",
+    }],
   },
   { timestamps: true }
 );

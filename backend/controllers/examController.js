@@ -178,7 +178,7 @@ exports.removeExam = async (req, res) => {
             { new: true },
         )
 
-        if (error_deleteFile) return res.status(500).json({ error: "Cannot delete image in question" });
+        if (error_deleteFile) return res.status(200).json({ data: { exam, course, message: "Cannot delete image in question" } });
         return res.json({ data: { exam, course } })
     }
     catch (err) {

@@ -5,7 +5,7 @@ const Plant = require("../models/plant");
 const Calendar = require("../models/calendar");
 const User = require("../models/user");
 
-const studentActivity = require("../models/activity");
+const Activity = require('../models/activity')
 const Condition = require("../models/condition");
 
 // POST: /create-course
@@ -75,13 +75,32 @@ exports.getCourse = async (req, res) => {
 
 // GET: /list-course
 exports.listCourse = async (req, res) => {
+  const allowField = ["condition", "room", "teacher", "exam"]
   try {
+    const fields = req?.query?.field
+    let populateField = null
+
+    if (fields && Array.isArray(fields)) {
+      if (fields.length > allowField.length) return res.status(400).json({ error: "Invalid query parameter(s)" });
+      if (fields.length > 1) {
+        for (let i = 0; i < fields.length; i++) {
+          if (!allowField.includes(fields[i])) return res.status(400).json({ error: "Invalid query parameter(s)" });
+        }
+      }
+      populateField = fields.join(" ")
+    }
+    else if (fields) {
+      if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid query parameter(s)" });
+      populateField = fields
+    }
+
     switch (req?.user?.role) {
       case "admin":
-        return res.json({ data: await Course.find({}) });
+        const searchedData = await Course.find({}).populate(populateField)
+        return res.json({ data: searchedData });
         break;
       case "teacher":
-        return res.json({ data: await Course.find({ teacher: user_id }) });
+        return res.json({ data: await Course.find({ teacher: user_id }).populate(populateField) });
         break;
       case "student":
         return res.status(403).json({ error: "Access denine for student" });
@@ -177,16 +196,25 @@ exports.updateCourseImage = async (req, res) => {
     let error_deleteFile = false;
 
     if (image_data.image) {
-      fs.unlink(
-        `./${req.body.upload_type}/uploads/${image_data.image.name}`,
-        (err) => {
-          if (err) {
-            if (req.body.upload_type === "public") {
-              fs.unlink(`./private/uploads/${image_data.image.name}`, (err) => {
-                if (err) error_deleteFile = true;
-                else error_deleteFile = false;
-              });
-            } else error_deleteFile = false;
+
+      fs.unlink(`./${req.body.upload_type}/uploads/${image_data.image.name}`, (err) => {
+        if (err) {
+
+          if (req.body.upload_type === "public") {
+            fs.unlink(`./private/uploads/${image_data.image.name}`, (err) => {
+              if (err) error_deleteFile = true;
+              else error_deleteFile = false;
+            });
+          }
+          else error_deleteFile = false;
+
+          if (req.body.upload_type === "private") {
+            fs.unlink(`./public/uploads/${image_data.image.name}`, (err) => {
+              if (err) error_deleteFile = true;
+              else error_deleteFile = false;
+            });
+          }
+          else error_deleteFile = false;
 
             if (req.body.upload_type === "private") {
               fs.unlink(`./public/uploads/${image_data.image.name}`, (err) => {
@@ -302,6 +330,68 @@ exports.listCourseWoQuiz = async (req, res) => {
     return res
       .status(500)
       .json({ error: "Unexpected error on get course count" });
+  }
+};
+
+// GET: /list-course/sp/graph
+exports.listCourseGraphData = async (req, res) => {
+
+  try {
+    switch (req?.user?.role) {
+      case "admin":
+        const searchedCourse = await Course.find({})
+          .populate({
+            path: "condition",
+            populate: {
+              path: "plant"
+              // select: ""
+            }
+          })
+          .populate({
+            path: "activity",
+            populate: {
+              path: "user",
+              populate: {
+                path: "plant"
+                // select: ""
+              }
+            }
+          })
+
+        const searchedActivity = await Activity.find({}).populate("user")
+        // console.log(searchedActivity.map((item) =>{
+        //   if(item.completed && item.user) return item.user
+        //   else return 0
+        // }))
+        
+        // console.log(searchedCourse.map((item) => item.activity.map((item) => item.user.plant.name)))
+        const payload = searchedCourse.map(
+          (item) => (
+            {
+              name: item.name,
+              plant: item.condition.map((citem) => citem.plant.name),
+              plant_amount: item.condition.map((amount) => amount.maximum),
+              plant_current: item.condition.map((citem) =>  item.activity.map((aitem) => citem.plant.name === aitem.user.plant.name && aitem.completed ? 1:0)[0]) ,
+              current: item.activity.map((aitem) => aitem.completed ? 1:0)[0],
+              maximum: item.condition.map((amount) => amount.maximum).reduce((prev, curr) => prev + curr, 0),
+            }
+          )
+        )
+        console.log(payload)
+        return res.json({ data: payload });
+        break;
+      case "teacher":
+        return res.json({ data: await Course.find({ teacher: user_id }).populate("condition") });
+        break;
+      case "student":
+        return res.status(403).json({ error: "Access denine for student" });
+        break;
+      default: return res.status(404).json({ error: "This role does not exist in system" });
+    }
+  }
+  catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Unexpected error on list courses" });
   }
 };
 
