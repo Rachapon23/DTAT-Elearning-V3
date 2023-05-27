@@ -89,7 +89,6 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
   const { coursePrivate, setCoursePrivate } = useContext(AdminContext)
 
   const [manageHomeData, setManageHomeData] = useState()
-
   const [actionMode, setActionMode] = useState(initAction)
 
   const handleAddImage = async (image) => {
@@ -194,14 +193,24 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
       }
       if (actionMode === "Add") {
         return (
-          <Button
-            color="primary"
-            onClick={() => {
-              setActionMode("Preview")
-              handleUpdateCourse()
-            }}>
-            Save
-          </Button>
+          <>
+            <Button
+              color="primary"
+              onClick={() => {
+                console.log(coursePublic)
+              }}>
+              Debug
+            </Button>
+
+            <Button
+              color="primary"
+              onClick={() => {
+                setActionMode("Preview")
+                handleUpdateCourse()
+              }}>
+              Save
+            </Button>
+          </>
         )
       }
     }
@@ -238,7 +247,12 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
   }
 
   async function handleUpdateCourse() {
-    await updateCoursePublic(sessionStorage.getItem("token"), { course_public: coursePublic })
+    console.log(manage)
+    if (manage !== "Public Course" && manage !== "Private Course") return
+    const field = manage === "Public Course" ? "course_public" : manage === "Private Course" ? "course_private" : null
+    const courseData = manage === "Public Course" ? coursePublic : manage === "Private Course" ? coursePrivate : null
+
+    await updateCoursePublic(sessionStorage.getItem("token"), { [field]: courseData })
       .then(
         (res) => {
           const data = res.data.data
@@ -331,51 +345,58 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
     }
   };
 
-  const columnsEdit = [
-    {
-      key: 'sort',
-      align: "center",
-      width: "5%",
-    },
-    {
-      title: 'Image',
-      dataIndex: 'url',
-      align: "center",
-      width: "10%",
-      render: (data) => {
-        return (
-          <Image
-            width={150}
-            src={process.env.REACT_APP_IMG + data}
-          />
-        )
-      }
-    },
-    {
-      title: 'File Name',
-      dataIndex: 'original_name',
-    },
-    // {
-    //   title: 'Edit',
-    //   align: "center",
-    //   width: "5%",
-    //   render: (data) => (
-    //     <Button onClick={() => null}>
-    //       <EditOutlined style={{ fontSize: "120%" }} />
-    //     </Button>
-    //   )
-    // },
-    {
-      title: 'Delete',
-      align: "center",
-      width: "5%",
-      render: (data) => (
-        <Button onClick={() => handleDeleteAcnounce(acnounce.indexOf(data))}>
-          <DeleteOutlined style={{ fontSize: "120%" }} />
-        </Button>
-      )
-    },
-  ];
+  // 
+
+  const columnsEdit = () => {
+    if (manage === "Acnounce" || manage === "Public Course" || manage === "Private Course") {
+      return ([
+        {
+          key: 'sort',
+          align: "center",
+          width: "5%",
+        },
+        {
+          title: 'Image',
+          dataIndex: 'url',
+          align: "center",
+          width: "10%",
+          render: (data) => {
+            return (
+              <Image
+                width={150}
+                src={process.env.REACT_APP_IMG + data}
+              />
+            )
+          }
+        },
+        {
+          title: 'File Name',
+          dataIndex: 'original_name',
+        },
+        // {
+        //   title: 'Edit',
+        //   align: "center",
+        //   width: "5%",
+        //   render: (data) => (
+        //     <Button onClick={() => null}>
+        //       <EditOutlined style={{ fontSize: "120%" }} />
+        //     </Button>
+        //   )
+        // },
+        {
+          title: 'Delete',
+          align: "center",
+          width: "5%",
+          render: (data) => (
+            <Button onClick={() => handleDeleteAcnounce(acnounce.indexOf(data))}>
+              <DeleteOutlined style={{ fontSize: "120%" }} />
+            </Button>
+          )
+        },
+      ])
+    }
+    return null
+  }
 
   useEffect(() => {
     switch (manage) {
@@ -418,7 +439,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
                         },
                       }}
                       rowKey="name"
-                      columns={columnsEdit}
+                      columns={columnsEdit()}
                       dataSource={manageHomeData}
                     />
                   </SortableContext>
