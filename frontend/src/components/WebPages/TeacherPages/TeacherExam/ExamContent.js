@@ -4,7 +4,7 @@ import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress
 import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import CardContent from "./CardContent";
+import CardContent from "../../../ExamComponent/CardContent";
 import "../teach.css"
 
 import CardEmptyContent from "./CardEmptyContent";

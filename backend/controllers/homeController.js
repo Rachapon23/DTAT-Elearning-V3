@@ -144,6 +144,9 @@ exports.updateCoursePublic = async (req, res) => {
         if (search) search = search.replace(seperator, " ")
 
 
+        console.log(fields)
+        console.log(fetchs)
+        console.log(selects)
         console.log(search)
 
 

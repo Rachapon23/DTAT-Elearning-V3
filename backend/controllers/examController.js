@@ -50,16 +50,101 @@ exports.createExam = async (req, res) => {
 
 // GET: /get-exam/:id
 exports.getExam = async (req, res) => {
+    const allowField = ["quiz"]
+    const allowedSearch = ["type"]
     try {
-        switch (req.user.role) {
+
+        let fields = req?.query?.field // field for populate
+        let fetchs = req?.query?.fetch // fetch field after populate
+        let selects = req?.query?.selects // select field in this model
+        let search = req?.query?.search // search condition
+
+        const seperator = new RegExp(",", 'g');
+
+        // console.log(req?.query.fetch.replace(seperator, " "))
+        if (fields) fields = fields.replace(seperator, " ")
+        if (fetchs) fetchs = fetchs.replace(seperator, " ")
+        if (selects) selects = selects.replace(seperator, " ")
+        if (search) search = search.replace(seperator, " ")
+
+
+        console.log(fields)
+        console.log(fetchs)
+        console.log(selects)
+        console.log(search)
+
+
+        // check role
+        let searchParams = null
+        let updateParams = null
+        let option = { new: true }
+        switch (req?.user?.role) {
             case "admin":
-                return res.json({ data: await Exam.findOne({ _id: req.params.id }).populate("quiz") });
+                searchParams = { _id: req.params.id }
                 break;
             case "teacher":
-                return res.json({ data: await Exam.findOne({ _id: req.params.id, teacher: user_id }) });
+                searchParams = { _id: req.params.id, teacher: user_id }
                 break;
             case "student":
-                return res.json({ data: await Exam.findOne({ _id: req.params.id }) });
+                searchParams = { _id: req.params.id }
+                break;
+            default:
+                return res.status(404).json({ error: "This role does not exist in system" });
+        }
+
+        // validate search
+        let searchArray = null
+        if (search) searchArray = search.split(",")
+
+        if (searchArray && Array.isArray(searchArray)) {
+            if (searchArray.length > allowedSearch.length) return res.status(400).json({ error: "Invalid search parameter(s)" });
+            if (searchArray.length > 0) {
+                for (let i = 0; i < allowedSearch.length; i++) {
+                    const searchSplited = searchArray[i].split(":")
+                    const searchField = searchSplited[0]
+                    const searchValue = searchSplited[1]
+                    if (!allowedSearch.includes(searchField)) return res.status(400).json({ error: "Invalid search parameter(s)" });
+                    else {
+                        console.log(searchField, searchValue)
+                        searchParams[searchField] = searchValue
+                    }
+                }
+            }
+
+        }
+        else if (search) {
+            if (!allowedSearch.includes(fields)) return res.status(400).json({ error: "Invalid search parameter(s)" });
+        }
+
+        // validate populateField
+        let populateField = null
+        if (fields && Array.isArray(fields)) {
+            if (fields.length > allowField.length) return res.status(400).json({ error: "Invalid field parameter(s)" });
+            if (fields.length > 1) {
+                for (let i = 0; i < fields.length; i++) {
+                    if (!allowField.includes(fields[i])) return res.status(400).json({ error: "Invalid field parameter(s)" });
+                }
+            }
+            populateField = fields.join(" ")
+        }
+        else if (fields) {
+            // console.log("===>", fields)
+            if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid field parameter(s)" });
+            populateField = fields
+        }
+
+        if (!searchParams) return res.status(500).json({ error: "Unexpected error on list courses" });
+
+        // database thing
+        switch (req.user.role) {
+            case "admin":
+                return res.json({ data: await Exam.findOne(searchParams).populate(fields, fetchs) });
+                break;
+            case "teacher":
+                return res.json({ data: await Exam.findOne(searchParams).populate(fields) });
+                break;
+            case "student":
+                return res.json({ data: await Exam.findOne(searchParams).populate(fields, fetchs+" -answer") });
                 break;
             default: return res.status(404).json({ error: "This role does not exist in system" });
         }

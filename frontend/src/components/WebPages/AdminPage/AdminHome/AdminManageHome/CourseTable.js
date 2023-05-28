@@ -6,7 +6,7 @@ import { listCourse } from "../../../../../function/Admin/adminFunction";
 const CourseTable = ({ manage = null, home_course=null }) => {
     const { coursePublic, setCoursePublic } = useContext(AdminContext)
     const { coursePrivate, setCoursePrivate } = useContext(AdminContext)
-    const [publicCourse, setPublicCourse] = useState([]);
+    // const [publicCourse, setPublicCourse] = useState([]);
     const [courseList, setCourseList] = useState([])
     const [selectedCourse, setSelectedCourse] = useState(mapSelectedCourse(manage))
 

@@ -250,11 +250,14 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
   }
 
   async function handleUpdateCourse() {
-    console.log(manage)
+    // console.log(manage)
     
     if (manage !== "Public Course" && manage !== "Private Course") return
+    if(manageHomeData === coursePublic) return
+    
     const field = manage === "Public Course" ? "course_public" : manage === "Private Course" ? "course_private" : null
     const courseData = manage === "Public Course" ? coursePublic : manage === "Private Course" ? coursePrivate : null
+
 
     await updateCourse(sessionStorage.getItem("token"), { [field]: courseData }, `?field=${field}&fetch=_id,name,enabled,type,image`)
       .then(
@@ -262,7 +265,6 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
           const data = res.data.data
           if (manage === "Public Course") setCoursePublic(data.course_public)
           if (manage === "Private Course") setCoursePrivate(data.course_private)
-          console.log("WE CHANGEeED")
           setSaveChange(true)
         }
       )

@@ -75,7 +75,7 @@ const NavBarHome = () => {
           <a className="a-nav" href="/">
             Home
           </a>
-          <a className="a-nav" href="/student/home">
+          <a className="a-nav" href="/student/page/home">
             Public Course
           </a>
           <a className="a-nav" href="/teacher/page/home">
