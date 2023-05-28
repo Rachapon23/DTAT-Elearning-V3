@@ -97,18 +97,27 @@ export const updateAcnounce = async (authtoken, data) =>
     });
 
 // GET: /list-course
-export const listCourse = async (authtoken) =>
-    await axios.get(process.env.REACT_APP_API + `/list-course`, {
+export const listCourse = async (authtoken, query) => {
+    let reqStr =  `/list-course`
+    // console.log(query)
+    if(query) reqStr += query
+
+    return await axios.get(process.env.REACT_APP_API + reqStr, {
         headers: {
             authtoken,
         }
     });
+}
 
 // DELETE: /update-course-public
-export const updateCoursePublic = async (authtoken, data) =>
-    await axios.put(process.env.REACT_APP_API + `/update-course-public`, data, {
+export const updateCourse= async (authtoken, data, query) => {
+    let reqStr =  `/update-course-public`
+    if(query) reqStr += query
+    return await axios.put(process.env.REACT_APP_API + reqStr, data, {
         headers: {
             authtoken,
         }
     });
+}
+    
 

@@ -11,7 +11,7 @@ import {
 } from '@dnd-kit/sortable';
 import { DndContext } from '@dnd-kit/core';
 import { Link } from 'react-router-dom';
-import { createAcnounce, createFilePublic, updateAcnounce, updateCoursePublic } from '../../../../../function/Admin/adminFunction';
+import { createAcnounce, createFilePublic, updateAcnounce, updateCourse } from '../../../../../function/Admin/adminFunction';
 import { AdminContext } from './AdminManageContext';
 import ImgCrop from 'antd-img-crop';
 import CourseTable from './CourseTable';
@@ -90,6 +90,9 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
 
   const [manageHomeData, setManageHomeData] = useState()
   const [actionMode, setActionMode] = useState(initAction)
+  const [saveChange, setSaveChange] = useState(false)
+  
+  const [isUpdate, setIsUpdate] = useState(false)
 
   const handleAddImage = async (image) => {
 
@@ -248,15 +251,19 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
 
   async function handleUpdateCourse() {
     console.log(manage)
+    
     if (manage !== "Public Course" && manage !== "Private Course") return
     const field = manage === "Public Course" ? "course_public" : manage === "Private Course" ? "course_private" : null
     const courseData = manage === "Public Course" ? coursePublic : manage === "Private Course" ? coursePrivate : null
 
-    await updateCoursePublic(sessionStorage.getItem("token"), { [field]: courseData })
+    await updateCourse(sessionStorage.getItem("token"), { [field]: courseData }, `?field=${field}&fetch=_id,name,enabled,type,image`)
       .then(
         (res) => {
           const data = res.data.data
-          console.log(data)
+          if (manage === "Public Course") setCoursePublic(data.course_public)
+          if (manage === "Private Course") setCoursePrivate(data.course_private)
+          console.log("WE CHANGEeED")
+          setSaveChange(true)
         }
       )
       .catch(
@@ -264,6 +271,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
           console.log(err)
         }
       )
+    
   }
 
   async function handleDeleteAcnounce(index) {
@@ -281,7 +289,6 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
           const data = res.data.data
           console.log(res.data)
           setAcnounce(() => data.acnounce)
-
         }
       )
       .catch(
@@ -330,7 +337,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
           .then(
             (res) => {
               const data = res.data.data
-              console.log(data)
+              console.log("update > ", data)
               setAcnounce(() => data.acnounce)
 
             }
@@ -348,7 +355,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
   // 
 
   const columnsEdit = () => {
-    if (manage === "Acnounce" || manage === "Public Course" || manage === "Private Course") {
+    if (manage === "Acnounce") {
       return ([
         {
           key: 'sort',
@@ -395,32 +402,91 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
         },
       ])
     }
+    if (manage === "Public Course" || manage === "Private Course") {
+      return ([
+        {
+          key: 'sort',
+          align: "center",
+          width: "5%",
+        },
+        {
+          title: 'Image',
+          dataIndex: 'image',
+          align: "center",
+          width: "10%",
+          render: (data) => {
+            // console.log(data?.url)
+            if (!data?.url) return
+            return (
+              <Image
+                width={150}
+                src={process.env.REACT_APP_IMG + data.url}
+              />
+            )
+          }
+        },
+        {
+          title: "Course",
+          dataIndex: 'name',
+          key: 'name',
+          width: "50%",
+        },
+        {
+          title: "ID",
+          dataIndex: '_id',
+          key: '_id',
+        },
+        {
+          title: "Type",
+          dataIndex: 'type',
+          key: 'type',
+          align: "center",
+          render: (type) => type === true ? "Public" : "Private",
+        },
+        {
+          title: "Status",
+          dataIndex: 'status',
+          key: 'status',
+          align: "center",
+          render: (status) => status === true ? "Disable" : "Eanble",
+        },
+      ])
+    }
     return null
   }
 
+
   useEffect(() => {
+
     switch (manage) {
       case "Acnounce":
-        setManageHomeData(acnounce);
+        setManageHomeData(() => acnounce);
         setActionMode("Preview");
+        setSaveChange(false)
         break;
       case "Public Course":
-        setManageHomeData(coursePublic);
-        // setActionMode("Preview");
+        setManageHomeData(() => coursePublic);
+        setActionMode("Preview");
+        setSaveChange(false)
         break;
       case "Private Course":
-        setManageHomeData(coursePrivate);
-        // setActionMode("Preview");
+        setManageHomeData(() => coursePrivate);
+        setActionMode("Preview");
+        setSaveChange(false)
         break;
       default:
         setManageHomeData(null);
       // setActionMode("Preview");
     }
-  }, [acnounce, coursePrivate, coursePublic, manage])
+    console.log(saveChange)
+
+  }, [acnounce, manage, saveChange])
 
   const renderContent = (actionMode, manage) => {
     // console.log(actionMode, manage)
+    // console.log(manageHomeData)
     if (actionMode === "Preview" && (manage === "Acnounce" || manage === "Public Course" || manage === "Private Course")) {
+
       return (
         <Col flex={"auto"}>
           {
@@ -460,7 +526,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
       if (actionMode === "Add") {
         return (
           <Col flex={"auto"}>
-            <CourseTable />
+            <CourseTable manage={manage} />
           </Col>
         )
       }

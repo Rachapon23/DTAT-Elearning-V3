@@ -41,20 +41,18 @@ exports.createAcnounce = async (req, res) => {
     }
 }
 
-
+// GET: /get-home?field=:field&fetch=:fetch
 exports.getHome = async (req, res) => {
     try {
-        const dataBaseAcnounce = await Home.find({})
-        if (Array.isArray(dataBaseAcnounce)) {
-            if (dataBaseAcnounce.length === 0) {
-                return res.status(200).json({ data: null })
-            }
-            else if (dataBaseAcnounce.length === 1) {
-                return res.status(200).json({ data: dataBaseAcnounce[0] })
-            }
-            else {
-                return res.status(500).json({ error: "Unexpected error on get home" })
-            }
+        // let field = req?.query?.field
+        // let fetch = req?.query?.fetch
+        // if(field) field.replace(",", " ")
+        // if(fetch) fetch.replace(",", " ")
+
+        const dataBaseAcnounce = await Home.findOne({}).populate(`course_public course_private`, `image name`).select(`-_id`)//.populate(`${fetch}`)
+        console.log(dataBaseAcnounce)
+        if (dataBaseAcnounce) {
+            return res.status(200).json({ data: dataBaseAcnounce })
         }
         return res.status(500).json({ error: "Unexpected error on get home" })
     }
@@ -121,17 +119,102 @@ exports.updateAcnounce = async (req, res) => {
 }
 
 exports.updateCoursePublic = async (req, res) => {
+    const allowField = ["course_public", "course_private"]
+    const allowedSearch = ["type"]
     try {
         // await Home.findOneAndUpdate(
         //     { _id: req.params.id },
         //     { $push: { course_public: req.body.course_public } },
         //     { new: true },
         // )
+        const { course_public, course_private, remove } = req?.body
 
-        const { course_public, remove } = req?.body
-        console.log(req?.body)
 
-        const dataBaseCoursePublic = await Home.find({})
+        let fields = req?.query?.field // field for populate
+        let fetchs = req?.query?.fetch // fetch field after populate
+        let selects = req?.query?.selects // select field in this model
+        let search = req?.query?.search // search condition
+
+        const seperator = new RegExp(",", 'g');
+
+        // console.log(req?.query.fetch.replace(seperator, " "))
+        if (fields) fields = fields.replace(seperator, " ")
+        if (fetchs) fetchs = fetchs.replace(seperator, " ")
+        if (selects) selects = selects.replace(seperator, " ")
+        if (search) search = search.replace(seperator, " ")
+
+
+        console.log(search)
+
+
+        // check role
+        let searchParams = null
+        let updateParams = null
+        let option = { new: true }
+        switch (req?.user?.role) {
+            case "admin":
+                searchParams = {}
+                if(course_public) updateParams = { course_public: course_public }
+                if(course_private) updateParams = { course_private: course_private }
+                
+                break;
+            case "teacher":
+                searchParams = {}
+                if(course_public) updateParams = { course_public: course_public }
+                if(course_private) updateParams = { course_private: course_private }
+                break;
+            case "student":
+                return res.status(403).json({ error: "Access denine for student" });
+            default:
+                return res.status(404).json({ error: "This role does not exist in system" });
+        }
+
+        // validate search
+        let searchArray = null
+        if (search) searchArray = search.split(",")
+
+        if (searchArray && Array.isArray(searchArray)) {
+            if (searchArray.length > allowedSearch.length) return res.status(400).json({ error: "Invalid search parameter(s)" });
+            if (searchArray.length > 0) {
+                for (let i = 0; i < allowedSearch.length; i++) {
+                    const searchSplited = searchArray[i].split(":")
+                    const searchField = searchSplited[0]
+                    const searchValue = searchSplited[1]
+                    if (!allowedSearch.includes(searchField)) return res.status(400).json({ error: "Invalid search parameter(s)" });
+                    else {
+                        console.log(searchField, searchValue)
+                        searchParams[searchField] = searchValue
+                    }
+                }
+            }
+
+        }
+        else if (search) {
+            if (!allowedSearch.includes(fields)) return res.status(400).json({ error: "Invalid search parameter(s)" });
+        }
+
+        // validate populateField
+        let populateField = null
+        if (fields && Array.isArray(fields)) {
+            if (fields.length > allowField.length) return res.status(400).json({ error: "Invalid field parameter(s)" });
+            if (fields.length > 1) {
+                for (let i = 0; i < fields.length; i++) {
+                    if (!allowField.includes(fields[i])) return res.status(400).json({ error: "Invalid field parameter(s)" });
+                }
+            }
+            populateField = fields.join(" ")
+        }
+        else if (fields) {
+            console.log("===>", fields)
+            if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid field parameter(s)" });
+            populateField = fields
+        }
+
+        if (!searchParams) return res.status(500).json({ error: "Unexpected error on list courses" });
+
+
+        // perfrom database thing
+        const dataBaseCoursePublic = await Home.find(searchParams)
         if (Array.isArray(dataBaseCoursePublic)) {
             if (dataBaseCoursePublic.length === 0) {
 
@@ -150,14 +233,12 @@ exports.updateCoursePublic = async (req, res) => {
                     )
 
                 }
-
-
                 return res.status(200).json({ data: payload })
                 // return res.status(500).json({ error: "Cannot find acnounce to update" })
             }
             else if (dataBaseCoursePublic.length === 1) {
-                const payload = await Home.findOneAndUpdate({}, { course_public: course_public }, { new: true })
-
+                const payload = await Home.findOneAndUpdate(searchParams, updateParams, option).populate(fields, fetchs)
+                console.log(payload)
 
                 if (remove) {
                     fs.unlink(`./public/uploads${remove?.url}`,
@@ -178,7 +259,7 @@ exports.updateCoursePublic = async (req, res) => {
         return res.status(500).json({ error: "Unexpected error on update course public" })
 
 
-        
+
     }
     catch (err) {
         console.log(err)

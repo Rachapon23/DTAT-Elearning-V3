@@ -129,13 +129,12 @@ exports.getActivityScore = async (req, res) => {
     }
 }
 
-
-
-
-// GET: /get-activity/:id/:field
+// GET: /get-activity/:id?field=:field
 exports.getActivity = async (req, res) => {
     try {
-        const field = req?.params?.field
+        const field = req?.query?.field.replace(",", " ")
+        // const field = req?.params?.field
+        // console.log(field)
         const activity = await Activity.findOne({ _id: req?.params?.id }).select(`${field} -_id`)
         
         

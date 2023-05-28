@@ -64,7 +64,7 @@ exports.createCourse = async (req, res) => {
 exports.getCourse = async (req, res) => {
   try {
     const course = await Course.findOne({ _id: req.params.id })
-    .populate("teacher room calendar condition");
+      .populate("teacher room calendar condition");
 
     res.json({ data: course });
   } catch (err) {
@@ -76,10 +76,60 @@ exports.getCourse = async (req, res) => {
 // GET: /list-course
 exports.listCourse = async (req, res) => {
   const allowField = ["condition", "room", "teacher", "exam"]
+  const allowedSearch = ["type"]
   try {
     const fields = req?.query?.field
-    let populateField = null
+    let fetchs = req?.query?.fetch
+    let selects = req?.query?.selects
+    let search = req?.query?.search
 
+    const seperator = new RegExp(",", 'g');
+    if (fetchs) fetchs = fetchs.replace(seperator, " ")
+    if (selects) selects = selects.replace(seperator, " ")
+
+
+    // check role
+    let searchParams = null
+    switch (req?.user?.role) {
+      case "admin":
+        searchParams = {}
+        break;
+      case "teacher":
+        searchParams = { teacher: user_id }
+        break;
+      case "student":
+        return res.status(403).json({ error: "Access denine for student" });
+      default:
+        return res.status(404).json({ error: "This role does not exist in system" });
+    }
+
+    // validate search
+    let searchArray = null
+    if (search) searchArray = search.split(",")
+
+    if (searchArray && Array.isArray(searchArray)) {
+      if (searchArray.length > allowedSearch.length) return res.status(400).json({ error: "Invalid query parameter(s)" });
+      if (searchArray.length > 0) {
+        for (let i = 0; i < allowedSearch.length; i++) {
+          const searchSplited = searchArray[i].split(":")
+          const searchField = searchSplited[0]
+          const searchValue = searchSplited[1]
+          if (!allowedSearch.includes(searchField)) return res.status(400).json({ error: "Invalid query parameter(s)" });
+          else {
+            console.log(searchField, searchValue)
+            searchParams[searchField] = searchValue
+          }
+        }
+      }
+
+    }
+    else if (fields) {
+      if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid query parameter(s)" });
+      populateField = fields
+    }
+
+    // validate populateField
+    let populateField = null
     if (fields && Array.isArray(fields)) {
       if (fields.length > allowField.length) return res.status(400).json({ error: "Invalid query parameter(s)" });
       if (fields.length > 1) {
@@ -94,22 +144,12 @@ exports.listCourse = async (req, res) => {
       populateField = fields
     }
 
-    switch (req?.user?.role) {
-      case "admin":
-        const searchedData = await Course.find({}).populate(populateField)
-        return res.json({ data: searchedData });
-        break;
-      case "teacher":
-        return res.json({ data: await Course.find({ teacher: user_id }).populate(populateField) });
-        break;
-      case "student":
-        return res.status(403).json({ error: "Access denine for student" });
-        break;
-      default:
-        return res
-          .status(404)
-          .json({ error: "This role does not exist in system" });
-    }
+    if (!searchParams) return res.status(500).json({ error: "Unexpected error on list courses" });
+
+    // console.log(searchParams)
+    const searchedData = await Course.find(searchParams).populate(populateField).select(selects)
+    return res.json({ data: searchedData });
+
   } catch (err) {
     console.log("fail to fetch courses");
     res.status(500).json({ error: "Unexpected error on list courses" });
@@ -216,14 +256,14 @@ exports.updateCourseImage = async (req, res) => {
           }
           else error_deleteFile = false;
 
-            if (req.body.upload_type === "private") {
-              fs.unlink(`./public/uploads/${image_data.image.name}`, (err) => {
-                if (err) error_deleteFile = true;
-                else error_deleteFile = false;
-              });
-            } else error_deleteFile = false;
+          if (req.body.upload_type === "private") {
+            fs.unlink(`./public/uploads/${image_data.image.name}`, (err) => {
+              if (err) error_deleteFile = true;
+              else error_deleteFile = false;
+            });
           } else error_deleteFile = false;
-        }
+        } else error_deleteFile = false;
+      }
       );
     }
 
@@ -363,7 +403,7 @@ exports.listCourseGraphData = async (req, res) => {
         //   if(item.completed && item.user) return item.user
         //   else return 0
         // }))
-        
+
         // console.log(searchedCourse.map((item) => item.activity.map((item) => item.user.plant.name)))
         const payload = searchedCourse.map(
           (item) => (
@@ -371,8 +411,8 @@ exports.listCourseGraphData = async (req, res) => {
               name: item.name,
               plant: item.condition.map((citem) => citem.plant.name),
               plant_amount: item.condition.map((amount) => amount.maximum),
-              plant_current: item.condition.map((citem) =>  item.activity.map((aitem) => citem.plant.name === aitem.user.plant.name && aitem.completed ? 1:0)[0]) ,
-              current: item.activity.map((aitem) => aitem.completed ? 1:0)[0],
+              plant_current: item.condition.map((citem) => item.activity.map((aitem) => citem.plant.name === aitem.user.plant.name && aitem.completed ? 1 : 0)[0]),
+              current: item.activity.map((aitem) => aitem.completed ? 1 : 0)[0],
               maximum: item.condition.map((amount) => amount.maximum).reduce((prev, curr) => prev + curr, 0),
             }
           )

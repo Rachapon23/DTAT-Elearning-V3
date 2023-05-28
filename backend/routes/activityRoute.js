@@ -35,6 +35,6 @@ router.get("/get-activity/:id/score", checkUser, getActivityScore);
 
 
 // new api pattern check role in controller
-router.get("/get-activity/:id/:field", checkUser, getActivity);
+router.get("/get-activity/:id", checkUser, getActivity);
 
 module.exports = router;
