@@ -10,6 +10,7 @@ const {
     updateActivityScore,
     getActivityScore,
     getActivity,
+    listActivity
 } = require('../controllers/activityController')
 
 // teacher
@@ -28,6 +29,8 @@ router.get("/get-activity/:id/progress", checkUser, getActivityProgress);
 
 router.put("/update-activity/:id/score", checkUser, updateActivityScore);
 router.get("/get-activity/:id/score", checkUser, getActivityScore);
+
+router.get("/list-activity", checkUser, listActivity);
 
 // we still have to add these API?
 // router.get("/get-my-course-student", checkUser, getMyCourseStudent);

@@ -7,7 +7,7 @@ import CalendarDisplay from "../../CalendarPage/CalendarDisplay";
 import StudentExam from "../StudentExam/StudentExam";
 
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
-import { listCourse } from "../../../../function/Student/course";
+import { listActivity, listCourse } from "../../../../function/Student/course";
 import { Link } from "react-router-dom";
 const { Header, Content, Footer } = Layout;
 
@@ -47,9 +47,9 @@ const StudentHomePage = () => {
       title: `Action`,
       align: "center",
       render: (data) => {
-        // console.log(data)
+        console.log(data)
         return (
-          <Link to={`/student/page/exam/${data?.exam}`} state={{mode: "Preview", exam_name: data?.name}}><Button onClick={null}> Exam </Button></Link>
+          <Link to={`/student/page/exam/${data?.course?.exam}`} state={{mode: "Preview", exam_name: data?.name}}><Button onClick={null}> Exam </Button></Link>
         )
       }
     },
@@ -57,8 +57,8 @@ const StudentHomePage = () => {
 
   ];
 
-  const fetchCourse = async () => {
-    await listCourse(sessionStorage.getItem("token"))
+  const fetchActivity = async () => {
+    await listActivity(sessionStorage.getItem("token"), `?search=user:643de7f99dc3433565c8f599&fetch=course&field=course&select=exam`)
       .then(
         (res) => {
           const data = res.data.data
@@ -74,7 +74,7 @@ const StudentHomePage = () => {
   }
 
   useEffect(() => {
-    fetchCourse()
+    fetchActivity()
   }, [])
 
   return (

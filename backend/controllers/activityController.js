@@ -22,6 +22,135 @@ exports.createActivity = async (req, res) => {
     }
 }
 
+// GET: /list-activity?search=:?search&field=:field&fetch=:fetch&select=:select
+exports.listActivity = async (req, res) => {
+    const allowField = ["user", "course"]
+    const allowedSearch = ["user", "course"]
+    try {
+
+        let fields = req?.query?.field // field for populate
+        let fetchs = req?.query?.fetch // fetch field after populate
+        let selects = req?.query?.selects // select field in this model
+        let search = req?.query?.search // search condition
+
+        const seperator = new RegExp(",", 'g');
+
+        // console.log(req?.query.fetch.replace(seperator, " "))
+        if (fields) fields = fields.replace(seperator, " ")
+        if (fetchs) fetchs = fetchs.replace(seperator, " ")
+        if (selects) selects = selects.replace(seperator, " ")
+        if (search) search = search.replace(seperator, " ")
+
+
+        console.log(fields)
+        console.log(fetchs)
+        console.log(selects)
+        console.log(search)
+
+
+        // check role
+        let searchParams = null
+        let updateParams = null
+        let option = { new: true }
+        switch (req?.user?.role) {
+            case "admin":
+                searchParams = {}
+                break;
+            case "teacher":
+                searchParams = { user: user_id }
+                break;
+            case "student":
+                searchParams = { user: req.params.id }
+                break;
+            default:
+                return res.status(404).json({ error: "This role does not exist in system" });
+        }
+
+        // validate search
+        let searchArray = null
+        if (search) searchArray = search.split(",")
+
+        if (searchArray && Array.isArray(searchArray)) {
+            if (searchArray.length > allowedSearch.length) return res.status(400).json({ error: "Invalid search parameter(s)" });
+
+            if (searchArray.length > 1) {
+                for (let i = 0; i < allowedSearch.length; i++) {
+                    const searchSplited = searchArray[i].split(":")
+                    const searchField = searchSplited[0]
+                    const searchValue = searchSplited[1]
+                    if (!allowedSearch.includes(searchField)) return res.status(400).json({ error: "Invalid search parameter(s)" });
+                    else {
+                        console.log(searchField, searchValue)
+                        searchParams[searchField] = searchValue
+                    }
+                }
+            }
+            else if (searchArray.length === 1) {
+                const searchSplited = searchArray[0].split(":")
+                searchParams[searchSplited[0]] = searchSplited[1]
+            }
+            else {
+                return res.status(400).json({ error: "Invalid search parameter(s)" });
+            }
+        }
+        else if (search) {
+            if (!allowedSearch.includes(fields)) return res.status(400).json({ error: "Invalid search parameter(s)" });
+        }
+
+        console.log(searchParams)
+
+        // validate populateField
+        let populateField = null
+        let fieldArray = null
+        if (fields) fieldArray = fields.split(",")
+        console.log(fieldArray)
+        if (fields && Array.isArray(fields)) {
+            if (fields.length > allowField.length) return res.status(400).json({ error: "Invalid field parameter(s)" });
+            if (fields.length > 1) {
+
+                for(let i = 0; i < allowField.length; i++) {
+                    const fieldSplited = fieldArray[i].split(":")
+                    const field = fieldSplited[0]
+                    const fieldValue = fieldSplited[1]
+
+                    if (!allowField.includes(searchField)) return res.status(400).json({ error: "Invalid search parameter(s)" });
+                    else {
+                        console.log(field, fieldValue)
+                        searchParams[field] = fieldValue
+                    }
+                }
+
+                // for (let i = 0; i < fields.length; i++) {
+                //     if (!allowField.includes(fields[i])) return res.status(400).json({ error: "Invalid field parameter(s)" });
+                // }
+            }
+            else if (fieldArray.length === 1) {
+                const fieldSplited = fieldArray[0].split(":")
+                populateField[fieldSplited[0]] = fieldSplited[1]
+            }
+            else {
+                return res.status(400).json({ error: "Invalid search parameter(s)" });
+            }
+        }
+        else if (fields) {
+            console.log("===>", fields)
+            if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid field parameter(s)" });
+        }
+
+        if (!searchParams) return res.status(500).json({ error: "Unexpected error on list courses" });
+
+        console.log(populateField)
+
+
+        // database thing
+        const activity_course = await Activity.find(searchParams, fetchs).populate(fields).select(selects)
+        res.json({ data: activity_course })
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Uncexpected error on list activity" })
+    }
+}
 
 
 // GET: /list-activity/course/:id
@@ -33,7 +162,7 @@ exports.listActivityCourse = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(500).json({ error: "Uncexpected error on create activity" })
+        res.status(500).json({ error: "Uncexpected error on list activity by course ID" })
     }
 }
 
@@ -50,7 +179,7 @@ exports.updateActivityProgress = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(500).json({ error: "Uncexpected error on create activity" })
+        res.status(500).json({ error: "Uncexpected error on update activity" })
     }
 }
 
@@ -65,7 +194,7 @@ exports.getActivityProgress = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(500).json({ error: "Uncexpected error on create activity" })
+        res.status(500).json({ error: "Uncexpected error on get activity progress" })
     }
 }
 
@@ -112,7 +241,7 @@ exports.updateActivityScore = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ error: "Uncexpected error on create activity" })
+        return res.status(500).json({ error: "Uncexpected error on update activity score" })
     }
 }
 
@@ -120,12 +249,12 @@ exports.updateActivityScore = async (req, res) => {
 exports.getActivityScore = async (req, res) => {
     try {
         const activity = await Activity.findOne({ _id: req?.params?.id }).select("score_value -_id")
-        
+
         return res.json({ data: activity });
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ error: "Uncexpected error on create activity" })
+        return res.status(500).json({ error: "Uncexpected error on get activity score" })
     }
 }
 
@@ -136,14 +265,14 @@ exports.getActivity = async (req, res) => {
         // const field = req?.params?.field
         // console.log(field)
         const activity = await Activity.findOne({ _id: req?.params?.id }).select(`${field} -_id`)
-        
-        
-        if(activity[`${field}`] === undefined) return res.status(404).json({ error: `Cannot find field name ${field}` })
+
+
+        if (activity[`${field}`] === undefined) return res.status(404).json({ error: `Cannot find field name ${field}` })
         return res.json({ data: activity });
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ error: "Uncexpected error on create activity" })
+        return res.status(500).json({ error: "Uncexpected error on get activity by ID" })
     }
 }
 

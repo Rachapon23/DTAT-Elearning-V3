@@ -192,6 +192,24 @@ exports.loadData = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
+    const student2 = await User.findOneAndUpdate(
+        { employee: "6100999" },
+        {
+            employee: "6100999",
+            department: await Department.findOne({ id: "919323" }).select("_id"),
+            firstname: "Jhon",
+            lastname: "Marstion",
+            profile: null,
+            role: await Role.findOne({ name: "student" }).select("_id"),
+            plant: await Plant.findOne({ name: "B" }).select("_id"),
+            verified: false,
+            enable: true,
+            email: "bstudent@g.com",
+            password: await bcrypt.hash("123456", await bcrypt.genSalt(10)),
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
     // Condition
     await Condition.findOneAndUpdate(
         { _id: "64264e62440e75505b4d5032" },
@@ -465,7 +483,6 @@ exports.loadData = async () => {
             score_value: null,
             user: student1,
             course: course1,
-            activity: null,
 
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -541,6 +558,38 @@ exports.loadData = async () => {
     course5.activity = activity5
     course5.save()
     
-    
+    const activity6 =  await Activity.findOneAndUpdate(
+        { course: course2, user: student2 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            socre_max: null,
+            score_value: null,
+            user: student2,
+            course: course2,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course2.activity.push(activity6) 
+    course2.save()
+
+    const activity7 =  await Activity.findOneAndUpdate(
+        { course: course3, user: student2 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            socre_max: null,
+            score_value: null,
+            user: student2,
+            course: course3,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course3.activity.push(activity7) 
+    course3.save()
 
 }
