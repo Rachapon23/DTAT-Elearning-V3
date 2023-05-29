@@ -1,10 +1,13 @@
+import { Col, Row } from "antd";
 import React from "react";
 
 const StudentExam = () => {
     return (
-        <>
-            Course
-        </>
+        <Row>
+            <Col>
+                Course
+            </Col>
+        </Row>
     )
 }
 

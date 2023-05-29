@@ -26,22 +26,26 @@ exports.createActivity = async (req, res) => {
 exports.listActivity = async (req, res) => {
     const allowField = ["user", "course"]
     const allowedSearch = ["user", "course"]
+    let allowedProps = ["user", "course", "exam", "plant", "_id", "name", "exam -_id"]
+    const allowedPropsField = ["path", "select", "populate"]
     try {
 
+        let pops = req?.query?.pops
         let fields = req?.query?.field // field for populate
-        let fetchs = req?.query?.fetch // fetch field after populate
+        let fetchs = req?.query?.fetch // fetch field after search
         let selects = req?.query?.selects // select field in this model
         let search = req?.query?.search // search condition
 
-        const seperator = new RegExp(",", 'g');
+        if (pops && fields) return res.status(400).json({ error: "Invalid query parameter pops and field cannot use at the same time" })
 
-        // console.log(req?.query.fetch.replace(seperator, " "))
+        const seperator = new RegExp(",", 'g');
+        // if (pops) pops = pops.replace(seperator, " ")
         if (fields) fields = fields.replace(seperator, " ")
         if (fetchs) fetchs = fetchs.replace(seperator, " ")
         if (selects) selects = selects.replace(seperator, " ")
         if (search) search = search.replace(seperator, " ")
 
-
+        console.log(pops)
         console.log(fields)
         console.log(fetchs)
         console.log(selects)
@@ -58,9 +62,11 @@ exports.listActivity = async (req, res) => {
                 break;
             case "teacher":
                 searchParams = { user: user_id }
+                allowedProps = []
                 break;
             case "student":
                 searchParams = { user: req.params.id }
+                allowedProps = []
                 break;
             default:
                 return res.status(404).json({ error: "This role does not exist in system" });
@@ -69,7 +75,6 @@ exports.listActivity = async (req, res) => {
         // validate search
         let searchArray = null
         if (search) searchArray = search.split(",")
-
         if (searchArray && Array.isArray(searchArray)) {
             if (searchArray.length > allowedSearch.length) return res.status(400).json({ error: "Invalid search parameter(s)" });
 
@@ -96,54 +101,76 @@ exports.listActivity = async (req, res) => {
         else if (search) {
             if (!allowedSearch.includes(fields)) return res.status(400).json({ error: "Invalid search parameter(s)" });
         }
+        if (!searchParams) return res.status(500).json({ error: "Unexpected error on list courses" });
 
-        console.log(searchParams)
 
-        // validate populateField
+        // validate fields
         let populateField = null
-        let fieldArray = null
-        if (fields) fieldArray = fields.split(",")
-        console.log(fieldArray)
-        if (fields && Array.isArray(fields)) {
-            if (fields.length > allowField.length) return res.status(400).json({ error: "Invalid field parameter(s)" });
-            if (fields.length > 1) {
 
-                for(let i = 0; i < allowField.length; i++) {
-                    const fieldSplited = fieldArray[i].split(":")
-                    const field = fieldSplited[0]
-                    const fieldValue = fieldSplited[1]
-
-                    if (!allowField.includes(searchField)) return res.status(400).json({ error: "Invalid search parameter(s)" });
-                    else {
-                        console.log(field, fieldValue)
-                        searchParams[field] = fieldValue
+        if (fields) {
+            // normal populate
+            if (fields && Array.isArray(fields)) {
+                if (fields.length > allowField.length) return res.status(400).json({ error: "Invalid field parameter(s)" });
+                if (fields.length > 1) {
+                    for (let i = 0; i < fields.length; i++) {
+                        if (!allowField.includes(fields[i])) return res.status(400).json({ error: "Invalid field parameter(s)" });
                     }
                 }
-
-                // for (let i = 0; i < fields.length; i++) {
-                //     if (!allowField.includes(fields[i])) return res.status(400).json({ error: "Invalid field parameter(s)" });
-                // }
+                populateField = fields.join(" ")
             }
-            else if (fieldArray.length === 1) {
-                const fieldSplited = fieldArray[0].split(":")
-                populateField[fieldSplited[0]] = fieldSplited[1]
+            else if (fields) {
+                if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid field parameter(s)" });
+                populateField = fields
+            }
+        }
+        else if (pops) {
+            // sub-populate
+
+            let popsParams = []
+            let popsArray = null
+            if (pops) popsArray = pops.split(",")
+            if (popsArray && Array.isArray(popsArray)) {
+                if (popsArray.length > allowedProps.length) return res.status(400).json({ error: "Invalid pops parameter(s)" });
+
+                for (let i = 0; i < popsArray.length; i++) {
+                    let popsLayers = popsArray[i].split("$")
+
+                    console.log(popsLayers)
+
+                    let popsObject = {}
+                    for (let j = 0; j < popsLayers.length; j++) {
+                        const splitedData = popsLayers[j].split(":")
+                        const fieldData = splitedData[0]
+                        const valueData = splitedData[1]
+
+                        console.log(allowedProps, valueData)
+
+                        if (req?.user.role !== "admin") {
+                            if (!allowedProps.includes(valueData)) return res.status(400).json({ error: "Invalid pops value parameter(s)" });
+                            if (!allowedPropsField.includes(fieldData)) return res.status(400).json({ error: "Invalid pops field parameter(s)" });
+                        }
+
+                        if (fieldData === "populate") {
+                            popsObject[fieldData] = { path: valueData }
+                        }
+                        else {
+                            popsObject[fieldData] = valueData
+                        }
+                    }
+                    popsParams.push(popsObject)
+                }
+                populateField = popsParams
             }
             else {
                 return res.status(400).json({ error: "Invalid search parameter(s)" });
             }
         }
-        else if (fields) {
-            console.log("===>", fields)
-            if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid field parameter(s)" });
-        }
-
-        if (!searchParams) return res.status(500).json({ error: "Unexpected error on list courses" });
-
-        console.log(populateField)
 
 
+
+        // populateField
         // database thing
-        const activity_course = await Activity.find(searchParams, fetchs).populate(fields).select(selects)
+        const activity_course = await Activity.find(searchParams, fetchs).populate(populateField).select(selects)
         res.json({ data: activity_course })
     }
     catch (err) {

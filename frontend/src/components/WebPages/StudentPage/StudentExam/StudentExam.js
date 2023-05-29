@@ -182,7 +182,16 @@ const StudentExam = () => {
                 </Row>
                 <Row justify={"space-between"} style={{ paddingTop: "0.5%", paddingLeft: "2.5%", paddingRight: "2.5%", paddingBottom: "0.5%" }}>
                     <Col flex={"auto"}>
-                        {renderPageNav()}
+                        {
+                            exam?.quiz && exam?.quiz.length > 0 ?
+                            (
+                                renderPageNav()
+                            )
+                            :
+                            (
+                                null
+                            )
+                        }
                     </Col>
                 </Row>
             </Col>

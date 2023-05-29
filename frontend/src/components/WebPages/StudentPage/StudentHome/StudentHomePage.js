@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./studenthome.css";
-import { Button, Table } from "antd";
+import { Button, Image, Table } from "antd";
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 import CalendarDisplay from "../../CalendarPage/CalendarDisplay";
 
@@ -16,26 +16,32 @@ const StudentHomePage = () => {
 
   const columns = [
     {
-      title: "No",
+      title: "Image",
       align: "center",
-      dataIndex: "_id"
+      render: (data) => {
+        return (
+          <Image
+            width={150}
+            src={process.env.REACT_APP_IMG + data?.course?.image?.url}
+          />
+        )
+      }
     },
     {
       title: `course`,
-      align: "center",
-      dataIndex: "name",
+      render: (data) => data?.course?.name
     },
 
     {
       title: `score`,
       align: "center",
-      dataIndex: "score",
+      render: (data) => data?.score_value ? data?.score_value : "waiting for test"
     },
 
     {
       title: `max score`,
       align: "center",
-      dataIndex: "maxscore",
+      render: (data) => data?.score_max ? data?.score_max : "waiting for test"
     },
 
     {
@@ -47,9 +53,19 @@ const StudentHomePage = () => {
       title: `Action`,
       align: "center",
       render: (data) => {
-        console.log(data)
+        // console.log(data)
         return (
-          <Link to={`/student/page/exam/${data?.course?.exam}`} state={{mode: "Preview", exam_name: data?.name}}><Button onClick={null}> Exam </Button></Link>
+          <Link to={`/student/page/course/${data?.course?._id}`} state={{ mode: "Preview", exam_name: data?.name }}><Button onClick={null}> Course </Button></Link>
+        )
+      }
+    },
+    {
+      title: `Action`,
+      align: "center",
+      render: (data) => {
+        // console.log(data)
+        return (
+          <Link to={`/student/page/exam/${data?.course?.exam}`} state={{ mode: "Preview", exam_name: data?.name }}><Button onClick={null}> Exam </Button></Link>
         )
       }
     },
@@ -58,7 +74,8 @@ const StudentHomePage = () => {
   ];
 
   const fetchActivity = async () => {
-    await listActivity(sessionStorage.getItem("token"), `?search=user:643de7f99dc3433565c8f599&fetch=course&field=course&select=exam`)
+    // do not forget to add pops allowed field in activity backend
+    await listActivity(sessionStorage.getItem("token"), `?search=user:643d54088dcaa2b2667a5b59&fetch=-ans,-__v&pops=path:course$select:name exam image`)
       .then(
         (res) => {
           const data = res.data.data
