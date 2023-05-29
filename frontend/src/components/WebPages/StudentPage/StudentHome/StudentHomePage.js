@@ -47,8 +47,9 @@ const StudentHomePage = () => {
       title: `Action`,
       align: "center",
       render: (data) => {
+        // console.log(data)
         return (
-          <Link to={`/student/page/exam/${data?._id}`} state={{mode: "Preview", exam_name: data?.name}}><Button onClick={null}> Exam </Button></Link>
+          <Link to={`/student/page/exam/${data?.exam}`} state={{mode: "Preview", exam_name: data?.name}}><Button onClick={null}> Exam </Button></Link>
         )
       }
     },

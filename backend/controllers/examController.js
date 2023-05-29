@@ -136,16 +136,21 @@ exports.getExam = async (req, res) => {
         if (!searchParams) return res.status(500).json({ error: "Unexpected error on list courses" });
 
         // database thing
+        let payload = null
         switch (req.user.role) {
             case "admin":
-                return res.json({ data: await Exam.findOne(searchParams).populate(fields, fetchs) });
-                break;
+                payload =  await Exam.findOne(searchParams).populate(fields, fetchs)
+                console.log(payload)
+                if(payload) return res.json({ data: payload });
+                return res.status(404).json({ error: "Exam with ID does not exsit"});
             case "teacher":
-                return res.json({ data: await Exam.findOne(searchParams).populate(fields) });
-                break;
+                payload = await Exam.findOne(searchParams).populate(fields)
+                if(payload) return res.json({ data: payload });
+                return res.status(404).json({ error: "Exam with ID does not exsit"});
             case "student":
-                return res.json({ data: await Exam.findOne(searchParams).populate(fields, fetchs+" -answer") });
-                break;
+                payload = await Exam.findOne(searchParams).populate(fields, fetchs+" -answer")
+                if(payload) return res.json({ data: payload });
+                return res.status(404).json({ error: "Exam with ID does not exsit"});
             default: return res.status(404).json({ error: "This role does not exist in system" });
         }
     }

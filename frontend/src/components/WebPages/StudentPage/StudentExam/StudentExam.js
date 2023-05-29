@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import CardContent from "../../../ExamComponent/CardContent";
 import { getExam } from "../../../../function/Student/exam";
-import { Button, Card, Col, Form, Row } from "antd";
-import { useLocation } from "react-router-dom";
+import { Button, Card, Col, Empty, Form, Row } from "antd";
+import { useParams } from "react-router-dom";
 
 const StudentExam = () => {
     const [exam, setExam] = useState({})
@@ -10,10 +10,9 @@ const StudentExam = () => {
     const [answer, setAnswer] = useState({})
     const actionMode = "Preview"
 
-    const [currentPage ] = useState(0);
+    const [currentPage] = useState(0);
     const [pageStepLength, setPageStepLength] = useState(0)
-    const location = useLocation()
-    const examEditId = location.pathname.split("/")[location.pathname.split("/").length - 1]
+    const params = useParams()
 
     const [form] = Form.useForm();
     const [requiredMark, setRequiredMarkType] = useState('optional');
@@ -45,12 +44,19 @@ const StudentExam = () => {
                                 <Row>
                                     <Col>
                                         {
-                                            (
-                                                <Button type="primary"
-                                                >
-                                                    {"Submit"}
-                                                </Button>
-                                            )
+                                            exam?.quiz ?
+                                                (
+                                                    (
+                                                        <Button type="primary"
+                                                        >
+                                                            {"Submit"}
+                                                        </Button>
+                                                    )
+                                                )
+                                                :
+                                                (
+                                                    null
+                                                )
                                         }
                                     </Col>
                                 </Row>
@@ -67,12 +73,12 @@ const StudentExam = () => {
 
     const fetchExam = async () => {
         //&fetch=-answer
-        console.log(examEditId)
-        await getExam(sessionStorage.getItem("token"), "645d07e198f3a6087a5784f1", `?field=quiz`)
+        
+        await getExam(sessionStorage.getItem("token"), params?.id, `?field=quiz`)
             .then(
                 (res) => {
                     const data = res.data.data
-                    console.log(data)
+                    console.log(res)
                     setExam(data)
                     setInfoData({
                         name: data.name,
@@ -89,7 +95,8 @@ const StudentExam = () => {
     }
 
     useEffect(() => {
-        fetchExam()
+        
+        if(params?.id) fetchExam()
     }, [])
     return (
         <Row>
@@ -97,9 +104,24 @@ const StudentExam = () => {
                 <Row justify={"center"}>
                     <Col flex={"auto"} style={{ paddingLeft: "2.5%", paddingRight: "2.5%", paddingTop: "2%" }}>
                         <Card >
-                            <p><h5>{infoData?.name}</h5></p>
-                            <br></br>
-                            {infoData?.detail}
+                            {
+                                infoData?.name && infoData?.detail ?
+                                    (
+                                        <>
+                                            <p><h5>{infoData?.name}</h5></p>
+                                            <br></br>
+                                            {infoData?.detail}
+                                        </>
+                                    )
+                                    :
+                                    (
+                                        <Row justify={"center"}>
+                                            <Col >
+                                                <h4>No Exam Info</h4>
+                                            </Col>
+                                        </Row>
+                                    )
+                            }
                         </Card>
                     </Col>
                 </Row>
@@ -125,9 +147,10 @@ const StudentExam = () => {
                                             flex="auto"
                                         // style={{ height: "570px", }}
                                         >
+                                            {console.log(exam)}
                                             {
 
-                                                exam.quiz ?
+                                                exam?.quiz && exam?.quiz.length > 0 ?
                                                     (
                                                         exam.quiz.map((item, index) => (
                                                             <CardContent
@@ -144,7 +167,9 @@ const StudentExam = () => {
                                                     )
                                                     :
                                                     (
-                                                        null
+                                                        <Card>
+                                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                                        </Card>
                                                     )
 
                                             }
