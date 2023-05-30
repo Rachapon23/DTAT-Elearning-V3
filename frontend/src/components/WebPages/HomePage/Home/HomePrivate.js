@@ -11,7 +11,7 @@ const DEFAULT_DATA = {
   name: "No course available",
 }
 
-const x = new Array(6).fill(false)
+const arrayTemplate = new Array(6).fill(false)
 
 const HomePrivate = () => {
 
@@ -25,15 +25,19 @@ const HomePrivate = () => {
         {
           coursePrivate.length > 0 ?
             (
-              coursePrivate.slice(index, index + 3).map((data) => (
+              coursePrivate.slice(index, index + GROUP_NUMBER).map((data) => (
                 <div className="col-content">
-                  <CardCourse data={data} />
+                  <CardCourse data={{
+                    name: data?.name,
+                    detail: data?.detail,
+                    image: data?.image?.url
+                  }} />
                 </div>
               ))
             )
             :
             (
-              x.slice(index, index + 3).map((data) => (
+              arrayTemplate.slice(index, index + GROUP_NUMBER).map(() => (
                 <div className="col-content">
                   <CardCourse data={DEFAULT_DATA} />
                 </div>
@@ -65,7 +69,7 @@ const HomePrivate = () => {
               )
               :
               (
-                x.map((_, index) => (
+                arrayTemplate.map((_, index) => (
                   renderContent(index)
                 ))
               )

@@ -10,22 +10,21 @@ const HomePublic = () => {
 
   const { coursePublic } = useContext(HomeContext)
 
-  const Data = {
-    img: "",
-    title: "",
-    description: "",
-  };
-
   const renderContent = (index) => {
-
-    if(index % GROUP_NUMBER !== 0) return null
+    if (index % GROUP_NUMBER !== 0) return null
 
     return (
       <div className="row-content">
         {
-          coursePublic.slice(index, index + 3).map((data) => (
+          coursePublic.slice(index, index + GROUP_NUMBER).map((data) => (
             <div className="col-content">
-              <CardCourse data={data} />
+              <CardCourse
+                data={{
+                  name: data?.name,
+                  detail: data?.detail,
+                  image: data?.image?.url
+                }}
+              />
             </div>
           ))
         }

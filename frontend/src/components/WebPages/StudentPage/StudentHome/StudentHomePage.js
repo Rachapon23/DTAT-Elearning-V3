@@ -86,7 +86,7 @@ const StudentHomePage = () => {
 
   const fetchActivity = async () => {
     // do not forget to add pops allowed field in activity backend
-    await listActivity(sessionStorage.getItem("token"), `?search=user:6422ad02848f4c2a4831e2fe&fetch=-ans,-__v&pops=path:course$select:name exam image`)
+    await listActivity(sessionStorage.getItem("token"), `?search=${sessionStorage.getItem("user_id")}&fetch=-ans,-__v&pops=path:course$select:name exam image`)
       .then(
         (res) => {
           const data = res.data.data
@@ -111,6 +111,7 @@ const StudentHomePage = () => {
       <div className="content-home">
         <div className="">
           <p className="label-home-st" htmlFor="">My Course</p>
+          <Button onClick={() => handleNavigate(`/student/page/browes-course`)}>Browes Course</Button>
           <Table
             columns={columns}
             dataSource={courses}
@@ -139,12 +140,6 @@ const StudentHomePage = () => {
           <p htmlFor="" className="label-home-st">Calendar</p>
           <CalendarDisplay />
         </div>
-
-        <div>
-          <DoExam />
-        </div>
-
-
       </div>
 
     </div>

@@ -13,6 +13,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import StudentHomePage from "./StudentHome/StudentHomePage";
 import DoExam from "./StudentExam/DoExam";
 import StudentCourse from "./StudentCourse/StudentCourse"
+import BrowesCourse from "./StudentCourse/BrowesCourse";
+import { StudentProvider } from "./StudentCourse/StudentCourseContext";
+import RegisterCourse from "./StudentCourse/RegisterCourse";
 
 
 
@@ -68,11 +71,21 @@ const App = () => {
   const renderContent = React.useCallback(() => {
     switch (params) {
       case 'home':
-        return <StudentHomePage></StudentHomePage>
+        return <StudentHomePage />
       case 'exam':
-        return <DoExam></DoExam>
+        return <DoExam />
       case 'course':
-        return <StudentCourse></StudentCourse>
+        return <StudentCourse />
+      case 'browes-course':
+        return (
+          <StudentProvider>
+            <BrowesCourse />
+          </StudentProvider>
+        )
+      case 'register-course':
+        return (
+          <RegisterCourse/>
+        )
       // case 'preview-exam':
       //   return <ExamCreate mode={"Preview"}/>;
       case 'calendar':
