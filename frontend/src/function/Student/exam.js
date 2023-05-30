@@ -11,3 +11,12 @@ export const getExam = async (authtoken, id, query) => {
     });
 }
 
+// PUT: /update-activity/:id/send-exam
+export const sendExam = async (authtoken, id, data) =>
+    await axios.put(process.env.REACT_APP_API + `/update-activity/${id}/send-exam`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+
+

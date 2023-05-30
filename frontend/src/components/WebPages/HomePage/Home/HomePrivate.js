@@ -1,20 +1,54 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import "./content.css";
 import CardCourse from "../../../Card/CardCourse";
 import { Col, Row } from "antd";
+import { HomeContext } from './HomeContext';
+
+const GROUP_NUMBER = 3
+const DEFAULT_DATA = {
+  detail: "Waiting for new course...",
+  image: null,
+  name: "No course available",
+}
+
+const x = new Array(6).fill(false)
 
 const HomePrivate = () => {
 
-  const Data = {
-    img: "",
-    title: "",
-    description: "",
-  };
+  const { coursePrivate } = useContext(HomeContext)
+
+  const renderContent = (index) => {
+    if (index % GROUP_NUMBER !== 0) return null
+
+    return (
+      <div className="row-content">
+        {
+          coursePrivate.length > 0 ?
+            (
+              coursePrivate.slice(index, index + 3).map((data) => (
+                <div className="col-content">
+                  <CardCourse data={data} />
+                </div>
+              ))
+            )
+            :
+            (
+              x.slice(index, index + 3).map((data) => (
+                <div className="col-content">
+                  <CardCourse data={DEFAULT_DATA} />
+                </div>
+              ))
+            )
+        }
+      </div>
+    )
+
+  }
 
   return (
     <div className="content-course">
       <div className="title-content">
-        <p className="title-1">Public Course</p>
+        <p className="title-1">Private Course</p>
         <p className="title-2">
           It is a long established fact that a reader will be distracted by the
           readable content of a page when looking at its layout.
@@ -22,26 +56,20 @@ const HomePrivate = () => {
       </div>
       <div className="">
         <div className="row-content">
-          <div className="col-content">
-            <CardCourse Data={Data} />
-          </div>
-          <div className="col-content">
-            <CardCourse Data={Data} />
-          </div>
-          <div className="col-content">
-            <CardCourse Data={Data} />
-          </div>
-        </div>
-        <div className="row-content">
-          <div className="col-content none-dis">
-            <CardCourse Data={Data} />
-          </div>
-          <div className="col-content none-dis">
-            <CardCourse Data={Data} />
-          </div>
-          <div className="col-content none-dis">
-            <CardCourse Data={Data} />
-          </div>
+          {
+            coursePrivate.length > 0 ?
+              (
+                coursePrivate.map((_, index) => (
+                  renderContent(index)
+                ))
+              )
+              :
+              (
+                x.map((_, index) => (
+                  renderContent(index)
+                ))
+              )
+          }
         </div>
       </div>
       <div className="btn-navigate">

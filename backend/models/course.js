@@ -11,7 +11,7 @@ const CourseSchema = new mongoose.Schema(
     detail: {
       type: String,
     },
-    type: {
+    type: { // true -> public, false -> private
       type: Boolean,
     },
     video: {

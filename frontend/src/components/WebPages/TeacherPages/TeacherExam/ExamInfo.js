@@ -29,6 +29,17 @@ const ExamInfo = ({
     const editMode = actionMode === "Edit"
     const previewMode = actionMode === "Preview"
 
+    const enableExamOptions = [
+        {
+            label: "Close",
+            value: false
+        },
+        {
+            label: "Open",
+            value: true
+        },
+    ]
+
 
     const coursesCol = [
         {
@@ -69,7 +80,13 @@ const ExamInfo = ({
     ]
 
     const handleInputInfoData = (e) => {
-        onSetInputInfoData((inputInfoData) => ({ ...inputInfoData, [e.target.id]: e.target.value }))
+        console.log(e.target)
+        if(e?.target?.name) {
+            onSetInputInfoData((inputInfoData) => ({ ...inputInfoData, [e.target.name]: e.target.value }))
+        }
+        else {
+            onSetInputInfoData((inputInfoData) => ({ ...inputInfoData, [e.target.id]: e.target.value }))
+        }
     }
 
     return (
@@ -124,6 +141,30 @@ const ExamInfo = ({
                                 :
                                 (
                                     previewMode ? (<> {inputInfoData?.name} </>) : (null)
+                                )
+                        }
+                    </Form.Item>
+
+                    <Form.Item
+                        label={<Text strong> Status </Text>}
+                        required
+                        tooltip={editMode ? <Row><Col><Row>Open: student can access exam</Row><Row> Close: student can not access exam</Row></Col></Row> : null}
+                    >
+                        {
+                            editMode || createMode ?
+                                (
+                                    <Radio.Group
+                                        name="enable"
+                                        options={enableExamOptions}
+                                        onChange={handleInputInfoData}
+                                        value={inputInfoData?.enable}
+                                        optionType="button"
+                                        buttonStyle="solid"
+                                    />
+                                )
+                                :
+                                (
+                                    null
                                 )
                         }
                     </Form.Item>

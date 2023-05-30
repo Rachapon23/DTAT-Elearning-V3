@@ -60,7 +60,6 @@ exports.getExam = async (req, res) => {
         let search = req?.query?.search // search condition
 
         const seperator = new RegExp(",", 'g');
-
         // console.log(req?.query.fetch.replace(seperator, " "))
         if (fields) fields = fields.replace(seperator, " ")
         if (fetchs) fetchs = fetchs.replace(seperator, " ")
@@ -73,84 +72,94 @@ exports.getExam = async (req, res) => {
         console.log(selects)
         console.log(search)
 
-
-        // check role
+        // init variable
         let searchParams = null
         let updateParams = null
         let option = { new: true }
-        switch (req?.user?.role) {
-            case "admin":
-                searchParams = { _id: req.params.id }
-                break;
-            case "teacher":
-                searchParams = { _id: req.params.id, teacher: user_id }
-                break;
-            case "student":
-                searchParams = { _id: req.params.id }
-                break;
-            default:
-                return res.status(404).json({ error: "This role does not exist in system" });
-        }
 
-        // validate search
-        let searchArray = null
-        if (search) searchArray = search.split(",")
 
-        if (searchArray && Array.isArray(searchArray)) {
-            if (searchArray.length > allowedSearch.length) return res.status(400).json({ error: "Invalid search parameter(s)" });
-            if (searchArray.length > 0) {
-                for (let i = 0; i < allowedSearch.length; i++) {
-                    const searchSplited = searchArray[i].split(":")
-                    const searchField = searchSplited[0]
-                    const searchValue = searchSplited[1]
-                    if (!allowedSearch.includes(searchField)) return res.status(400).json({ error: "Invalid search parameter(s)" });
-                    else {
+        // search
+        if (search) {
+            console.log("req -> search")
+            let searchArray = null
+            if (search) searchArray = search.split(",")
+            console.log(search)
+            if (searchArray && Array.isArray(searchArray)) {
+                if (searchArray.length > allowedSearch.length) return res.status(400).json({ error: "Invalid search parameter(s)" });
+                if (searchArray.length > 0) {
+                    for (let i = 0; i < allowedSearch.length; i++) {
+                        const searchSplited = searchArray[i].split(":")
+                        const searchField = searchSplited[0]
+                        const searchValue = searchSplited[1]
+
+                        if (searchField === "_id" && searchValue === null) return res.status(400).json({ error: "Invalid search parameter(s)" });
+                        if (!allowedSearch.includes(searchField)) return res.status(400).json({ error: "Invalid search parameter(s)" });
+
                         console.log(searchField, searchValue)
                         searchParams[searchField] = searchValue
                     }
                 }
             }
-
-        }
-        else if (search) {
-            if (!allowedSearch.includes(fields)) return res.status(400).json({ error: "Invalid search parameter(s)" });
-        }
-
-        // validate populateField
-        let populateField = null
-        if (fields && Array.isArray(fields)) {
-            if (fields.length > allowField.length) return res.status(400).json({ error: "Invalid field parameter(s)" });
-            if (fields.length > 1) {
-                for (let i = 0; i < fields.length; i++) {
-                    if (!allowField.includes(fields[i])) return res.status(400).json({ error: "Invalid field parameter(s)" });
-                }
+            else if (search) {
+                if (!allowedSearch.includes(fields)) return res.status(400).json({ error: "Invalid search parameter(s)" });
             }
-            populateField = fields.join(" ")
-        }
-        else if (fields) {
-            // console.log("===>", fields)
-            if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid field parameter(s)" });
-            populateField = fields
         }
 
-        if (!searchParams) return res.status(500).json({ error: "Unexpected error on list courses" });
+        // normal populate field
+        if (fields) {
+            console.log("req -> fields")
+            let populateField = null
+            if (fields && Array.isArray(fields)) {
+                if (fields.length > allowField.length) return res.status(400).json({ error: "Invalid field parameter(s)" });
+                if (fields.length > 1) {
+                    for (let i = 0; i < fields.length; i++) {
+                        if (!allowField.includes(fields[i])) return res.status(400).json({ error: "Invalid field parameter(s)" });
+                    }
+                }
+                populateField = fields.join(" ")
+            }
+            else if (fields) {
+                // console.log("===>", fields)
+                if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid field parameter(s)" });
+                populateField = fields
+            }
+            if (!populateField) return res.status(500).json({ error: "Unexpected error on list courses" });
+        }
 
-        // database thing
+        // checkrole for default query
+        switch (req?.user?.role) {
+            case "admin":
+                searchParams = searchParams ? searchParams : { _id: req?.params?.id }
+                fields = fields ? fields : "quiz"
+                break;
+            case "teacher":
+                searchParams = searchParams ? searchParams : { _id: req?.params?.id, teacher: user_id }
+                fields = fields ? fields : "quiz"
+                break;
+            case "student":
+                searchParams = searchParams ? searchParams : { _id: req?.params?.id }
+                fields = fields ? fields : "quiz"
+                break;
+            default:
+                return res.status(404).json({ error: "This role does not exist in system" });
+        }
+
+        // do the database thing
         let payload = null
         switch (req.user.role) {
             case "admin":
-                payload =  await Exam.findOne(searchParams).populate(fields, fetchs)
-                console.log(payload)
-                if(payload) return res.json({ data: payload });
-                return res.status(404).json({ error: "Exam with ID does not exsit"});
+                payload = await Exam.findOne(searchParams).populate(fields, fetchs)
+                console.log("-->>>>", payload)
+                if (payload) return res.json({ data: payload });
+                return res.status(404).json({ error: "Exam with ID does not exsit" });
             case "teacher":
                 payload = await Exam.findOne(searchParams).populate(fields)
-                if(payload) return res.json({ data: payload });
-                return res.status(404).json({ error: "Exam with ID does not exsit"});
+                if (payload) return res.json({ data: payload });
+                return res.status(404).json({ error: "Exam with ID does not exsit" });
             case "student":
-                payload = await Exam.findOne(searchParams).populate(fields, fetchs+" -answer")
-                if(payload) return res.json({ data: payload });
-                return res.status(404).json({ error: "Exam with ID does not exsit"});
+                payload = await Exam.findOne(searchParams).populate(fields, fetchs + " -answer")
+                if (payload) return res.json({ data: payload });
+                return res.status(404).json({ error: "Exam with ID does not exsit" });
             default: return res.status(404).json({ error: "This role does not exist in system" });
         }
     }
@@ -221,7 +230,8 @@ exports.updateExam = async (req, res) => {
             course: head.course,
             detail: head.detail,
             teacher: user_id,
-            quiz: quiz
+            quiz: quiz,
+            enable: head.enable,
         }
 
         const exam = await Exam.findOneAndUpdate(

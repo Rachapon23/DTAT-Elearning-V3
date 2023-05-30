@@ -35,6 +35,17 @@ const CourseInfo = ({
   const { course_id } = useParams();
   const [courseData, setCourseData] = useState({});
 
+  const typeCourseOptions = [
+    {
+      label: "Private",
+      value: false
+    },
+    {
+      label: "Public",
+      value: true
+    },
+  ]
+
   const loadDataCourse = () => {
     getCourse(sessionStorage.getItem("token"), course_id)
       .then((res) => {
@@ -53,11 +64,11 @@ const CourseInfo = ({
     loadDataCourse();
   }, []);
 
-  const handleChangeType = (type) => {
-    setCourseType(type);
+  const handleChangeType = (e) => {
+    setCourseType(e.target.value);
     setCourseInfo((courseInfo) => ({
       ...courseInfo,
-      "type": type,
+      "type": e.target.value,
     }));
   };
 
@@ -80,19 +91,19 @@ const CourseInfo = ({
       [e.target.name]: e.target.value,
     }));
   };
-// console.log(courseData.type,courseType)
+  // console.log(courseData.type,courseType)
   return (
     <Form style={{ paddingTop: "2%" }} layout="vertical"
-    fields={[
-      {
-        name: ["fieldName"],
-        value: courseData?.name,
-      },
-      {
-        name: ["fieldDetail"],
-        value: courseData?.detail,
-      },
-    ]}
+      fields={[
+        {
+          name: ["fieldName"],
+          value: courseData?.name,
+        },
+        {
+          name: ["fieldDetail"],
+          value: courseData?.detail,
+        },
+      ]}
     >
       <Row>
         <Col style={{ width: "100%" }}>
@@ -106,7 +117,7 @@ const CourseInfo = ({
               placeholder="input placeholder"
               name="name"
               onChange={handleChangeInfo}
-              // defaultValue={courseData?.name}
+            // defaultValue={courseData?.name}
             />
           </Form.Item>
 
@@ -126,22 +137,18 @@ const CourseInfo = ({
               placeholder="can resize"
               name="detail"
               onChange={handleChangeInfo}
-              // defaultValue={courseData?.detail}
+            // defaultValue={courseData?.detail}
             />
           </Form.Item>
 
           <Form.Item label="Course Type" required>
-            <Radio.Group defaultValue={courseType} buttonStyle="solid">
-              <Radio.Button value={true} onClick={() => handleChangeType(true)}>
-                Public
-              </Radio.Button>
-              <Radio.Button
-                value={false}
-                onClick={() => handleChangeType(false)}
-              >
-                Private
-              </Radio.Button>
-            </Radio.Group>
+            <Radio.Group
+              optionType="button"
+              buttonStyle="solid"
+              options={typeCourseOptions}
+              value={courseInfo.type}
+              onChange={handleChangeType}
+            />
           </Form.Item>
           <Form.Item label="Cover Image">
             <Row justify={"space-between"}>
@@ -152,8 +159,8 @@ const CourseInfo = ({
                   className="avatar-uploader"
                   showUploadList={false}
                   action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  // beforeUpload={beforeUpload}
-                  // onChange={handleChange}
+                // beforeUpload={beforeUpload}
+                // onChange={handleChange}
                 >
                   {imageUrl ? (
                     <img

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import CardContent from "../../../ExamComponent/CardContent";
-import { getExam } from "../../../../function/Student/exam";
+import { getExam, sendExam } from "../../../../function/Student/exam";
 import { Button, Card, Col, Empty, Form, Row } from "antd";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 
-const StudentExam = () => {
+const DoExam = () => {
     const [exam, setExam] = useState({})
     const [infoData, setInfoData] = useState({})
     const [answer, setAnswer] = useState({})
@@ -13,6 +13,7 @@ const StudentExam = () => {
     const [currentPage] = useState(0);
     const [pageStepLength, setPageStepLength] = useState(0)
     const params = useParams()
+    const location = useLocation()
 
     const [form] = Form.useForm();
     const [requiredMark, setRequiredMarkType] = useState('optional');
@@ -21,35 +22,50 @@ const StudentExam = () => {
     };
 
 
-    const handleChangeChoiceAnswer = (card_index, data) => {
+    const handleChangeChoiceAnswer = (quiz_id, card_index, data) => {
         console.log(card_index, data)
         // const prevCard = answer.slice(0, card_index)
         // const currentCard = data?.answer
         // const nextCard = answer.slice(card_index + 1, answer.length)
 
-        setAnswer((prev) => ({ ...prev, [`ans${card_index}`]: data?.answer }))
+        setAnswer((prev) => ({ ...prev, [`${quiz_id}`]: data?.answer }))
         // setHasChanged(true)
     }
+    console.log(answer)
 
-    console.log("ans: ", answer)
+    const submitExam = async () => {
+        console.log(answer)
+        await sendExam(sessionStorage.getItem("token"), location.state.activity, { answer: answer })
+            .then(
+                (res) => {
+                    const data = res.data.data
+                    console.log(data)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
 
     const renderPageNav = () => {
         return (
             <Row justify={"end"} style={{ height: "10%", marginBottom: "1%" }} >
-                {/* {JSON.stringify(currentPage)} */}
+                {/* {console.log("----> ",exam?.quiz)} */}
                 {
-                    currentPage !== pageStepLength - 1 ?
+                    currentPage > -1 ?
                         (
                             <Col style={{ display: "flex", justifyContent: "flex-end" }}>
                                 <Row>
                                     <Col>
+
                                         {
                                             exam?.quiz ?
                                                 (
                                                     (
-                                                        <Button type="primary"
-                                                        >
-                                                            {"Submit"}
+                                                        <Button type="primary" onClick={submitExam}>
+                                                            Submit
                                                         </Button>
                                                     )
                                                 )
@@ -73,7 +89,6 @@ const StudentExam = () => {
 
     const fetchExam = async () => {
         //&fetch=-answer
-        
         await getExam(sessionStorage.getItem("token"), params?.id, `?field=quiz`)
             .then(
                 (res) => {
@@ -95,8 +110,7 @@ const StudentExam = () => {
     }
 
     useEffect(() => {
-        
-        if(params?.id) fetchExam()
+        if (params?.id) fetchExam()
     }, [])
     return (
         <Row>
@@ -158,7 +172,7 @@ const StudentExam = () => {
                                                                 index={index}
                                                                 head={infoData}
                                                                 actionMode={actionMode}
-                                                                data={{ ...item, answer: answer[`ans${index}`] }}
+                                                                data={{ ...item, answer: answer[`${item._id}`] }}
                                                                 examID={exam._id}
                                                                 onChangeChoiceAnswer={handleChangeChoiceAnswer}
                                                             />
@@ -184,13 +198,13 @@ const StudentExam = () => {
                     <Col flex={"auto"}>
                         {
                             exam?.quiz && exam?.quiz.length > 0 ?
-                            (
-                                renderPageNav()
-                            )
-                            :
-                            (
-                                null
-                            )
+                                (
+                                    renderPageNav()
+                                )
+                                :
+                                (
+                                    null
+                                )
                         }
                     </Col>
                 </Row>
@@ -199,4 +213,4 @@ const StudentExam = () => {
     )
 }
 
-export default StudentExam;
+export default DoExam;

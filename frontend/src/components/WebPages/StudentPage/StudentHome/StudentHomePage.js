@@ -4,15 +4,20 @@ import { Button, Image, Table } from "antd";
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 import CalendarDisplay from "../../CalendarPage/CalendarDisplay";
 
-import StudentExam from "../StudentExam/StudentExam";
+import DoExam from "../StudentExam/DoExam";
 
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import { listActivity, listCourse } from "../../../../function/Student/course";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const { Header, Content, Footer } = Layout;
 
 const StudentHomePage = () => {
   const [courses, setCourses] = useState([])
+  const navigate = useNavigate()
+
+  const handleNavigate = (navStr, dataStage) => {
+    navigate(navStr, { state: dataStage})
+  }
 
   const columns = [
     {
@@ -53,7 +58,7 @@ const StudentHomePage = () => {
       title: `Action`,
       align: "center",
       render: (data) => {
-        // console.log(data)
+        // console.log(data?.course?._id)
         return (
           <Link to={`/student/page/course/${data?.course?._id}`} state={{ mode: "Preview", exam_name: data?.name }}><Button onClick={null}> Course </Button></Link>
         )
@@ -63,9 +68,15 @@ const StudentHomePage = () => {
       title: `Action`,
       align: "center",
       render: (data) => {
-        // console.log(data)
+        console.log(data?.course?.exam)
         return (
-          <Link to={`/student/page/exam/${data?.course?.exam}`} state={{ mode: "Preview", exam_name: data?.name }}><Button onClick={null}> Exam </Button></Link>
+          <Button
+            disabled={!data?.course?.exam}
+            onClick={() => handleNavigate(`/student/page/exam/${data?.course?.exam}`, { activity: data?._id})}
+          >
+            Exam
+          </Button>
+
         )
       }
     },
@@ -75,7 +86,7 @@ const StudentHomePage = () => {
 
   const fetchActivity = async () => {
     // do not forget to add pops allowed field in activity backend
-    await listActivity(sessionStorage.getItem("token"), `?search=user:643d54088dcaa2b2667a5b59&fetch=-ans,-__v&pops=path:course$select:name exam image`)
+    await listActivity(sessionStorage.getItem("token"), `?search=user:6422ad02848f4c2a4831e2fe&fetch=-ans,-__v&pops=path:course$select:name exam image`)
       .then(
         (res) => {
           const data = res.data.data
@@ -130,7 +141,7 @@ const StudentHomePage = () => {
         </div>
 
         <div>
-          <StudentExam></StudentExam>
+          <DoExam />
         </div>
 
 

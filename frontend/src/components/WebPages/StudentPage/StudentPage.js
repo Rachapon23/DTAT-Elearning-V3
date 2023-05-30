@@ -11,7 +11,7 @@ import React, { useState, useEffect } from "react";
 
 import { useParams, useNavigate } from "react-router-dom";
 import StudentHomePage from "./StudentHome/StudentHomePage";
-import StudentExam from "./StudentExam/StudentExam";
+import DoExam from "./StudentExam/DoExam";
 import StudentCourse from "./StudentCourse/StudentCourse"
 
 
@@ -70,7 +70,7 @@ const App = () => {
       case 'home':
         return <StudentHomePage></StudentHomePage>
       case 'exam':
-        return <StudentExam></StudentExam>
+        return <DoExam></DoExam>
       case 'course':
         return <StudentCourse></StudentCourse>
       // case 'preview-exam':

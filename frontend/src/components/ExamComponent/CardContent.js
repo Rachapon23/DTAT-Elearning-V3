@@ -26,7 +26,7 @@ const CardContent = ({
 
 }) => {
     const lastCard = useRef(null)
-    
+
     // const [radioSelected, setRadioSelected] = useState("");
     const [currentRadioSelected, setRadioCurentSelected] = useState(null)
     // const [imageData, setImageData] = useState(data?.image ? URL.createObjectURL(data?.image.get("file")) : null)
@@ -79,16 +79,16 @@ const CardContent = ({
     const handleRadioChange = (data) => {
         // console.log("ans index:", data?.index)
         setRadioCurentSelected(data?.index)
-        if(previewMode) {
-            console.log("you select: ", data?.index)
-            onChangeChoiceAnswer(index, { answer: data?.index })
+        if (previewMode) {
+            console.log("you select: ", data?.quiz_id)
+            onChangeChoiceAnswer(data?.quiz_id, index, { answer: data?.index })
         }
 
-        if(editMode || createMode ) {
-            onChangeChoiceAnswer(index, { answer: data?.index })
+        if (editMode || createMode) {
+            onChangeChoiceAnswer(data?.quiz_id, index, { answer: data?.index })
         }
-        
-        
+
+
     }
 
     const handleQuestionChange = (e, choice_index) => {
@@ -367,7 +367,7 @@ const CardContent = ({
                                                                     checked={editMode || createMode || previewMode ? data?.answer === choice_index : null}
                                                                     onChange={
                                                                         editMode || createMode || previewMode ?
-                                                                            (e) => handleRadioChange({ checked: e?.target?.checked, index: choice_index }) : null
+                                                                            (e) => handleRadioChange({ checked: e?.target?.checked, index: choice_index, quiz_id: data?._id }) : null
                                                                     }
                                                                 />
                                                             </Col>

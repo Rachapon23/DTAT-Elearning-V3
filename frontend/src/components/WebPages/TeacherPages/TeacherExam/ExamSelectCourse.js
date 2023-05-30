@@ -120,6 +120,7 @@ const ExamSelectCourse = ({
             name: "",
             course: "",
             detail: "",
+            enable: false,
         }))
         onSetInputContentData([])
 

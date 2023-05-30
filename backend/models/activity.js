@@ -9,7 +9,7 @@ const ActivitySchema = new mongoose.Schema({
         type: Number,
     },
     ans: {
-        type: []
+        type: {}
     },
     progress: {
         type: Number,

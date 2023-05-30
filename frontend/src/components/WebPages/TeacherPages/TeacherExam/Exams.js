@@ -153,8 +153,16 @@ const Exams = () => {
         {
             title: 'Exam',
             dataIndex: 'name',
-            key: 'name',
+            key: '_id',
             width: '35%',
+        },
+        {
+            title: 'Status',
+            dataIndex: 'enable',
+            align: 'center',
+            key: '_id',
+            width: '10%',
+            render: (enable) => enable ? "Open":"Close"
         },
         {
             title: 'Edit',

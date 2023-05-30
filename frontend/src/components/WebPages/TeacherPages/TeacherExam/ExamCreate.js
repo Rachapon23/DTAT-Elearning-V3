@@ -70,6 +70,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         name: "",
         course: "",
         detail: "",
+        enable: false,
         // teacher: "",  teacher data will add in backend
     })
 
@@ -326,11 +327,12 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                 (res) => {
                     const data = res.data.data
                     setInputInfoData(() => ({
+                        enable: data?.enable,
                         course: data?.course,
                         detail: data?.detail,
                         name: data?.name,
                     }))
-                    // console.log(data?.quiz)
+                    console.log(data)
                     setInputContentData(data?.quiz ? data?.quiz : [])
                     setEditExamLoaeded(true)
 
@@ -466,6 +468,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         const id = mainManagementMode === "Edit" ? examEditId :
             mainManagementMode === "Create" ? examId : null
 
+        console.log(examData)
         if (!id) return
 
         await updateExam(sessionStorage.getItem("token"), id, examData)
@@ -569,6 +572,18 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         }
     }
 
+    const pageValidation = (pageNumber) => {
+        switch (pageNumber) {
+            case 0:
+                if(currentSelectedRadio === null || currentSelectedRadio === undefined) return false
+                return true
+            case 1:
+                if(inputInfoData.name.length <= 0) return false
+                return true
+            default: return false
+        }
+    }
+
     const renderPageNav = () => {
         return (
             <Row justify={"space-between"} style={{ height: "10%", marginBottom: "1%" }} >
@@ -607,7 +622,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                                                 createMode ?
                                                     (
                                                         <Button type="primary"
-                                                            disabled={currentSelectedRadio === null}
+                                                            disabled={!pageValidation(currentPage)}
                                                             onClick={handleDisplay}
                                                         >
                                                             {currentPage === pageStepLength - 2 ? "Done" : createSteps[currentPage].title === "Exam Info" ? "Create" : "Next"}

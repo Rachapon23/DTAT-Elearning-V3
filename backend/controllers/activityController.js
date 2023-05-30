@@ -1,5 +1,6 @@
 const Activity = require('../models/activity')
 const Exam = require('../models/exam')
+const Quiz = require('../models/quiz')
 // POST: /create-activity
 exports.createActivity = async (req, res) => {
     try {
@@ -56,6 +57,8 @@ exports.listActivity = async (req, res) => {
         let searchParams = null
         let updateParams = null
         let option = { new: true }
+
+        const user_id = req?.user?.user_id
         switch (req?.user?.role) {
             case "admin":
                 searchParams = {}
@@ -65,7 +68,7 @@ exports.listActivity = async (req, res) => {
                 allowedProps = []
                 break;
             case "student":
-                searchParams = { user: req.params.id }
+                searchParams = { user: user_id }
                 allowedProps = []
                 break;
             default:
@@ -125,7 +128,6 @@ exports.listActivity = async (req, res) => {
         }
         else if (pops) {
             // sub-populate
-
             let popsParams = []
             let popsArray = null
             if (pops) popsArray = pops.split(",")
@@ -171,7 +173,7 @@ exports.listActivity = async (req, res) => {
         // populateField
         // database thing
         const activity_course = await Activity.find(searchParams, fetchs).populate(populateField).select(selects)
-        res.json({ data: activity_course })
+        return res.json({ data: activity_course })
     }
     catch (err) {
         console.log(err);
@@ -303,48 +305,68 @@ exports.getActivity = async (req, res) => {
     }
 }
 
-
-// =============================================================
-exports.sendQuizStudent = async (req, res) => {
+// PUT: /update-activity/:id/send-exam
+exports.sendExam = async (req, res) => {
     try {
-        const {
-            ans,
-            quiz,
-        } = req.body
-        const { fisrtname, user_id } = req.user
 
-        const quize = await Quiz.findOne({ _id: quiz })
-            .populate('course')
-            .exec()
+        res.send({ data: "You answer has been send" })
+        const { answer } = req?.body
+        const { user_id } = req.user
+        const activity_id = req?.params?.id
+
+        const database_activity = await Activity.findOne({ _id: activity_id }, "course -_id").populate({
+            path: "course",
+            select: "exam",
+            populate: {
+                path: "exam",
+                select: "quiz -_id",
+            }
+        })
+        const quiz = database_activity?.course?.exam?.quiz
+        console.log(database_activity)
+
+        if (!quiz) return console.log("Cannot find quiz for this activity")
+
+        const quizList = await Quiz.find({ _id: quiz  }, "")
+
+        console.log(quizList)
 
         let totalScore = 0;
-        for (let i = 0; i < ans.length; i++) {
-            if (quize.question[i].ans == ans[i]) {
+        const answerKeys = Object.keys(answer)
+        console.log(answer)
+        for (let i = 0; i < answerKeys.length; i++) {
+            console.log(quizList[i].answer, answer[`${quizList[i]._id}`])
+            if (quizList[i].answer == answer[`${quizList[i]._id}`]) {
+                
                 totalScore++;
             }
         }
+        // console.log(activity_id)
 
-        const activity = await studentActivity.findOneAndUpdate(
+        // console.log(await Activity.findOne({_id: activity_id}))
+
+        const activity = await Activity.findOneAndUpdate(
             {
-                coursee: quize.course._id,
-                user: user_id
-            }, {
-            score: totalScore,
-            max_score: quize.question.length,
-            ans: ans,
-        }
-        ).exec()
-
-
+                _id: activity_id,
+                user: user_id,
+            },
+            {
+                score_value: totalScore,
+                score_max: answerKeys.length,
+                ans: answer,
+            }
+        )
+        if (!activity) return console.log("Cannot find activity to update")
         // console.log(activity)
-
-        res.send(activity)
     }
     catch (err) {
-        console.log("fail to list score");
-        res.status(500).json({ error: "fail to sendQuizStudent" })
+        console.log(err);
+        return res.status(500).json({ error: "Uncexpected error on update activity send exam" })
     }
 }
+
+
+// =============================================================
 
 exports.listScore = async (req, res) => {
     try {

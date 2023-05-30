@@ -136,7 +136,7 @@ exports.loadData = async () => {
 
     // User
     // Admin
-    await User.findOneAndUpdate(
+    const admin1 = await User.findOneAndUpdate(
         { employee: "6100319" },
         {
             employee: "6100319",
@@ -297,7 +297,7 @@ exports.loadData = async () => {
             room: await Room.findOne({ name: "Technical Skill 1" }).select("_id"),
             image: null,
             video: 2,
-            type: false,
+            type: true,//false,
             enabled: true,
             teacher: await User.findOne({ employee: "6100319" }),
             condition: [
@@ -317,7 +317,7 @@ exports.loadData = async () => {
             room: await Room.findOne({ name: "Technical Skill 1" }).select("_id"),
             image: null,
             video: 2,
-            type: false,
+            type: true,//false,
             enabled: false,
             teacher: await User.findOne({ employee: "6100319" }),
             condition: [
@@ -337,7 +337,7 @@ exports.loadData = async () => {
             room: await Room.findOne({ name: "Technical Skill 5" }).select("_id"),
             image: null,
             video: 2,
-            type: false,
+            type: true,//false,
             enabled: true,
             teacher: await User.findOne({ employee: "6100319" }),
             condition: [
@@ -398,6 +398,22 @@ exports.loadData = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
+    const quiz4 = await Quiz.findOneAndUpdate(
+        { question: "What is this?" },
+        {
+            question: "What is this?",
+            choices: [
+                "What",
+                "is",
+                "this",
+                "?"
+            ],
+            image: null,
+            answer: 3,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
     // Exam
     const exam1 = await Exam.findOneAndUpdate(
         { name: "Introduction of Docker Final test" },
@@ -411,6 +427,7 @@ exports.loadData = async () => {
                 quiz3,
             ],
             course: course2,
+            enable: true,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -424,11 +441,12 @@ exports.loadData = async () => {
             detail: "Basic of IoT Final test Detail ",
             teacher: await User.findOne({ employee: "6100319" }),
             quiz: [
-                // await Quiz.findOne({ _id: "642ce32ed296e5733ca593df" }),
+                await Quiz.findOne({ _id: "647557df5f895e038b54e555" }),
                 // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e0" }),
                 // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e1" }),
             ],
             course: course3,
+            enable: true,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -447,6 +465,7 @@ exports.loadData = async () => {
                 // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e1" }),
             ],
             course: course4,
+            enable: true,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -465,6 +484,7 @@ exports.loadData = async () => {
                 // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e1" }),
             ],
             course: course5,
+            enable: true,
 
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -498,7 +518,7 @@ exports.loadData = async () => {
             completed: false,
             score_max: null,
             score_value: null,
-            user: student1,
+            user: admin1,
             course: course2,
 
         },
