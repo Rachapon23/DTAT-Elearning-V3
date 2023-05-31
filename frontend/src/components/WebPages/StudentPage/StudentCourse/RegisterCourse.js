@@ -12,6 +12,23 @@ const RegisterCourse = () => {
 
     const [course, setCourse] = useState()
 
+
+    const isPassCondition = () => {
+        // TODO: implement check condition login
+        return false 
+    }
+
+    const handleAddCourse = async () => {
+        
+        if(!isPassCondition()) {
+            // alert user or something
+            return
+        }
+        // when add course create activity -> in student's home, use activity to fetch all student added course
+        
+
+    }
+
     const fetchCourse = async () => {
         await getCourse(sessionStorage.getItem("token"), params.id)
             .then(
@@ -92,7 +109,7 @@ const RegisterCourse = () => {
                             </Row>
                             <Row justify={"center"} style={{ paddingTop: "5%" }}>
                                 <Col flex={"auto"}>
-                                    <Button type="primary" style={{ width: "100%" }}> Add Course </Button>
+                                    <Button type="primary" style={{ width: "100%" }} onClick={handleAddCourse}> Add Course </Button>
                                 </Col>
                             </Row>
                         </Col>

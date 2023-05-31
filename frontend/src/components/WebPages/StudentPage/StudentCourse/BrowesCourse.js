@@ -4,7 +4,7 @@ import CardCourse from "../../../Card/CardCourse"
 import { StudentContext } from "./StudentCourseContext";
 import { useNavigate } from "react-router-dom";
 
-const GROUP_NUMBER = 3
+const GROUP_NUMBER = 4
 const { Title } = Typography
 
 const BrowesCourse = () => {
@@ -17,9 +17,10 @@ const BrowesCourse = () => {
         navigate(navStr, { state: dataStage})
       }
 
-    const handleClickCourse = (e) => {
-        console.log(e.target.id)
-        if(!e?.target?.id) return
+    const handleClickCourse = (e, data) => {
+        console.log(e)
+        e.target.id = data?._id
+        // if(!e?.target?.id) return
         handleNavigate(`/student/page/register-course/${e?.target?.id}`)
     }
 
@@ -56,12 +57,12 @@ const BrowesCourse = () => {
         if (index % GROUP_NUMBER !== 0) return null
 
         return (
-            <Row justify={"start"} style={{ paddingInlineStart: "7%" }}>
+            <Row justify={"start"} style={{ paddingInlineStart: "4%" }}>
                 {
                     courses.slice(index, index + GROUP_NUMBER).map((data) => (
                         <Col style={{ padding: "1%", }}>
                             <CardCourse
-                                onClick={handleClickCourse}
+                                onClick={(e) => handleClickCourse(e, data)}
                                 data={{
                                     _id: data?._id,
                                     name: data?.name,

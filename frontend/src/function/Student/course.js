@@ -32,3 +32,4 @@ export const getCourse = async (authtoken, id, query) => {
         }
     });
 }
+

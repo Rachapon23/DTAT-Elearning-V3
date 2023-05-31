@@ -76,28 +76,45 @@ const NavBarHome = () => {
   }
 
   const renderProfile = () => {
+    const rowOffset = { paddingInlineStart: "6%" }
+
+    const handleMouseOverandOut = (e) => {
+      if (!e?.type) return
+      switch (e?.type) {
+        case "mouseover":
+          e.target.style.backgroundColor = "rgba(230, 230, 230, 0.9)";
+          break
+        case "mouseleave":
+          e.target.style.backgroundColor = "rgba(230, 230, 230, 0)";
+          break
+        default:
+          return
+      }
+    }
 
     return (
       <Popover
         placement="bottomRight"
         content={
-          <Row style={{ width: "150px" }}>
+          <Row style={{ width: "150px", }}>
             <Col flex={"auto"}>
-              <Row>
+
+              <Row style={{ ...rowOffset }}>
                 <Text strong={false}>
                   Signed in as
                 </Text>
               </Row>
-              <Row>
+              <Row style={{ ...rowOffset }}>
                 <Title level={5}>
                   {sessionStorage.getItem("firstname")}
                 </Title>
               </Row>
+
               <Divider style={{ marginTop: "5%", marginBottom: "5%" }} />
-              <Row>
+              <Row style={{ ...rowOffset }}>
                 Role as
               </Row>
-              <Row>
+              <Row style={{ ...rowOffset }}>
                 <Title level={5}>
                   {sessionStorage.getItem("role").charAt(0).toUpperCase() + sessionStorage.getItem("role").slice(1)}
                 </Title>
@@ -105,6 +122,15 @@ const NavBarHome = () => {
               <Divider style={{ marginTop: "5%", marginBottom: "5%" }} />
 
               <Row
+                onMouseOver={handleMouseOverandOut}
+                onMouseLeave={handleMouseOverandOut}
+                style={{
+                  ...rowOffset,
+                  borderRadius: "4px",
+                  backgroundColor: "rgba(90%, 90%, 90%, 0.9)",
+                  cursor: "pointer",
+                  touchAction: "inherit"
+                }}
                 onClick={() => {
                   sessionStorage.clear()
                   window.location.reload()
@@ -120,6 +146,7 @@ const NavBarHome = () => {
       >
         <Avatar
           style={{
+            cursor: "pointer",
             paddingBottom: "0.5%",
             verticalAlign: 'middle',
           }}

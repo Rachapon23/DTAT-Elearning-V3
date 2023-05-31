@@ -329,13 +329,13 @@ exports.sendExam = async (req, res) => {
 
         const quizList = await Quiz.find({ _id: quiz  }, "")
 
-        console.log(quizList)
+        // console.log(quizList)
 
         let totalScore = 0;
         const answerKeys = Object.keys(answer)
         console.log(answer)
         for (let i = 0; i < answerKeys.length; i++) {
-            console.log(quizList[i].answer, answer[`${quizList[i]._id}`])
+            // console.log(quizList[i].answer, answer[`${quizList[i]._id}`])
             if (quizList[i].answer == answer[`${quizList[i]._id}`]) {
                 
                 totalScore++;
