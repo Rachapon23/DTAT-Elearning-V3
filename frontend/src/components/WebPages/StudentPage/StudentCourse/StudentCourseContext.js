@@ -13,6 +13,7 @@ export const StudentProvider = ({ children }) => {
                 (res) => {
                     const data = res.data.data
                     setCourses(data)
+                    // console.log("student context", data)
                 }
             )
             .catch(

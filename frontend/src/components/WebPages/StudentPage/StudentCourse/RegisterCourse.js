@@ -1,9 +1,10 @@
-import { Avatar, Breadcrumb, Button, Card, Col, Row, Typography } from "antd";
+import { Avatar, Breadcrumb, Button, Card, Col, Image, Row, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getCourse } from "../../../../function/Student/course";
 
 const { Text, Title } = Typography
+const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
 
 const RegisterCourse = () => {
 
@@ -14,23 +15,27 @@ const RegisterCourse = () => {
 
 
     const isPassCondition = () => {
-        // TODO: implement check condition login
-        return false 
+        // TODO: implement check condition of course
+        return false
     }
 
     const handleAddCourse = async () => {
-        
-        if(!isPassCondition()) {
+
+        if (!isPassCondition()) {
             // alert user or something
             return
         }
         // when add course create activity -> in student's home, use activity to fetch all student added course
-        
+
 
     }
 
+    const handleUnloadImage = (e) => {
+        e.target.src = DEFAULT_IMAGE
+    }
+
     const fetchCourse = async () => {
-        await getCourse(sessionStorage.getItem("token"), params.id)
+        await getCourse(sessionStorage.getItem("token"), params.id, `?fetch=name,detail,image,condition`)
             .then(
                 (res) => {
                     const data = res.data.data
@@ -69,9 +74,9 @@ const RegisterCourse = () => {
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
                     {/* <Link to="/teacher/page/create-exam" state={{ mode: "Create" }}> */}
-                        <Button onClick={() => navigate(-1)}>
-                            Back
-                        </Button>
+                    <Button onClick={() => navigate(-1)}>
+                        Back
+                    </Button>
                     {/* </Link> */}
                 </Col>
             </Row>
@@ -80,42 +85,121 @@ const RegisterCourse = () => {
 
     return (
         <Row justify={"center"}>
-            <Col flex={"auto"} style={{ padding: "2%" }}>
+            <Col flex={"auto"} style={{ padding: "2%", paddingLeft: "10%", paddingRight: "10%" }}>
                 {/* Register Course: {course?.name} */}
                 <Card
                     title={registerCourseTitle()}>
                     <Row justify={"center"}>
                         <Col flex={"auto"}>
-                            <Row justify={"start"} style={{ paddingTop: "0.5%", paddingBottom: "2%" }}>
-                                <Col style={{ width: "100%" }}>
-                                    <h4>{course?.name}</h4>
-                                </Col>
-                                <Col flex={"auto"} style={{ paddingTop: "0.3%" }}>
-                                    <Row justify={"start"} align={"middle"}>
-                                        <Col>
-                                            
-                                        </Col>
-                                        <Col>
-                                            by {course?.teacher?.firstname} {course?.teacher?.lastname}
-                                        </Col>
-                                    </Row>
+
+                            <Row>
+                                <Col flex={"auto"}>
+                                    <Card>
+                                        <Row justify={"start"} style={{ paddingTop: "0.5%", paddingBottom: "1%" }}>
+                                            <Col style={{ width: "330px" }}>
+                                                <Image
+                                                    width={300}
+                                                    preview={false}
+                                                    onError={handleUnloadImage}
+                                                    src={course?.image?.url ? (process.env.REACT_APP_IMG + course?.image?.url) : DEFAULT_IMAGE}
+                                                />
+                                            </Col>
+                                            <Col flex={"auto"} style={{ minWidth: "30%" }}>
+                                                <Row>
+                                                    <Col flex={"auto"} style={{ width: "80%" }}>
+                                                        <h4>{course?.name}</h4>
+                                                    </Col>
+                                                </Row>
+                                                <Row justify={"start"} align={"middle"}>
+                                                    <Col>
+                                                        by {course?.teacher?.firstname} {course?.teacher?.lastname}
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col style={{ paddingTop: "25px" }}>
+                                                        <Text >{course?.detail}</Text>
+                                                    </Col>
+                                                </Row>
+                                            </Col>
+
+                                            {/* <Col style={{ width: "15%" }}>
+                                                <Row style={{ paddingTop: "18%", paddingBottom: "20px" }}>
+                                                    <Button
+                                                        type="primary"
+                                                        size="large"
+                                                        block
+                                                        onClick={handleAddCourse}
+                                                    >
+                                                        Add Course
+                                                    </Button>
+                                                </Row>
+                                                <Row>
+                                                    <Button
+                                                        type="primary"
+                                                        size="large"
+                                                        block
+                                                        onClick={handleAddCourse}
+                                                    >
+                                                        Start
+                                                    </Button>
+                                                </Row>
+                                            </Col >
+                                            <Col style={{ width: "25px" }} /> */}
+                                        </Row>
+
+                                        <Row style={{ paddingTop: "0.5%", }}>
+                                            <Col style={{ width: "48%"}}>
+                                                <Button
+                                                    type="primary"
+                                                    size="large"
+                                                    block
+                                                    onClick={handleAddCourse}
+                                                >
+                                                    Add Course
+                                                </Button>
+                                            </Col>
+                                            <Col style={{ width: "2%"}}/>
+                                            <Col flex={"auto"}>
+                                                <Button
+                                                    type="primary"
+                                                    size="large"
+                                                    block
+                                                    onClick={handleAddCourse}
+                                                >
+                                                    Start
+                                                </Button>
+                                            </Col>
+
+                                        </Row>
+
+                                    </Card>
                                 </Col>
                             </Row>
 
-                            <Row style={{ paddingTop: "2%" }}>
+                            <Row style={{ paddingTop: "1%" }}>
                                 <Col flex={"auto"}>
-                                    <Text >{course?.detail}</Text>
+                                    <Card >
+                                        Condtion for course if exist
+                                    </Card>
                                 </Col>
+
                             </Row>
-                            <Row justify={"center"} style={{ paddingTop: "5%" }}>
+
+                            {/* <Row style={{ paddingTop: "2%" }}>
                                 <Col flex={"auto"}>
-                                    <Button type="primary" style={{ width: "100%" }} onClick={handleAddCourse}> Add Course </Button>
+
                                 </Col>
-                            </Row>
+                            </Row> */}
+
+                            {/* <Row justify={"center"} style={{ paddingTop: "5%" }}>
+                                <Col flex={"auto"}>
+                                    
+                                </Col>
+                            </Row> */}
                         </Col>
                     </Row>
-                </Card>
-            </Col>
+                </Card >
+            </Col >
         </Row >
     )
 }
