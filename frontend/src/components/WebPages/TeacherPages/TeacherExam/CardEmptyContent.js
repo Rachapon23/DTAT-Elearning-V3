@@ -30,8 +30,9 @@ const CardEmptyContent = ({
                             </span>
                         }
                     >
+                        {/* {JSON.stringify(actionMode)} */}
                         {
-                            actionMode === "Edit" ?
+                            actionMode === "Edit" || actionMode === "Create" ?
                             (
                                 <Button type="primary" onClick={onAddCardContent}>Create Now</Button>
                             ):(null)

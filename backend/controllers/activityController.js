@@ -1,6 +1,9 @@
 const Activity = require('../models/activity')
 const Exam = require('../models/exam')
 const Quiz = require('../models/quiz')
+
+const { validateQuery } = require('./util')
+
 // POST: /create-activity
 exports.createActivity = async (req, res) => {
     try {
@@ -25,154 +28,47 @@ exports.createActivity = async (req, res) => {
 
 // GET: /list-activity?search=:?search&field=:field&fetch=:fetch&select=:select
 exports.listActivity = async (req, res) => {
-    const allowField = ["user", "course"]
-    const allowedSearch = ["user", "course"]
-    let allowedProps = ["user", "course", "exam", "plant", "_id", "name", "exam -_id"]
+    const allowField = ["user", "course", "ans"]
+    const allowedSearch = ["user", "course", "ans"]
+    const allowedPops = ["user", "course", "exam", "plant", "_id", "name", "exam -_id", "ans", "image"]
     const allowedPropsField = ["path", "select", "populate"]
+    const allowedSelect = ["ans"]
+    const allowedFetch = ["-ans", "-__v"]
     try {
+        const result = validateQuery(
+            "get",
+            "list activity",
+            req?.user?.role,
+            null,
+            req?.user?.role === "admin",
+            null,
+            {
+                fields: req?.query?.field,
+                fetchs: req?.query?.fetch,
+                selects: req?.query?.selects,
+                search: req?.params?._id ? req?.params?._id : req?.query?.search,
+                subPops: req?.query?.pops,
+            },
+            {
+                fields: allowField,
+                search: allowedSearch,
+                subPops: {
+                    method: allowedPropsField,
+                    fields: allowedPops,
+                },
+                selects: allowedSelect,
+                fetchs: allowedFetch,
 
-        let pops = req?.query?.pops
-        let fields = req?.query?.field // field for populate
-        let fetchs = req?.query?.fetch // fetch field after search
-        let selects = req?.query?.selects // select field in this model
-        let search = req?.query?.search // search condition
+            },
+            false
+        )
+        // console.log(result)
+        if (!result.success) return res.status(result.code).json({ error: result.message })
 
-        if (pops && fields) return res.status(400).json({ error: "Invalid query parameter pops and field cannot use at the same time" })
-
-        const seperator = new RegExp(",", 'g');
-        // if (pops) pops = pops.replace(seperator, " ")
-        if (fields) fields = fields.replace(seperator, " ")
-        if (fetchs) fetchs = fetchs.replace(seperator, " ")
-        if (selects) selects = selects.replace(seperator, " ")
-        if (search) search = search.replace(seperator, " ")
-
-        console.log(pops)
-        console.log(fields)
-        console.log(fetchs)
-        console.log(selects)
-        console.log(search)
-
-
-        // check role
-        let searchParams = null
-        let updateParams = null
-        let option = { new: true }
-
-        const user_id = req?.user?.user_id
-        switch (req?.user?.role) {
-            case "admin":
-                searchParams = {}
-                break;
-            case "teacher":
-                searchParams = { user: user_id }
-                allowedProps = []
-                break;
-            case "student":
-                searchParams = { user: user_id }
-                allowedProps = []
-                break;
-            default:
-                return res.status(404).json({ error: "This role does not exist in system" });
-        }
-
-        // validate search
-        let searchArray = null
-        if (search) searchArray = search.split(",")
-        if (searchArray && Array.isArray(searchArray)) {
-            if (searchArray.length > allowedSearch.length) return res.status(400).json({ error: "Invalid search parameter(s)" });
-
-            if (searchArray.length > 1) {
-                for (let i = 0; i < allowedSearch.length; i++) {
-                    const searchSplited = searchArray[i].split(":")
-                    const searchField = searchSplited[0]
-                    const searchValue = searchSplited[1]
-                    if (!allowedSearch.includes(searchField)) return res.status(400).json({ error: "Invalid search parameter(s)" });
-                    else {
-                        console.log(searchField, searchValue)
-                        searchParams[searchField] = searchValue
-                    }
-                }
-            }
-            else if (searchArray.length === 1) {
-                const searchSplited = searchArray[0].split(":")
-                searchParams[searchSplited[0]] = searchSplited[1]
-            }
-            else {
-                return res.status(400).json({ error: "Invalid search parameter(s)" });
-            }
-        }
-        else if (search) {
-            if (!allowedSearch.includes(fields)) return res.status(400).json({ error: "Invalid search parameter(s)" });
-        }
-        if (!searchParams) return res.status(500).json({ error: "Unexpected error on list courses" });
-
-
-        // validate fields
-        let populateField = null
-
-        if (fields) {
-            // normal populate
-            if (fields && Array.isArray(fields)) {
-                if (fields.length > allowField.length) return res.status(400).json({ error: "Invalid field parameter(s)" });
-                if (fields.length > 1) {
-                    for (let i = 0; i < fields.length; i++) {
-                        if (!allowField.includes(fields[i])) return res.status(400).json({ error: "Invalid field parameter(s)" });
-                    }
-                }
-                populateField = fields.join(" ")
-            }
-            else if (fields) {
-                if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid field parameter(s)" });
-                populateField = fields
-            }
-        }
-        else if (pops) {
-            // sub-populate
-            let popsParams = []
-            let popsArray = null
-            if (pops) popsArray = pops.split(",")
-            if (popsArray && Array.isArray(popsArray)) {
-                if (popsArray.length > allowedProps.length) return res.status(400).json({ error: "Invalid pops parameter(s)" });
-
-                for (let i = 0; i < popsArray.length; i++) {
-                    let popsLayers = popsArray[i].split("$")
-
-                    console.log(popsLayers)
-
-                    let popsObject = {}
-                    for (let j = 0; j < popsLayers.length; j++) {
-                        const splitedData = popsLayers[j].split(":")
-                        const fieldData = splitedData[0]
-                        const valueData = splitedData[1]
-
-                        console.log(allowedProps, valueData)
-
-                        if (req?.user.role !== "admin") {
-                            if (!allowedProps.includes(valueData)) return res.status(400).json({ error: "Invalid pops value parameter(s)" });
-                            if (!allowedPropsField.includes(fieldData)) return res.status(400).json({ error: "Invalid pops field parameter(s)" });
-                        }
-
-                        if (fieldData === "populate") {
-                            popsObject[fieldData] = { path: valueData }
-                        }
-                        else {
-                            popsObject[fieldData] = valueData
-                        }
-                    }
-                    popsParams.push(popsObject)
-                }
-                populateField = popsParams
-            }
-            else {
-                return res.status(400).json({ error: "Invalid search parameter(s)" });
-            }
-        }
-
-
-
-        // populateField
-        // database thing
-        const activity_course = await Activity.find(searchParams, fetchs).populate(populateField).select(selects)
+        const activity_course = await Activity
+            .find(result.options.searchParams, result.options.fetchParams)
+            .populate(result.options.fieldParams ? result.options.fieldParams : result.options.subPropsParams)
+            .select(result.options.selectParams)
         return res.json({ data: activity_course })
     }
     catch (err) {
@@ -289,15 +185,48 @@ exports.getActivityScore = async (req, res) => {
 
 // GET: /get-activity/:id?field=:field
 exports.getActivity = async (req, res) => {
+    const allowField = ["user", "course", "ans"]
+    const allowedSearch = ["user", "course", "ans"]
+    const allowedPops = ["user", "course", "exam", "plant", "_id", "name", "exam -_id", "ans", "image"]
+    const allowedPropsField = ["path", "select", "populate"]
+    const allowedSelect = ["ans"]
+    const allowedFetch = ["-ans", "-__v"]
     try {
-        const field = req?.query?.field.replace(",", " ")
-        // const field = req?.params?.field
-        // console.log(field)
-        const activity = await Activity.findOne({ _id: req?.params?.id }).select(`${field} -_id`)
+        const result = validateQuery(
+            "get",
+            "get activity",
+            req?.user?.role,
+            null,
+            req?.user?.role === "admin",
+            null,
+            {
+                fields: req?.query?.field,
+                fetchs: req?.query?.fetch,
+                selects: req?.query?.selects,
+                search: req?.params?._id ? req?.params?._id : req?.query?.search,
+                subPops: req?.query?.pops,
+            },
+            {
+                fields: allowField,
+                search: allowedSearch,
+                subPops: {
+                    method: allowedPropsField,
+                    fields: allowedPops,
+                },
+                selects: allowedSelect,
+                fetchs: allowedFetch,
 
+            },
+            false
+        )
+        // console.log(result)
+        if (!result.success) return res.status(result.code).json({ error: result.message })
 
-        if (activity[`${field}`] === undefined) return res.status(404).json({ error: `Cannot find field name ${field}` })
-        return res.json({ data: activity });
+        const activity_course = await Activity
+            .findOne(result.options.searchParams, result.options.fetchParams)
+            .populate(result.options.fieldParams ? result.options.fieldParams : result.options.subPropsParams)
+            .select(result.options.selectParams)
+        return res.json({ data: activity_course })
     }
     catch (err) {
         console.log(err);
@@ -327,7 +256,7 @@ exports.sendExam = async (req, res) => {
 
         if (!quiz) return console.log("Cannot find quiz for this activity")
 
-        const quizList = await Quiz.find({ _id: quiz  }, "")
+        const quizList = await Quiz.find({ _id: quiz }, "")
 
         // console.log(quizList)
 
@@ -337,7 +266,7 @@ exports.sendExam = async (req, res) => {
         for (let i = 0; i < answerKeys.length; i++) {
             // console.log(quizList[i].answer, answer[`${quizList[i]._id}`])
             if (quizList[i].answer == answer[`${quizList[i]._id}`]) {
-                
+
                 totalScore++;
             }
         }
@@ -365,6 +294,27 @@ exports.sendExam = async (req, res) => {
     }
 }
 
+exports.updateActivityResult = async (req, res) => {
+    // TODO: implement update result of activity
+    try {
+        const activity_id = req?.params?.id
+        const { user, result } = req?.body
+        console.log("find this -> ",activity_id, user)
+
+        if (!activity_id) return res.status(404).json({ error: "Activity not found" })
+
+        const activity = await Activity.findOneAndUpdate({ _id: activity_id, user: user }, { result: result }, { new: true })
+        
+
+        if (!activity) return res.status(404).json({ error: "Activity of user not found" })
+        return res.json({ data: activity })
+
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Uncexpected error on update activity result" })
+    }
+}
 
 // =============================================================
 

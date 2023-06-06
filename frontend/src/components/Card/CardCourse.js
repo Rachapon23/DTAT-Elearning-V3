@@ -15,7 +15,7 @@ const CardCourse = ({
     e.target.src = DEFAULT_IMAGE
   }
 
-  console.log(data._id)
+  // console.log(data._id)
 
   return (
     <Card

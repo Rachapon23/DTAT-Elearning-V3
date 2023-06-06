@@ -79,7 +79,9 @@ const NavBarHome = () => {
     const rowOffset = { paddingInlineStart: "6%" }
 
     const handleMouseOverandOut = (e) => {
+      console.log("JJJJ")
       if (!e?.type) return
+      
       switch (e?.type) {
         case "mouseover":
           e.target.style.backgroundColor = "rgba(230, 230, 230, 0.9)";
@@ -127,7 +129,6 @@ const NavBarHome = () => {
                 style={{
                   ...rowOffset,
                   borderRadius: "4px",
-                  backgroundColor: "rgba(90%, 90%, 90%, 0.9)",
                   cursor: "pointer",
                   touchAction: "inherit"
                 }}

@@ -1,7 +1,7 @@
 import { Avatar, Breadcrumb, Button, Card, Col, Image, Row, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getCourse } from "../../../../function/Student/course";
+import { createActivity, getActivity, getCourse, getUser, listCondition } from "../../../../function/Student/course";
 
 const { Text, Title } = Typography
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
@@ -12,35 +12,107 @@ const RegisterCourse = () => {
     const navigate = useNavigate()
 
     const [course, setCourse] = useState()
+    const [plant, setPlant] = useState()
+    const [registered, setRegistered] = useState(false)
+    const [passedCondition, setPassedCondition] = useState(false)
+    const [pageChange, setPageChange] = useState(false)
 
 
-    const isPassCondition = () => {
-        // TODO: implement check condition of course
-        return false
+    const isPassCondition = async () => {
+        // check registered
+        await checkRegistered()
+
+
+
+        // check plant
+        let inPlant = false
+        for (let i = 0; i < course?.condition.length; i++) {
+            console.log(course?.condition[i].plant.name , plant)
+            if (course?.condition[i].plant.name === plant) {
+                inPlant = true
+                break
+            }
+        }
+        //TODO: check course limit
+        console.log("in plant: ", inPlant)
+        setPassedCondition(inPlant)
+        setPageChange(true)
+    }
+
+    const checkRegistered = async () => {
+        await getActivity(sessionStorage.getItem("token"), null, `?search=user:${sessionStorage.getItem("user_id")},course:${params.id}&fetch=_id`)
+            .then(
+                (res) => {
+                    const data = res.data.data
+                    if (data) setRegistered(true)
+                    // console.log("check: ",data)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
+
+    const handleOpenCourse = () => {
+        navigate(`/student/page/course/${params.id}`)
     }
 
     const handleAddCourse = async () => {
 
         if (!isPassCondition()) {
             // alert user or something
+            console.log("????")
             return
         }
         // when add course create activity -> in student's home, use activity to fetch all student added course
-
-
+        await createActivity(sessionStorage.getItem("token"), {
+            user: sessionStorage.getItem("user_id"),
+            course: params.id,
+        })
+            .then(
+                (res) => {
+                    const data = res.data.data
+                    console.log(data)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
     }
 
     const handleUnloadImage = (e) => {
         e.target.src = DEFAULT_IMAGE
     }
 
+    const fetchUser = async () => {
+        await getUser(sessionStorage.getItem("token"), sessionStorage.getItem("user_id"), `?fetch=plant,-_id&field=plant`)
+            .then(
+                (res) => {
+                    const data = res.data.data
+                    // console.log(data)
+                    setPlant(data.plant.name)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
+
     const fetchCourse = async () => {
-        await getCourse(sessionStorage.getItem("token"), params.id, `?fetch=name,detail,image,condition`)
+        // console.log("id: ", params.id)
+        await getCourse(sessionStorage.getItem("token"), params.id, `?fetch=name,detail,image,condition,teacher&pops=path:condition$populate:plant$select:plant maximum,path:teacher$select:firstname lastname -_id`)
             .then(
                 (res) => {
                     const data = res.data.data
                     console.log(data)
                     setCourse(data)
+                    isPassCondition()
                 }
             )
             .catch(
@@ -51,8 +123,9 @@ const RegisterCourse = () => {
     }
 
     useEffect(() => {
+        fetchUser()
         fetchCourse()
-    }, [])
+    }, [pageChange])
 
     const registerCourseTitle = () => {
         return (
@@ -147,19 +220,32 @@ const RegisterCourse = () => {
                                             <Col style={{ width: "25px" }} /> */}
                                         </Row>
 
-                                        <Row style={{ paddingTop: "0.5%", }}>
-                                            <Col style={{ width: "48%"}}>
+                                        <Row style={{ paddingTop: "2%", }}>
+                                            <Col style={{ width: "100%" }}>
                                                 <Button
+                                                    disabled={!passedCondition}
                                                     type="primary"
                                                     size="large"
                                                     block
-                                                    onClick={handleAddCourse}
+                                                    onClick={
+                                                        () => registered ? handleOpenCourse() : handleAddCourse()
+                                                    }
                                                 >
-                                                    Add Course
+                                                    {
+                                                        registered ?
+                                                            (
+                                                                "Go to Course"
+                                                            )
+                                                            :
+                                                            (
+                                                                "Add Course"
+                                                            )
+                                                    }
+
                                                 </Button>
                                             </Col>
-                                            <Col style={{ width: "2%"}}/>
-                                            <Col flex={"auto"}>
+                                            {/* <Col style={{ width: "2%" }} /> */}
+                                            {/* <Col flex={"auto"}>
                                                 <Button
                                                     type="primary"
                                                     size="large"
@@ -168,7 +254,7 @@ const RegisterCourse = () => {
                                                 >
                                                     Start
                                                 </Button>
-                                            </Col>
+                                            </Col> */}
 
                                         </Row>
 
@@ -179,7 +265,20 @@ const RegisterCourse = () => {
                             <Row style={{ paddingTop: "1%" }}>
                                 <Col flex={"auto"}>
                                     <Card >
-                                        Condtion for course if exist
+                                        {
+                                            course?.condition && course?.condition.map(
+                                                (item) => (
+                                                    <Row >
+                                                        <Col style={{ paddingRight: "2%" }}>
+                                                            Maximum: {item.maximum}
+                                                        </Col>
+                                                        <Col>
+                                                            Plant: {item.plant.name}
+                                                        </Col>
+                                                    </Row>
+                                                )
+                                            )
+                                        }
                                     </Card>
                                 </Col>
 

@@ -58,6 +58,7 @@ const ExamContent = ({
                         // style={{ height: "570px", }}
 
                         >
+                            {/* {JSON.stringify(Object.keys(inputContentData).length === 0)} */}
                             {
                                 Object.keys(inputContentData).length === 0 ?
                                     (

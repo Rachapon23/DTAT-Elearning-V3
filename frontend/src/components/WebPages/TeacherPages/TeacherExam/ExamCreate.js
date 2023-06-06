@@ -444,7 +444,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         const examData = {
             head: inputInfoData,
         }
-        // console.log(examData)
+        // console.log("exam data: ",examData)
         await createExam(sessionStorage.getItem("token"), examData)
             .then(
                 (res) => {
@@ -575,10 +575,12 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     const pageValidation = (pageNumber) => {
         switch (pageNumber) {
             case 0:
-                if(currentSelectedRadio === null || currentSelectedRadio === undefined) return false
+                if (currentSelectedRadio === null || currentSelectedRadio === undefined) return false
                 return true
             case 1:
-                if(inputInfoData.name.length <= 0) return false
+                if (inputInfoData.name.length <= 0) return false
+                return true
+            case 2:
                 return true
             default: return false
         }
@@ -625,7 +627,10 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                                                             disabled={!pageValidation(currentPage)}
                                                             onClick={handleDisplay}
                                                         >
-                                                            {currentPage === pageStepLength - 2 ? "Done" : createSteps[currentPage].title === "Exam Info" ? "Create" : "Next"}
+                                                            {
+                                                                currentPage === pageStepLength - 2 ?
+                                                                    "Done" : createSteps[currentPage].title === "Exam Info" && !examId ?
+                                                                        "Create" : "Next"}
                                                         </Button>
                                                     )
                                                     :

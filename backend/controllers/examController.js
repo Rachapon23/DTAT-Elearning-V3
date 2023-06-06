@@ -22,6 +22,7 @@ exports.createExam = async (req, res) => {
             const data = {
                 name: head.name,
                 course: head.course,
+                enable: head.enable,
                 detail: head.detail,
                 teacher: user_id,
                 quiz: quiz,

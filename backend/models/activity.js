@@ -17,6 +17,10 @@ const ActivitySchema = new mongoose.Schema({
     completed: {
         type: Boolean,
     },
+    result: {
+        type: Number,
+        default: 0,
+    },
     user: {
         type: ObjectId,
         ref: "users",

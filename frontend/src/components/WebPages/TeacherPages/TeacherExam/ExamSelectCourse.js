@@ -14,7 +14,7 @@ const { TextArea } = Input;
 const ExamSelectCourse = ({
     // cousresWithOutQuiz = null,
     // coursesCol = null,
-    onSetInputContentData=null,
+    onSetInputContentData = null,
     inputInfoData = null,
     onSetInputInfoData = null,
     onSetCurentSelectedRadio = null,
@@ -88,7 +88,13 @@ const ExamSelectCourse = ({
 
     const filterCourse = useCallback((data) => {
         if (!data) return
+        
+        console.log(data.filter((item) => {
+            return item?.name?.toLowerCase().indexOf(keyword) >= 0;
+        }).slice(pageSize * (currentCoursePage - 1), (pageSize * (currentCoursePage - 1)) + pageSize))
+        
         return data.filter((item) => {
+            console.log(item)
             return item?.name?.toLowerCase().indexOf(keyword) >= 0;
         }).slice(pageSize * (currentCoursePage - 1), (pageSize * (currentCoursePage - 1)) + pageSize)
     }, [currentCoursePage, keyword])
@@ -130,14 +136,12 @@ const ExamSelectCourse = ({
 
         onSetCousreWithOutQuiz(cousresWithOutQuiz[data?.index])
 
-        
+
     }
 
     useEffect(() => {
         fetchCourseWoQuiz()
-        return () => {
-
-        }
+        console.log(cousresWithOutQuiz)
     }, [])
 
 

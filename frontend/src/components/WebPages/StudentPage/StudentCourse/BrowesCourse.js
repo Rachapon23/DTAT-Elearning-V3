@@ -18,7 +18,7 @@ const BrowesCourse = () => {
       }
 
     const handleClickCourse = (e, data) => {
-        console.log(e)
+        // console.log(e)
         e.target.id = data?._id
         // if(!e?.target?.id) return
         handleNavigate(`/student/page/register-course/${e?.target?.id}`)
