@@ -12,7 +12,7 @@ import "./teach.css";
 import { useParams, useNavigate } from "react-router-dom";
 
 import Courses from "./TeacherCourse/Courses";
-import CourseCreate from "./TeacherCourse/CourseCreate"
+// import CourseCreate from "./TeacherCourse/CourseCreate"
 import Exames from "./TeacherExam/Exams";
 import ExamCreate from "./TeacherExam/ExamCreate"
 import TeacherHome from "./TeacherHome/TeacherHome";
@@ -78,7 +78,7 @@ const App = () => {
       case 'list-course':
         return <Courses  />;
       case 'create-course':
-        return <CourseCreate />;
+        // return <CourseCreate />;
       case 'list-exam':
         return <Exames />;
       case 'create-exam':

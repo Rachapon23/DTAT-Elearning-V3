@@ -5,7 +5,7 @@ const CourseSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: true,
+      // require: true, not require  ; first time create not have name
       unique: true,
     },
     detail: {
@@ -30,14 +30,14 @@ const CourseSchema = new mongoose.Schema(
       type: ObjectId,
       ref: "users",
     },
-    condition: [{
-      type: ObjectId,
-      ref: "condition",
-    }],
-    topic: [{
-      type: ObjectId,
-      ref: "topic",
-    }],
+    // condition: [{
+    //   type: ObjectId,
+    //   ref: "condition",
+    // }],
+    // topic: [{
+    //   type: ObjectId,
+    //   ref: "topic",
+    // }],
     room: {
       type: ObjectId,
       ref: "room",
@@ -50,10 +50,10 @@ const CourseSchema = new mongoose.Schema(
       type: ObjectId,
       ref: "exam",
     },
-    activity: [{
-      type: ObjectId,
-      ref: "activity",
-    }],
+    // activity: [{
+    //   type: ObjectId,
+    //   ref: "activity",
+    // }],
   },
   { timestamps: true }
 );

@@ -13,7 +13,7 @@ const CalendarSchema = mongoose.Schema({
     color: {
         type: String
     },
-    all_day: {
+    allDay: {
         type: Boolean,
         default: true
     },

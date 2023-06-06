@@ -10,6 +10,10 @@ const ConditionSchema = new mongoose.Schema({
         type: ObjectId,
         ref:"plant",
     },
+    course: {
+        type: ObjectId,
+        ref: "course"
+    },
 }, { timestamps: true });
 
 module.exports = Condition = mongoose.model("condition", ConditionSchema);

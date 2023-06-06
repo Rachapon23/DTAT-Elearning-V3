@@ -19,7 +19,7 @@ import {
 import React, { useEffect } from "react";
 import NavBar from "../../../Layout/NavBar";
 import { useState } from "react";
-import "./course.css";
+import "./courses.css";
 import "../teach.css";
 import { Link,useNavigate } from "react-router-dom";
 import { listCourse, removeCourse,createCourse } from "../../../../function/Teacher/course";
@@ -40,13 +40,13 @@ const Courses = () => {
             name: "",
           },
           _id: "",
-          condition: [],
+          // condition: [],
           createdAt: "",
           detail: "",
           enabled: null,
           name: "",
           room: "",
-          topic: [],
+          // topic: [],
           type: null,
           updatedAt: "",
           video: null,
@@ -63,7 +63,7 @@ const Courses = () => {
   const handleRemoveCourse = async (index) => {
     await removeCourse(sessionStorage.getItem("token"), courses[index]?._id)
       .then((res) => {
-        console.log(res.data.data);
+        console.log(res.data);
         setHasChanged(true);
       })
       .catch((err) => {
@@ -237,32 +237,6 @@ const Courses = () => {
       <Row align={"middle"} justify={"space-between"}>
         <Col>
           <p style={{ marginTop: "10px" }}>Course</p>
-          {/* <Breadcrumb
-            separator={
-              <Title level={5} style={{ marginTop: "10px" }}>
-                {" "}
-                {">"}{" "}
-              </Title>
-            }
-            items={[
-              {
-                title: (
-                  <Title level={5} style={{ marginTop: "10px" }}>
-                    <p>Course</p>
-                  </Title>
-                ),
-                key: "courses",
-              },
-              {
-                title: (
-                  <Title level={5} style={{ marginTop: "10px" }}>
-                    <p>list Course</p>
-                  </Title>
-                ),
-                key: "courses_list",
-              },
-            ]}
-          /> */}
         </Col>
         <Col style={{ paddingTop: "1px", paddingBottom: "1px" }}>
           <Button onClick={CreateCourseEmpty}>Create</Button>
@@ -274,7 +248,7 @@ const Courses = () => {
   const CreateCourseEmpty = () => {
     createCourse(sessionStorage.getItem("token"))
     .then((res) => {
-      navigate(`/teacher/course/${res.data.data._id}`)
+      navigate(`/teacher/course/${res.data._id}`)
       // console.log(res);
 
     })
@@ -321,7 +295,7 @@ const Courses = () => {
   const fetchCourse = async () => {
     await listCourse(sessionStorage.getItem("token"))
       .then((res) => {
-        const data = res.data.data;
+        const data = res.data;
         console.log(data);
         setCourses(data);
       })
@@ -340,9 +314,7 @@ const Courses = () => {
 
   return (
     <Layout className="layout-content">
-      {/* <NavBar page={"Courses"} /> */}
       <Row>
-        {/* <Col sm={2} /> */}
         <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
           <Card title={myCoursesTitle()} style={{ maxWidth: "100%" }}>
             <Row justify="space-between" style={{ marginBottom: "1%" }}>
@@ -364,13 +336,6 @@ const Courses = () => {
                   onChange={handleDisplay}
                 />
               </Col>
-              {/* <Col>
-                                <Link to="/teacher/courses/create">
-                                    <Button>
-                                        Create
-                                    </Button>
-                                </Link>
-                            </Col> */}
             </Row>
             <Row justify="center">
               <Col flex={"auto"} style={{ width: "2000px" }}>
@@ -379,7 +344,6 @@ const Courses = () => {
             </Row>
           </Card>
         </Col>
-        {/* <Col sm={2} /> */}
       </Row>
     </Layout>
   );
