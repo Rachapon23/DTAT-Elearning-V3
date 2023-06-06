@@ -16,9 +16,11 @@ export const HomeProvider = ({ children }) => {
             .then(
                 (res) => {
                     const data = res.data.data
-                    setHome(data)
-                    setAcnounce(() => data.acnounce)
-                    // console.log(data.acnounce)
+                    // Error Data is null
+                    
+                    // setHome(data)
+                    // setAcnounce(() => data.acnounce)
+                    // console.log("Data : ",res.data.data)
                 }
             )
             .catch(

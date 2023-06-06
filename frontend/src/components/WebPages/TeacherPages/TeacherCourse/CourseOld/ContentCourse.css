@@ -1,0 +1,12 @@
+
+.group-menu-content{
+    position: fixed;
+    right: 0;
+    margin-right: 5px;
+    background-color: rgb(249, 249, 249);
+    padding: 0px;
+}
+
+.menu-content{
+    margin-bottom: 5px;
+}

@@ -6,30 +6,31 @@ const {
     createCourse,
     getCourse,
     listCourse,
-    updateCourse,
-    updateEnableCourse,
     removeCourse,
-    updateCourseImage,
-    getCourseImage,
-    getCourseCount,
+    // updateCourse,
+    // updateEnableCourse,
+    // updateCourseImage,
+    // getCourseImage,
+    // getCourseCount,
     listCourseWoQuiz,
-    listCourseGraphData,
+    // listCourseGraphData,
 } = require("../controllers/courseController");
 
 
 // teacher 
 router.post("/create-course", checkUser, checkTeacher, createCourse);
-router.get("/list-course", checkUser, checkTeacher, listCourse);
 router.get("/get-course/:id", checkUser, checkTeacher, getCourse);
-router.put("/update-course/:id", checkUser, checkTeacher, updateCourse);
+router.get("/list-course", checkUser, checkTeacher, listCourse);
 router.delete("/remove-course/:id", checkUser, checkTeacher, removeCourse);
 
-router.put("/update-course/:id/enabled", checkUser, checkTeacher, updateEnableCourse);
-router.put("/update-course/:id/image", checkUser, checkTeacher, uploadPublic, updateCourseImage); // uploadPublic uploadPrivate
-router.get("/get-course/:id/image", checkUser, checkTeacher, getCourseImage);
-router.get("/get-course/sp/count", checkUser, checkTeacher, getCourseCount);
+// router.put("/update-course/:id", checkUser, checkTeacher, updateCourse);
+
+// router.put("/update-course/:id/enabled", checkUser, checkTeacher, updateEnableCourse);
+// router.put("/update-course/:id/image", checkUser, checkTeacher, uploadPublic, updateCourseImage); // uploadPublic uploadPrivate
+// router.get("/get-course/:id/image", checkUser, checkTeacher, getCourseImage);
+// router.get("/get-course/sp/count", checkUser, checkTeacher, getCourseCount);
 router.get("/list-course/sp/wo/quiz", checkUser, checkTeacher, listCourseWoQuiz);
-router.get("/list-course/sp/graph", checkUser, checkTeacher, listCourseGraphData);
+// router.get("/list-course/sp/graph", checkUser, checkTeacher, listCourseGraphData);
 
 
 
