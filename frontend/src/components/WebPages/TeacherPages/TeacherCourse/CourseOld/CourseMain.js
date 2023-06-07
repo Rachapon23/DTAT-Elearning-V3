@@ -52,16 +52,17 @@ const CourseMain = () => {
   });
 
   const [courseData, setCourseData] = useState({});
+  
   const loadDataCourse = () => {
     getCourse(sessionStorage.getItem("token"), course_id)
       .then((res) => {
         console.log(res);
-        setCourseData(res.data.data);
-        setCourseType(res.data.data.type);
+        setCourseData(res.data);
+        setCourseType(res.data.type);
         setCourseInfo({
-          name: res.data.data.name,
-          detail: res.data.data.detail,
-          type: res.data.data.type,
+          name: res.data.name,
+          detail: res.data.detail,
+          type: res.data.type,
         });
       })
       .catch((err) => {

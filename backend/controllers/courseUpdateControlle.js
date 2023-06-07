@@ -6,6 +6,7 @@ const Course = require("../models/course");
 // PUT: /update-course-info/:id
 exports.updateCourseInfo = async (req, res) => {
   try {
+    console.log(req.body);
     const course = await Course.findOneAndUpdate(
       { _id: req.params.id },
       {
@@ -16,7 +17,7 @@ exports.updateCourseInfo = async (req, res) => {
       { new: true }
     );
 
-    res.json({ data: course });
+    res.json(course);
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Unexpected error on update course info" });
@@ -25,7 +26,7 @@ exports.updateCourseInfo = async (req, res) => {
 
 exports.updateCoursetimeAndRoom = async (req, res) => {
   try {
-    const { start, end, color, room } = req.body;
+    // const { start, end, color, room } = req.body;
     const { id } = req.params;
 
     const course = await Course.findOne({ _id: id }).populate("calendar");
@@ -38,27 +39,42 @@ exports.updateCoursetimeAndRoom = async (req, res) => {
           end: req.body.end,
           color: req.body.color,
           title: course.name,
+
         },
         { new: true }
       );
-      // console.log("Updatat: ",calendarUpdate)
-      res.json({ data: calendarUpdate });
-    } else {
+
+      const courseUpdate = await Course.findOneAndUpdate(
+        { _id: id },
+        { room: req.body.room_id },
+        { new: true }
+      );
+  
+      res.json(courseUpdate);
+    } 
+    else {
       const calendar = await new Calendar({
         start: req.body.start,
         end: req.body.end,
         color: req.body.color,
         title: course.name,
       }).save();
+
       const courseUpdate = await Course.findOneAndUpdate(
         { _id: id },
-        { calendar: calendar._id, room: room },
+        { calendar: calendar._id, room: req.body.room_id },
         { new: true }
       );
-      res.json({ data: courseUpdate });
+  
+      res.json(courseUpdate);
+
     }
+
+    
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Unexpected error on update course time and room" });
+    res
+      .status(500)
+      .json({ error: "Unexpected error on update course time and room" });
   }
 };

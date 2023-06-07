@@ -33,12 +33,12 @@ const TimeAndRoom = ({ setTimeAndRoom, timeAndroom }) => {
     getCourse(sessionStorage.getItem("token"), course_id)
       .then((res) => {
         // console.log("tR",res);
-        setCourseData(res.data.data);
+        setCourseData(res.data);
         setTimeAndRoom({
-          room: res.data.data.room._id,
-          start: res.data.data.calendar.start,
-          end: res.data.data.calendar.end,
-          color: res.data.data.calendar.color,
+          room: res.data.room._id,
+          start: res.data.calendar.start,
+          end: res.data.calendar.end,
+          color: res.data.calendar.color,
         });
       })
       .catch((err) => {

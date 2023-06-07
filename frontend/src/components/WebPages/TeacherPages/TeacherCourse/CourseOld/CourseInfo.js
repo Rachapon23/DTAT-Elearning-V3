@@ -50,7 +50,7 @@ const CourseInfo = ({
     getCourse(sessionStorage.getItem("token"), course_id)
       .then((res) => {
         console.log(res);
-        setCourseData(res.data.data);
+        setCourseData(res.data);
       })
       .catch((err) => {
         console.log(err);

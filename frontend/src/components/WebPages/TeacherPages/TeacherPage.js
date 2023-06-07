@@ -12,7 +12,7 @@ import "./teach.css";
 import { useParams, useNavigate } from "react-router-dom";
 
 import Courses from "./TeacherCourse/Courses";
-import CourseCreate from "./TeacherCourse/CourseCreate"
+// import CourseCreate from "./TeacherCourse/CourseCreate"
 import Exames from "./TeacherExam/Exams";
 import ExamCreate from "./TeacherExam/ExamCreate"
 import TeacherHome from "./TeacherHome/TeacherHome";
@@ -34,10 +34,60 @@ const App = () => {
         console.log("click ", e);
         setKeyMenu(e.key);
     };
+<<<<<<< HEAD
     const [keyMenu, setKeyMenu] = useState("1");
     const { params } = useParams();
     const navigate = useNavigate()
     // console.log(params);
+=======
+  }
+
+  const items = [
+    getItem('Home', 'home', <HomeOutlined />),
+    getItem('Course', 'list-course', <ReadOutlined />),
+    // getItem('Course', 'course', <ReadOutlined />, [
+    //   getItem('List Course', 'list-course'),
+    //   // getItem('Create Course', 'create-course'),
+    // ]),
+    getItem('Exam', 'exam', <ScheduleOutlined />, [
+      getItem('List Exam', 'list-exam'),
+      getItem('Create Exam', 'create-exam'),
+    ]),
+    getItem('Calendar', 'calendar', <CalendarOutlined />),
+  ];
+
+  const items2 = [
+    getItem('Home', '/'),
+    getItem('Public Course', '/teacher/page/home'),
+    getItem('Private Course', '/admin/page/home'),
+    // getItem('Contact', '#',),
+  ];
+
+  const renderContent = React.useCallback(() => {
+    switch (params) {
+      case 'home':
+        return (
+          <TeacherHomeProvider>
+            <TeacherHome />
+          </TeacherHomeProvider>
+        );
+      case 'list-course':
+        return <Courses  />;
+      case 'create-course':
+        // return <CourseCreate />;
+      case 'list-exam':
+        return <Exames />;
+      case 'create-exam':
+        return <ExamCreate mode={"Create"} />;
+      case 'edit-exam':
+        return <ExamCreate mode={"Edit"} />;
+      // case 'preview-exam':
+      //   return <ExamCreate mode={"Preview"}/>;
+      case 'calendar':
+        return <p className="success">Calendar</p>;
+      default:
+        return <p className="success">404 not found ... </p>;
+>>>>>>> 34cdfe598d8f934c6ba07c7796c17d5434024948
 
     function getItem(label, key, icon, children, type) {
         return {

@@ -5,7 +5,7 @@ const CourseSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: true,
+      // require: true, not require  ; first time create not have name
       unique: true,
     },
     detail: {

@@ -6,7 +6,7 @@ const TopicSchema = new mongoose.Schema({
         type: String,
     },
     detail: {
-        type: String,
+      type: String,
     },
     sub_content: {
         type: [],

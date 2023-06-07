@@ -5,7 +5,7 @@ const Plant = require("../models/plant");
 const Calendar = require("../models/calendar");
 const User = require("../models/user");
 
-const Activity = require('../models/activity')
+const Activity = require("../models/activity");
 const Condition = require("../models/condition");
 
 const { validateQuery } = require('./util')
@@ -243,7 +243,6 @@ exports.updateCourse = async (req, res) => {
         res.status(500).json({ error: "Unexpected error on update course" });
     }
 };
-
 // DELETE: /remove-course/:id
 exports.removeCourse = async (req, res) => {
     try {

@@ -211,36 +211,58 @@ exports.loadData = async () => {
     )
 
     // Condition
-    await Condition.findOneAndUpdate(
-        { _id: "64264e62440e75505b4d5032" },
-        {
-            _id: "64264e62440e75505b4d5032",
-            plant: await Plant.findOne({ name: "A" }).select("_id"),
-            maximum: 10,
-        },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-    )
+    // await Condition.findOneAndUpdate(
+    //     { _id: "64264e62440e75505b4d5032" },
+    //     {
+    //         _id: "64264e62440e75505b4d5032",
+    //         plant: await Plant.findOne({ name: "A" }).select("_id"),
+    //         maximum: 10,
+    //     },
+    //     { upsert: true, new: true, setDefaultsOnInsert: true }
+    // )
 
-    await Condition.findOneAndUpdate(
-        { _id: "64264e62440e75505b4d5035" },
-        {
-            _id: "64264e62440e75505b4d5035",
-            plant: await Plant.findOne({ name: "B" }).select("_id"),
-            maximum: 20,
-        },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-    )
+    // await Condition.findOneAndUpdate(
+    //     { _id: "64264e62440e75505b4d5035" },
+    //     {
+    //         _id: "64264e62440e75505b4d5035",
+    //         plant: await Plant.findOne({ name: "B" }).select("_id"),
+    //         maximum: 20,
+    //     },
+    //     { upsert: true, new: true, setDefaultsOnInsert: true }
+    // )
 
-    await Condition.findOneAndUpdate(
-        { _id: "64264e62440e75505b4d5038" },
-        {
-            _id: "64264e62440e75505b4d5038",
-            plant: await Plant.findOne({ name: "C" }).select("_id"),
-            maximum: 30,
-        },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-    )
+    // await Condition.findOneAndUpdate(
+    //     { _id: "64264e62440e75505b4d5038" },
+    //     {
+    //         _id: "64264e62440e75505b4d5038",
+    //         plant: await Plant.findOne({ name: "C" }).select("_id"),
+    //         maximum: 30,
+    //     },
+    //     { upsert: true, new: true, setDefaultsOnInsert: true }
+    // )
 
+    // coment for change model 
+    // Course 
+    // const course1 = await Course.findOneAndUpdate(
+    //     { _id: "64264f3c7e51c155540e7750" },
+    //     {
+    //         _id: "64264f3c7e51c155540e7750",
+    //         name: "First load course",
+    //         detail: "First load course",
+    //         room: await Room.findOne({ name: "Technical Skill 3" }).select("_id"),
+    //         video: 2,
+    //         type: true,
+    //         enabled: true,
+    //         teacher: await User.findOne({ employee: "6100319" }),
+    //         condition: [
+    //             await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
+    //             await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
+    //             await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
+    //         ],
+    //         exam: null,
+    //     },
+    //     { upsert: true, new: true, setDefaultsOnInsert: true }
+    // )
 
     // Course
     const course1 = await Course.findOneAndUpdate(
@@ -265,29 +287,24 @@ exports.loadData = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
-    const course2 = await Course.findOneAndUpdate(
-        { name: "Introduction of Docker" },
-        {
-            name: "Introduction of Docker",
-            detail: "Introduction of Docker Detail ",
-            room: await Room.findOne({ name: "Technical Skill 2" }).select("_id"),
-            image: {
-                original_name: "course-pic1",
-                name: "file-1684511836883-779460665.png",
-                url: `/course/file-1684511836883-779460665.png`,
-            },
-            video: 2,
-            type: true,
-            enabled: true,
-            teacher: await User.findOne({ employee: "6100319" }),
-            condition: [
-                await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
-                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
-                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
-            ]
-        },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-    )
+    // const course3 = await Course.findOneAndUpdate(
+    //     { name: "Basic of IoT" },
+    //     {
+    //         name: "Basic of IoT",
+    //         detail: "Basic of IoT Detail ",
+    //         room: await Room.findOne({ name: "Technical Skill 1" }).select("_id"),
+    //         video: 2,
+    //         type: false,
+    //         enabled: true,
+    //         teacher: await User.findOne({ employee: "6100319" }),
+    //         condition: [
+    //             await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
+    //             await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
+    //             await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
+    //         ]
+    //     },
+    //     { upsert: true, new: true, setDefaultsOnInsert: true }
+    // )
 
     const course3 = await Course.findOneAndUpdate(
         { name: "Basic of IoT" },
@@ -431,8 +448,8 @@ exports.loadData = async () => {
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    course2.exam = exam1
-    course2.save()
+    // course2.exam = exam1
+    // course2.save()
 
     const exam2 = await Exam.findOneAndUpdate(
         { name: "Basic of IoT Final test" },
@@ -450,8 +467,8 @@ exports.loadData = async () => {
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    course3.exam = exam2
-    course3.save()
+    // course3.exam = exam2
+    // course3.save()
 
     const exam3 = await Exam.findOneAndUpdate(
         { name: "Arduino Final test" },
@@ -469,8 +486,8 @@ exports.loadData = async () => {
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    course4.exam = exam3
-    course4.save()
+    // course4.exam = exam3
+    // course4.save()
 
     const exam4 = await Exam.findOneAndUpdate(
         { name: "Software Engineer Final test" },
@@ -489,8 +506,8 @@ exports.loadData = async () => {
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
-    course5.exam = exam4
-    course5.save()
+    // course5.exam = exam4
+    // course5.save()
 
     // Activity
    const activity1 =  await Activity.findOneAndUpdate(
