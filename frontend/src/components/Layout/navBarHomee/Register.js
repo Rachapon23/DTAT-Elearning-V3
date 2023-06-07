@@ -77,6 +77,12 @@ const App = ({ layout, setLayout }) => {
       className="register-form"
       onFinish={onFinish}
       scrollToFirstError
+      labelCol={{
+        span: 24,
+      }}
+      wrapperCol={{
+        span: 24,
+      }}
     >
       <Row gutter={16}>
         <Col span={12}>

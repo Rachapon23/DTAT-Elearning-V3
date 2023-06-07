@@ -9,7 +9,9 @@ import DoExam from "../StudentExam/DoExam";
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import { listActivity, listCourse } from "../../../../function/Student/course";
 import { Link, useNavigate } from "react-router-dom";
+
 const { Header, Content, Footer } = Layout;
+const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
 
 const StudentHomePage = () => {
     const [courses, setCourses] = useState([])
@@ -19,6 +21,10 @@ const StudentHomePage = () => {
         navigate(navStr, { state: dataStage })
     }
 
+    const handleUnloadImage = (e) => {
+        e.target.src = DEFAULT_IMAGE
+    }
+
     const columns = [
         {
             title: "Image",
@@ -26,8 +32,10 @@ const StudentHomePage = () => {
             render: (data) => {
                 return (
                     <Image
+                        preview={false}
                         width={150}
-                        src={process.env.REACT_APP_IMG + data?.course?.image?.url}
+                        onError={handleUnloadImage}
+                        src={data?.course?.image?.url ? (process.env.REACT_APP_IMG + data?.course?.image?.url) : DEFAULT_IMAGE}
                     />
                 )
             }
@@ -41,8 +49,8 @@ const StudentHomePage = () => {
             title: `score`,
             align: "center",
             render: (data) => {
-                if(!data?.score_value && data?.result === 0) return "waiting for test"
-                if(!data?.score_value && data?.result !== 0) return "No examination"
+                if (!data?.score_value && data?.result === 0) return "waiting for test"
+                if (!data?.score_value && data?.result !== 0) return "No examination"
                 return data?.score_value
             }
         },
@@ -51,8 +59,8 @@ const StudentHomePage = () => {
             title: `max score`,
             align: "center",
             render: (data) => {
-                if(!data?.score_max && data?.result === 0) return "waiting for test"
-                if(!data?.score_max && data?.result !== 0) return "No examination"
+                if (!data?.score_max && data?.result === 0) return "waiting for test"
+                if (!data?.score_max && data?.result !== 0) return "No examination"
                 return data?.score_max
 
             }

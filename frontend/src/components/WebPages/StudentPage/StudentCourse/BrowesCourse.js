@@ -57,10 +57,10 @@ const BrowesCourse = () => {
         if (index % GROUP_NUMBER !== 0) return null
 
         return (
-            <Row justify={"start"} style={{ paddingInlineStart: "4%" }}>
+            <Row gutter={[32, 0]} justify={"start"} style={{paddingLeft: "3%", paddingRight: "3%"}}>
                 {
                     courses.slice(index, index + GROUP_NUMBER).map((data) => (
-                        <Col style={{ padding: "1%", }}>
+                        <Col span={6} style={{ padding: "1%", }}>
                             <CardCourse
                                 onClick={(e) => handleClickCourse(e, data)}
                                 data={{
