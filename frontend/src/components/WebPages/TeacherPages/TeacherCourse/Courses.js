@@ -28,42 +28,10 @@ const { Title } = Typography;
 const { Meta } = Card;
 
 const Courses = () => {
-<<<<<<< HEAD
 	// Variable-Start
 	const [filteredInfo, setFilteredInfo] = useState({});
 	const [sortedInfo, setSortedInfo] = useState({});
 	const [hasChanged, setHasChanged] = useState(false);
-=======
-  // Variable-Start
-  const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
-  const [hasChanged, setHasChanged] = useState(false);
-  const [courses, setCourses] = useState(
-    null |
-      [
-        {
-          image: {
-            original_name: "",
-            name: "",
-          },
-          _id: "",
-          // condition: [],
-          createdAt: "",
-          detail: "",
-          enabled: null,
-          name: "",
-          room: "",
-          // topic: [],
-          type: null,
-          updatedAt: "",
-          video: null,
-          calendar: "",
-          teacher: "",
-          exam: "",
-        },
-      ]
-  );
->>>>>>> 34cdfe598d8f934c6ba07c7796c17d5434024948
 
 	// const {courses} = useContext(TeacherCourseContext)
 	const [courses, setCourses] = useState(
@@ -92,21 +60,8 @@ const Courses = () => {
 		]
 	);
 
-<<<<<<< HEAD
 	const navigate = useNavigate()
 	// Variable-End -------------------------------------------------------------------------------------------------------------------------------------------------------------
-=======
-  const handleRemoveCourse = async (index) => {
-    await removeCourse(sessionStorage.getItem("token"), courses[index]?._id)
-      .then((res) => {
-        console.log(res.data);
-        setHasChanged(true);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
->>>>>>> 34cdfe598d8f934c6ba07c7796c17d5434024948
 
 	const handleRemoveCourse = async (index) => {
 		await removeCourse(sessionStorage.getItem("token"), courses[index]?._id)
@@ -263,7 +218,6 @@ const Courses = () => {
 		});
 	};
 
-<<<<<<< HEAD
 	// const [displayMode, setDisplayMode] = useState("List");
 	const handleDisplay = (mode) => {
 		// if (!mode) {
@@ -325,27 +279,6 @@ const Courses = () => {
 			.then((res) => {
 				navigate(`/teacher/course/${res.data.data._id}`)
 				// console.log(res);
-=======
-  // Sub-Component-Page-Start
-  const myCoursesTitle = () => {
-    return (
-      <Row align={"middle"} justify={"space-between"}>
-        <Col>
-          <p style={{ marginTop: "10px" }}>Course</p>
-        </Col>
-        <Col style={{ paddingTop: "1px", paddingBottom: "1px" }}>
-          <Button onClick={CreateCourseEmpty}>Create</Button>
-        </Col>
-      </Row>
-    );
-  };
-
-  const CreateCourseEmpty = () => {
-    createCourse(sessionStorage.getItem("token"))
-    .then((res) => {
-      navigate(`/teacher/course/${res.data._id}`)
-      // console.log(res);
->>>>>>> 34cdfe598d8f934c6ba07c7796c17d5434024948
 
 			})
 			.catch((err) => {
@@ -388,7 +321,6 @@ const Courses = () => {
 
 	// Page-Conttoller-End ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-<<<<<<< HEAD
 	const fetchCourse = async () => {
 		await listCourse(sessionStorage.getItem("token"))
 			.then((res) => {
@@ -400,19 +332,6 @@ const Courses = () => {
 				console.log(err);
 			});
 	};
-=======
-  const fetchCourse = async () => {
-    await listCourse(sessionStorage.getItem("token"))
-      .then((res) => {
-        const data = res.data;
-        console.log(data);
-        setCourses(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
->>>>>>> 34cdfe598d8f934c6ba07c7796c17d5434024948
 
 	useEffect(() => {
 		fetchCourse();
@@ -422,7 +341,6 @@ const Courses = () => {
 		};
 	}, [hasChanged]);
 
-<<<<<<< HEAD
 	return (
 		<Layout className="layout-content">
 			{/* <NavBar page={"Courses"} /> */}
@@ -468,43 +386,6 @@ const Courses = () => {
 			</Row>
 		</Layout>
 	);
-=======
-  return (
-    <Layout className="layout-content">
-      <Row>
-        <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
-          <Card title={myCoursesTitle()} style={{ maxWidth: "100%" }}>
-            <Row justify="space-between" style={{ marginBottom: "1%" }}>
-              <Col>
-                <Segmented
-                  defaultValue={"List"}
-                  options={[
-                    {
-                      label: "List",
-                      value: "List",
-                      icon: <BarsOutlined />,
-                    },
-                    {
-                      label: "Kanban",
-                      value: "Kanban",
-                      icon: <AppstoreOutlined />,
-                    },
-                  ]}
-                  onChange={handleDisplay}
-                />
-              </Col>
-            </Row>
-            <Row justify="center">
-              <Col flex={"auto"} style={{ width: "2000px" }}>
-                {renderDisplay()}
-              </Col>
-            </Row>
-          </Card>
-        </Col>
-      </Row>
-    </Layout>
-  );
->>>>>>> 34cdfe598d8f934c6ba07c7796c17d5434024948
 };
 
 export default Courses;

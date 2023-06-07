@@ -7,14 +7,9 @@ import AdminPage from "./components/WebPages/AdminPage/AdminPage"
 import TeacherPage from "./components/WebPages/TeacherPages/TeacherPage";
 
 //test page
-<<<<<<< HEAD
-import CourseMain from "./components/WebPages/TeacherPages/TeacherCourse/Course/CourseMain";
-import Course from "./components/WebPages/TeacherPages/TeacherCourse/CourseManage/Course";
-
-=======
 import CourseMain from "./components/WebPages/TeacherPages/TeacherCourse/CourseOld/CourseMain";
 import Course from "./components/WebPages/TeacherPages/TeacherCourse/CourseManage/Course";
->>>>>>> 34cdfe598d8f934c6ba07c7796c17d5434024948
+
 function App() {
   return (
     <div>
@@ -26,7 +21,6 @@ function App() {
 
         <Route path="/teacher/page/:params" element={<TeacherPage/>} />
         <Route path="/teacher/page/:params/:id" element={<TeacherPage/>} />
-<<<<<<< HEAD
 
         <Route path="/teacher/course/:course_id" element={<Course/>} />
         <Route path="/admin/page/:params" element={<AdminPage/>} />
@@ -34,11 +28,6 @@ function App() {
         {/* <Route path="/teacher/exams" element={<Exames/>} /> */}
         {/* <Route path="/teacher/calendar" element={<Calendar/>} /> */}
         {/* <Route path="/teacher/courses/create" element={<CourseCreate/>} /> */}
-=======
-        <Route path="/teacher/course/:course_id" element={<Course/>} />
-        <Route path="/admin/page/:params" element={<AdminPage/>} />
-       
->>>>>>> 34cdfe598d8f934c6ba07c7796c17d5434024948
         <Route path="/teacher/exams/create" element={<ExamCreate/>} />
       </Routes>
     </div>
