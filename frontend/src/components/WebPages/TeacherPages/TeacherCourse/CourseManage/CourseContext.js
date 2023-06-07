@@ -32,24 +32,30 @@ export const CourseProvider = ({ children }) => {
   const loadDataCourse = () => {
     getCourse(sessionStorage.getItem("token"), course_id)
       .then((res) => {
-        setCourseData(res.data);
+        const data = res.data.data
+        setCourseData(data);
+
+
         if (
-          res.data.name != undefined &&
-          res.data.detail != undefined &&
-          res.data.type != undefined
+          data.name != undefined &&
+          data.detail != undefined &&
+          data.type != undefined
         ) {
+
           setCourseInfo({
-            name: res.data.name,
-            detail: res.data.detail,
-            type: res.data.type,
+            name: data.name,
+            detail: data.detail,
+            type: data.type,
           });
+
+          
         }
-        if (res.data.room != undefined && res.data.calendar != undefined) {
+        if (data.room != undefined && data.calendar != undefined) {
           setTimeAndRoom({
-            room_id: res.data.room._id,
-            start: res.data.calendar.start,
-            end: res.data.calendar.end,
-            color: res.data.calendar.color,
+            room_id: data.room._id,
+            start: data.calendar.start,
+            end: data.calendar.end,
+            color: data.calendar.color,
           });
         }
       })
@@ -65,7 +71,7 @@ export const CourseProvider = ({ children }) => {
   const CreateContent = () => {
     createTopic(sessionStorage.getItem("token"), course_id)
       .then((res) => {
-        //  console.log(res.data)
+        console.log("CreateContent: ", res.data)
         loadTopic();
       })
       .catch((err) => {
@@ -79,6 +85,7 @@ export const CourseProvider = ({ children }) => {
     listTopicCourse(sessionStorage.getItem("token"), course_id)
       .then((res) => {
         // setConditionData(res.data);
+        console.log("loadTopic: ", res.data)
         setTopicData(res.data);
       })
       .catch((err) => {

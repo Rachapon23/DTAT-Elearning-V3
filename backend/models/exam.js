@@ -9,6 +9,9 @@ const ExamSchema = new mongoose.Schema({
     detail: {
         type: String,
     },
+    enable: {
+        type: Boolean,
+    },
     teacher: {
         type: ObjectId,
         ref:"user",

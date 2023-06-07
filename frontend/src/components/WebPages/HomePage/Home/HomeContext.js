@@ -10,17 +10,20 @@ export const HomeProvider = ({ children }) => {
         course_private: [],
     })
     const [acnounce, setAcnounce] = useState([])
+    const [coursePublic, setCoursePublic] = useState([])
+    const [coursePrivate, setCoursePrivate] = useState([])
 
     const fetchHome = async () => {
         await getHome()
             .then(
                 (res) => {
                     const data = res.data.data
-                    // Error Data is null
-                    
-                    // setHome(data)
-                    // setAcnounce(() => data.acnounce)
-                    // console.log("Data : ",res.data.data)
+                    setHome(data)
+                    // console.log(data)
+                    setAcnounce(() => data.acnounce)
+                    setCoursePublic(() => data.course_public)
+                    setCoursePrivate(() => data.course_private)
+                    // console.log(data.acnounce)
                 }
             )
             .catch(
@@ -32,6 +35,7 @@ export const HomeProvider = ({ children }) => {
 
     useEffect(() => {
         fetchHome()
+        // console.log(coursePrivate)
     }, [])
 
     return (
@@ -40,7 +44,11 @@ export const HomeProvider = ({ children }) => {
                 home,
                 setHome,
                 acnounce,
-                setAcnounce
+                setAcnounce,
+                coursePublic,
+                setCoursePublic,
+                coursePrivate,
+                setCoursePrivate,
             }}>
             {children}
         </HomeContext.Provider >

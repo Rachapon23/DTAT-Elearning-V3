@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./navbarhome.css";
 import LogAndRe from "./LogAndRe";
-import { Button, Modal } from "antd";
+import { Avatar, Button, Col, Modal, Row, Popover, Typography, Divider, Menu } from "antd";
 import { BarsOutlined } from "@ant-design/icons";
+
+const { Title, Text } = Typography
 
 const NavBarHome = () => {
   const [openDrop, setOpenDrop] = useState(false);
@@ -10,6 +12,7 @@ const NavBarHome = () => {
   const [bg, setBg] = useState("");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+
   const showModal = () => {
     setOpen(true);
     setOpenDrop(!openDrop);
@@ -67,6 +70,96 @@ const NavBarHome = () => {
   };
   window.addEventListener("scroll", handlechange);
 
+  const checkLogedin = () => {
+    if (sessionStorage.getItem("token")) return true
+    return false
+  }
+
+  const renderProfile = () => {
+    const rowOffset = { paddingInlineStart: "6%" }
+
+    const handleMouseOverandOut = (e) => {
+      console.log("JJJJ")
+      if (!e?.type) return
+      
+      switch (e?.type) {
+        case "mouseover":
+          e.target.style.backgroundColor = "rgba(230, 230, 230, 0.9)";
+          break
+        case "mouseleave":
+          e.target.style.backgroundColor = "rgba(230, 230, 230, 0)";
+          break
+        default:
+          return
+      }
+    }
+
+    return (
+      <Popover
+        placement="bottomRight"
+        content={
+          <Row style={{ width: "150px", }}>
+            <Col flex={"auto"}>
+
+              <Row style={{ ...rowOffset }}>
+                <Text strong={false}>
+                  Signed in as
+                </Text>
+              </Row>
+              <Row style={{ ...rowOffset }}>
+                <Title level={5}>
+                  {sessionStorage.getItem("firstname")}
+                </Title>
+              </Row>
+
+              <Divider style={{ marginTop: "5%", marginBottom: "5%" }} />
+              <Row style={{ ...rowOffset }}>
+                Role as
+              </Row>
+              <Row style={{ ...rowOffset }}>
+                <Title level={5}>
+                  {sessionStorage.getItem("role").charAt(0).toUpperCase() + sessionStorage.getItem("role").slice(1)}
+                </Title>
+              </Row>
+              <Divider style={{ marginTop: "5%", marginBottom: "5%" }} />
+
+              <Row
+                onMouseOver={handleMouseOverandOut}
+                onMouseLeave={handleMouseOverandOut}
+                style={{
+                  ...rowOffset,
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  touchAction: "inherit"
+                }}
+                onClick={() => {
+                  sessionStorage.clear()
+                  window.location.reload()
+                }}
+              >
+                Log out
+              </Row>
+
+            </Col>
+          </Row>
+        }
+        trigger="click"
+      >
+        <Avatar
+          style={{
+            cursor: "pointer",
+            paddingBottom: "0.5%",
+            verticalAlign: 'middle',
+          }}
+          size="large"
+        >
+          {sessionStorage.getItem("firstname").substring(0, 1)}
+        </Avatar>
+      </Popover>
+
+    )
+  }
+
   return (
     <div className="nav-home">
       <div className={`full-screen ${bg}`}>
@@ -75,7 +168,7 @@ const NavBarHome = () => {
           <a className="a-nav" href="/">
             Home
           </a>
-          <a className="a-nav" href="/student/home">
+          <a className="a-nav" href="/student/page/home">
             Public Course
           </a>
           <a className="a-nav" href="/teacher/page/home">
@@ -84,9 +177,23 @@ const NavBarHome = () => {
           <a className="a-nav" href="/admin/page/home">
             Contact
           </a>
-          <button className={"btn-login"} onClick={showModal}>
-            Login
-          </button>
+          {
+            checkLogedin() ?
+              (
+                <a className="a-nav">
+                  {
+                    renderProfile()
+                  }
+                </a>
+              )
+              :
+              (
+                <button className={"btn-login"} onClick={showModal}>
+                  Login
+                </button>
+              )
+
+          }
           <div className="toggle_btn">
             <span onClick={() => setOpenDrop(!openDrop)}>
               <BarsOutlined />
@@ -127,9 +234,9 @@ const NavBarHome = () => {
       <Modal
         className="modal-ant"
         style={{
-          top:100,
-          left:0,
-          right:0,
+          top: 100,
+          left: 0,
+          right: 0,
         }}
         open={open}
         // width={1500}
@@ -141,7 +248,7 @@ const NavBarHome = () => {
       >
         <LogAndRe />
       </Modal>
-    </div>
+    </div >
   );
 };
 

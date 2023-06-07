@@ -11,7 +11,7 @@ const CourseSchema = new mongoose.Schema(
     detail: {
       type: String,
     },
-    type: {
+    type: { // true -> public, false -> private
       type: Boolean,
     },
     video: {
@@ -30,14 +30,16 @@ const CourseSchema = new mongoose.Schema(
       type: ObjectId,
       ref: "users",
     },
-    // condition: [{
-    //   type: ObjectId,
-    //   ref: "condition",
-    // }],
-    // topic: [{
-    //   type: ObjectId,
-    //   ref: "topic",
-    // }],
+    // ------------------
+    condition: [{
+      type: ObjectId,
+      ref: "condition",
+    }],
+    topic: [{
+      type: ObjectId,
+      ref: "topic",
+    }],
+    // ------------------
     room: {
       type: ObjectId,
       ref: "room",
@@ -50,10 +52,12 @@ const CourseSchema = new mongoose.Schema(
       type: ObjectId,
       ref: "exam",
     },
-    // activity: [{
-    //   type: ObjectId,
-    //   ref: "activity",
-    // }],
+    // ------------------
+    activity: [{
+      type: ObjectId,
+      ref: "activity",
+    }],
+    // ------------------
   },
   { timestamps: true }
 );

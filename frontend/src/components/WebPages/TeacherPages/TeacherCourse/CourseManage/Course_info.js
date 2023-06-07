@@ -26,6 +26,8 @@ const { TextArea } = Input;
 const Course_info = () => {
   const { courseInfo, setCourseInfo } = useContext(CourseContext);
 
+  console.log("courseInfo: ",courseInfo)
+
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
 

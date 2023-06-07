@@ -1,5 +1,9 @@
 const Activity = require('../models/activity')
 const Exam = require('../models/exam')
+const Quiz = require('../models/quiz')
+
+const { validateQuery } = require('./util')
+
 // POST: /create-activity
 exports.createActivity = async (req, res) => {
     try {
@@ -22,6 +26,56 @@ exports.createActivity = async (req, res) => {
     }
 }
 
+// GET: /list-activity?search=:?search&field=:field&fetch=:fetch&select=:select
+exports.listActivity = async (req, res) => {
+    const allowField = ["user", "course", "ans"]
+    const allowedSearch = ["user", "course", "ans"]
+    const allowedPops = ["user", "course", "exam", "plant", "_id", "name", "exam -_id", "ans", "image"]
+    const allowedPropsField = ["path", "select", "populate"]
+    const allowedSelect = ["ans"]
+    const allowedFetch = ["-ans", "-__v"]
+    try {
+        const result = validateQuery(
+            "get",
+            "list activity",
+            req?.user?.role,
+            null,
+            req?.user?.role === "admin",
+            null,
+            {
+                fields: req?.query?.field,
+                fetchs: req?.query?.fetch,
+                selects: req?.query?.selects,
+                search: req?.params?._id ? req?.params?._id : req?.query?.search,
+                subPops: req?.query?.pops,
+            },
+            {
+                fields: allowField,
+                search: allowedSearch,
+                subPops: {
+                    method: allowedPropsField,
+                    fields: allowedPops,
+                },
+                selects: allowedSelect,
+                fetchs: allowedFetch,
+
+            },
+            false
+        )
+        // console.log(result)
+        if (!result.success) return res.status(result.code).json({ error: result.message })
+
+        const activity_course = await Activity
+            .find(result.options.searchParams, result.options.fetchParams)
+            .populate(result.options.fieldParams ? result.options.fieldParams : result.options.subPropsParams)
+            .select(result.options.selectParams)
+        return res.json({ data: activity_course })
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Uncexpected error on list activity" })
+    }
+}
 
 
 // GET: /list-activity/course/:id
@@ -33,7 +87,7 @@ exports.listActivityCourse = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(500).json({ error: "Uncexpected error on create activity" })
+        res.status(500).json({ error: "Uncexpected error on list activity by course ID" })
     }
 }
 
@@ -50,7 +104,7 @@ exports.updateActivityProgress = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(500).json({ error: "Uncexpected error on create activity" })
+        res.status(500).json({ error: "Uncexpected error on update activity" })
     }
 }
 
@@ -65,7 +119,7 @@ exports.getActivityProgress = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(500).json({ error: "Uncexpected error on create activity" })
+        res.status(500).json({ error: "Uncexpected error on get activity progress" })
     }
 }
 
@@ -112,7 +166,7 @@ exports.updateActivityScore = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ error: "Uncexpected error on create activity" })
+        return res.status(500).json({ error: "Uncexpected error on update activity score" })
     }
 }
 
@@ -120,76 +174,149 @@ exports.updateActivityScore = async (req, res) => {
 exports.getActivityScore = async (req, res) => {
     try {
         const activity = await Activity.findOne({ _id: req?.params?.id }).select("score_value -_id")
-        
+
         return res.json({ data: activity });
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ error: "Uncexpected error on create activity" })
+        return res.status(500).json({ error: "Uncexpected error on get activity score" })
     }
 }
 
-
-
-
-// GET: /get-activity/:id/:field
+// GET: /get-activity/:id?field=:field
 exports.getActivity = async (req, res) => {
+    const allowField = ["user", "course", "ans"]
+    const allowedSearch = ["user", "course", "ans"]
+    const allowedPops = ["user", "course", "exam", "plant", "_id", "name", "exam -_id", "ans", "image"]
+    const allowedPropsField = ["path", "select", "populate"]
+    const allowedSelect = ["ans"]
+    const allowedFetch = ["-ans", "-__v"]
     try {
-        const field = req?.params?.field
-        const activity = await Activity.findOne({ _id: req?.params?.id }).select(`${field} -_id`)
-        
-        
-        if(activity[`${field}`] === undefined) return res.status(404).json({ error: `Cannot find field name ${field}` })
-        return res.json({ data: activity });
+        const result = validateQuery(
+            "get",
+            "get activity",
+            req?.user?.role,
+            null,
+            req?.user?.role === "admin",
+            null,
+            {
+                fields: req?.query?.field,
+                fetchs: req?.query?.fetch,
+                selects: req?.query?.selects,
+                search: req?.params?._id ? req?.params?._id : req?.query?.search,
+                subPops: req?.query?.pops,
+            },
+            {
+                fields: allowField,
+                search: allowedSearch,
+                subPops: {
+                    method: allowedPropsField,
+                    fields: allowedPops,
+                },
+                selects: allowedSelect,
+                fetchs: allowedFetch,
+
+            },
+            false
+        )
+        // console.log(result)
+        if (!result.success) return res.status(result.code).json({ error: result.message })
+
+        const activity_course = await Activity
+            .findOne(result.options.searchParams, result.options.fetchParams)
+            .populate(result.options.fieldParams ? result.options.fieldParams : result.options.subPropsParams)
+            .select(result.options.selectParams)
+        return res.json({ data: activity_course })
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ error: "Uncexpected error on create activity" })
+        return res.status(500).json({ error: "Uncexpected error on get activity by ID" })
     }
 }
 
-
-// =============================================================
-exports.sendQuizStudent = async (req, res) => {
+// PUT: /update-activity/:id/send-exam
+exports.sendExam = async (req, res) => {
     try {
-        const {
-            ans,
-            quiz,
-        } = req.body
-        const { fisrtname, user_id } = req.user
 
-        const quize = await Quiz.findOne({ _id: quiz })
-            .populate('course')
-            .exec()
+        res.send({ data: "You answer has been send" })
+        const { answer } = req?.body
+        const { user_id } = req.user
+        const activity_id = req?.params?.id
+
+        const database_activity = await Activity.findOne({ _id: activity_id }, "course -_id").populate({
+            path: "course",
+            select: "exam",
+            populate: {
+                path: "exam",
+                select: "quiz -_id",
+            }
+        })
+        const quiz = database_activity?.course?.exam?.quiz
+        console.log(database_activity)
+
+        if (!quiz) return console.log("Cannot find quiz for this activity")
+
+        const quizList = await Quiz.find({ _id: quiz }, "")
+
+        // console.log(quizList)
 
         let totalScore = 0;
-        for (let i = 0; i < ans.length; i++) {
-            if (quize.question[i].ans == ans[i]) {
+        const answerKeys = Object.keys(answer)
+        console.log(answer)
+        for (let i = 0; i < answerKeys.length; i++) {
+            // console.log(quizList[i].answer, answer[`${quizList[i]._id}`])
+            if (quizList[i].answer == answer[`${quizList[i]._id}`]) {
+
                 totalScore++;
             }
         }
+        // console.log(activity_id)
 
-        const activity = await studentActivity.findOneAndUpdate(
+        // console.log(await Activity.findOne({_id: activity_id}))
+
+        const activity = await Activity.findOneAndUpdate(
             {
-                coursee: quize.course._id,
-                user: user_id
-            }, {
-            score: totalScore,
-            max_score: quize.question.length,
-            ans: ans,
-        }
-        ).exec()
-
-
+                _id: activity_id,
+                user: user_id,
+            },
+            {
+                score_value: totalScore,
+                score_max: answerKeys.length,
+                ans: answer,
+            }
+        )
+        if (!activity) return console.log("Cannot find activity to update")
         // console.log(activity)
-
-        res.send(activity)
     }
     catch (err) {
-        console.log("fail to list score");
-        res.status(500).json({ error: "fail to sendQuizStudent" })
+        console.log(err);
+        return res.status(500).json({ error: "Uncexpected error on update activity send exam" })
     }
 }
+
+exports.updateActivityResult = async (req, res) => {
+    // TODO: implement update result of activity
+    try {
+        const activity_id = req?.params?.id
+        const { user, result } = req?.body
+        console.log("find this -> ",activity_id, user)
+
+        if (!activity_id) return res.status(404).json({ error: "Activity not found" })
+
+        const activity = await Activity.findOneAndUpdate({ _id: activity_id, user: user }, { result: result }, { new: true })
+        
+
+        if (!activity) return res.status(404).json({ error: "Activity of user not found" })
+        return res.json({ data: activity })
+
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Uncexpected error on update activity result" })
+    }
+}
+
+// =============================================================
 
 exports.listScore = async (req, res) => {
     try {

@@ -40,9 +40,9 @@ import Course_topic_children from "./Course_topic_children";
 moment.locale("th");
 
 const Course_main = () => {
-  const { courseInfo, timeAndroom, loadTopic,topicData, setTimeAndRoom, course_id } =
+  const { courseInfo, timeAndroom, loadTopic, topicData, setTimeAndRoom, course_id } =
     useContext(CourseContext);
-    
+
   const [currentPage, setCurrentPage] = useState(0);
 
   const [step, setStep] = useState([]);
@@ -50,53 +50,53 @@ const Course_main = () => {
   const pageList = courseInfo.type
     ? [<Course_info />, <Course_topic />, <Course_finished />]
     : [
-        <Course_info />,
-        <Course_Room />,
-        <Course_condition />,
-        <Course_topic />,
-        <Course_finished />,
-      ];
+      <Course_info />,
+      <Course_Room />,
+      <Course_condition />,
+      <Course_topic />,
+      <Course_finished />,
+    ];
 
   const [currentDisplay, setCurrentDisplay] = useState(pageList);
 
   useEffect(() => {
     courseInfo.type
       ? setStep([
-          {
-            title: "Course Info",
-            content: "First-content",
-          },
-          {
-            title: "topic",
-            content: "second-content",
-          },
-          {
-            title: "Finished",
-            content: "Last-content",
-          },
-        ])
+        {
+          title: "Course Info",
+          content: "First-content",
+        },
+        {
+          title: "topic",
+          content: "second-content",
+        },
+        {
+          title: "Finished",
+          content: "Last-content",
+        },
+      ])
       : setStep([
-          {
-            title: "Course Info",
-            content: "First-content",
-          },
-          {
-            title: "Time & Room",
-            content: "second-content",
-          },
-          {
-            title: "Manage Plant",
-            content: "third-content",
-          },
-          {
-            title: "topic",
-            content: "fourth-content",
-          },
-          {
-            title: "Finished",
-            content: "Last-content",
-          },
-        ]);
+        {
+          title: "Course Info",
+          content: "First-content",
+        },
+        {
+          title: "Time & Room",
+          content: "second-content",
+        },
+        {
+          title: "Manage Plant",
+          content: "third-content",
+        },
+        {
+          title: "topic",
+          content: "fourth-content",
+        },
+        {
+          title: "Finished",
+          content: "Last-content",
+        },
+      ]);
     setCurrentDisplay(pageList);
   }, [courseInfo.type]);
 
@@ -248,9 +248,9 @@ const Course_main = () => {
       </Row>
 
       {timeAndroom.start !== "" &&
-      timeAndroom.end !== "" &&
-      step[1].title === "Time & Room" &&
-      currentPage === 1 ? (
+        timeAndroom.end !== "" &&
+        step[1].title === "Time & Room" &&
+        currentPage === 1 ? (
         <Row className="course-main-for-calendar">
           <Card className="card-calendar">
             <Row justify="center">
@@ -312,23 +312,34 @@ const Course_main = () => {
         <></>
       )}
 
-      {topicData.length !== 0 &&
-      step[3]?.title === "topic" &&
-      currentPage === 3 ? (
-        <>
-          {topicData.map((item, index) => (
-            <Course_topic_children
-              nextState={nextState}
-              setNextState={setNextState}
-              key={item._id}
-              item={item}
-              index={index}
-            />
-          ))}
-        </>
-      ) : (
-        <></>
-      )}
+      {
+        topicData.length !== 0 &&
+          (step[3]?.title === "topic" || step[1]?.title === "topic") &&
+          (currentPage === 3 || currentPage === 1)  ?
+          (
+            <>
+              {
+                topicData.map((item, index) => (
+                  <Course_topic_children
+                    nextState={nextState}
+                    setNextState={setNextState}
+                    key={item._id}
+                    item={item}
+                    index={index}
+                  />
+                ))
+              }
+            </>
+          )
+          :
+          (
+            <>
+              {
+                console.log(currentPage)
+              }
+            </>
+          )
+      }
 
       <Row className="course-main-btn-bottom">
         <Col flex={"auto"}>

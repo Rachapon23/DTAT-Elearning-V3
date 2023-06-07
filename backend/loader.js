@@ -136,7 +136,7 @@ exports.loadData = async () => {
 
     // User
     // Admin
-    await User.findOneAndUpdate(
+    const admin1 = await User.findOneAndUpdate(
         { employee: "6100319" },
         {
             employee: "6100319",
@@ -192,7 +192,24 @@ exports.loadData = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
-    // coment for change model 
+    const student2 = await User.findOneAndUpdate(
+        { employee: "6100999" },
+        {
+            employee: "6100999",
+            department: await Department.findOne({ id: "919323" }).select("_id"),
+            firstname: "Jhon",
+            lastname: "Marstion",
+            profile: null,
+            role: await Role.findOne({ name: "student" }).select("_id"),
+            plant: await Plant.findOne({ name: "B" }).select("_id"),
+            verified: false,
+            enable: true,
+            email: "bstudent@g.com",
+            password: await bcrypt.hash("123456", await bcrypt.genSalt(10)),
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
     // Condition
     // await Condition.findOneAndUpdate(
     //     { _id: "64264e62440e75505b4d5032" },
@@ -247,29 +264,28 @@ exports.loadData = async () => {
     //     { upsert: true, new: true, setDefaultsOnInsert: true }
     // )
 
-    // const course2 = await Course.findOneAndUpdate(
-    //     { name: "Introduction of Docker" },
-    //     {
-    //         name: "Introduction of Docker",
-    //         detail: "Introduction of Docker Detail ",
-    //         room: await Room.findOne({ name: "Technical Skill 2" }).select("_id"),
-    //         image: {
-    //             original_name: "course-pic1",
-    //             name: "file-1684511836883-779460665.png",
-    //             url: `/course/file-1684511836883-779460665.png`,
-    //         },
-    //         video: 2,
-    //         type: true,
-    //         enabled: true,
-    //         teacher: await User.findOne({ employee: "6100319" }),
-    //         condition: [
-    //             await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
-    //             await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
-    //             await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
-    //         ]
-    //     },
-    //     { upsert: true, new: true, setDefaultsOnInsert: true }
-    // )
+    // Course
+    const course1 = await Course.findOneAndUpdate(
+        { _id: "64264f3c7e51c155540e7750" },
+        {
+            _id: "64264f3c7e51c155540e7750",
+            name: "First load course",
+            detail: "First load course",
+            room: await Room.findOne({ name: "Technical Skill 3" }).select("_id"),
+            image: null,
+            video: 2,
+            type: true,
+            enabled: true,
+            teacher: await User.findOne({ employee: "6100319" }),
+            condition: [
+                await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
+            ],
+            exam: null,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
 
     // const course3 = await Course.findOneAndUpdate(
     //     { name: "Basic of IoT" },
@@ -290,43 +306,65 @@ exports.loadData = async () => {
     //     { upsert: true, new: true, setDefaultsOnInsert: true }
     // )
 
-    // const course4 = await Course.findOneAndUpdate(
-    //     { name: "Arduino" },
-    //     {
-    //         name: "Arduino",
-    //         detail: "Arduino Detail ",
-    //         room: await Room.findOne({ name: "Technical Skill 1" }).select("_id"),
-    //         video: 2,
-    //         type: false,
-    //         enabled: false,
-    //         teacher: await User.findOne({ employee: "6100319" }),
-    //         condition: [
-    //             await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
-    //             await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
-    //             await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
-    //         ]
-    //     },
-    //     { upsert: true, new: true, setDefaultsOnInsert: true }
-    // )
+    const course3 = await Course.findOneAndUpdate(
+        { name: "Basic of IoT" },
+        {
+            name: "Basic of IoT",
+            detail: "Basic of IoT Detail ",
+            room: await Room.findOne({ name: "Technical Skill 1" }).select("_id"),
+            image: null,
+            video: 2,
+            type: true,//false,
+            enabled: true,
+            teacher: await User.findOne({ employee: "6100319" }),
+            condition: [
+                await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
+            ]
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
 
-    // const course5 = await Course.findOneAndUpdate(
-    //     { name: "Software Engineer" },
-    //     {
-    //         name: "Software Engineer",
-    //         detail: "Software Engineer Detail ",
-    //         room: await Room.findOne({ name: "Technical Skill 5" }).select("_id"),
-    //         video: 2,
-    //         type: false,
-    //         enabled: true,
-    //         teacher: await User.findOne({ employee: "6100319" }),
-    //         condition: [
-    //             await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
-    //             await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
-    //             await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
-    //         ]
-    //     },
-    //     { upsert: true, new: true, setDefaultsOnInsert: true }
-    // )
+    const course4 = await Course.findOneAndUpdate(
+        { name: "Arduino" },
+        {
+            name: "Arduino",
+            detail: "Arduino Detail ",
+            room: await Room.findOne({ name: "Technical Skill 1" }).select("_id"),
+            image: null,
+            video: 2,
+            type: true,//false,
+            enabled: false,
+            teacher: await User.findOne({ employee: "6100319" }),
+            condition: [
+                // await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
+            ]
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    const course5 = await Course.findOneAndUpdate(
+        { name: "Software Engineer" },
+        {
+            name: "Software Engineer",
+            detail: "Software Engineer Detail ",
+            room: await Room.findOne({ name: "Technical Skill 5" }).select("_id"),
+            image: null,
+            video: 2,
+            type: true,//false,
+            enabled: true,
+            teacher: await User.findOne({ employee: "6100319" }),
+            condition: [
+                await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
+                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
+            ]
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
 
     // Quiz
     const quiz1 = await Quiz.findOneAndUpdate(
@@ -377,6 +415,22 @@ exports.loadData = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
+    const quiz4 = await Quiz.findOneAndUpdate(
+        { question: "What is this?" },
+        {
+            question: "What is this?",
+            choices: [
+                "What",
+                "is",
+                "this",
+                "?"
+            ],
+            image: null,
+            answer: 3,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
     // Exam
     const exam1 = await Exam.findOneAndUpdate(
         { name: "Introduction of Docker Final test" },
@@ -389,7 +443,8 @@ exports.loadData = async () => {
                 quiz2,
                 quiz3,
             ],
-            // course: course2,
+            course: course2,
+            enable: true,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -403,11 +458,12 @@ exports.loadData = async () => {
             detail: "Basic of IoT Final test Detail ",
             teacher: await User.findOne({ employee: "6100319" }),
             quiz: [
-                // await Quiz.findOne({ _id: "642ce32ed296e5733ca593df" }),
+                await Quiz.findOne({ _id: "647557df5f895e038b54e555" }),
                 // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e0" }),
                 // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e1" }),
             ],
-            // course: course3,
+            course: course3,
+            enable: true,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -425,7 +481,8 @@ exports.loadData = async () => {
                 // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e0" }),
                 // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e1" }),
             ],
-            // course: course4,
+            course: course4,
+            enable: true,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -443,7 +500,8 @@ exports.loadData = async () => {
                 // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e0" }),
                 // await Quiz.findOne({ _id: "642ce32ed296e5733ca593e1" }),
             ],
-            // course: course5,
+            course: course5,
+            enable: true,
 
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -452,92 +510,130 @@ exports.loadData = async () => {
     // course5.save()
 
     // Activity
-//    const activity1 =  await Activity.findOneAndUpdate(
-//         { course: course1 },
-//         {
-//             ans: null,
-//             progress: 0,
-//             completed: false,
-//             socre_max: null,
-//             score_value: null,
-//             user: student1,
-//             course: course1,
-//             activity: null,
+   const activity1 =  await Activity.findOneAndUpdate(
+        { course: course1 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            result: 0,
+            score_max: null,
+            score_value: null,
+            user: student1,
+            course: course1,
 
-//         },
-//         { upsert: true, new: true, setDefaultsOnInsert: true }
-//     )
-//     course1.activity = activity1
-//     course1.save()
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course1.activity = activity1
+    course1.save()
 
-//     const activity2 = await Activity.findOneAndUpdate(
-//         { course: course2 },
-//         {
-//             ans: null,
-//             progress: 0,
-//             completed: false,
-//             socre_max: null,
-//             score_value: null,
-//             user: student1,
-//             course: course2,
+    const activity2 = await Activity.findOneAndUpdate(
+        { course: course2 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            result: 0,
+            score_max: null,
+            score_value: null,
+            user: admin1,
+            course: course2,
 
-//         },
-//         { upsert: true, new: true, setDefaultsOnInsert: true }
-//     )
-//     course2.activity = activity2
-//     course2.save()
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course2.activity = activity2
+    course2.save()
 
-//     const activity3 = await Activity.findOneAndUpdate(
-//         { course: course3 },
-//         {
-//             ans: null,
-//             progress: 0,
-//             completed: false,
-//             socre_max: null,
-//             score_value: null,
-//             user: student1,
-//             course: course3,
+    const activity3 = await Activity.findOneAndUpdate(
+        { course: course3 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            result: 0,
+            score_max: null,
+            score_value: null,
+            user: student1,
+            course: course3,
 
-//         },
-//         { upsert: true, new: true, setDefaultsOnInsert: true }
-//     )
-//     course3.activity = activity3
-//     course3.save()
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course3.activity = activity3
+    course3.save()
 
-//     const activity4 = await Activity.findOneAndUpdate(
-//         { course: course4 },
-//         {
-//             ans: null,
-//             progress: 0,
-//             completed: false,
-//             socre_max: null,
-//             score_value: null,
-//             user: student1,
-//             course: course4,
+    const activity4 = await Activity.findOneAndUpdate(
+        { course: course4 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            result: 0,
+            score_max: null,
+            score_value: null,
+            user: student1,
+            course: course4,
 
-//         },
-//         { upsert: true, new: true, setDefaultsOnInsert: true }
-//     )
-//     course4.activity = activity4
-//     course4.save()
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course4.activity = activity4
+    course4.save()
 
-//     const activity5 = await Activity.findOneAndUpdate(
-//         { course: course5 },
-//         {
-//             ans: null,
-//             progress: 0,
-//             completed: false,
-//             socre_max: null,
-//             score_value: null,
-//             user: student1,
-//             course: course5,
+    const activity5 = await Activity.findOneAndUpdate(
+        { course: course5 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            result: 0,
+            score_max: null,
+            score_value: null,
+            user: student1,
+            course: course5,
 
-//         },
-//         { upsert: true, new: true, setDefaultsOnInsert: true }
-//     )
-//     course5.activity = activity5
-//     course5.save()
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course5.activity = activity5
+    course5.save()
     
-    
+    const activity6 =  await Activity.findOneAndUpdate(
+        { course: course2, user: student2 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            result: 0,
+            score_max: null,
+            score_value: null,
+            user: student2,
+            course: course2,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course2.activity.push(activity6) 
+    course2.save()
+
+    const activity7 =  await Activity.findOneAndUpdate(
+        { course: course3, user: student2 },
+        {
+            ans: null,
+            progress: 0,
+            completed: false,
+            result: 0,
+            score_max: null,
+            score_value: null,
+            user: student2,
+            course: course3,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+    course3.activity.push(activity7) 
+    course3.save()
 
 }

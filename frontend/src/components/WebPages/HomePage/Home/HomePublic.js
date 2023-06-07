@@ -1,14 +1,37 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./content.css";
 import CardCourse from "../../../Card/CardCourse";
-import { Col, Row } from "antd";
+import { Col, Row, Image } from "antd";
+import { HomeContext } from './HomeContext';
+
+const GROUP_NUMBER = 3
 
 const HomePublic = () => {
-  const Data = {
-    img: "",
-    title: "",
-    description: "",
-  };
+
+  const { coursePublic } = useContext(HomeContext)
+
+  const renderContent = (index) => {
+    if (index % GROUP_NUMBER !== 0) return null
+
+    return (
+      <div className="row-content">
+        {
+          coursePublic.slice(index, index + GROUP_NUMBER).map((data) => (
+            <div className="col-content">
+              <CardCourse
+                data={{
+                  name: data?.name,
+                  detail: data?.detail,
+                  image: data?.image?.url
+                }}
+              />
+            </div>
+          ))
+        }
+      </div>
+    )
+
+  }
 
   return (
     <div className="content-course">
@@ -21,26 +44,11 @@ const HomePublic = () => {
       </div>
       <div className="">
         <div className="row-content">
-          <div className="col-content">
-            <CardCourse Data={Data} />
-          </div>
-          <div className="col-content">
-            <CardCourse Data={Data} />
-          </div>
-          <div className="col-content">
-            <CardCourse Data={Data} />
-          </div>
-        </div>
-        <div className="row-content">
-          <div className="col-content none-dis">
-            <CardCourse Data={Data} />
-          </div>
-          <div className="col-content none-dis">
-            <CardCourse Data={Data} />
-          </div>
-          <div className="col-content none-dis">
-            <CardCourse Data={Data} />
-          </div>
+          {
+            coursePublic.map((_, index) => (
+              renderContent(index)
+            ))
+          }
         </div>
       </div>
       <div className="btn-navigate">

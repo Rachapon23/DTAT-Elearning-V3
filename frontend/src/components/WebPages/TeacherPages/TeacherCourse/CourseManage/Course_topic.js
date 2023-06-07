@@ -29,14 +29,25 @@ import {
 
 //course Context
 import { CourseContext } from "./CourseContext";
+import Course_topic_children from "./Course_topic_children";
 
 const Course_topic = () => {
-  const { course_id, CreateContent, topicData } = useContext(CourseContext);
+  const { course_id, CreateContent, topicData, setTopicData } = useContext(CourseContext);
 
   return (
     <div style={{ paddingTop: "2%" }}>
       <Row>
-        <Col span={24}>{topicData.length === 0 ? <Empty /> : <></>}</Col>
+        <Col span={24}>
+          {
+            topicData.length === 0 ?
+              <Empty />
+              :
+              null
+              // topicData.map((item, index) => (
+              //   <Course_topic_children index={index} item={item} nextState={topicData} setNextState={setTopicData} />
+              // ))
+          }
+        </Col>
         <Col className="col-card-add">
           <Card className="card-Add">
             <Row align={"middle"} justify={"center"} style={{ height: "100%" }}>
