@@ -226,7 +226,8 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         setHasChanged(true)
     }, [inputContentData])
 
-    const handleChangeChoiceAnswer = useCallback((card_index, data) => {
+    const handleChangeChoiceAnswer = useCallback((card_id, card_index, data) => {
+        // console.log(inputContentData, card_index)
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: inputContentData[card_index]?.question,

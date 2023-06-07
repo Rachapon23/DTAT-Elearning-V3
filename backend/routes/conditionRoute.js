@@ -7,7 +7,7 @@ const { checkUser, checkTeacher } = require('../middleware/middleware')
 const {
     deleteCondition,
     createCondition,
-    listCondition,
+    listConditionCourse,
 } = require('../controllers/conditionController')
 
 
@@ -15,7 +15,7 @@ const {
 // teacher
 router.post("/create-condition/:id", checkUser, checkTeacher, createCondition);
 router.put("/remove-condition/:id", checkUser, checkTeacher, deleteCondition);
-
+router.get("/list-condition/course/:id", checkUser, checkTeacher, listConditionCourse);
 
 
 

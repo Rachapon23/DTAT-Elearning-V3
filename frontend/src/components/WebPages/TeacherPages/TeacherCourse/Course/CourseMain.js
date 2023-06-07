@@ -23,11 +23,11 @@ import ContentCourse from "./ContentCourse";
 import Finished from "./Finished";
 
 // function Update : PUT
-import { updateCourseInfo } from "../../../../../function/Teacher/course_master";
+import { updateCourseInfo } from "../../../../../function/Teacher/course_update";
 // fucntion : GET
 import { getCourse } from "../../../../../function/Teacher/course";
 // function :POST
-import { updateCoursetimeAndRoom } from "../../../../../function/Teacher/course_master";
+import { updateCoursetimeAndRoom } from "../../../../../function/Teacher/course_update";
 
 import "./course.css";
 const { Header, Sider, Content } = Layout;

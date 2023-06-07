@@ -1,19 +1,26 @@
 const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Schema;
 
 const TopicSchema = new mongoose.Schema({
-    name: {
+    title: {
         type: String,
     },
     detail: {
         type: String,
     },
     sub_content: {
-        type: Number,
+        type: [],
     },
-    link: [{}],
+    link: {
+        type: [{}]
+    },
     file: {
-        type: []
-    }
-}, {timestamps: true});
+        type: [],
+    },
+    course: {
+        type: ObjectId,
+        ref: "course"
+    },
+}, { timestamps: true });
 
 module.exports = Topic = mongoose.model("topic", TopicSchema);

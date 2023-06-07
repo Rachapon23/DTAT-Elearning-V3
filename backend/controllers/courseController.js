@@ -66,7 +66,7 @@ exports.createCourse = async (req, res) => {
 exports.getCourse = async (req, res) => {
     const allowField = []
     const allowedSearch = ["_id"]
-    const allowedProps = ["condition", "plant",  "plant maximum"]
+    const allowedProps = ["condition", "plant", "plant maximum"]
     const allowedPropsField = ["path", "populate", "select"]
     const allowedSelect = []
     const allowedFetch = ["name", "detail", "image", "condition"]
@@ -439,19 +439,21 @@ exports.listCourseGraphData = async (req, res) => {
                 //   else return 0
                 // }))
 
-                // console.log(searchedCourse.map((item) => item.activity.map((item) => item.user.plant.name)))
-                const payload = searchedCourse.map(
-                    (item) => (
-                        {
-                            name: item.name,
-                            plant: item.condition.map((citem) => citem.plant.name),
-                            plant_amount: item.condition.map((amount) => amount.maximum),
-                            plant_current: item.condition.map((citem) => item.activity.map((aitem) => citem.plant.name === aitem.user.plant.name && aitem.completed ? 1 : 0)[0]),
-                            current: item.activity.map((aitem) => aitem.completed ? 1 : 0)[0],
-                            maximum: item.condition.map((amount) => amount.maximum).reduce((prev, curr) => prev + curr, 0),
-                        }
+                // console.log(searchedCourse)
+                const payload = searchedCourse
+                    .filter((fitem) => fitem.condition)
+                    .map(
+                        (item) => (
+                            {
+                                name: item.name,
+                                plant: item.condition?.map((citem) => citem.plant.name),
+                                plant_amount: item.condition?.map((amount) => amount.maximum),
+                                plant_current: item.condition?.map((citem) => item.activity.map((aitem) => citem.plant.name === aitem.user.plant.name && aitem.completed ? 1 : 0)[0]),
+                                current: item.activity.map((aitem) => aitem.completed ? 1 : 0)[0],
+                                maximum: item.condition.map((amount) => amount.maximum).reduce((prev, curr) => prev + curr, 0),
+                            }
+                        )
                     )
-                )
                 console.log(payload)
                 return res.json({ data: payload });
             case "teacher":

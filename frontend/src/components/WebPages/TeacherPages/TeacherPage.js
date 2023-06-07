@@ -85,8 +85,8 @@ const App = () => {
                         <Courses />
                     </TeacherCourseProvider>
                 );
-            case 'create-course':
-                return <CourseCreate />;
+            // case 'create-course':
+            //     return <CourseCreate />;
             case 'list-exam':
                 return <Exames />;
             case 'create-exam':

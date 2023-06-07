@@ -33,32 +33,32 @@ const Courses = () => {
 	const [sortedInfo, setSortedInfo] = useState({});
 	const [hasChanged, setHasChanged] = useState(false);
 
-	const {courses} = useContext(TeacherCourseContext)
-	// const [courses, setCourses] = useState(
-	// 	null |
-	// 	[
-	// 		{
-	// 			image: {
-	// 				original_name: "",
-	// 				name: "",
-	// 			},
-	// 			_id: "",
-	// 			condition: [],
-	// 			createdAt: "",
-	// 			detail: "",
-	// 			enabled: null,
-	// 			name: "",
-	// 			room: "",
-	// 			topic: [],
-	// 			type: null,
-	// 			updatedAt: "",
-	// 			video: null,
-	// 			calendar: "",
-	// 			teacher: "",
-	// 			exam: "",
-	// 		},
-	// 	]
-	// );
+	// const {courses} = useContext(TeacherCourseContext)
+	const [courses, setCourses] = useState(
+		null |
+		[
+			{
+				image: {
+					original_name: "",
+					name: "",
+				},
+				_id: "",
+				condition: [],
+				createdAt: "",
+				detail: "",
+				enabled: null,
+				name: "",
+				room: "",
+				topic: [],
+				type: null,
+				updatedAt: "",
+				video: null,
+				calendar: "",
+				teacher: "",
+				exam: "",
+			},
+		]
+	);
 
 	const navigate = useNavigate()
 	// Variable-End -------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -321,20 +321,20 @@ const Courses = () => {
 
 	// Page-Conttoller-End ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	// const fetchCourse = async () => {
-	// 	await listCourse(sessionStorage.getItem("token"))
-	// 		.then((res) => {
-	// 			const data = res.data.data;
-	// 			console.log(data);
-	// 			setCourses(data);
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log(err);
-	// 		});
-	// };
+	const fetchCourse = async () => {
+		await listCourse(sessionStorage.getItem("token"))
+			.then((res) => {
+				const data = res.data.data;
+				console.log(data);
+				setCourses(data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
 
 	useEffect(() => {
-		// fetchCourse();
+		fetchCourse();
 		// renderDisplay()
 		return () => {
 			setHasChanged(false);

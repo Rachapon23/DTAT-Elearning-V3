@@ -78,6 +78,7 @@ const CardContent = ({
 
     const handleRadioChange = (data) => {
         // console.log("ans index:", data?.index)
+        // console.log(actionMode)
         setRadioCurentSelected(data?.index)
         if (previewMode) {
             console.log("you select: ", data?.quiz_id)
