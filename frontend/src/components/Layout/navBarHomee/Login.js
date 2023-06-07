@@ -5,7 +5,7 @@ import { Col, Row } from "antd";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { login } from '../../../function/auth';
 
-const Login = ({ layout, setLayout }) => {
+const Login = ({ layout, setLayout, onClose }) => {
 
   const [inputData, setInputData] = useState({
     employee: "",
@@ -25,6 +25,7 @@ const Login = ({ layout, setLayout }) => {
         sessionStorage.setItem("firstname", user?.firstname)
         sessionStorage.setItem("user_id", user?.user_id)
         sessionStorage.setItem("role", user?.role)
+        onClose(false) 
       })
       .catch((err) => {
         console.log(err.response?.data)

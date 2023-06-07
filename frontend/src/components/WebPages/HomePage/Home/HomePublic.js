@@ -1,14 +1,67 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import "./content.css";
 import CardCourse from "../../../Card/CardCourse";
-import { Col, Row, Image } from "antd";
+import { Col, Row, Image, Modal } from "antd";
 import { HomeContext } from './HomeContext';
+import LogAndRe from "../../../Layout/navBarHomee/LogAndRe";
+import { useNavigate } from "react-router-dom";
 
 const GROUP_NUMBER = 3
+const DEFAULT_DATA = {
+  detail: "Waiting for new course...",
+  image: null,
+  name: "No course available",
+}
+
+const arrayTemplate = new Array(6).fill(false)
 
 const HomePublic = () => {
 
   const { coursePublic } = useContext(HomeContext)
+  const navigate = useNavigate()
+
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const handleNavigate = (navStr, dataStage) => {
+    navigate(navStr, { state: dataStage })
+}
+
+  const checkUserLogin = () => {
+    if (
+      !sessionStorage.getItem("token") ||
+      !sessionStorage.getItem("firstname") ||
+      !sessionStorage.getItem("user_id") ||
+      !sessionStorage.getItem("role")
+    ) {
+      setOpen(true)
+      return false
+    }
+    return true
+
+  }
+
+  const handleClickCourse = (e, data) => {
+    console.log(data?._id)
+    e.target.id = data?._id
+
+    if (!e?.target?.id) return
+    if(!checkUserLogin()) return
+
+    handleNavigate(`/student/page/register-course/${e?.target?.id}`)
+  }
+
+  const handleOk = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setOpen(false);
+    }, 3000);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
 
   const renderContent = (index) => {
     if (index % GROUP_NUMBER !== 0) return null
@@ -16,17 +69,29 @@ const HomePublic = () => {
     return (
       <div className="row-content">
         {
-          coursePublic.slice(index, index + GROUP_NUMBER).map((data) => (
-            <div className="col-content">
-              <CardCourse
-                data={{
-                  name: data?.name,
-                  detail: data?.detail,
-                  image: data?.image?.url
-                }}
-              />
-            </div>
-          ))
+          coursePublic.length > 0 ?
+            (
+              coursePublic.slice(index, index + GROUP_NUMBER).map((data) => (
+                <div className="col-content">
+                  <CardCourse
+                    onClick={(e) => handleClickCourse(e, data)}
+                    data={{
+                      name: data?.name,
+                      detail: data?.detail,
+                      image: data?.image?.url
+                    }}
+                  />
+                </div>
+              ))
+            )
+            :
+            (
+              arrayTemplate.slice(index, index + GROUP_NUMBER).map(() => (
+                <div className="col-content">
+                  <CardCourse data={DEFAULT_DATA} />
+                </div>
+              ))
+            )
         }
       </div>
     )
@@ -45,15 +110,41 @@ const HomePublic = () => {
       <div className="">
         <div className="row-content">
           {
-            coursePublic.map((_, index) => (
-              renderContent(index)
-            ))
+            coursePublic.length > 0 ?
+              (
+                coursePublic.map((_, index) => (
+                  renderContent(index)
+                ))
+              )
+              :
+              (
+                arrayTemplate.map((_, index) => (
+                  renderContent(index)
+                ))
+              )
           }
         </div>
       </div>
       <div className="btn-navigate">
         <button className="btn-show-more">Show More</button>
       </div>
+      <Modal
+        className="modal-ant"
+        style={{
+          top: 100,
+          left: 0,
+          right: 0,
+        }}
+        open={open}
+        // width={1500}
+        // title="login"
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[]}
+        mask={false}
+      >
+        <LogAndRe />
+      </Modal>
     </div>
   );
 };

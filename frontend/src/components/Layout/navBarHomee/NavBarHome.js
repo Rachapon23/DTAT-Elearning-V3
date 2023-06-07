@@ -246,7 +246,7 @@ const NavBarHome = () => {
         footer={[]}
         mask={false}
       >
-        <LogAndRe />
+        <LogAndRe onClose={setOpen}/>
       </Modal>
     </div >
   );
