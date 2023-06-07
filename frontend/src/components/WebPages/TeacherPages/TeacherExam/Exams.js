@@ -162,7 +162,7 @@ const Exams = () => {
             align: 'center',
             key: '_id',
             width: '10%',
-            render: (enable) => enable ? "Open":"Close"
+            render: (enable) => enable ? "Open" : "Close"
         },
         {
             title: 'Edit',
@@ -173,7 +173,7 @@ const Exams = () => {
                 const index = exams.indexOf(data);
                 console.log()
                 return (
-                    <Link to={`/teacher/page/edit-exam/${data?._id}`} state={{mode: "Edit", exam_name: data?.name}}>
+                    <Link to={`/teacher/page/edit-exam/${data?._id}`} state={{ mode: "Edit", exam_name: data?.name }}>
                         <Button onClick={() => null}>
                             <EditOutlined />
                         </Button>
@@ -283,7 +283,17 @@ const Exams = () => {
         }
     }, [hasChanged])
 
-
+    const renderCreateExamNotification = () => {
+        if (courseCount - examCount === 0) {
+            return <Alert style={{ height: "70%" }} message={`No exams to create`} type="success" showIcon />
+        }
+        else if (courseCount - examCount < 0) {
+            return <Alert style={{ height: "70%" }} message={`server cannot calculate number of exams avialiable to create`} type="warning" showIcon />
+        }
+        else {
+            return <Alert style={{ height: "70%" }} message={`${courseCount - examCount} exams avialiable to create`} type="info" showIcon />
+        }
+    }
 
     const renderDisplay = () => {
         return <Table columns={columns} dataSource={exams} onChange={handleChange} />
@@ -319,14 +329,7 @@ const Exams = () => {
                             </Col>
                             <Col style={{ marginBottom: "-1%" }}>
                                 {
-                                    courseCount - examCount === 0 ?
-                                        (
-                                            <Alert style={{ height: "70%" }} message={`No exams to create`} type="success" showIcon />
-                                        )
-                                        :
-                                        (
-                                            <Alert style={{ height: "70%" }} message={`${courseCount - examCount} exams avialiable to create`} type="info" showIcon />
-                                        )
+                                    renderCreateExamNotification()
                                 }
                             </Col>
                         </Row>
