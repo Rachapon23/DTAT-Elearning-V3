@@ -438,9 +438,9 @@ exports.listCourseGraphData = async (req, res) => {
                 //   else return 0
                 // }))
 
-                // console.log(searchedCourse)
+                console.log(searchedCourse)
                 const payload = searchedCourse
-                    .filter((fitem) => fitem.condition)
+                    .filter((fitem) => fitem.condition && Array.isArray(fitem.condition) && fitem.condition.length > 0)
                     .map(
                         (item) => (
                             {
