@@ -152,6 +152,16 @@ exports.updateUserEnabled = async (req, res) => {
     }
 }
 
+exports.checkUser = async (req, res) => {
+    try {
+        const { user_id, role } = req?.user
+        return res.json({ data: { user_id: user_id, role: role } });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Unexpected error on check user" });
+    }
+}
 
 
 

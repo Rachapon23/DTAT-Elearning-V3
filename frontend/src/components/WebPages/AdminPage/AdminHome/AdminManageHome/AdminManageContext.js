@@ -22,7 +22,7 @@ export const AdminProvider = ({ children }) => {
                     setAcnounce(() => data.acnounce)
                     setCoursePublic(() => data.course_public)
                     setCoursePrivate(() => data.course_private)
-                    console.log( "fetch: ",data.course_public)
+                    console.log( "fetch: ",data.acnounce, data.course_public,data.course_private)
                 }
             )
             .catch(

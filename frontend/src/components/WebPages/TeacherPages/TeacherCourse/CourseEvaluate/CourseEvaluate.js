@@ -13,7 +13,7 @@ const CourseEvaluate = () => {
         {
             title: "No",
             width: "10%",
-            // render: (data) => courses.indexOf(data) + 1,
+            render: (data) => courses.indexOf(data) + 1,
         },
         {
             title: "Course",
@@ -43,7 +43,7 @@ const CourseEvaluate = () => {
             title: "Status",
             dataIndex: "enabled",
             key: "enabled",
-            render: (enabled) => (enabled === true ? "Enable" : "Disable"),
+            render: (enabled) => (enabled === true ? "Open" : "Close"),//"Enable" : "Disable"),
             align: "center",
         },
         {
