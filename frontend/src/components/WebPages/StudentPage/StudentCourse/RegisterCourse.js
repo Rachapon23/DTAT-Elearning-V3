@@ -158,45 +158,47 @@ const RegisterCourse = () => {
     }
 
     return (
-        <Row justify={"center"} >
+        <div className="bg-st-course">
             <NavBarHome />
-            <Col flex={"auto"} style={{ padding: "2%", paddingTop: "4%"}}>
-                {/* Register Course: {course?.name} */}
-                <Card title={registerCourseTitle()}>
-                    <Row justify={"center"}>
-                        <Col flex={"auto"}>
-
-                            <Row>
+            <div style={{width: "100%", marginTop: "100px", marginBottom: "50px"}}>
+                <Row justify={"center"} >
+                    <NavBarHome />
+                    <Col flex={"auto"} >
+                        {/* style={{ padding: "2%", paddingTop: "4%" }} */}
+                        <Card title={registerCourseTitle()}>
+                            <Row justify={"center"}>
                                 <Col flex={"auto"}>
-                                    <Card>
-                                        <Row justify={"start"} style={{ paddingTop: "0.5%", paddingBottom: "1%" }}>
-                                            <Col style={{ width: "330px" }}>
-                                                <Image
-                                                    width={300}
-                                                    preview={false}
-                                                    onError={handleUnloadImage}
-                                                    src={course?.image?.url ? (process.env.REACT_APP_IMG + course?.image?.url) : DEFAULT_IMAGE}
-                                                />
-                                            </Col>
-                                            <Col flex={"auto"} style={{ minWidth: "30%" }}>
-                                                <Row>
-                                                    <Col flex={"auto"} style={{ width: "80%" }}>
-                                                        <h4>{course?.name}</h4>
+                                    <Row>
+                                        <Col flex={"auto"}>
+                                            <Card>
+                                                <Row justify={"start"} style={{ paddingTop: "0.5%", paddingBottom: "1%" }}>
+                                                    <Col style={{ width: "330px" }}>
+                                                        <Image
+                                                            width={300}
+                                                            preview={false}
+                                                            onError={handleUnloadImage}
+                                                            src={course?.image?.url ? (process.env.REACT_APP_IMG + course?.image?.url) : DEFAULT_IMAGE}
+                                                        />
                                                     </Col>
-                                                </Row>
-                                                <Row justify={"start"} align={"middle"}>
-                                                    <Col>
-                                                        by {course?.teacher?.firstname} {course?.teacher?.lastname}
+                                                    <Col flex={"auto"} style={{ minWidth: "30%" }}>
+                                                        <Row>
+                                                            <Col flex={"auto"} style={{ width: "80%" }}>
+                                                                <h4>{course?.name}</h4>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row justify={"start"} align={"middle"}>
+                                                            <Col>
+                                                                by {course?.teacher?.firstname} {course?.teacher?.lastname}
+                                                            </Col>
+                                                        </Row>
+                                                        <Row>
+                                                            <Col style={{ paddingTop: "25px" }}>
+                                                                <Text >{course?.detail}</Text>
+                                                            </Col>
+                                                        </Row>
                                                     </Col>
-                                                </Row>
-                                                <Row>
-                                                    <Col style={{ paddingTop: "25px" }}>
-                                                        <Text >{course?.detail}</Text>
-                                                    </Col>
-                                                </Row>
-                                            </Col>
 
-                                            {/* <Col style={{ width: "15%" }}>
+                                                    {/* <Col style={{ width: "15%" }}>
                                                 <Row style={{ paddingTop: "18%", paddingBottom: "20px" }}>
                                                     <Button
                                                         type="primary"
@@ -219,34 +221,34 @@ const RegisterCourse = () => {
                                                 </Row>
                                             </Col >
                                             <Col style={{ width: "25px" }} /> */}
-                                        </Row>
+                                                </Row>
 
-                                        <Row style={{ paddingTop: "2%", }}>
-                                            <Col style={{ width: "100%" }}>
-                                                <Button
-                                                    disabled={!passedCondition}
-                                                    type="primary"
-                                                    size="large"
-                                                    block
-                                                    onClick={
-                                                        () => registered ? handleOpenCourse() : handleAddCourse()
-                                                    }
-                                                >
-                                                    {
-                                                        registered ?
-                                                            (
-                                                                "Go to Course"
-                                                            )
-                                                            :
-                                                            (
-                                                                "Add Course"
-                                                            )
-                                                    }
+                                                <Row style={{ paddingTop: "2%", }}>
+                                                    <Col style={{ width: "100%" }}>
+                                                        <Button
+                                                            disabled={!passedCondition}
+                                                            type="primary"
+                                                            size="large"
+                                                            block
+                                                            onClick={
+                                                                () => registered ? handleOpenCourse() : handleAddCourse()
+                                                            }
+                                                        >
+                                                            {
+                                                                registered ?
+                                                                    (
+                                                                        "Go to Course"
+                                                                    )
+                                                                    :
+                                                                    (
+                                                                        "Add Course"
+                                                                    )
+                                                            }
 
-                                                </Button>
-                                            </Col>
-                                            {/* <Col style={{ width: "2%" }} /> */}
-                                            {/* <Col flex={"auto"}>
+                                                        </Button>
+                                                    </Col>
+                                                    {/* <Col style={{ width: "2%" }} /> */}
+                                                    {/* <Col flex={"auto"}>
                                                 <Button
                                                     type="primary"
                                                     size="large"
@@ -257,50 +259,52 @@ const RegisterCourse = () => {
                                                 </Button>
                                             </Col> */}
 
-                                        </Row>
+                                                </Row>
 
-                                    </Card>
-                                </Col>
-                            </Row>
+                                            </Card>
+                                        </Col>
+                                    </Row>
 
-                            <Row style={{ paddingTop: "1%" }}>
-                                <Col flex={"auto"}>
-                                    <Card >
-                                        {
-                                            course?.condition && course?.condition.map(
-                                                (item) => (
-                                                    <Row >
-                                                        <Col style={{ paddingRight: "2%" }}>
-                                                            Maximum: {item.maximum}
-                                                        </Col>
-                                                        <Col>
-                                                            Plant: {item.plant.name}
-                                                        </Col>
-                                                    </Row>
-                                                )
-                                            )
-                                        }
-                                    </Card>
-                                </Col>
+                                    <Row style={{ paddingTop: "1%" }}>
+                                        <Col flex={"auto"}>
+                                            <Card >
+                                                {
+                                                    course?.condition && course?.condition.map(
+                                                        (item) => (
+                                                            <Row >
+                                                                <Col style={{ paddingRight: "2%" }}>
+                                                                    Maximum: {item.maximum}
+                                                                </Col>
+                                                                <Col>
+                                                                    Plant: {item.plant.name}
+                                                                </Col>
+                                                            </Row>
+                                                        )
+                                                    )
+                                                }
+                                            </Card>
+                                        </Col>
 
-                            </Row>
+                                    </Row>
 
-                            {/* <Row style={{ paddingTop: "2%" }}>
+                                    {/* <Row style={{ paddingTop: "2%" }}>
                                 <Col flex={"auto"}>
 
                                 </Col>
                             </Row> */}
 
-                            {/* <Row justify={"center"} style={{ paddingTop: "5%" }}>
+                                    {/* <Row justify={"center"} style={{ paddingTop: "5%" }}>
                                 <Col flex={"auto"}>
                                     
                                 </Col>
                             </Row> */}
-                        </Col>
-                    </Row>
-                </Card >
-            </Col >
-        </Row >
+                                </Col>
+                            </Row>
+                        </Card >
+                    </Col >
+                </Row >
+            </div>
+        </div>
     )
 }
 

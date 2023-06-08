@@ -254,6 +254,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
 
     if (manage !== "Public Course" && manage !== "Private Course") return
     if (manageHomeData === coursePublic) return
+    if (manageHomeData === coursePrivate) return
 
     const field = manage === "Public Course" ? "course_public" : manage === "Private Course" ? "course_private" : null
     const courseData = manage === "Public Course" ? coursePublic : manage === "Private Course" ? coursePrivate : null
@@ -355,109 +356,107 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
   };
 
   // 
-  const colAcnounce = [
-    {
-      key: 'sort',
-      align: "center",
-      width: "5%",
-    },
-    {
-      title: 'Image',
-      dataIndex: 'url',
-      align: "center",
-      width: "10%",
-      render: (data) => {
-        return (
-          <Image
-            width={150}
-            src={process.env.REACT_APP_IMG + data}
-          />
-        )
-      }
-    },
-    {
-      title: 'File Name',
-      dataIndex: 'original_name',
-    },
-    // {
-    //   title: 'Edit',
-    //   align: "center",
-    //   width: "5%",
-    //   render: (data) => (
-    //     <Button onClick={() => null}>
-    //       <EditOutlined style={{ fontSize: "120%" }} />
-    //     </Button>
-    //   )
-    // },
-    {
-      title: 'Delete',
-      align: "center",
-      width: "5%",
-      render: (data) => (
-        <Button onClick={() => handleDeleteAcnounce(acnounce.indexOf(data))}>
-          <DeleteOutlined style={{ fontSize: "120%" }} />
-        </Button>
-      )
-    },
-  ]
-
-  const colCourse = [
-    {
-      key: 'sort',
-      align: "center",
-      width: "5%",
-    },
-    {
-      title: 'Image',
-      dataIndex: 'image',
-      align: "center",
-      width: "10%",
-      render: (data) => {
-        // console.log(data?.url)
-        if (!data?.url) return
-        return (
-          <Image
-            width={150}
-            src={process.env.REACT_APP_IMG + data.url}
-          />
-        )
-      }
-    },
-    {
-      title: "Course",
-      dataIndex: 'name',
-      key: 'name',
-      width: "50%",
-    },
-    {
-      title: "ID",
-      dataIndex: '_id',
-      key: '_id',
-    },
-    {
-      title: "Type",
-      dataIndex: 'type',
-      key: 'type',
-      align: "center",
-      render: (type) => type === true ? "Public" : "Private",
-    },
-    {
-      title: "Status",
-      dataIndex: 'status',
-      key: 'status',
-      align: "center",
-      render: (status) => status === true ? "Disable" : "Eanble",
-    },
-  ]
 
   const columnsEdit = () => {
-    if (manage === "Acnounce") {
-      return
+    switch (manage) {
+      case "Acnounce":
+        return ([
+          {
+            key: 'sort',
+            align: "center",
+            width: "5%",
+          },
+          {
+            title: 'Image',
+            dataIndex: 'url',
+            align: "center",
+            width: "10%",
+            render: (data) => {
+              return (
+                <Image
+                  width={150}
+                  src={process.env.REACT_APP_IMG + data}
+                />
+              )
+            }
+          },
+          {
+            title: 'File Name',
+            dataIndex: 'original_name',
+          },
+          // {
+          //   title: 'Edit',
+          //   align: "center",
+          //   width: "5%",
+          //   render: (data) => (
+          //     <Button onClick={() => null}>
+          //       <EditOutlined style={{ fontSize: "120%" }} />
+          //     </Button>
+          //   )
+          // },
+          {
+            title: 'Delete',
+            align: "center",
+            width: "5%",
+            render: (data) => (
+              <Button onClick={() => handleDeleteAcnounce(acnounce.indexOf(data))}>
+                <DeleteOutlined style={{ fontSize: "120%" }} />
+              </Button>
+            )
+          },
+        ])
+      case "Public Course":
+      case "Private Course":
+        return ([
+          // {
+          //   key: 'sort',
+          //   align: "center",
+          //   width: "5%",
+          // },
+          {
+            title: 'Image',
+            dataIndex: 'image',
+            align: "center",
+            width: "10%",
+            render: (data) => {
+              // console.log(data?.url)
+              if (!data?.url) return
+              return (
+                <Image
+                  width={150}
+                  src={process.env.REACT_APP_IMG + data.url}
+                />
+              )
+            }
+          },
+          {
+            title: "Course",
+            dataIndex: 'name',
+            key: 'name',
+            width: "50%",
+          },
+          {
+            title: "ID",
+            dataIndex: '_id',
+            key: '_id',
+          },
+          {
+            title: "Type",
+            dataIndex: 'type',
+            key: 'type',
+            align: "center",
+            render: (type) => type === true ? "Public" : "Private",
+          },
+          {
+            title: "Status",
+            dataIndex: 'status',
+            key: 'status',
+            align: "center",
+            render: (status) => status === true ? "Disable" : "Eanble",
+          },
+        ])
+      default: return null
     }
-    if (manage === "Public Course" || manage === "Private Course") {
-      return
-    }
-    return null
   }
 
 
@@ -485,95 +484,103 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
     }
     console.log(saveChange)
 
-  }, [acnounce, coursePrivate, coursePublic, manage, saveChange])
+  }, [acnounce, manage, saveChange])
 
   const renderContent = (actionMode, manage) => {
     // console.log(actionMode, manage)
     // console.log(manageHomeData)
+
     if (actionMode === "Preview") {
+
       switch (manage) {
         case "Acnounce":
           return (
             <Col flex={"auto"}>
-              <DndContext onDragEnd={onDragEnd}>
-                <SortableContext
-                  // rowKey array
-                  items={acnounce.map((i) => i.name)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <Table
-                    components={{
-                      body: {
-                        row: RowTable,
-                      },
-                    }}
-                    rowKey="name"
-                    columns={colAcnounce}
-                    dataSource={[...acnounce]}
-                  />
-                </SortableContext>
-              </DndContext>
+              {
+                acnounce ?
+                  (
+                    <DndContext onDragEnd={onDragEnd}>
+                      <SortableContext
+                        // rowKey array
+                        items={acnounce.map((i) => i.name)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <Table
+                          components={{
+                            body: {
+                              row: RowTable,
+                            },
+                          }}
+                          rowKey="name"
+                          columns={columnsEdit()}
+                          dataSource={acnounce}
+                        />
+                      </SortableContext>
+                    </DndContext>
+                  )
+                  :
+                  (
+                    <Table
+                      columns={columnsPreview}
+                      dataSource={null}
+                    />
+                  )
+              }
             </Col>
-
           )
         case "Public Course":
           return (
             <Col flex={"auto"}>
-              <DndContext onDragEnd={onDragEnd}>
-                <SortableContext
-                  // rowKey array
-                  items={coursePublic.map((i) => i.name)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <Table
-                    components={{
-                      body: {
-                        row: RowTable,
-                      },
-                    }}
-                    rowKey="name"
-                    columns={colCourse}
-                    dataSource={[...coursePublic]}
-                  />
-                </SortableContext>
-              </DndContext>
+              {
+                coursePublic ?
+                  (
+                    <Table
+                      rowKey="name"
+                      columns={columnsEdit()}
+                      dataSource={coursePublic}
+                    />
+                  )
+                  :
+                  (
+                    <Table
+                      columns={columnsPreview}
+                      dataSource={null}
+                    />
+                  )
+              }
             </Col>
-
           )
         case "Private Course":
           return (
             <Col flex={"auto"}>
-              <DndContext onDragEnd={onDragEnd}>
-                <SortableContext
-                  // rowKey array
-                  items={coursePrivate.map((i) => i.name)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <Table
-                    components={{
-                      body: {
-                        row: RowTable,
-                      },
-                    }}
-                    rowKey="name"
-                    columns={colCourse}
-                    dataSource={coursePrivate}
-                  />
-                </SortableContext>
-              </DndContext>
+              {
+                coursePrivate ?
+                  (
+                    <Table
+                      rowKey="name"
+                      columns={columnsEdit()}
+                      dataSource={coursePrivate}
+                    />
+                  )
+                  :
+                  (
+                    <Table
+                      columns={columnsPreview}
+                      dataSource={null}
+                    />
+                  )
+              }
             </Col>
           )
         default:
           return (
-            <Col flex={"auto"}>
-              <Table
-                columns={columnsPreview}
-                dataSource={null}
-              />
-            </Col>
+            <Table
+              columns={columnsPreview}
+              dataSource={null}
+            />
           )
-
       }
+
     }
     if (manage === "Public Course" || manage === "Private Course") {
       if (actionMode === "Add") {

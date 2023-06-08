@@ -77,11 +77,12 @@ const storagePublic = Multer.diskStorage({
     destination: (req, file, cb) => {
 
         if (!fs.existsSync("./public/uploads")) {
-            fs.mkdirSync("./public/uploads")
+            console.log("LLSLSLSLSLSLSLLSLS")
+            fs.mkdirSync("./public/uploads", { recursive: true })
         }
         if (req?.params?.field && allowedField.includes(req?.params?.field)) {
             if (!fs.existsSync(`./public/uploads/${req.params.field}`)) {
-                fs.mkdirSync(`./public/uploads/${req.params.field}`)
+                fs.mkdirSync(`./public/uploads/${req.params.field}`, { recursive: true })
             }
             path = `./public/uploads/${req.params.field}`
         }
@@ -104,11 +105,11 @@ const storagePrivate = Multer.diskStorage({
     destination: (req, file, cb) => {
         let path = "./private/uploads"
         if (!fs.existsSync("./private/uploads")) {
-            fs.mkdirSync("./private/uploads")
+            fs.mkdirSync("./private/uploads", { recursive: true })
         }
         if (req?.params?.field && allowedField.includes(req?.params?.field)) {
             if (!fs.existsSync(`./private/uploads/${req.params.field}`)) {
-                fs.mkdirSync(`./private/uploads/${req.params.field}`)
+                fs.mkdirSync(`./private/uploads/${req.params.field}`, { recursive: true })
             }
             path = `./private/uploads/${req.params.field}`
         }
