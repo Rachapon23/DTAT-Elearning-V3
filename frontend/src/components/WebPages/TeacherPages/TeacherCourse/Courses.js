@@ -118,7 +118,7 @@ const Courses = () => {
 			title: "Status",
 			dataIndex: "enabled",
 			key: "enabled",
-			render: (enabled) => (enabled === true ? "Enable" : "Disable"),
+			render: (enabled) => (enabled === true ? "Open" : "Close"),//"Enable" : "Disable"),
 			align: "center",
 		},
 		{
@@ -154,46 +154,6 @@ const Courses = () => {
 	];
 	// Data-Page-End ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	// Data-Mockup-Start
-	const data = [
-		{
-			key: "1",
-			name: "Introduction of Docker",
-			address: "New York No. 1 Lake Park",
-			type: "Public",
-			status: "Enable",
-			edit: <Button>Edit</Button>,
-			delete: <Button>Delete</Button>,
-		},
-		{
-			key: "2",
-			name: "Basic of IoT",
-			address: "London No. 1 Lake Park",
-			type: "Private",
-			status: "Enable",
-			edit: <Button>Edit</Button>,
-			delete: <Button>Delete</Button>,
-		},
-		{
-			key: "3",
-			name: "Arduino",
-			address: "Sydney No. 1 Lake Park",
-			type: "Private",
-			status: "Disable",
-			edit: <Button>Edit</Button>,
-			delete: <Button>Delete</Button>,
-		},
-		{
-			key: "4",
-			name: "Software Engineer",
-			address: "London No. 2 Lake Park",
-			type: "Private",
-			status: "Enable",
-			edit: <Button>Edit</Button>,
-			delete: <Button>Delete</Button>,
-		},
-	];
-	// Data-Mockup-End ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// Function-Start
 	const handleChange = (pagination, filters, sorter) => {
