@@ -438,7 +438,8 @@ exports.listCourseGraphData = async (req, res) => {
                 //   else return 0
                 // }))
 
-                console.log(searchedCourse)
+                // console.log("user plant: ", searchedCourse.map((item) => item.activity.map((aitem) => aitem.user.firstname)))
+                // console.log("curse plant: ", searchedCourse.filter((fitem) => fitem.condition).map((item) => item.condition.map((citem) => citem.plant.name)))
                 const payload = searchedCourse
                     .filter((fitem) => fitem.condition && Array.isArray(fitem.condition) && fitem.condition.length > 0)
                     .map(
@@ -447,8 +448,15 @@ exports.listCourseGraphData = async (req, res) => {
                                 name: item.name,
                                 plant: item.condition?.map((citem) => citem.plant.name),
                                 plant_amount: item.condition?.map((amount) => amount.maximum),
-                                plant_current: item.condition?.map((citem) => item.activity.map((aitem) => citem.plant.name === aitem.user.plant.name && aitem.completed ? 1 : 0)[0]),
-                                current: item.activity.map((aitem) => aitem.completed ? 1 : 0)[0],
+                                plant_current: item.condition?.map((citem) => item.activity.map((aitem) => {
+                                    if(citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1)) {
+                                        console.log("match: ", citem.plant.name, aitem.user.plant.name)
+                                        console.log("result: ", aitem.result)
+                                        console.log("logic: ", citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0)
+                                    }
+                                    return citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0
+                                }).reduce((prev, curr) => prev + curr, 0)),
+                                current: item.activity.map((aitem) => aitem.result === 2 || aitem.result === 1 ? 1 : 0).reduce((prev, curr) => prev + curr, 0),
                                 maximum: item.condition.map((amount) => amount.maximum).reduce((prev, curr) => prev + curr, 0),
                             }
                         )

@@ -199,27 +199,51 @@ const TeacherHome = () => {
                                     </Col>
                                   </Row>
                                   <Row>
-                                    <Pie
-                                      appendPadding={10}
-                                      data={[
-                                        { name: "Completed", current: graphData[selectedCourseIndex].current },
-                                        { name: "Not Completed", current: graphData[selectedCourseIndex].maximum - graphData[selectedCourseIndex].current }
-                                      ]}
-                                      angleField='current'
-                                      colorField='name'
-                                      radius={0.8}
-                                      label={{
-                                        type: 'outer',
-                                      }}
-                                      interactions={[
-                                        {
-                                          type: 'element-active',
-                                        },
-                                      ]}
-                                      legend={{
-                                        position: 'left'
-                                      }}
-                                    />
+                                    <Col>
+                                      <Pie
+                                        appendPadding={10}
+                                        data={[
+                                          { name: "Completed", current: graphData[selectedCourseIndex].current },
+                                          { name: "Not Completed", current: graphData[selectedCourseIndex].maximum - graphData[selectedCourseIndex].current }
+                                        ]}
+                                        angleField='current'
+                                        colorField='name'
+                                        radius={0.8}
+                                        label={{
+                                          type: 'outer',
+                                        }}
+                                        interactions={[
+                                          {
+                                            type: 'element-active',
+                                          },
+                                        ]}
+                                        legend={{
+                                          position: 'left'
+                                        }}
+                                      />
+                                    </Col>
+                                    <Col flex={"auto"} style={{ marginRight: "1.8%" }}>
+                                      {
+                                        graphData[selectedCourseIndex].plant.map((item, index) => (
+                                          <Row style={{paddingBottom: "1%", paddingTop: "1.5%"}}>
+                                            <Col flex={"auto"}>
+                                              <Row>
+                                                <Col flex={"auto"}>
+                                                  {item}
+                                                </Col>
+                                                <Col >
+                                                  {`${graphData[selectedCourseIndex].plant_current[index]} / ${graphData[selectedCourseIndex].plant_amount[index]}`}
+                                                </Col>
+                                              </Row>
+                                              {console.log(graphData[selectedCourseIndex].plant_current[index], graphData[selectedCourseIndex].plant_amount[index])}
+                                              < Progress percent={Math.round((graphData ? graphData[selectedCourseIndex].plant_current[index] : 0) * 100 / graphData[selectedCourseIndex].plant_amount[index] * 100) / 100} />
+                                            </Col>
+                                          </Row>
+                                        ))
+                                      }
+
+                                    </Col>
+
                                   </Row>
                                 </Col>
                               </Row>
@@ -299,6 +323,7 @@ const TeacherHome = () => {
                         Target
                       </Col>
                       <Col>
+                        {console.log("pie: ", graphData.map((data) => data.current))}
                         {graphData ? graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0) : 0} / {profile.target}
                       </Col>
                     </Row>
@@ -384,24 +409,24 @@ const TeacherHome = () => {
                                     }).reduce((prev, curr) => prev + curr, 0)}`}>
                                 <Progress
                                   percent={
-                                    // Math.round(
-                                    graphData.map(
-                                      (item) => {
-                                        if (course.plant[index]) {
-                                          return (item.plant_current[index])
-                                        }
-                                        return null
-                                      }).reduce((prev, curr) => prev + curr, 0)
-                                    * 100 /
-                                    graphData.map(
-                                      (item) => {
-                                        if (course.plant[index]) {
-                                          return (item.plant_amount[index])
-                                        }
-                                        return null
-                                      }).reduce((prev, curr) => prev + curr, 0)
-
-                                    // )
+                                    Math.round(
+                                      graphData.map(
+                                        (item) => {
+                                          if (course.plant[index]) {
+                                            return (item.plant_current[index])
+                                          }
+                                          return null
+                                        }).reduce((prev, curr) => prev + curr, 0)
+                                      * 100 /
+                                      graphData.map(
+                                        (item) => {
+                                          if (course.plant[index]) {
+                                            return (item.plant_amount[index])
+                                          }
+                                          return null
+                                        }).reduce((prev, curr) => prev + curr, 0)
+                                      * 100
+                                    ) / 100
                                   }
                                 />
                               </Tooltip>
