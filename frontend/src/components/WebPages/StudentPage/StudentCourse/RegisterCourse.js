@@ -2,6 +2,8 @@ import { Avatar, Breadcrumb, Button, Card, Col, Image, Row, Typography } from "a
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createActivity, getActivity, getCourse, getUser, listCondition } from "../../../../function/Student/course";
+import "./studentcourse.css";
+import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 
 const { Text, Title } = Typography
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
@@ -22,12 +24,10 @@ const RegisterCourse = () => {
         // check registered
         await checkRegistered()
 
-
-
         // check plant
         let inPlant = false
         for (let i = 0; i < course?.condition.length; i++) {
-            console.log(course?.condition[i].plant.name , plant)
+            console.log(course?.condition[i].plant.name, plant)
             if (course?.condition[i].plant.name === plant) {
                 inPlant = true
                 break
@@ -130,6 +130,7 @@ const RegisterCourse = () => {
     const registerCourseTitle = () => {
         return (
             <Row align={"middle"} justify={"space-between"} >
+
                 <Col>
                     <Breadcrumb
                         separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
@@ -157,11 +158,11 @@ const RegisterCourse = () => {
     }
 
     return (
-        <Row justify={"center"}>
-            <Col flex={"auto"} style={{ padding: "2%", paddingLeft: "10%", paddingRight: "10%" }}>
+        <Row justify={"center"} >
+            <NavBarHome />
+            <Col flex={"auto"} style={{ padding: "2%", paddingTop: "4%"}}>
                 {/* Register Course: {course?.name} */}
-                <Card
-                    title={registerCourseTitle()}>
+                <Card title={registerCourseTitle()}>
                     <Row justify={"center"}>
                         <Col flex={"auto"}>
 

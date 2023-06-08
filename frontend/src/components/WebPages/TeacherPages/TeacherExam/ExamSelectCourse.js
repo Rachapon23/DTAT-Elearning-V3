@@ -58,10 +58,10 @@ const ExamSelectCourse = ({
         },
         {
             title: "Status",
-            dataIndex: 'status',
-            key: 'status',
+            dataIndex: 'enabled',
+            key: 'enabled',
             align: "center",
-            render: (status) => status === true ? "Disable" : "Eanble",
+            render: (enabled) => enabled === true ? "Open" : "Close",//"Enable" : "Disable"),
         },
         {
             title: "Select",

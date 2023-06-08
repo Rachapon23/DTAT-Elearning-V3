@@ -3,6 +3,8 @@ import React, { useContext, useEffect, useState } from "react";
 import CardCourse from "../../../Card/CardCourse"
 import { StudentContext } from "./StudentCourseContext";
 import { useNavigate } from "react-router-dom";
+import "./studentcourse.css";
+import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 
 const GROUP_NUMBER = 4
 const { Title } = Typography
@@ -107,8 +109,9 @@ const BrowesCourse = () => {
     }
 
     return (
-        <Row justify={"center"}>
-            <Col flex={"auto"} style={{ padding: "2%" }}>
+        <Row justify={"center"} >
+            <NavBarHome />
+            <Col flex={"auto"} style={{ padding: "2%", paddingTop: "4%" }}>
                 <Row justify={"center"}>
                     <Col flex={"auto"}>
                         <Card title={browesCourseTitle()}>
