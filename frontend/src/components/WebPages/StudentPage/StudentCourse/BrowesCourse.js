@@ -109,33 +109,39 @@ const BrowesCourse = () => {
     }
 
     return (
-        <Row justify={"center"} >
+        <div className="bg-st-course">
             <NavBarHome />
-            <Col flex={"auto"} style={{ padding: "2%", paddingTop: "4%" }}>
-                <Row justify={"center"}>
-                    <Col flex={"auto"}>
-                        <Card title={browesCourseTitle()}>
-                            <Row style={{ paddingLeft: "3%", paddingRight: "3%", paddingBottom: "0.5%", }}>
-                                {/* <Segmented
-                                    style={{ width: "20%" }}
-                                    block
-                                    options={[
-                                        "All",
-                                        "Public",
-                                        "Private"
-                                    ]}
-                                /> */}
-                            </Row>
-                            {
-                                courses.map((_, index) => (
-                                    renderContent(index)
-                                ))
-                            }
-                        </Card>
-                    </Col>
-                </Row>
-            </Col >
-        </Row >
+            <div style={{width: "100%", marginTop: "100px", marginBottom: "50px"}}>
+                <Row justify={"center"} >
+                    <Col flex={"auto"} >
+                        {/* style={{ padding: "2%", paddingTop: "4%" }} */}
+                        <Row justify={"center"} align={"top"}>
+                            <Col flex={"auto"}>
+                                <Card title={browesCourseTitle()}>
+                                    {/* <Row style={{ paddingLeft: "3%", paddingRight: "3%", paddingBottom: "0.5%", }}>
+                                        <Segmented
+                                            style={{ width: "20%" }}
+                                            block
+                                            options={[
+                                                "All",
+                                                "Public",
+                                                "Private"
+                                            ]}
+                                        />
+                                    </Row> */}
+                                    {
+                                        courses.slice(0, 1).map((_, index) => (
+                                            renderContent(index)
+                                        ))
+                                    }
+                                </Card>
+                            </Col>
+                        </Row>
+                    </Col >
+                </Row >
+            </div>
+
+        </div>
     )
 
 }
