@@ -1,28 +1,50 @@
 import React, { useEffect, useState } from "react";
-import "./adminhome.css";
+import "../AdminHome/adminhome.css";
 import { Button, Input, Select, Table, Typography, Breadcrumb, Switch } from "antd";
-import { listUserRole, updateUserEnabled } from "../../../../function/Admin/adminFunction";
-
+import { listUserRole, updateUserEnabled, updateUserRole } from "../../../../function/Admin/adminFunction";
 const { Title } = Typography;
-
-const AdminManageStudent = () => {
-  const role = "student";
+const AdminManageTeacher = () => {
+  const role = "teacher";
   const [hasChanged, setHasChanged] = useState(false);
   const [users, setUsers] = useState([
-    {
-      _id: "",
-      employee: "",
-      department: { id: "" },
-      email: "",
-      enabled: null,
-      firstname: "",
-      lastname: "",
-      plant: { name: "" },
-      profile: null,
-      role: { name: "" },
-      verified: null
-    }
+    // {
+    //   _id: "",
+    //   employee: "",
+    //   department: { id: "" },
+    //   email: "",
+    //   enabled: null,
+    //   firstname: "",
+    //   lastname: "",
+    //   plant: { name: "" },
+    //   profile: null,
+    //   role: { name: "" },
+    //   verified: null
+    // }
   ]);
+
+  const handleChangeRole = async (user_id, role) => {
+    // message.info(`Evaluate as ${value}`);
+
+    await updateUserRole(
+      sessionStorage.getItem("token"),
+      user_id,
+      {
+        role: role,
+      }
+    )
+      .then(
+        (res) => {
+          const data = res.data.data
+          console.log("updated result: ", data)
+          setHasChanged(true)
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err)
+        }
+      )
+  }
 
   const handleChangeEnabled = async (id, enabled) => {
     console.log(id, enabled)
@@ -66,11 +88,36 @@ const AdminManageStudent = () => {
       align: "center",
       render: (data) => `${data?.firstname} ${data?.lastname}`,
     },
-    // {
-    //   title: `Role`,
-    //   align: "center",
-    //   render: (data) => data?.role?.name,
-    // },
+    {
+      title: `role`,
+      align: "center",
+      width: "15%",
+      render: (data) => {
+        console.log(data)
+        // const role = data?.role?.name
+        const user_id = data?._id
+        return (
+          <Select
+            // defaultValue={0}
+            value={role}
+            style={{
+              width: "100%",
+            }}
+            onChange={(role) => handleChangeRole(user_id, role)}
+            options={[
+              {
+                value: "teacher",
+                label: 'Teacher',
+              },
+              {
+                value: "student",
+                label: 'Student',
+              },
+            ]}
+          />
+        )
+      }
+    },
     {
       title: `Status`,
       align: "center",
@@ -85,7 +132,7 @@ const AdminManageStudent = () => {
       .then(
         (res) => {
           const data = res.data.data
-          console.log(data)
+          // console.log(data)
           setUsers(data)
         }
       )
@@ -102,7 +149,6 @@ const AdminManageStudent = () => {
       setHasChanged(false)
     }
   }, [hasChanged])
-
   return (
     <div>
       <Breadcrumb
@@ -115,10 +161,10 @@ const AdminManageStudent = () => {
           {
             title: (
               <Title level={5} style={{ marginTop: "10px" }}>
-                <p>Manage Student</p>
+                <p>Manage Teacher</p>
               </Title>
             ),
-            key: "managestudent",
+            key: "listuser",
           },
         ]}
       />
@@ -133,7 +179,7 @@ const AdminManageStudent = () => {
         }}
       />
     </div>
-  )
-}
+  );
+};
 
-export default AdminManageStudent
+export default AdminManageTeacher;
