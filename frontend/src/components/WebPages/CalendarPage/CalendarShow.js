@@ -13,22 +13,22 @@ const CalendarShow = () => {
 
   return (
     <FullCalendar
-    plugins={[
-      dayGridPlugin,
-      timeGridPlugin,
-      interactionPlugin,
-      bootstrap5Plugin,
-    ]}
-    headerToolbar={{
-      left: "prev today",
-      center: "title",
-      right: "next",
-    }}
-    height={500}
-    themeSystem="bootstrap5"
-    events={events}
-    selectable={true}
-  />
+      plugins={[
+        dayGridPlugin,
+        timeGridPlugin,
+        interactionPlugin,
+        bootstrap5Plugin,
+      ]}
+      headerToolbar={{
+        left: "prev today",
+        center: "title",
+        right: "next",
+      }}
+      height={500}
+      themeSystem="bootstrap5"
+      events={events}
+      selectable={true}
+    />
   )
 }
 

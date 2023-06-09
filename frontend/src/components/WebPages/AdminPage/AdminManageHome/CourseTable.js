@@ -1,7 +1,7 @@
 import { Checkbox, Col, Image, Row, Table } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import { AdminContext } from "./AdminManageContext";
-import { listCourse } from "../../../../../function/Admin/adminFunction";
+import { listCourse } from "../../../../function/Admin/adminFunction";
 
 const CourseTable = ({ manage = null, home_course=null }) => {
     const { coursePublic, setCoursePublic } = useContext(AdminContext)

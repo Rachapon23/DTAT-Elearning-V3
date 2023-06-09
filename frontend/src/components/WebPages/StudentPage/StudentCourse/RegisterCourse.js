@@ -260,7 +260,6 @@ const RegisterCourse = () => {
                                             </Col> */}
 
                                                 </Row>
-
                                             </Card>
                                         </Col>
                                     </Row>

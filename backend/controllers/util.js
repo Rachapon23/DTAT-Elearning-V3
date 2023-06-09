@@ -263,7 +263,6 @@ function generateSubProps(subProps = "", allowed = { method: [], fields: [] }, a
             // console.log(allowed.fields, fields)
 
             if (!adminBypass) {
-                console.log(allowed.fields, fields)
                 if (!allowed.fields.includes(fields)) return { success: false, code: 400, message: "Query params value not allowed (string)", data: null }
                 if (!allowed.method.includes(method)) return { success: false, code: 400, message: "Query params field not allowed (string)", data: null }
             }

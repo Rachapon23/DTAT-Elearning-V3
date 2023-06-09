@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./studenthome.css";
-import { Button, Image, Table } from "antd";
+import { Button, Card, Image, Table } from "antd";
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
-import CalendarDisplay from "../../CalendarPage/CalendarDisplay";
+import CalendarShow from "../../CalendarPage/CalendarShow";
 
 import DoExam from "../StudentExam/DoExam";
 
@@ -25,87 +25,164 @@ const StudentHomePage = () => {
         e.target.src = DEFAULT_IMAGE
     }
 
-    const columns = [
-        {
-            title: "Image",
-            align: "center",
-            render: (data) => {
-                return (
-                    <Image
-                        preview={false}
-                        width={150}
-                        onError={handleUnloadImage}
-                        src={data?.course?.image?.url ? (process.env.REACT_APP_IMG + data?.course?.image?.url) : DEFAULT_IMAGE}
-                    />
-                )
-            }
-        },
-        {
-            title: `course`,
-            render: (data) => data?.course?.name
-        },
+    const columns = (table) => {
+        switch (table) {
+            case "Course":
+                return ([
+                    {
+                        title: "Image",
+                        align: "center",
+                        width: "20%",
+                        render: (data) => {
+                            return (
+                                <Image
+                                    preview={false}
+                                    width={150}
+                                    onError={handleUnloadImage}
+                                    src={data?.course?.image?.url ? (process.env.REACT_APP_IMG + data?.course?.image?.url) : DEFAULT_IMAGE}
+                                />
+                            )
+                        }
+                    },
+                    {
+                        title: `course`,
+                        render: (data) => data?.course?.name
+                    },
 
-        {
-            title: `score`,
-            align: "center",
-            render: (data) => {
-                if (!data?.score_value && data?.result === 0) return "waiting for test"
-                if (!data?.score_value && data?.result !== 0) return "No examination"
-                return data?.score_value
-            }
-        },
+                    {
+                        title: `score`,
+                        align: "center",
+                        render: (data) => {
+                            if (!data?.score_value && data?.result === 0) return "waiting for test"
+                            if (!data?.score_value && data?.result !== 0) return "No examination"
+                            return data?.score_value
+                        }
+                    },
 
-        {
-            title: `max score`,
-            align: "center",
-            render: (data) => {
-                if (!data?.score_max && data?.result === 0) return "waiting for test"
-                if (!data?.score_max && data?.result !== 0) return "No examination"
-                return data?.score_max
+                    {
+                        title: `max score`,
+                        align: "center",
+                        render: (data) => {
+                            if (!data?.score_max && data?.result === 0) return "waiting for test"
+                            if (!data?.score_max && data?.result !== 0) return "No examination"
+                            return data?.score_max
 
-            }
-        },
+                        }
+                    },
+                    {
+                        title: `Action`,
+                        align: "center",
+                        width: "10%",
+                        render: (data) => {
+                            // console.log(data?.course?._id)
+                            return (
+                                <Link to={`/student/page/course/${data?.course?._id}`} state={{ mode: "Preview", exam_name: data?.name }}><Button onClick={null}> Course </Button></Link>
+                            )
+                        }
+                    },
+                    {
+                        title: `Action`,
+                        align: "center",
+                        width: "10%",
+                        render: (data) => {
+                            console.log(data?.course?.exam)
+                            return (
+                                <Button
+                                    disabled={!data?.course?.exam}
+                                    onClick={() => handleNavigate(`/student/page/exam/${data?.course?.exam}`, { activity: data?._id })}
+                                >
+                                    Exam
+                                </Button>
 
-        {
-            title: `result`,
-            align: "center",
-            // dataIndex: "result",
-            width: "10%",
-            render: (data) => {
-                if (data?.result === 0) return "Not evaluate"
-                if (data?.result === 1) return "Not pass"
-                if (data?.result === 2) return "Pass"
-            }
-        },
-        {
-            title: `Action`,
-            align: "center",
-            render: (data) => {
-                // console.log(data?.course?._id)
-                return (
-                    <Link to={`/student/page/course/${data?.course?._id}`} state={{ mode: "Preview", exam_name: data?.name }}><Button onClick={null}> Course </Button></Link>
-                )
-            }
-        },
-        {
-            title: `Action`,
-            align: "center",
-            render: (data) => {
-                console.log(data?.course?.exam)
-                return (
-                    <Button
-                        disabled={!data?.course?.exam}
-                        onClick={() => handleNavigate(`/student/page/exam/${data?.course?.exam}`, { activity: data?._id })}
-                    >
-                        Exam
-                    </Button>
+                            )
+                        }
+                    },
+                ])
+            case "History":
+                return ([
+                    {
+                        title: "Image",
+                        align: "center",
+                        width: "20%",
+                        render: (data) => {
+                            return (
+                                <Image
+                                    preview={false}
+                                    width={150}
+                                    onError={handleUnloadImage}
+                                    src={data?.course?.image?.url ? (process.env.REACT_APP_IMG + data?.course?.image?.url) : DEFAULT_IMAGE}
+                                />
+                            )
+                        }
+                    },
+                    {
+                        title: `course`,
+                        render: (data) => data?.course?.name
+                    },
 
-                )
-            }
-        },
+                    {
+                        title: `score`,
+                        align: "center",
+                        render: (data) => {
+                            if (!data?.score_value && data?.result === 0) return "waiting for test"
+                            if (!data?.score_value && data?.result !== 0) return "No examination"
+                            return data?.score_value
+                        }
+                    },
 
+                    {
+                        title: `max score`,
+                        align: "center",
+                        render: (data) => {
+                            if (!data?.score_max && data?.result === 0) return "waiting for test"
+                            if (!data?.score_max && data?.result !== 0) return "No examination"
+                            return data?.score_max
 
-    ];
+                        }
+                    },
+                    {
+                        title: `result`,
+                        align: "center",
+                        // dataIndex: "result",
+                        width: "10%",
+                        render: (data) => {
+                            if (data?.result === 0) return "Not evaluate"
+                            if (data?.result === 1) return "Not pass"
+                            if (data?.result === 2) return "Pass"
+                        }
+                    },
+                    {
+                        title: `Action`,
+                        align: "center",
+                        width: "10%",
+                        render: (data) => {
+                            // console.log(data?.course?._id)
+                            return (
+                                <Link to={`/student/page/course/${data?.course?._id}`} state={{ mode: "Preview", exam_name: data?.name }}><Button onClick={null}> Course </Button></Link>
+                            )
+                        }
+                    },
+                    {
+                        title: `Action`,
+                        align: "center",
+                        width: "10%",
+                        render: (data) => {
+                            console.log(data?.course?.exam)
+                            return (
+                                <Button
+                                    disabled={!data?.course?.exam}
+                                    onClick={() => handleNavigate(`/student/page/exam/${data?.course?.exam}`, { activity: data?._id })}
+                                >
+                                    Exam
+                                </Button>
+
+                            )
+                        }
+                    },
+                ])
+            default: return null
+        }
+    }
 
     const fetchActivity = async () => {
         // search=user:${sessionStorage.getItem("user_id")}&
@@ -137,7 +214,7 @@ const StudentHomePage = () => {
                     <p className="label-home-st" htmlFor="">My Course</p>
                     <Button onClick={() => handleNavigate(`/student/page/browes-course`)}>Browes Course</Button>
                     <Table
-                        columns={columns}
+                        columns={columns("Course")}
                         dataSource={courses.filter((item) => item.result === 0)}
                         className="table-student"
                         pagination={{
@@ -150,7 +227,7 @@ const StudentHomePage = () => {
                 <div className="">
                     <p htmlFor="" className="label-home-st">My History</p>
                     <Table
-                        columns={columns}
+                        columns={columns("History")}
                         dataSource={courses.filter((item) => item.result !== 0)}
                         className="table-student"
                         pagination={{
@@ -162,7 +239,9 @@ const StudentHomePage = () => {
                 </div>
                 <div className="">
                     <p htmlFor="" className="label-home-st">Calendar</p>
-                    <CalendarDisplay />
+                    <Card>
+                        <CalendarShow />
+                    </Card>
                 </div>
             </div>
 

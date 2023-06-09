@@ -66,10 +66,10 @@ exports.createCourse = async (req, res) => {
 exports.getCourse = async (req, res) => {
     const allowField = []
     const allowedSearch = ["_id"]
-    const allowedProps = ["condition", "plant", "plant maximum"]
+    const allowedProps = ["condition", "plant", "plant maximum", "teacher", "firstname lastname -_id", "firstname lastname"]
     const allowedPropsField = ["path", "populate", "select"]
-    const allowedSelect = []
-    const allowedFetch = ["name", "detail", "image", "condition"]
+    const allowedSelect = ["firstname", "lastname"]
+    const allowedFetch = ["name", "detail", "image", "condition", "teacher"]
     try {
         console.log(req?.params?.id)
         const result = validateQuery(
@@ -77,7 +77,7 @@ exports.getCourse = async (req, res) => {
             "get course",
             req?.user?.role,
             null,
-            req?.user?.role === "admin",
+            false,//req?.user?.role === "admin",
             null,
             {
                 fields: req?.query?.field,
@@ -449,7 +449,7 @@ exports.listCourseGraphData = async (req, res) => {
                                 plant: item.condition?.map((citem) => citem.plant.name),
                                 plant_amount: item.condition?.map((amount) => amount.maximum),
                                 plant_current: item.condition?.map((citem) => item.activity.map((aitem) => {
-                                    if(citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1)) {
+                                    if (citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1)) {
                                         console.log("match: ", citem.plant.name, aitem.user.plant.name)
                                         console.log("result: ", aitem.result)
                                         console.log("logic: ", citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0)

@@ -21,6 +21,7 @@ import { TeacherHomeProvider } from "./TeacherHome/TeacherHomeContext";
 import CourseEvaluate from "./TeacherCourse/CourseEvaluate/CourseEvaluate";
 import { TeacherCourseProvider } from "./TeacherCourse/TeacherCourseContext";
 import EvaluateStudent from "./TeacherCourse/CourseEvaluate/EvaluateStudent";
+import Calendar from "./TeacherCalendar/Calendar"
 
 const { Header, Sider, Content } = Layout;
 
@@ -104,7 +105,7 @@ const App = () => {
                     <EvaluateStudent/>
                 );
             case 'calendar':
-                return <p className="success">Calendar</p>;
+                return (<Calendar/>);
             default:
                 return <p className="success">404 not found ... </p>;
         }

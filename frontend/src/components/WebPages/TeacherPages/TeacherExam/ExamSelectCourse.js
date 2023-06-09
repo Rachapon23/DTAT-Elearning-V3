@@ -42,6 +42,7 @@ const ExamSelectCourse = ({
             key: 'image',
             align: "center",
             width: "15%",
+            render: (data) => (<></>)
         },
         {
             title: "Course",
