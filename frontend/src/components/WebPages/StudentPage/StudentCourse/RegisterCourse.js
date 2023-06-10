@@ -93,7 +93,7 @@ const RegisterCourse = () => {
             .then(
                 (res) => {
                     const data = res.data.data
-                    // console.log(data)
+                    console.log(data)
                     setPlant(data.plant.name)
                 }
             )

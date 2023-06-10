@@ -32,12 +32,12 @@ exports.listUser = async (req, res) => {
 
 // POST: /get-user/:id
 exports.getUser = async (req, res) => {
-    const allowField = ["user", "course", "ans"]
-    const allowedSearch = ["user", "course", "ans"]
+    const allowField = ["user", "course", "ans", "plant"]
+    const allowedSearch = ["user", "course", "ans", "_id"]
     const allowedPops = ["user", "course", "exam", "plant", "_id", "name", "exam -_id", "ans", "image"]
     const allowedPropsField = ["path", "select", "populate"]
     const allowedSelect = ["ans"]
-    const allowedFetch = ["-ans", "-__v"]
+    const allowedFetch = ["-ans", "-__v", "plant", "-_id"]
     try {
         const result = validateQuery(
             "get",
@@ -49,14 +49,14 @@ exports.getUser = async (req, res) => {
                 fields: "role",
                 fetchs: "role",
                 selects: "role",
-                search: { user: req?.params?.id },
+                search: { _id: req?.params?.id },
                 subPops: null,
             },
             {
                 fields: req?.query?.field,
                 fetchs: req?.query?.fetch,
                 selects: req?.query?.selects,
-                search: req?.params?._id ? req?.params?._id : req?.query?.search,
+                search: req?.params?.id ? `_id:${req?.params?.id}` : req?.query?.search,
                 subPops: req?.query?.pops,
             },
             {
@@ -70,7 +70,7 @@ exports.getUser = async (req, res) => {
                 fetchs: allowedFetch,
 
             },
-            false
+            true
         )
         // console.log(result)
         if (!result.success) return res.status(result.code).json({ error: result.message })
@@ -79,6 +79,7 @@ exports.getUser = async (req, res) => {
             .findOne(result.options.searchParams, result.options.fetchParams)
             .populate(result.options.fieldParams ? result.options.fieldParams : result.options.subPropsParams)
             .select(result.options.selectParams)
+        // console.log(user)
         return res.json({ data: user })
     }
     catch (err) {
@@ -149,17 +150,6 @@ exports.updateUserEnabled = async (req, res) => {
     catch (err) {
         console.log(err);
         return res.status(500).json({ error: "Server Error!!! on change enanbled" });
-    }
-}
-
-exports.checkUser = async (req, res) => {
-    try {
-        const { user_id, role } = req?.user
-        return res.json({ data: { user_id: user_id, role: role } });
-    }
-    catch (err) {
-        console.log(err);
-        return res.status(500).json({ error: "Unexpected error on check user" });
     }
 }
 

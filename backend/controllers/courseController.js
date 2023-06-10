@@ -118,84 +118,46 @@ exports.getCourse = async (req, res) => {
 exports.listCourse = async (req, res) => {
     const allowField = ["condition", "room", "teacher", "exam"]
     const allowedSearch = ["type"]
+    const allowedPops = []
+    const allowedPropsField = ["path", "select", "populate"]
+    const allowedSelect = ["ans", "name", "detail", "image", "type"]
+    const allowedFetch = []
     try {
-        const fields = req?.query?.field
-        let fetchs = req?.query?.fetch
-        let selects = req?.query?.select
-        let search = req?.query?.search
+        const result = validateQuery(
+            "get",
+            "list course",
+            req?.user?.role,
+            null,
+            req?.user?.role === "admin",
+            null,
+            {
+                fields: req?.query?.field,
+                fetchs: req?.query?.fetch,
+                selects: req?.query?.selects,
+                search: req?.params?._id ? req?.params?._id : req?.query?.search,
+                subPops: req?.query?.pops,
+            },
+            {
+                fields: allowField,
+                search: allowedSearch,
+                subPops: {
+                    method: allowedPropsField,
+                    fields: allowedPops,
+                },
+                selects: allowedSelect,
+                fetchs: allowedFetch,
 
-        const seperator = new RegExp(",", 'g');
-        if (fetchs) fetchs = fetchs.replace(seperator, " ")
-        if (selects) selects = selects.replace(seperator, " ")
+            },
+            false
+        )
+        // console.log(result)
+        if (!result.success) return res.status(result.code).json({ error: result.message })
 
-        // console.log(pops)
-        console.log(fields)
-        console.log(fetchs)
-        console.log(selects)
-        console.log(search)
-
-
-        // check role
-        let searchParams = null
-        switch (req?.user?.role) {
-            case "admin":
-                searchParams = {}
-                break;
-            case "teacher":
-                searchParams = { teacher: user_id }
-                break;
-            case "student":
-                return res.status(403).json({ error: "Access denine for student" });
-            default:
-                return res.status(404).json({ error: "This role does not exist in system" });
-        }
-
-        // validate search
-        let searchArray = null
-        if (search) searchArray = search.split(",")
-
-        if (searchArray && Array.isArray(searchArray)) {
-            if (searchArray.length > allowedSearch.length) return res.status(400).json({ error: "Invalid query parameter(s)" });
-            if (searchArray.length > 0) {
-                for (let i = 0; i < allowedSearch.length; i++) {
-                    const searchSplited = searchArray[i].split(":")
-                    const searchField = searchSplited[0]
-                    const searchValue = searchSplited[1]
-                    if (!allowedSearch.includes(searchField)) return res.status(400).json({ error: "Invalid query parameter(s)" });
-                    else {
-                        console.log(searchField, searchValue)
-                        searchParams[searchField] = searchValue
-                    }
-                }
-            }
-
-        }
-        else if (fields) {
-            if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid query parameter(s)" });
-            populateField = fields
-        }
-
-        // validate populateField
-        let populateField = null
-        if (fields && Array.isArray(fields)) {
-            if (fields.length > allowField.length) return res.status(400).json({ error: "Invalid query parameter(s)" });
-            if (fields.length > 1) {
-                for (let i = 0; i < fields.length; i++) {
-                    if (!allowField.includes(fields[i])) return res.status(400).json({ error: "Invalid query parameter(s)" });
-                }
-            }
-            populateField = fields.join(" ")
-        }
-        else if (fields) {
-            if (!allowField.includes(fields)) return res.status(400).json({ error: "Invalid query parameter(s)" });
-            populateField = fields
-        }
-        if (!searchParams) return res.status(500).json({ error: "Unexpected error on list courses" });
-
-        // console.log(searchParams)
-        // database thing
-        const searchedData = await Course.find(searchParams, fetchs).populate(populateField).select(selects)
-        return res.json({ data: searchedData });
+        const courses = await Course
+            .find(result.options.searchParams, result.options.fetchParams)
+            .populate(result.options.fieldParams ? result.options.fieldParams : result.options.subPropsParams)
+            .select(result.options.selectParams)
+        return res.json({ data: courses })
 
     }
     catch (err) {
