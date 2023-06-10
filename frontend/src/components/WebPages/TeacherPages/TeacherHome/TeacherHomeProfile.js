@@ -102,11 +102,11 @@ const TeacherHomeProfile = ({ actionMode, setActionMode }) => {
                                     <p>
 
                                         <Col> <Text strong> Tel </Text> </Col>
-                                        <Col> {profile.tel}</Col>
+                                        <Col> {profile.tel ? profile.tel : "No data"}</Col>
                                     </p>
                                     <p>
                                         <Col> <Text strong> Target </Text> </Col>
-                                        <Col> {profile.target} </Col>
+                                        <Col> {profile.target ? profile.target : "No data"} </Col>
 
                                     </p>
                                 </>

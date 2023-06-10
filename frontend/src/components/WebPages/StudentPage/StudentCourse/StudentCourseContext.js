@@ -8,7 +8,7 @@ export const StudentProvider = ({ children }) => {
     const [courses, setCourses] = useState([])
 
     const fetchCourse = async () => {
-        await listCourse(sessionStorage.getItem("token"), `?select=name,detail,image,type`)
+        await listCourse(sessionStorage.getItem("token"), `?selects=name,detail,image,type`)
             .then(
                 (res) => {
                     const data = res.data.data

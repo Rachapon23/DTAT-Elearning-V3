@@ -30,7 +30,7 @@ exports.createActivity = async (req, res) => {
 exports.listActivity = async (req, res) => {
     const allowField = ["user", "course", "ans"]
     const allowedSearch = ["user", "course", "ans"]
-    const allowedPops = ["user", "course", "exam", "plant", "_id", "name", "exam -_id", "ans", "image"]
+    const allowedPops = ["user", "course", "exam", "plant", "_id", "name", "exam -_id", "ans", "image", "name exam image", "employee firstname lastname", "name exam"]
     const allowedPropsField = ["path", "select", "populate"]
     const allowedSelect = ["ans"]
     const allowedFetch = ["-ans", "-__v"]
@@ -190,7 +190,7 @@ exports.getActivity = async (req, res) => {
     const allowedPops = ["user", "course", "exam", "plant", "_id", "name", "exam -_id", "ans", "image"]
     const allowedPropsField = ["path", "select", "populate"]
     const allowedSelect = ["ans"]
-    const allowedFetch = ["-ans", "-__v"]
+    const allowedFetch = ["-ans", "-__v", "_id"]
     try {
         const result = validateQuery(
             "get",
