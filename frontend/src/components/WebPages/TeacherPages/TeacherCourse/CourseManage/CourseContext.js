@@ -17,7 +17,7 @@ export const CourseProvider = ({ children }) => {
   const [even, setEven] = useState([]);
 
   const loadDataCourse = () => {
-    getCourse(sessionStorage.getItem("token"), course_id)
+    getCourse(sessionStorage.getItem("token"), course_id, `?field=calendar`)
       .then((res) => {
         const data = res.data.data;
         setCourseData(data);
