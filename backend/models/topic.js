@@ -15,7 +15,7 @@ const TopicSchema = new mongoose.Schema({
         type: [{}]
     },
     file: {
-        type: [],
+        type: [{}],
     },
     course: {
         type: ObjectId,

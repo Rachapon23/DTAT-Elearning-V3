@@ -10,8 +10,8 @@ require('dotenv').config()
 const app = express()
 module.exports = { app, express }
 
-// Static file
-app.use(express.static('public'))
+// Static file for displat image
+app.use(express.static('private'))
 
 //connect cloud Database
 mongoose.connect(process.env.DATABASE2, {

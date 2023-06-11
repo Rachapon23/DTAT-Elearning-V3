@@ -1,5 +1,6 @@
 const Topic = require("../models/topic");
 const Course = require("../models/course");
+const fs = require("fs");
 
 // POST: /create-content
 exports.createTopic = async (req, res) => {
@@ -39,46 +40,153 @@ exports.deleteTopic = async (req, res) => {
 // PUT: update-topic
 exports.updateTopic = async (req, res) => {
   try {
-    const arrIDtopicNew = [];
-    const arrIDtopicOld = [];
-
-    const topicReq = req.body;
-    const topic = await Topic.find({ course: req.params.id });
-
-    // Update
-    await topicReq.map(async (item, index) => {
-      await topic.map(async (Ttem, Tdex) => {
-        if (item._id == Ttem._id) {
-          arrIDtopicNew.push(item._id);
-          const topic_update = await Topic.findOneAndUpdate(
-            { _id: item._id },
-            {
-              title: item.title,
-              detail: item.detail,
-              link: item.link,
-              file: item.file,
-              sub_content: item.sub_content,
-            },
-            { new: true }
-          );
-        }
-      });
-    });
-
-    // Delete
-    await topic.map(async (item, index) => {
-      arrIDtopicOld.push(item._id);
-    });
-
-    for (var i = 0; i < arrIDtopicOld.length; i++) {
-      for (var j = 0; j < arrIDtopicNew.length; j++) {
-        if (arrIDtopicOld[i] == arrIDtopicNew[j]) {
-          arrIDtopicOld.splice(i, 1);
-        }
-      }
+    const { field, value } = req.body;
+    if (field === "title") {
+      const topic = await Topic.findOneAndUpdate(
+        { _id: req.params.id },
+        { title: value }
+      );
+      res.json(topic);
+    } else if (field === "detail") {
+      const topic = await Topic.findOneAndUpdate(
+        { _id: req.params.id },
+        { detail: value }
+      );
+      res.json(topic);
     }
-    await Topic.deleteMany({ _id: { $in: arrIDtopicOld } });
-    res.json("Process Success");
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server Error!!! on update topic" });
+  }
+};
+// PUT: add-sub-topic
+exports.addTopicSub = async (req, res) => {
+  try {
+    const topic = await Topic.findOne({ _id: req.params.id });
+    topic.sub_content.push("");
+
+    await Topic.findOneAndUpdate(
+      {_id:req.params.id},
+      {sub_content:topic.sub_content}
+      )
+
+    res.json(topic);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server Error!!! on update topic" });
+  }
+};
+// PUT: remove-sub-topic
+exports.removeTopicSub = async (req, res) => {
+  try {
+    const topic = await Topic.findOne({ _id: req.params.id });
+    topic.sub_content.splice(req.body.index,1);
+    await Topic.findOneAndUpdate(
+      {_id:req.params.id},
+      {sub_content:topic.sub_content}
+      )
+
+    res.json(topic);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server Error!!! on update topic" });
+  }
+};
+// PUT: update-sub-topic
+exports.updateTopicSub = async (req, res) => {
+  try {
+    const topic = await Topic.findOne({ _id: req.params.id });
+    topic.sub_content[req.body.field] = req.body.value;
+    await Topic.findOneAndUpdate(
+      {_id:req.params.id},
+      {sub_content:topic.sub_content}
+      )
+
+    res.json(topic);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server Error!!! on update topic" });
+  }
+};
+
+
+// PUT: add-sub-topic
+exports.addTopicLink = async (req, res) => {
+  try {
+    const topic = await Topic.findOne({ _id: req.params.id });
+    topic.link.push({
+      name:"",
+      link:""
+    });
+
+    await Topic.findOneAndUpdate(
+      {_id:req.params.id},
+      {link:topic.link}
+      )
+
+    res.json(topic);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server Error!!! on update topic" });
+  }
+};
+// PUT: remove-sub-topic
+exports.removeTopicLink = async (req, res) => {
+  try {
+    const topic = await Topic.findOne({ _id: req.params.id });
+    topic.link.splice(req.body.index,1);
+    await Topic.findOneAndUpdate(
+      {_id:req.params.id},
+      {link:topic.link}
+      )
+
+    res.json(topic);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server Error!!! on update topic" });
+  }
+};
+// PUT: update-link-topic
+exports.updateTopicLink = async (req, res) => {
+  try {
+    const {field,value,index} = req.body
+    const topic = await Topic.findOne({ _id: req.params.id });
+    if(field === "fieldname"){
+      topic.link[index].name = value
+    }else if(field === "fieldlink"){
+      topic.link[index].link = value
+    }
+    await Topic.findOneAndUpdate(
+      {_id:req.params.id},
+      {link:topic.link}
+      )
+
+    res.json(topic);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server Error!!! on update topic" });
+  }
+};
+
+// PUT: remove-file-topic
+exports.removeTopicFile = async (req, res) => {
+  try {
+    const {index} = req.body
+    const topic = await Topic.findOne({ _id: req.params.id });
+
+    fs.unlink(`./private/uploads/topic/${topic.file[index].name}`, (err) => {
+      if (err) {
+        console.log(err);
+        error_deleteFile = true;
+      }
+    });
+    topic.file.splice(index,1);
+    await Topic.findOneAndUpdate(
+      {_id:req.params.id},
+      {file:topic.file}
+      )
+
+    res.json(topic);
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Server Error!!! on update topic" });

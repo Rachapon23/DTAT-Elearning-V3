@@ -11,23 +11,34 @@ import {
   Radio,
   Upload,
   Image,
+  Badge,
 } from "antd";
 import {
   InfoCircleOutlined,
   PlusOutlined,
   LoadingOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
+import { debounce } from "lodash";
 
 //course Context
 import { CourseContext } from "./CourseContext";
+// fucntion : POST
+import { createFile } from "../../../../../function/Teacher/course_update";
+// fucntion : DELETE
+import { deleteFileCourse } from "../../../../../function/Teacher/course";
+// function Update : PUT
+import { updateCourseStatus,updateCourseInfo } from "../../../../../function/Teacher/course_update";
 
 const { TextArea } = Input;
-
 const Course_info = () => {
-  const { courseInfo, setCourseInfo } = useContext(CourseContext);
-
-  console.log("courseInfo: ",courseInfo)
-
+  const {
+    courseData,
+    course_id,
+    loadDataCourse,
+  } = useContext(CourseContext);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const createFileField = "course";
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
 
@@ -45,18 +56,73 @@ const Course_info = () => {
   );
 
   const handleChangeType = (type) => {
-    setCourseInfo((courseInfo) => ({
-      ...courseInfo,
-      type: type,
-    }));
+    updateCourseStatus(
+      sessionStorage.getItem("token"),
+      {
+        type: type,
+      },
+      course_id
+    )
+      .then((res) => {
+        console.log(res);
+        loadDataCourse();
+      })
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
   };
 
   const handleChangeInfo = (e) => {
-    setCourseInfo((courseInfo) => ({
-      ...courseInfo,
-      [e.target.name]: e.target.value,
-    }));
+    const field = e.target.name;
+    const value = e.target.value;
+    updateCourseInfo(
+      sessionStorage.getItem("token"),
+      {
+        field: field,
+        value: value,
+      },
+      course_id
+    )
+      .then((res) => {
+        console.log(res);
+        loadDataCourse();
+      })
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
   };
+
+  const handleAddImage = async (image) => {
+    let formData = new FormData();
+    formData.append("file", image?.file);
+    formData.append("original_name", image?.file?.name);
+    formData.append("course_id", course_id);
+
+    await createFile(sessionStorage.getItem("token"), formData, createFileField)
+      .then((res) => {
+        // console.log(res);
+        loadDataCourse();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const handleRemoveImage = async () => {
+    await deleteFileCourse(sessionStorage.getItem("token"), course_id)
+      .then((res) => {
+        console.log(res);
+        loadDataCourse();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const debounceOnChange = debounce(handleChangeInfo, 500);
 
   return (
     <Form
@@ -65,19 +131,60 @@ const Course_info = () => {
       fields={[
         {
           name: ["fieldName"],
-          value: courseInfo?.name,
+          value: courseData?.name,
         },
         {
           name: ["fieldDetail"],
-          value: courseInfo?.detail,
+          value: courseData?.detail,
         },
         {
           name: ["fieldType"],
-          value: courseInfo?.detail,
+          value: courseData?.detail,
         },
       ]}
     >
       <Row>
+        <Col style={{ width: "100%" }}>
+          <Form.Item label="Cover Image">
+            <Row justify={"center"} align={"middle"}>
+              <Col>
+                {courseData?.image?.name === null ? (
+                  <Upload
+                    name="avatar"
+                    listType="picture-card"
+                    className="avatar-uploader"
+                    showUploadList={false}
+                    customRequest={handleAddImage}
+                  >
+                    {uploadButton}
+                  </Upload>
+                ) : (
+                  <Badge
+                    count={
+                      <Row justify={"center"} align={"middle"}>
+                        <DeleteOutlined
+                          onClick={handleRemoveImage}
+                          style={{
+                            fontSize: "120%",
+                            color: "white",
+                            backgroundColor: "#f5222d",
+                            borderRadius: "50%",
+                            padding: "20%",
+                          }}
+                        />
+                      </Row>
+                    }
+                  >
+                    <Image
+                      height={250}
+                      src={process.env.REACT_APP_IMG + courseData?.image?.name}
+                    />
+                  </Badge>
+                )}
+              </Col>
+            </Row>
+          </Form.Item>
+        </Col>
         <Col style={{ width: "100%" }}>
           <Form.Item
             label="Course Name"
@@ -88,7 +195,7 @@ const Course_info = () => {
             <Input
               placeholder="input placeholder"
               name="name"
-              onChange={handleChangeInfo}
+              onChange={debounceOnChange}
             />
           </Form.Item>
 
@@ -107,12 +214,12 @@ const Course_info = () => {
               style={{ height: 120 }}
               placeholder="can resize"
               name="detail"
-              onChange={handleChangeInfo}
+              onChange={debounceOnChange}
             />
           </Form.Item>
 
           <Form.Item label="Course Type" required>
-            <Radio.Group value={courseInfo?.type} buttonStyle="solid">
+            <Radio.Group value={courseData?.type} buttonStyle="solid">
               <Radio.Button value={true} onClick={() => handleChangeType(true)}>
                 Public
               </Radio.Button>
@@ -123,33 +230,6 @@ const Course_info = () => {
                 Private
               </Radio.Button>
             </Radio.Group>
-          </Form.Item>
-          <Form.Item label="Cover Image">
-            <Row justify={"space-between"}>
-              <Col style={{ width: "100%" }}>
-                <Upload
-                  name="avatar"
-                  listType="picture-card"
-                  className="avatar-uploader"
-                  showUploadList={false}
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  // beforeUpload={beforeUpload}
-                  // onChange={handleChange}
-                >
-                  {imageUrl ? (
-                    <img
-                      src={imageUrl}
-                      alt="avatar"
-                      style={{
-                        width: "100%",
-                      }}
-                    />
-                  ) : (
-                    uploadButton
-                  )}
-                </Upload>
-              </Col>
-            </Row>
           </Form.Item>
         </Col>
       </Row>

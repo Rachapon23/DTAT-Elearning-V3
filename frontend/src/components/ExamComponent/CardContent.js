@@ -114,13 +114,12 @@ const CardContent = ({
         setRadioCurentSelected(data?.answer)
     }
 
-    // console.log()
+    console.log(index)
 
     const handleAddImage = async (image) => {
         let formData = new FormData()
         formData.append("file", image?.file)
         formData.append("original_name", image?.file?.name)
-
         // onChange(index, { image: formData })
 
         // create image for preview before upload to server

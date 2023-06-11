@@ -7,7 +7,8 @@ const fs = require("fs")
 const allowedField = [
     "exam",
     "course",
-    "acnounce"
+    "acnounce",
+    "topic"
 ]
 
 exports.checkUser = (req, res, next) => {
@@ -115,13 +116,14 @@ const storagePrivate = Multer.diskStorage({
         }
         cb(null, path)
     },
-    filename: (req, file, cb) => {
+    filename: (req, file, cb) => {  
         // console.log(req.originalUrl.split("/")[2].split("-")[1])
         const uniqueStr = `${Date.now()}-${Math.round(Math.random() * 1E9)}`
         const splitedFileName = file.originalname.split(".")
         const fileExtension = splitedFileName[splitedFileName.length - 1]
         req.body["name"] = `${file.fieldname}-${uniqueStr}.${fileExtension}`
         req.body["upload_type"] = "private";
+        req.body["field"] = `${req.params.field}`
         cb(null, `${file.fieldname}-${uniqueStr}.${fileExtension}`)
     }
 })
