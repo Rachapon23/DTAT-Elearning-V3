@@ -15,12 +15,15 @@ export const listCourse = async (authtoken) =>
         }
     });
 // GET: /get-course
-export const getCourse = async (authtoken, id) =>
-    await axios.get(process.env.REACT_APP_API + `/get-course/${id}`, {
+export const getCourse = async (authtoken, id, query) => {
+    let reqStr = `/get-course/${id}`
+    if (query) reqStr += query
+    return await axios.get(process.env.REACT_APP_API + reqStr, {
         headers: {
             authtoken,
         }
     });
+}
 
 // DELETE: /remove-course
 export const removeCourse = async (authtoken, id) =>
