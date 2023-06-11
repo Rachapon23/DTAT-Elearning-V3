@@ -48,6 +48,21 @@ export const updateActivityResult = async (authtoken, id, data) =>
             authtoken,
         }
     });
+// POST: /get-image/:field/:id
+export const getPrivateFieldImage = async (authtoken, field, param, value) =>
+    await axios.get(process.env.REACT_APP_API + `/get-image/private/${field}?${param}=${value}`, {
+        headers: {
+            authtoken,
+        },
+        responseType: "blob"
+    });
 
 
+// DELETE: /delete-file/course/:id
+export const deleteFileCourse = async (authtoken, course_id) =>
+    await axios.delete(process.env.REACT_APP_API + `/delete-file/course/${course_id}`, {
+        headers: {
+            authtoken,
+        }
+    });
 

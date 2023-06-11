@@ -117,7 +117,7 @@ const CardContent = ({
         const objectUrl = URL.createObjectURL(image?.file)
         setSelectedImage(objectUrl)
 
-        let imageData = null
+     let imageData = null
         await createFile(sessionStorage.getItem("token"), formData, createFileField)
             .then(
                 (res) => {

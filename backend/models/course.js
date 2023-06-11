@@ -31,14 +31,14 @@ const CourseSchema = new mongoose.Schema(
       ref: "users",
     },
     // ------------------
-    condition: [{
-      type: ObjectId,
-      ref: "condition",
-    }],
-    topic: [{
-      type: ObjectId,
-      ref: "topic",
-    }],
+    // condition: [{
+    //   type: ObjectId,
+    //   ref: "condition",
+    // }],
+    // topic: [{
+    //   type: ObjectId,
+    //   ref: "topic",
+    // }],
     // ------------------
     room: {
       type: ObjectId,

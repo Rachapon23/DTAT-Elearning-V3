@@ -7,7 +7,7 @@ import AdminPage from "./components/WebPages/AdminPage/AdminPage"
 import TeacherPage from "./components/WebPages/TeacherPages/TeacherPage";
 
 //test page
-import CourseMain from "./components/WebPages/TeacherPages/TeacherCourse/CourseOld/CourseMain";
+// import CourseMain from "./components/WebPages/TeacherPages/TeacherCourse/CourseOld/CourseMain";
 import Course from "./components/WebPages/TeacherPages/TeacherCourse/CourseManage/Course";
 
 function App() {

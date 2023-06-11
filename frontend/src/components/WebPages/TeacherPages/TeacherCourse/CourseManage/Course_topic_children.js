@@ -1,49 +1,196 @@
 import React from "react";
 import { useState, useEffect, useContext } from "react";
-import { Row, Card, Button, Col, Form, Input, Space } from "antd";
+import {
+  Row,
+  Card,
+  Button,
+  Col,
+  Form,
+  Image,
+  Input,
+  Badge,
+  Space,
+  Upload,
+  Typography,
+} from "antd";
 import {
   DeleteOutlined,
   MinusCircleOutlined,
   PlusOutlined,
   VerticalAlignBottomOutlined,
+  InfoCircleOutlined,
+  LoadingOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
-
+import { debounce } from "lodash";
+// fucntion : POST
+import { createFile } from "../../../../../function/Teacher/course_update";
 // fucntion : DELETE
 import { removeTopic } from "../../../../../function/Teacher/course_topic";
+// function Update : PUT
+import {
+  updateTopic,
+  addSubTopic,
+  removeSubTopic,
+  updateSubTopic,
+  addLinkTopic,
+  removeLinkTopic,
+  updateLinkTopic,
+  removeFileTopic,
+} from "../../../../../function/Teacher/course_topic";
 
 //course Context
 import { CourseContext } from "./CourseContext";
 
-const Course_topic_children = ({ item, index, nextState, setNextState }) => {
-  const { loadTopic, topicData, setTopicData } = useContext(CourseContext);
+const { Text, Link } = Typography;
 
+const Course_topic_children = ({ item, index, nextState, setNextState }) => {
+  const { loadTopic, course_id } = useContext(CourseContext);
+  const [loading, setLoading] = useState(false);
   const deleteTopic = () => {
-    // removeTopic(sessionStorage.getItem("token"), item._id)
-    //   .then((res) => {
-    //     loadTopic();
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     // alert for user
-    //     alert(err.response.data.error);
-    //   });
-    topicData.splice(index, 1);
-    setNextState([...nextState]);
+    removeTopic(sessionStorage.getItem("token"), item._id)
+      .then((res) => {
+        loadTopic();
+      })
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
   };
 
   const handleChange = (e) => {
-    const name = e.target.name;
+    const field = e.target.name;
     const value = e.target.value;
-    // console.log(name)
-    setTopicData((topicData) =>
-      topicData.map((topic) => {
-        if (topic._id === item._id) {
-          return { ...topic, [name]: value };
-        } else {
-          return topic;
-        }
+    updateTopic(sessionStorage.getItem("token"), item._id, {
+      field: field,
+      value: value,
+    })
+      .then((res) => {
+        console.log(res);
+        loadTopic();
       })
-    );
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
+  };
+  const handleAddSub = () => {
+    addSubTopic(sessionStorage.getItem("token"), item._id)
+      .then((res) => {
+        loadTopic();
+      })
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
+  };
+  const handleRemoveSub = (index) => {
+    removeSubTopic(sessionStorage.getItem("token"), item._id, {
+      index: index,
+    })
+      .then((res) => {
+        loadTopic();
+      })
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
+  };
+  const handleAddLink = () => {
+    addLinkTopic(sessionStorage.getItem("token"), item._id)
+      .then((res) => {
+        loadTopic();
+      })
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
+  };
+  const handleRemoveLink = (index) => {
+    removeLinkTopic(sessionStorage.getItem("token"), item._id, {
+      index: index,
+    })
+      .then((res) => {
+        loadTopic();
+      })
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
+  };
+  const handleChangeSub = (e) => {
+    const field = e.target.name;
+    const value = e.target.value;
+    updateSubTopic(sessionStorage.getItem("token"), item._id, {
+      field: field,
+      value: value,
+    })
+      .then((res) => {
+        loadTopic();
+      })
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
+  };
+  const handleChangeLink = (e) => {
+    const field = e.target.id;
+    const value = e.target.value;
+    const index = parseInt(e.target.name);
+
+    updateLinkTopic(sessionStorage.getItem("token"), item._id, {
+      field: field,
+      value: value,
+      index: index,
+    })
+      .then((res) => {
+        loadTopic();
+      })
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
+  };
+
+  const debounceOnChange = debounce(handleChange, 500);
+  const debounceOnChangeSub = debounce(handleChangeSub, 500);
+  const debounceOnChangeLink = debounce(handleChangeLink, 500);
+
+  const createFileField = "topic";
+  const handleAddFile = async (image) => {
+    let formData = new FormData();
+    formData.append("file", image?.file);
+    formData.append("original_name", image?.file?.name);
+    formData.append("topic_id", item._id);
+
+    await createFile(sessionStorage.getItem("token"), formData, createFileField)
+      .then((res) => {
+        loadTopic();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const handleRemoveFile = (index) => {
+    removeFileTopic(sessionStorage.getItem("token"), item._id, {
+      index: index,
+    })
+      .then((res) => {
+        loadTopic();
+      })
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
   };
 
   return (
@@ -73,15 +220,193 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
           ]}
         >
           <Form.Item name="fieldTitle" label="Title">
-            <Input name="title" onChange={handleChange} />
+            <Input name="title" onChange={debounceOnChange} />
           </Form.Item>
           <Form.Item name="fieldDetail" label="Detail">
-            <Input.TextArea name="detail" onChange={handleChange} />
+            <Input.TextArea name="detail" onChange={debounceOnChange} />
           </Form.Item>
-          <Form.Item label="Sub Topic"></Form.Item>
-          <Form.Item label="Link"></Form.Item>
-          <Form.Item label="File"></Form.Item>
         </Form>
+        <div style={{ marginBottom: "20px" }}>
+          <label>Sub Content</label>
+          <hr />
+          {item?.sub_content.map((ttem, ddex) => (
+            <Form
+              key={ddex}
+              layout="vertical"
+              fields={[
+                {
+                  name: ["fieldsub"],
+                  value: ttem,
+                },
+              ]}
+            >
+              <Row>
+                <Col style={{ width: "94%" }}>
+                  <Form.Item name="fieldsub">
+                    <Input name={`${ddex}`} onChange={debounceOnChangeSub} />
+                  </Form.Item>
+                </Col>
+                <Col
+                  style={{
+                    width: "5%",
+                    display: "flex",
+                    justifyContent: "center",
+                    marginLeft: "1%",
+                    // alignItems: "center",
+                    // backgroundColor:"red"
+                  }}
+                >
+                  <MinusCircleOutlined
+                    style={{ fontSize: "130%" }}
+                    className="dynamic-delete-button"
+                    onClick={() => handleRemoveSub(ddex)}
+                  />
+                </Col>
+              </Row>
+            </Form>
+          ))}
+          <Button
+            type="dashed"
+            onClick={handleAddSub}
+            style={{
+              width: "100%",
+            }}
+            icon={<PlusOutlined />}
+          >
+            Add Sub Content
+          </Button>
+        </div>
+        <div style={{ marginBottom: "20px" }}>
+          <label>Link</label>
+          <hr />
+          {item?.link.map((ttem, ddex) => (
+            <Form
+              key={ddex}
+              layout="vertical"
+              fields={[
+                {
+                  name: ["fieldname"],
+                  value: ttem?.name,
+                },
+                {
+                  name: ["fieldlink"],
+                  value: ttem?.link,
+                },
+              ]}
+            >
+              <Row>
+                <Col style={{ width: "30%" }}>
+                  <Form.Item name="fieldname">
+                    <Input
+                      name={`${ddex}`}
+                      placeholder="name"
+                      onChange={debounceOnChangeLink}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col style={{ width: "64%" }}>
+                  <Form.Item name="fieldlink">
+                    <Input
+                      name={`${ddex}`}
+                      placeholder="link"
+                      onChange={debounceOnChangeLink}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col
+                  style={{
+                    width: "5%",
+                    display: "flex",
+                    justifyContent: "center",
+                    marginLeft: "1%",
+                    // alignItems: "center",
+                    // backgroundColor:"red"
+                  }}
+                >
+                  <MinusCircleOutlined
+                    style={{ fontSize: "130%" }}
+                    className="dynamic-delete-button"
+                    onClick={() => handleRemoveLink(ddex)}
+                  />
+                </Col>
+              </Row>
+            </Form>
+          ))}
+          <Button
+            type="dashed"
+            onClick={handleAddLink}
+            style={{
+              width: "100%",
+            }}
+            icon={<PlusOutlined />}
+          >
+            Add Link
+          </Button>
+        </div>
+        <div style={{ marginBottom: "20px" }}>
+          <label>File</label>
+          <hr />
+          {item?.file.map((ttem, ddex) => (
+            <div style={{marginBottom:"10px"}} key={ddex}>
+              {ttem?.file_type === "image/jpeg" ||
+              ttem?.file_type === "image/png" 
+               ? (
+                <Row justify={"center"} align={"middle"}>
+                  <Col>
+                    <Badge
+                      count={
+                        <Row justify={"center"} align={"middle"}>
+                          <DeleteOutlined
+                            onClick={() => handleRemoveFile(ddex)}
+                            style={{
+                              fontSize: "120%",
+                              color: "white",
+                              backgroundColor: "#f5222d",
+                              borderRadius: "50%",
+                              padding: "20%",
+                            }}
+                          />
+                        </Row>
+                      }
+                    >
+                      <Image
+                        height={250}
+                        src={`http://localhost:5500/uploads/topic/${ttem?.name}`}
+                      />
+                    </Badge>
+                  </Col>
+                </Row>
+              ) : (
+                <Row>
+                  <Col style={{ width: "94%" }}>
+                    <Link 
+                    href={`http://localhost:5500/uploads/topic/${ttem?.name}`}
+                    target="_blank">{ttem?.original_name}</Link>
+                  </Col>
+                  <Col
+                    style={{
+                      width: "5%",
+                      display: "flex",
+                      justifyContent: "center",
+                      marginLeft: "1%",
+                      // alignItems: "center",
+                      // backgroundColor:"red"
+                    }}
+                  >
+                    <MinusCircleOutlined
+                      style={{ fontSize: "130%" }}
+                      className="dynamic-delete-button"
+                      onClick={() => handleRemoveFile(ddex)}
+                    />
+                  </Col>
+                </Row>
+              )}
+            </div>
+          ))}
+          <Upload showUploadList={false} customRequest={handleAddFile}>
+            <Button icon={<UploadOutlined />}>Click to Upload</Button>
+          </Upload>
+        </div>
       </Card>
     </Row>
   );

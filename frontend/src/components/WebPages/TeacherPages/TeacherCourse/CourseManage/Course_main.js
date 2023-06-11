@@ -22,16 +22,19 @@ import {
   Col,
   ColorPicker,
 } from "antd";
-
+import { DeleteOutlined } from "@ant-design/icons";
 //course Context
 import { CourseContext } from "./CourseContext";
-// function Update : PUT
-import { updateCourseInfo } from "../../../../../function/Teacher/course_update";
-import { updateCoursetimeAndRoom } from "../../../../../function/Teacher/course_update";
-import { updateTopic } from "../../../../../function/Teacher/course_topic";
-
+import { debounce } from "lodash";
 // fucntion : GET
 import { getCourse } from "../../../../../function/Teacher/course";
+
+// fucntion : POST
+import { createFile } from "../../../../../function/Teacher/course_update";
+// fucntion : PUT
+import { updateCalendar } from "../../../../../function/Teacher/calendar";
+// fucntion : DELETE
+import { deleteCalendar } from "../../../../../function/Teacher/calendar";
 
 //momentJS
 import moment from "moment";
@@ -40,65 +43,71 @@ import Course_topic_children from "./Course_topic_children";
 moment.locale("th");
 
 const Course_main = () => {
-  const { courseInfo, timeAndroom, loadTopic, topicData, setTimeAndRoom, course_id } =
-    useContext(CourseContext);
+  const {
+    loadDataCourse,
+    loadTopic,
+    topicData,
+    course_id,
+    courseData,
+    loadCalendar,
+    even,
+  } = useContext(CourseContext);
 
   const [currentPage, setCurrentPage] = useState(0);
-
   const [step, setStep] = useState([]);
   const [nextState, setNextState] = useState([]);
-  const pageList = courseInfo.type
+  const pageList = courseData?.type
     ? [<Course_info />, <Course_topic />, <Course_finished />]
     : [
-      <Course_info />,
-      <Course_Room />,
-      <Course_condition />,
-      <Course_topic />,
-      <Course_finished />,
-    ];
+        <Course_info />,
+        <Course_Room />,
+        <Course_condition />,
+        <Course_topic />,
+        <Course_finished />,
+      ];
 
   const [currentDisplay, setCurrentDisplay] = useState(pageList);
 
   useEffect(() => {
-    courseInfo.type
+    courseData?.type
       ? setStep([
-        {
-          title: "Course Info",
-          content: "First-content",
-        },
-        {
-          title: "topic",
-          content: "second-content",
-        },
-        {
-          title: "Finished",
-          content: "Last-content",
-        },
-      ])
+          {
+            title: "Course Info",
+            content: "First-content",
+          },
+          {
+            title: "topic",
+            content: "second-content",
+          },
+          {
+            title: "Finished",
+            content: "Last-content",
+          },
+        ])
       : setStep([
-        {
-          title: "Course Info",
-          content: "First-content",
-        },
-        {
-          title: "Time & Room",
-          content: "second-content",
-        },
-        {
-          title: "Manage Plant",
-          content: "third-content",
-        },
-        {
-          title: "topic",
-          content: "fourth-content",
-        },
-        {
-          title: "Finished",
-          content: "Last-content",
-        },
-      ]);
+          {
+            title: "Course Info",
+            content: "First-content",
+          },
+          {
+            title: "Time & Room",
+            content: "second-content",
+          },
+          {
+            title: "Manage Plant",
+            content: "third-content",
+          },
+          {
+            title: "topic",
+            content: "fourth-content",
+          },
+          {
+            title: "Finished",
+            content: "Last-content",
+          },
+        ]);
     setCurrentDisplay(pageList);
-  }, [courseInfo.type]);
+  }, [courseData?.type]);
 
   const renderPageNav = () => {
     return (
@@ -107,7 +116,7 @@ const Course_main = () => {
           <Button
             type="primary"
             onClick={() => {
-              console.log(timeAndroom);
+              console.log(courseData);
             }}
           >
             {" "}
@@ -131,9 +140,18 @@ const Course_main = () => {
                   Finished
                 </Button>
               ) : (
-                <Button type="primary" onClick={() => handleDisplay("Next")}>
-                  Next
-                </Button>
+                <>
+                  {currentPage === pageList.length - 1 ? (
+                    <></>
+                  ) : (
+                    <Button
+                      type="primary"
+                      onClick={() => handleDisplay("Next")}
+                    >
+                      Next
+                    </Button>
+                  )}
+                </>
               )}
             </Col>
           </Row>
@@ -144,28 +162,13 @@ const Course_main = () => {
 
   const handleDisplay = (mode) => {
     if (mode === "Next") {
-      if (currentPage === 0) {
-        courseUpdataInfo();
-      } else if (currentPage === 1) {
-        if (step[1].title === "Time & Room") {
-          CourseUpdateTimeAndRoom();
-        } else if (step[1].title === "topic") {
-        }
-      } else if (currentPage === 2) {
-        if (step[2].title === "Manage Plant") {
-          setCurrentPage(currentPage + 1);
-        }
-      } else if (currentPage === 3) {
-        // if (step[3].title === "topic") {
-        //   setCurrentPage(currentPage + 1);
-        // }
-      }
+      setCurrentPage(currentPage + 1);
     } else if (mode === "Previous") {
       if (currentPage - 1 >= 0) {
         setCurrentPage(currentPage - 1);
       }
     } else if (mode === "Finished") {
-      updateTopicCourse();
+      setCurrentPage(currentPage + 1);
     }
   };
 
@@ -174,49 +177,15 @@ const Course_main = () => {
     title: item.title,
   }));
 
-  const courseUpdataInfo = () => {
-    updateCourseInfo(sessionStorage.getItem("token"), courseInfo, course_id)
-      .then((res) => {
-        // console.log(res);
-        setCurrentPage(currentPage + 1);
-      })
-      .catch((err) => {
-        console.log(err);
-        // alert for user
-        alert(err.response.data.error);
-      });
-  };
-
-  const CourseUpdateTimeAndRoom = () => {
-    updateCoursetimeAndRoom(
-      sessionStorage.getItem("token"),
-      timeAndroom,
-      course_id
-    )
-      .then((res) => {
-        // console.log(res);
-        setCurrentPage(currentPage + 1);
-      })
-      .catch((err) => {
-        console.log(err);
-        // alert for user
-        alert(err.response.data.error);
-      });
-  };
-
   const onChangeColor = (e) => {
-    setTimeAndRoom((timeAndroom) => ({
-      ...timeAndroom,
+    updateCalendar(sessionStorage.getItem("token"), courseData?.calendar?._id, {
+      start: courseData?.calendar?.start,
+      end: courseData?.calendar?.end,
       color: e.toHexString(),
-    }));
-  };
-
-  const updateTopicCourse = () => {
-    updateTopic(sessionStorage.getItem("token"), course_id, topicData)
+    })
       .then((res) => {
-        console.log(res);
-        loadTopic()
-        setCurrentPage(currentPage + 1);
+        loadDataCourse();
+        loadCalendar();
       })
       .catch((err) => {
         console.log(err);
@@ -224,6 +193,19 @@ const Course_main = () => {
         alert(err.response.data.error);
       });
   };
+  const handleRemoveCalendar = () => {
+    deleteCalendar(sessionStorage.getItem("token"), course_id)
+      .then((res) => {
+        loadDataCourse();
+        loadCalendar();
+      })
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
+  };
+  const debounceOnChange = debounce(onChangeColor, 200);
 
   return (
     <Layout className="course-main-layout">
@@ -247,25 +229,28 @@ const Course_main = () => {
         </Col>
       </Row>
 
-      {timeAndroom.start !== "" &&
-        timeAndroom.end !== "" &&
-        step[1].title === "Time & Room" &&
-        currentPage === 1 ? (
+      {courseData?.calendar !== null &&
+      step[1]?.title === "Time & Room" &&
+      currentPage === 1 ? (
         <Row className="course-main-for-calendar">
           <Card className="card-calendar">
             <Row justify="center">
-              <Col className="col-card-calendar" span={8}>
+              <Col className="col-card-calendar" span={6}>
                 start :{" "}
-                {moment(timeAndroom.start.substring(0, 10)).format("LL")}
+                {moment(courseData?.calendar?.start?.substring(0, 10)).format(
+                  "LL"
+                )}
               </Col>
-              <Col className="col-card-calendar" span={8}>
-                end : {moment(timeAndroom.end.substring(0, 10)).format("LL")}
+              <Col className="col-card-calendar" span={6}>
+                end :{" "}
+                {moment(courseData?.calendar?.end?.substring(0, 10)).format(
+                  "LL"
+                )}
               </Col>
-              <Col className="col-card-calendar" span={8}>
+              <Col className="col-card-calendar" span={6}>
                 <ColorPicker
-                  // trigger="hover"
-                  onChange={onChangeColor}
-                  value={timeAndroom.color}
+                  onChange={debounceOnChange}
+                  value={courseData?.calendar?.color}
                   presets={[
                     {
                       label: "Recommended",
@@ -305,6 +290,11 @@ const Course_main = () => {
                   ]}
                 />
               </Col>
+              <Col className="col-card-calendar" span={6}>
+                <Button onClick={handleRemoveCalendar}>
+                  <DeleteOutlined />
+                </Button>
+              </Col>
             </Row>
           </Card>
         </Row>
@@ -312,34 +302,65 @@ const Course_main = () => {
         <></>
       )}
 
-      {
-        topicData.length !== 0 &&
-          (step[3]?.title === "topic" || step[1]?.title === "topic") &&
-          (currentPage === 3 || currentPage === 1)  ?
-          (
+      {courseData.type === true ? (
+        <>
+          {topicData.length !== 0 &&
+          step[1]?.title === "topic" &&
+          currentPage === 1 ? (
             <>
-              {
-                topicData.map((item, index) => (
-                  <Course_topic_children
-                    nextState={nextState}
-                    setNextState={setNextState}
-                    key={item._id}
-                    item={item}
-                    index={index}
-                  />
-                ))
-              }
+              {topicData.map((item, index) => (
+                <Course_topic_children
+                  nextState={nextState}
+                  setNextState={setNextState}
+                  key={item._id}
+                  item={item}
+                  index={index}
+                />
+              ))}
             </>
-          )
-          :
-          (
+          ) : (
+            <></>
+          )}
+        </>
+      ) : (
+        <>
+          {topicData.length !== 0 &&
+          step[3]?.title === "topic" &&
+          currentPage === 3 ? (
             <>
-              {
-                console.log(currentPage)
-              }
+              {topicData.map((item, index) => (
+                <Course_topic_children
+                  nextState={nextState}
+                  setNextState={setNextState}
+                  key={item._id}
+                  item={item}
+                  index={index}
+                />
+              ))}
             </>
-          )
-      }
+          ) : (
+            <></>
+          )}
+        </>
+      )}
+
+      {/* {topicData.length !== 0 &&
+      (step[3]?.title === "topic" || step[1]?.title === "topic") &&
+      (currentPage === 3 || currentPage === 1) ? (
+        <>
+          {topicData.map((item, index) => (
+            <Course_topic_children
+              nextState={nextState}
+              setNextState={setNextState}
+              key={item._id}
+              item={item}
+              index={index}
+            />
+          ))}
+        </>
+      ) : (
+        <>{console.log(currentPage)}</>
+      )} */}
 
       <Row className="course-main-btn-bottom">
         <Col flex={"auto"}>
