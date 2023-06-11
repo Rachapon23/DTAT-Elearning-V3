@@ -11,7 +11,7 @@ import {
 } from '@dnd-kit/sortable';
 import { DndContext } from '@dnd-kit/core';
 import { Link } from 'react-router-dom';
-import { createAcnounce, createFilePublic, updateAcnounce, updateCourse } from '../../../../../function/Admin/adminFunction';
+import { createAcnounce, createFilePublic, updateAcnounce, updateCourse } from '../../../../function/Admin/adminFunction';
 import { AdminContext } from './AdminManageContext';
 import ImgCrop from 'antd-img-crop';
 import CourseTable from './CourseTable';

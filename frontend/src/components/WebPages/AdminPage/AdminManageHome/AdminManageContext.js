@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { getHome } from "../../../../../function/Admin/adminFunction";
+import { getHome } from "../../../../function/Admin/adminFunction";
 
 export const AdminContext = createContext();
 

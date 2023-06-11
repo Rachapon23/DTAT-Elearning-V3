@@ -1,5 +1,5 @@
 import { Breadcrumb, Button, Card, Col, Empty, Radio, Row, Segmented, Tabs, Typography } from "antd";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import CardCourse from "../../../Card/CardCourse"
 import { StudentContext } from "./StudentCourseContext";
 import { useNavigate } from "react-router-dom";
@@ -12,10 +12,9 @@ const { Title } = Typography
 const BrowesCourse = () => {
 
     const { courses } = useContext(StudentContext)
-    // const [filterType, setFilterType] = useState(null)
-    // const [filteredCourse, setFilteredCourse] = useState(courses)
+    const [filterType, setFilterType] = useState(null)
+    const [filteredCourse, setFilteredCourse] = useState(courses)
     const navigate = useNavigate()
-    // console.log(courses)
 
     const handleNavigate = (navStr, dataStage) => {
         navigate(navStr, { state: dataStage })
@@ -28,31 +27,28 @@ const BrowesCourse = () => {
         handleNavigate(`/student/page/register-course/${e?.target?.id}`)
     }
 
-    // const handleFilterCourseType = (courseType) => {
-    //     // console.log(courseType)
-    //     setFilterType(courseType)
+    const handleFilterCourseType = (courseType) => {
+        console.log(courseType)
+        setFilterType(courseType)
+    }
 
-    // }
-
-    // const fileterCourse = (courses) => {
-    //     console.log("filtered")
-    //     if (!filterType) setFilterType("All")
-    //     console.log(filterType)
-    //     switch (filterType) {
-    //         case "Public":
-    //             setFilteredCourse(() => courses.filter((item) => item?.type))
-    //             break
-    //         case "Private":
-    //             setFilteredCourse(() => courses.filter((item) => !item?.type))
-    //             break
-    //         case "All": setFilteredCourse(() => courses)
-    //             break
-    //         default:
-    //             setFilteredCourse(() => courses)
-    //     }
-
-
-    // }
+    const fileterCourse = (courses) => {
+        console.log("filtered")
+        if (!filterType) setFilterType("All")
+        console.log(filterType)
+        switch (filterType) {
+            case "Public":
+                console.log(courses.filter((item) => item?.type))
+                return courses.filter((item) => item?.type)
+            case "Private":
+                console.log(courses.filter((item) => !item?.type))
+                return courses.filter((item) => !item?.type)
+            case "All":
+                return courses
+            default:
+                return courses
+        }
+    }
 
     const browesCourseTitle = () => {
         return (
@@ -83,14 +79,14 @@ const BrowesCourse = () => {
         )
     }
 
-    const renderContent = (index) => {
+    const renderContent = useCallback((index) => {
         // console.log("index:", filteredCourse)
         if (index % GROUP_NUMBER !== 0) return null
 
         return (
             <Row gutter={[32, 0]} justify={"start"} style={{ paddingLeft: "3%", paddingRight: "3%" }}>
                 {
-                    courses.slice(index, index + GROUP_NUMBER).map((data) => (
+                    fileterCourse(courses).slice(index, index + GROUP_NUMBER).map((data) => (
                         <Col span={6} style={{ padding: "1%", }}>
                             <CardCourse
                                 onClick={(e) => handleClickCourse(e, data)}
@@ -106,31 +102,32 @@ const BrowesCourse = () => {
             </Row>
         )
 
-    }
+    }, [filterType])
 
     return (
         <div className="bg-st-course">
             <NavBarHome />
-            <div style={{width: "100%", marginTop: "100px", marginBottom: "50px"}}>
+            <div style={{ width: "100%", marginTop: "100px", marginBottom: "50px" }}>
                 <Row justify={"center"} >
                     <Col flex={"auto"} >
                         {/* style={{ padding: "2%", paddingTop: "4%" }} */}
                         <Row justify={"center"} align={"top"}>
                             <Col flex={"auto"}>
                                 <Card title={browesCourseTitle()}>
-                                    {/* <Row style={{ paddingLeft: "3%", paddingRight: "3%", paddingBottom: "0.5%", }}>
+                                    <Row style={{ paddingLeft: "3%", paddingRight: "3%", paddingBottom: "0.5%", }}>
                                         <Segmented
-                                            style={{ width: "20%" }}
+                                            style={{ width: "220px" }}
                                             block
+                                            onChange={handleFilterCourseType}
                                             options={[
                                                 "All",
                                                 "Public",
                                                 "Private"
                                             ]}
                                         />
-                                    </Row> */}
+                                    </Row>
                                     {
-                                        courses.slice(0, 1).map((_, index) => (
+                                        fileterCourse(courses).map((_, index) => (
                                             renderContent(index)
                                         ))
                                     }
@@ -140,7 +137,6 @@ const BrowesCourse = () => {
                     </Col >
                 </Row >
             </div>
-
         </div>
     )
 

@@ -36,6 +36,14 @@ exports.register = async (req, res) => {
       }
     }
 
+    // create profile
+    const profile = await new Profile({
+      image: null,
+      tel: null,
+      email: email,
+      target: null,
+    }).save();
+
     // create new user data
     user = new User({
       employee,
@@ -45,16 +53,9 @@ exports.register = async (req, res) => {
       firstname,
       lastname,
       plant,
+      profile,
       role: await Role.findOne({ name: "student" }).select("_id")
     });
-
-    // create profile
-    await new Profile({
-      image: null,
-      tel: null,
-      email: email,
-      target: null,
-    }).save();
 
     // Encrypt password
     const salt = await bcrypt.genSalt(10);
@@ -123,10 +124,10 @@ exports.sendEmail = async (req, res) => {
   try {
     const { email } = req.body
     const transporter = nodeMailer.createTransport({
-      service: 'gmail',
+      service: process.env.SERVICE_EMAIL_SENDER,// gmail
       auth: {
-        user: 'densoeleaning@gmail.com',
-        pass: 'hqqabmpdjxmqsevf'
+        user: process.env.EMAIL_SENDER, // densoeleaning@gmail.com
+        pass: process.env.PASS_EMAIL_SENDER // hqqabmpdjxmqsevf
       }
     });
 
@@ -228,6 +229,17 @@ exports.resetPassword = async (req, res) => {
   }
 }
 
+exports.checkRole = async (req, res) => {
+  try {
+    const { user_id, role } = req?.user
+    return res.json({ data: { user_id: user_id, role: role } });
+  }
+  catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Unexpected error on check user" });
+  }
+}
+
 
 
 // =================================================================================================================
@@ -268,14 +280,14 @@ exports.getTeacherByCourseId = async (req, res) => {
   }
 };
 
-exports.checkRole = async (req, res) => {
-  try {
-    res.send(req.user.role)
-  }
-  catch (err) {
-    console.log(err);
-  }
-}
+// exports.checkRole = async (req, res) => {
+//   try {
+//     res.send(req.user.role)
+//   }
+//   catch (err) {
+//     console.log(err);
+//   }
+// }
 
 exports.getMyaccount = async (req, res) => {
   try {

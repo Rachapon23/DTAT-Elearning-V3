@@ -64,140 +64,106 @@ exports.createCourse = async (req, res) => {
 
 // GET: /get-course/:id
 exports.getCourse = async (req, res) => {
-  const allowField = [];
-  const allowedSearch = ["_id"];
-  const allowedProps = ["condition", "plant", "plant maximum"];
-  const allowedPropsField = ["path", "populate", "select"];
-  const allowedSelect = [];
-  const allowedFetch = ["name", "detail", "image", "condition"];
-  try {
-    console.log(req?.params?.id);
-    const result = validateQuery(
-      "get",
-      "get course",
-      req?.user?.role,
-      null,
-      req?.user?.role === "admin",
-      null,
-      {
-        fields: req?.query?.field,
-        fetchs: req?.query?.fetch,
-        selects: req?.query?.selects,
-        search: req?.params?.id ? `_id:${req?.params?.id}` : req?.query?.search,
-        subPops: req?.query?.pops,
-      },
-      {
-        fields: allowField,
-        search: allowedSearch,
-        subPops: {
-          method: allowedPropsField,
-          fields: allowedProps,
-        },
-        selects: allowedSelect,
-        fetchs: allowedFetch,
-      },
-      false
-    );
+    const allowField = []
+    const allowedSearch = ["_id"]
+    const allowedProps = ["condition", "plant", "plant maximum", "teacher", "firstname lastname -_id","firstname lastname"]
+    const allowedPropsField = ["path", "populate", "select"]
+    const allowedSelect = ["firstname", "lastname"]
+    const allowedFetch = ["name", "detail", "image", "condition", "teacher"]
+    try {
+        console.log(req?.params?.id)
+        const result = validateQuery(
+            "get",
+            "get course",
+            req?.user?.role,
+            null,
+            false,//req?.user?.role === "admin",
+            null,
+            {
+                fields: req?.query?.field,
+                fetchs: req?.query?.fetch,
+                selects: req?.query?.selects,
+                search: req?.params?.id ? `_id:${req?.params?.id}` : req?.query?.search,
+                subPops: req?.query?.pops,
+            },
+            {
+                fields: allowField,
+                search: allowedSearch,
+                subPops: {
+                    method: allowedPropsField,
+                    fields: allowedProps,
+                },
+                selects: allowedSelect,
+                fetchs: allowedFetch,
 
-    if (!result.success)
-      return res.status(result.code).json({ error: result.message });
+            },
+            false
+        )
 
-    const course = await Course.findOne(
-      result.options.searchParams,
-      result.options.fetchParams
-    )
-      .populate("calendar")
-      .select(result.options.selectParams);
-    return res.json({ data: course });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: "Unexpected error on get course" });
-  }
+        if (!result.success) return res.status(result.code).json({ error: result.message })
+
+        const course = await Course
+            .findOne(result.options.searchParams, result.options.fetchParams)
+            .populate(result.options.fieldParams ? result.options.fieldParams : result.options.subPropsParams)
+            .select(result.options.selectParams)
+        return res.json({ data: course })
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Unexpected error on get course" });
+    }
+
 };
 
 // GET: /list-course
 exports.listCourse = async (req, res) => {
-  const allowField = ["condition", "room", "teacher", "exam"];
-  const allowedSearch = ["type"];
-  try {
-    const fields = req?.query?.field;
-    let fetchs = req?.query?.fetch;
-    let selects = req?.query?.select;
-    let search = req?.query?.search;
+    const allowField = ["condition", "room", "teacher", "exam"]
+    const allowedSearch = ["type"]
+    const allowedPops = []
+    const allowedPropsField = ["path", "select", "populate"]
+    const allowedSelect = ["ans", "name", "detail", "image", "type"]
+    const allowedFetch = []
+    try {
+        const result = validateQuery(
+            "get",
+            "list course",
+            req?.user?.role,
+            null,
+            req?.user?.role === "admin",
+            null,
+            {
+                fields: req?.query?.field,
+                fetchs: req?.query?.fetch,
+                selects: req?.query?.selects,
+                search: req?.params?._id ? req?.params?._id : req?.query?.search,
+                subPops: req?.query?.pops,
+            },
+            {
+                fields: allowField,
+                search: allowedSearch,
+                subPops: {
+                    method: allowedPropsField,
+                    fields: allowedPops,
+                },
+                selects: allowedSelect,
+                fetchs: allowedFetch,
 
-    const seperator = new RegExp(",", "g");
-    if (fetchs) fetchs = fetchs.replace(seperator, " ");
-    if (selects) selects = selects.replace(seperator, " ");
+            },
+            false
+        )
+        // console.log(result)
+        if (!result.success) return res.status(result.code).json({ error: result.message })
 
-    // console.log(pops)
-    console.log(fields);
-    console.log(fetchs);
-    console.log(selects);
-    console.log(search);
+        const courses = await Course
+            .find(result.options.searchParams, result.options.fetchParams)
+            .populate(result.options.fieldParams ? result.options.fieldParams : result.options.subPropsParams)
+            .select(result.options.selectParams)
+        return res.json({ data: courses })
 
-    // check role
-    let searchParams = null;
-    switch (req?.user?.role) {
-      case "admin":
-        searchParams = {};
-        break;
-      case "teacher":
-        searchParams = { teacher: user_id };
-        break;
-      case "student":
-        return res.status(403).json({ error: "Access denine for student" });
-      default:
-        return res
-          .status(404)
-          .json({ error: "This role does not exist in system" });
     }
-
-    // validate search
-    let searchArray = null;
-    if (search) searchArray = search.split(",");
-
-    if (searchArray && Array.isArray(searchArray)) {
-      if (searchArray.length > allowedSearch.length)
-        return res.status(400).json({ error: "Invalid query parameter(s)" });
-      if (searchArray.length > 0) {
-        for (let i = 0; i < allowedSearch.length; i++) {
-          const searchSplited = searchArray[i].split(":");
-          const searchField = searchSplited[0];
-          const searchValue = searchSplited[1];
-          if (!allowedSearch.includes(searchField))
-            return res
-              .status(400)
-              .json({ error: "Invalid query parameter(s)" });
-          else {
-            console.log(searchField, searchValue);
-            searchParams[searchField] = searchValue;
-          }
-        }
-      }
-    } else if (fields) {
-      if (!allowField.includes(fields))
-        return res.status(400).json({ error: "Invalid query parameter(s)" });
-      populateField = fields;
-    }
-
-    // validate populateField
-    let populateField = null;
-    if (fields && Array.isArray(fields)) {
-      if (fields.length > allowField.length)
-        return res.status(400).json({ error: "Invalid query parameter(s)" });
-      if (fields.length > 1) {
-        for (let i = 0; i < fields.length; i++) {
-          if (!allowField.includes(fields[i]))
-            return res
-              .status(400)
-              .json({ error: "Invalid query parameter(s)" });
-        }
-      }
-      populateField = fields.join(" ");
-    } else if (fields) {
-      if (!allowField.includes(fields))
-        return res.status(400).json({ error: "Invalid query parameter(s)" });
-      populateField = fields;
+    catch (err) {
+        console.log("fail to fetch courses");
+        res.status(500).json({ error: "Unexpected error on list courses" });
     }
     if (!searchParams)
       return res
@@ -443,96 +409,71 @@ exports.listCourseWoQuiz = async (req, res) => {
 
 // GET: /list-course/sp/graph
 exports.listCourseGraphData = async (req, res) => {
-  try {
-    switch (req?.user?.role) {
-      case "admin":
-        const searchedCourse = await Course.find({})
-          .populate({
-            path: "condition",
-            populate: {
-              path: "plant",
-              // select: ""
-            },
-          })
-          .populate({
-            path: "activity",
-            populate: {
-              path: "user",
-              populate: {
-                path: "plant",
-                // select: ""
-              },
-            },
-          });
+    try {
+        switch (req?.user?.role) {
+            case "admin":
+                const searchedCourse = await Course.find({})
+                    .populate({
+                        path: "condition",
+                        populate: {
+                            path: "plant"
+                            // select: ""
+                        }
+                    })
+                    .populate({
+                        path: "activity",
+                        populate: {
+                            path: "user",
+                            populate: {
+                                path: "plant"
+                                // select: ""
+                            }
+                        }
+                    })
 
-        const searchedActivity = await Activity.find({}).populate("user");
-        // console.log(searchedActivity.map((item) =>{
-        //   if(item.completed && item.user) return item.user
-        //   else return 0
-        // }))
+                const searchedActivity = await Activity.find({}).populate("user")
+                // console.log(searchedActivity.map((item) =>{
+                //   if(item.completed && item.user) return item.user
+                //   else return 0
+                // }))
 
-        // console.log("user plant: ", searchedCourse.map((item) => item.activity.map((aitem) => aitem.user.firstname)))
-        // console.log("curse plant: ", searchedCourse.filter((fitem) => fitem.condition).map((item) => item.condition.map((citem) => citem.plant.name)))
-        const payload = searchedCourse
-          .filter(
-            (fitem) =>
-              fitem.condition &&
-              Array.isArray(fitem.condition) &&
-              fitem.condition.length > 0
-          )
-          .map((item) => ({
-            name: item.name,
-            plant: item.condition?.map((citem) => citem.plant.name),
-            plant_amount: item.condition?.map((amount) => amount.maximum),
-            plant_current: item.condition?.map((citem) =>
-              item.activity
-                .map((aitem) => {
-                  if (
-                    citem.plant.name === aitem.user.plant.name &&
-                    (aitem.result === 2 || aitem.result === 1)
-                  ) {
-                    console.log(
-                      "match: ",
-                      citem.plant.name,
-                      aitem.user.plant.name
-                    );
-                    console.log("result: ", aitem.result);
-                    console.log(
-                      "logic: ",
-                      citem.plant.name === aitem.user.plant.name &&
-                        (aitem.result === 2 || aitem.result === 1)
-                        ? 1
-                        : 0
-                    );
-                  }
-                  return citem.plant.name === aitem.user.plant.name &&
-                    (aitem.result === 2 || aitem.result === 1)
-                    ? 1
-                    : 0;
-                })
-                .reduce((prev, curr) => prev + curr, 0)
-            ),
-            current: item.activity
-              .map((aitem) =>
-                aitem.result === 2 || aitem.result === 1 ? 1 : 0
-              )
-              .reduce((prev, curr) => prev + curr, 0),
-            maximum: item.condition
-              .map((amount) => amount.maximum)
-              .reduce((prev, curr) => prev + curr, 0),
-          }));
-        console.log(payload);
-        return res.json({ data: payload });
-      case "teacher":
-        return res.json({
-          data: await Course.find({ teacher: user_id }).populate("condition"),
-        });
-      case "student":
-        return res.status(403).json({ error: "Access denine for student" });
-      default:
-        return res
-          .status(404)
-          .json({ error: "This role does not exist in system" });
+                // console.log("user plant: ", searchedCourse.map((item) => item.activity.map((aitem) => aitem.user.firstname)))
+                // console.log("curse plant: ", searchedCourse.filter((fitem) => fitem.condition).map((item) => item.condition.map((citem) => citem.plant.name)))
+                const payload = searchedCourse
+                    .filter((fitem) => fitem.condition && Array.isArray(fitem.condition) && fitem.condition.length > 0)
+                    .map(
+                        (item) => (
+                            {
+                                name: item.name,
+                                plant: item.condition?.map((citem) => citem.plant.name),
+                                plant_amount: item.condition?.map((amount) => amount.maximum),
+                                plant_current: item.condition?.map((citem) => item.activity.map((aitem) => {
+                                    if (citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1)) {
+                                        console.log("match: ", citem.plant.name, aitem.user.plant.name)
+                                        console.log("result: ", aitem.result)
+                                        console.log("logic: ", citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0)
+                                    }
+                                    return citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0
+                                }).reduce((prev, curr) => prev + curr, 0)),
+                                current: item.activity.map((aitem) => aitem.result === 2 || aitem.result === 1 ? 1 : 0).reduce((prev, curr) => prev + curr, 0),
+                                maximum: item.condition.map((amount) => amount.maximum).reduce((prev, curr) => prev + curr, 0),
+                            }
+                        )
+                    )
+                console.log(payload)
+                return res.json({ data: payload });
+            case "teacher":
+                return res.json({ data: await Course.find({ teacher: user_id }).populate("condition") });
+            case "student":
+                return res.status(403).json({ error: "Access denine for student" });
+            default:
+                return res.status(404).json({ error: "This role does not exist in system" });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Unexpected error on list courses" });
+
     }
   } catch (err) {
     console.log(err);

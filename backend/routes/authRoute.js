@@ -10,8 +10,7 @@ const {
     login,
     sendEmail,
     resetPassword,
-    checkToken,
-
+    checkRole,
 } = require('../controllers/authController')
 
 
@@ -21,8 +20,12 @@ router.post('/register', register)
 // login
 router.post('/login', login)
 
+// check user
+router.get('/check-role', checkUser, checkRole)
+
 // forgot password
 router.post('/send-email', sendEmail)
 router.post('/reset-password', resetPassword)
+
 
 module.exports = router;

@@ -79,7 +79,6 @@ const NavBarHome = () => {
     const rowOffset = { paddingInlineStart: "6%" }
 
     const handleMouseOverandOut = (e) => {
-      console.log("JJJJ")
       if (!e?.type) return
       
       switch (e?.type) {

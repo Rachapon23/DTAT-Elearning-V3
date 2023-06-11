@@ -8,7 +8,7 @@ const { Title, Text } = Typography;
 
 const TeacherHomeProfile = ({ actionMode, setActionMode }) => {
     const { profile, setProfile } = useContext(TeacherHomeContext)
-    const [ isEdited, setIsEdited ] = useState(false)
+    const [isEdited, setIsEdited] = useState(false)
 
     const handleProfileChange = (e) => {
         console.log(e.target.id, e.target.value)
@@ -19,7 +19,7 @@ const TeacherHomeProfile = ({ actionMode, setActionMode }) => {
     const handleProfileSave = async (e) => {
         console.log(e.target.innerText)
 
-        if(!isEdited) return
+        if (!isEdited) return
         if (e?.target?.innerText !== "Save") return
 
         await updateProfile(sessionStorage.getItem("token"), profile._id, profile)
@@ -68,8 +68,12 @@ const TeacherHomeProfile = ({ actionMode, setActionMode }) => {
                     }
                     style={{ width: "100%" }}
                 >
-                    <Row justify={"center"}>
-                        <Avatar shape="square" size={200} icon={<UserOutlined />} />
+                    <Row justify={"center"} >
+                        <Col>
+                            {
+                                profile?.firstname && <Avatar shape="square" size={200} icon={<p>{profile?.firstname.substring(0, 1)}</p>} />
+                            }
+                        </Col>
                     </Row>
                     <Row style={{ marginTop: "5%" }} />
                     {
@@ -80,7 +84,7 @@ const TeacherHomeProfile = ({ actionMode, setActionMode }) => {
                                         <Row>
                                             <Col flex={"auto"} style={{ width: "25%" }}>
                                                 <Col> <Text strong> First Name </Text> </Col>
-                                                <Col>{profile.firstname}</Col>
+                                                <Col>{profile?.firstname}</Col>
                                             </Col>
 
                                             <Col style={{ marginLeft: "1%", marginRight: "1%" }} />
@@ -98,11 +102,11 @@ const TeacherHomeProfile = ({ actionMode, setActionMode }) => {
                                     <p>
 
                                         <Col> <Text strong> Tel </Text> </Col>
-                                        <Col> {profile.tel}</Col>
+                                        <Col> {profile.tel ? profile.tel : "No data"}</Col>
                                     </p>
                                     <p>
                                         <Col> <Text strong> Target </Text> </Col>
-                                        <Col> {profile.target} </Col>
+                                        <Col> {profile.target ? profile.target : "No data"} </Col>
 
                                     </p>
                                 </>

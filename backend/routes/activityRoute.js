@@ -1,7 +1,7 @@
 
 const express = require('express')
 const router = express.Router()
-const {checkUser, checkTeacher, checkAdmin} = require('../middleware/middleware')
+const { checkUser, checkTeacher, checkAdmin } = require('../middleware/middleware')
 const {
     createActivity,
     listActivityCourse,
@@ -36,7 +36,7 @@ router.get("/list-activity", checkUser, listActivity);
 
 router.put("/update-activity/:id/send-exam", checkUser, sendExam)
 
-router.put("/update-activity/:id/result", checkUser, updateActivityResult)
+router.put("/update-activity/:id/result", checkUser, checkTeacher, updateActivityResult)
 
 
 // we still have to add these API?

@@ -98,9 +98,9 @@ export const updateAcnounce = async (authtoken, data) =>
 
 // GET: /list-course
 export const listCourse = async (authtoken, query) => {
-    let reqStr =  `/list-course`
+    let reqStr = `/list-course`
     // console.log(query)
-    if(query) reqStr += query
+    if (query) reqStr += query
 
     return await axios.get(process.env.REACT_APP_API + reqStr, {
         headers: {
@@ -110,14 +110,41 @@ export const listCourse = async (authtoken, query) => {
 }
 
 // DELETE: /update-course-public
-export const updateCourse= async (authtoken, data, query) => {
-    let reqStr =  `/update-course-public`
-    if(query) reqStr += query
+export const updateCourse = async (authtoken, data, query) => {
+    let reqStr = `/update-course-public`
+    if (query) reqStr += query
     return await axios.put(process.env.REACT_APP_API + reqStr, data, {
         headers: {
             authtoken,
         }
     });
 }
-    
 
+// POST:  /update-user/:id/role
+export const updateUserRole = async (authtoken, id, data) =>
+    await axios.put(process.env.REACT_APP_API + `/update-user/${id}/role`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// GET:  /list-department
+export const listDepartment = async () =>
+    await axios.get(process.env.REACT_APP_API + `/list-department`);
+
+
+// POST: create-department
+export const createDepartment = async (authtoken, data) =>
+    await axios.post(process.env.REACT_APP_API + `/create-department`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// DELETE: /remove-department/:id
+export const removeDepartment = async (authtoken, id) =>
+    await axios.delete(process.env.REACT_APP_API + `/remove-department/${id}`, {
+        headers: {
+            authtoken,
+        }
+    });

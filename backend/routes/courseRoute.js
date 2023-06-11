@@ -19,8 +19,8 @@ const {
 
 // teacher 
 router.post("/create-course", checkUser, checkTeacher, createCourse);
-router.get("/get-course/:id", checkUser, checkTeacher, getCourse);
-router.get("/list-course", checkUser, checkTeacher, listCourse);
+router.get("/get-course/:id", checkUser, getCourse);
+router.get("/list-course", checkUser, listCourse);
 router.put("/update-course/:id", checkUser, checkTeacher, updateCourse);
 router.delete("/remove-course/:id", checkUser, checkTeacher, removeCourse);
 

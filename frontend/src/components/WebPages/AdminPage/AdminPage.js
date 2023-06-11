@@ -11,12 +11,12 @@ import React, { useState, useEffect } from "react";
 import "./adminpage.css";
 import { useParams, useNavigate } from "react-router-dom";
 import AdminHomePage from "./AdminHome/AdminHomePage";
-import AdminManageHome from "./AdminHome/AdminManageHome/AdminManageHome";
-import AdminListUser from "./AdminHome/AdminListUser";
-import AdminManageTeacher from "./AdminHome/AdminManageTeacher";
-import AdminManageStudent from "./AdminHome/AdminManageStudent";
+import AdminManageHome from "./AdminManageHome/AdminManageHome";
+import AdminListUser from "./AdminListUser/AdminListUser";
+import AdminManageTeacher from "./AdminManageTeacher/AdminManageTeacher";
+import AdminManageStudent from "./AdminManageStudent/AdminManageStudent";
 
-import { AdminProvider } from "./AdminHome/AdminManageHome/AdminManageContext";
+import { AdminProvider } from "./AdminManageHome/AdminManageContext";
 
 const { Header, Sider, Content } = Layout;
 
