@@ -15,12 +15,15 @@ export const listCourse = async (authtoken) =>
         }
     });
 // GET: /get-course
-export const getCourse = async (authtoken, id) =>
-    await axios.get(process.env.REACT_APP_API + `/get-course/${id}`, {
+export const getCourse = async (authtoken, id, query) => {
+    let reqStr = `/get-course/${id}`
+    if (query) reqStr += query
+    return await axios.get(process.env.REACT_APP_API + reqStr, {
         headers: {
             authtoken,
         }
     });
+}
 
 // DELETE: /remove-course
 export const removeCourse = async (authtoken, id) =>
@@ -48,6 +51,21 @@ export const updateActivityResult = async (authtoken, id, data) =>
             authtoken,
         }
     });
+// POST: /get-image/:field/:id
+export const getPrivateFieldImage = async (authtoken, field, param, value) =>
+    await axios.get(process.env.REACT_APP_API + `/get-image/private/${field}?${param}=${value}`, {
+        headers: {
+            authtoken,
+        },
+        responseType: "blob"
+    });
 
 
+// DELETE: /delete-file/course/:id
+export const deleteFileCourse = async (authtoken, course_id) =>
+    await axios.delete(process.env.REACT_APP_API + `/delete-file/course/${course_id}`, {
+        headers: {
+            authtoken,
+        }
+    });
 

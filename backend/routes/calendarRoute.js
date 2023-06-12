@@ -5,11 +5,12 @@ const router = express.Router()
 
 const { checkUser, checkTeacher } = require('../middleware/middleware')
 const {
-    // createCalendar,
+    createCalendar,
     // listCalendarRole,
     // listCalendarCourse,
-    // updateCalendar,
-    listCalendar
+    updateCalendar,
+    listCalendar,
+    deleteCalendar
 } = require('../controllers/calendarController')
 
 
@@ -17,9 +18,10 @@ const {
 // router.get("/list-calendar/role/:id", checkUser, checkTeacher, listCalendarRole);
 
 // teacher
-// router.post("/create-calendar/course/:id", createCalendar);
+router.post("/create-calendar/course/:id", createCalendar);
 router.get("/list-calendar", listCalendar);
-// router.put("/update-calendar/:id", updateCalendar);
+router.put("/update-calendar/:id", updateCalendar);
+router.delete("/delete-calendar/:id", deleteCalendar);
 
 // student
 // router.get("/get-calendar/course/:id", checkUser, listCalendarCourse);

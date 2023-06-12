@@ -217,6 +217,7 @@ exports.loadData = async () => {
             _id: "64264e62440e75505b4d5032",
             plant: await Plant.findOne({ name: "A" }).select("_id"),
             maximum: 10,
+            course: "64264f3c7e51c155540e7750"
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -227,6 +228,7 @@ exports.loadData = async () => {
             _id: "64264e62440e75505b4d5035",
             plant: await Plant.findOne({ name: "B" }).select("_id"),
             maximum: 20,
+            course: "64264f3c7e51c155540e7750"
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -237,6 +239,7 @@ exports.loadData = async () => {
             _id: "64264e62440e75505b4d5038",
             plant: await Plant.findOne({ name: "C" }).select("_id"),
             maximum: 30,
+            course: "64264f3c7e51c155540e7750"
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -254,11 +257,6 @@ exports.loadData = async () => {
             type: true,
             enabled: true,
             teacher: await User.findOne({ employee: "6100319" }),
-            condition: [
-                await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
-                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
-                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
-            ],
             exam: null,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -279,11 +277,6 @@ exports.loadData = async () => {
             type: true,
             enabled: true,
             teacher: await User.findOne({ employee: "6100319" }),
-            condition: [
-                await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
-                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
-                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
-            ]
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -299,11 +292,6 @@ exports.loadData = async () => {
             type: true,//false,
             enabled: true,
             teacher: await User.findOne({ employee: "6100319" }),
-            condition: [
-                await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
-                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
-                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
-            ]
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -319,11 +307,6 @@ exports.loadData = async () => {
             type: true,//false,
             enabled: false,
             teacher: await User.findOne({ employee: "6100319" }),
-            condition: [
-                // await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
-                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
-                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
-            ]
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -339,11 +322,6 @@ exports.loadData = async () => {
             type: true,//false,
             enabled: true,
             teacher: await User.findOne({ employee: "6100319" }),
-            condition: [
-                await Condition.findOne({ _id: "64264e62440e75505b4d5032" }),
-                await Condition.findOne({ _id: "64264e62440e75505b4d5035" }),
-                await Condition.findOne({ _id: "64264e62440e75505b4d5038" }),
-            ]
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )

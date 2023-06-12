@@ -8,6 +8,7 @@ const {
     createPublicFile,
     getPrivateFieldImage,
     getPublicFieldImage,
+    deleteImageCourse
 } = require('../controllers/fileController')
 
 // teacher
@@ -16,6 +17,7 @@ router.post("/create-file/private/:field", checkUser, checkTeacher, uploadPrivat
 // GET: /get-image/private/:field?id=<ID> | for fetch data to display, edit
 // GET: /get-image/private/:field?file=<filename> | for fetch data in create process only
 router.get("/get-image/private/:field", checkUser, checkTeacher, getPrivateFieldImage);
+router.delete("/delete-file/course/:id", checkUser, checkTeacher, deleteImageCourse);
 
 // admin
 // public

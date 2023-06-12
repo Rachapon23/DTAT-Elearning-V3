@@ -7,10 +7,16 @@ import { CourseContext } from "./CourseContext";
 
 // fucntion : GET
 import { listRoom } from "../../../../../function/Teacher/room";
+// function Update : PUT
+import {
+  updateCoursetimeAndRoom,
+  updateCourseRoom,
+} from "../../../../../function/Teacher/course_update";
+
 // page Calendar
 import Course_calendar from "./Course_calendar";
 const Course_Room = () => {
-  const { timeAndroom, setTimeAndRoom } = useContext(CourseContext);
+  const { course_id,courseData,loadDataCourse,} = useContext(CourseContext);
   const [roomData, setRoomData] = useState([]);
 
   const loadRoom = () => {
@@ -28,11 +34,24 @@ const Course_Room = () => {
   }, []);
 
   const handleChangeRoom = (value) => {
-    setTimeAndRoom((timeAndroom) => ({
-      ...timeAndroom,
-      room_id: value,
-    }));
+    updateCourseRoom(
+      sessionStorage.getItem("token"),
+      {
+        id: value,
+      },
+      course_id
+    )
+      .then((res) => {
+        console.log(res);
+        loadDataCourse()
+      })
+      .catch((err) => {
+        console.log(err);
+        // alert for user
+        alert(err.response.data.error);
+      });
   };
+
 
   const options1 = [];
   const options2 = [];
@@ -57,7 +76,7 @@ const Course_Room = () => {
       fields={[
         {
           name: ["fieldRoom"],
-          value: timeAndroom?.room_id,
+          value: courseData?.room,
         },
       ]}
     >

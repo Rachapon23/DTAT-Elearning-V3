@@ -103,7 +103,6 @@ const BrowesCourse = () => {
 
     }, [courses])
 
-
     useEffect(() => {
         setFilterType("All")
     }, [])

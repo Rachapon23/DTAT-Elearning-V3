@@ -13,39 +13,53 @@ import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClic
 import timeGridPlugin from "@fullcalendar/timegrid";
 import bootstrap5Plugin from "@fullcalendar/bootstrap5";
 
-// fucntion : GET
-import { listCalendar } from "../../../../../function/Teacher/calendar";
 
+// fucntion : POST
+import { createCalendar } from "../../../../../function/Teacher/calendar";
+// fucntion : PUT
+import { updateCalendar } from "../../../../../function/Teacher/calendar";
 import "react-color-palette/lib/css/styles.css";
 
 const Course_calendar = () => {
-  const { courseData, setCourseData, timeAndroom, setTimeAndRoom } =
+  const { courseData,loadDataCourse, course_id,loadCalendar,
+    even } =
     useContext(CourseContext);
-  const [even, setEven] = useState([]);
 
   const handleSelect = (info) => {
-    setTimeAndRoom((timeAndroom) => ({
-      ...timeAndroom,
-      start: info.startStr,
-      end: info.endStr,
-      color: "#0288D1",
-    }));
+    if (courseData.calendar === null) {
+      createCalendar(sessionStorage.getItem("token"), course_id,{
+        start: info.startStr,
+        end: info.endStr,
+        color: "#0288D1",
+      })
+        .then((res) => {
+          loadDataCourse()
+          loadCalendar()
+        })
+        .catch((err) => {
+          console.log(err);
+          // alert for user
+          alert(err.response.data.error);
+        });
+    } else {
+      updateCalendar(sessionStorage.getItem("token"), courseData.calendar._id,{
+        start: info.startStr,
+        end: info.endStr,
+        color: "#0288D1",
+      })
+        .then((res) => {
+          loadDataCourse()
+          loadCalendar()
+        })
+        .catch((err) => {
+          console.log(err);
+          // alert for user
+          alert(err.response.data.error);
+        });
+    }
   };
 
-  const loadCalendar = () => {
-    listCalendar(sessionStorage.getItem("token"))
-      .then((res) => {
-        setEven(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        // alert for user
-        alert(err.response.data.error);
-      });
-  };
-  useEffect(() => {
-    loadCalendar();
-  }, []);
+
 
   return (
     <>

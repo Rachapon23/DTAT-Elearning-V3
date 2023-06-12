@@ -10,7 +10,7 @@ require('dotenv').config()
 const app = express()
 module.exports = { app, express }
 
-// Static file
+// Static file for displat image
 app.use(express.static('public'))
 
 //connect cloud Database
