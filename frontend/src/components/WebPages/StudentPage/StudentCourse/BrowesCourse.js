@@ -102,7 +102,12 @@ const BrowesCourse = () => {
             </Row>
         )
 
-    }, [filterType])
+    }, [courses])
+
+    useEffect(() => {
+        setFilterType("All")
+    }, [])
+
 
     return (
         <div className="bg-st-course">
@@ -127,9 +132,16 @@ const BrowesCourse = () => {
                                         />
                                     </Row>
                                     {
-                                        fileterCourse(courses).map((_, index) => (
-                                            renderContent(index)
-                                        ))
+                                        fileterCourse(courses).length > 0 ?
+                                            (
+                                                fileterCourse(courses).map((_, index) => (
+                                                    renderContent(index)
+                                                ))
+                                            )
+                                            :
+                                            (
+                                                <Empty />
+                                            )
                                     }
                                 </Card>
                             </Col>
