@@ -1,12 +1,61 @@
 const Activity = require('../models/activity')
 const Exam = require('../models/exam')
 const Quiz = require('../models/quiz')
+const Course = require('../models/course')
+const Condition = require('../models/condition')
+const User = require('../models/user')
 
 const { validateQuery } = require('./util')
 
 // POST: /create-activity
 exports.createActivity = async (req, res) => {
     try {
+        const { course, user } = req.body
+        if (!course) return res.status(400).json({ error: "Missing course to create activity" })
+        if (!user) return res.status(400).json({ error: "Missing user to create activity" })
+
+        console.log(course)
+        const searchedCourse = await Course.findOne({ _id: course })
+            .populate({
+                path: "condition",
+                populate: {
+                    path: "plant",
+                    select: "name"
+                }
+            })
+        const searchedUser = await User.findOne({ user: user }).populate("plant", "name")
+
+        console.log(searchedCourse)
+
+        // check plant
+        if (!searchedCourse) return res.status(404).json({ error: "Course not found for this private course" })
+        if (!searchedCourse.condition) return res.status(404).json({ error: "Conditions not found for this private course" })
+        // if (!Array.isArray(searchedCourse)) return res.status(500).json({ error: "Query error on create activity" })
+        // if (searchedCourse.length === 0) return res.status(404).json({ error: "Condition not found for this private course" })
+        if (!searchedUser) return res.status(404).json({ error: "User not found" })
+        let inPlant = false
+        let currentStudent = 0
+        let conditionIndex = null
+        for (let i = 0; i < searchedCourse.condition.length; i++) {
+            currentStudent += 1
+            console.log(searchedCourse.condition[i].plant.name, searchedUser.plant.name)
+            if (searchedCourse.condition[i].plant.name === searchedUser.plant.name) {
+                inPlant = true
+                conditionIndex = i
+                break
+            }
+
+        }
+        if (!inPlant) return res.status(403).json({ error: "Plant does not match with condition" })
+        if(!Number.isInteger(conditionIndex)) return res.status(500).json({ error: "Condition data corrupted, data type is not array" })
+
+        console.log(currentStudent + 1, searchedCourse.condition[conditionIndex].maximum)
+        if (!Number.isInteger(searchedCourse?.condition[conditionIndex]?.maximum)) return res.status(500).json({ error: "Condition data corrupted, data is not a number" })
+        if (currentStudent + 1 > searchedCourse.condition[conditionIndex].maximum) return res.status(500).json({ error: "Student exceed course limit" })
+
+
+        // check current student in course
+
 
         const activity = await new Activity({
             score_max: null,
@@ -14,15 +63,15 @@ exports.createActivity = async (req, res) => {
             ans: null,
             process: null,
             completed: null,
-            user: req.body.user,
-            course: req.body.course,
+            user: user,
+            course: course,
         }).save()
 
         res.json({ data: activity })
     }
     catch (err) {
         console.log(err);
-        res.status(500).json({ error: "Uncexpected error on create activity" })
+        return res.status(500).json({ error: "Uncexpected error on create activity" })
     }
 }
 
@@ -299,12 +348,12 @@ exports.updateActivityResult = async (req, res) => {
     try {
         const activity_id = req?.params?.id
         const { user, result } = req?.body
-        console.log("find this -> ",activity_id, user)
+        console.log("find this -> ", activity_id, user)
 
         if (!activity_id) return res.status(404).json({ error: "Activity not found" })
 
         const activity = await Activity.findOneAndUpdate({ _id: activity_id, user: user }, { result: result }, { new: true })
-        
+
 
         if (!activity) return res.status(404).json({ error: "Activity of user not found" })
         return res.json({ data: activity })

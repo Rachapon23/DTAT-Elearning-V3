@@ -3,6 +3,7 @@ import "./navbarhome.css";
 import LogAndRe from "./LogAndRe";
 import { Avatar, Button, Col, Modal, Row, Popover, Typography, Divider, Menu } from "antd";
 import { BarsOutlined } from "@ant-design/icons";
+import { Link, useNavigate } from "react-router-dom"
 
 const { Title, Text } = Typography
 
@@ -17,6 +18,27 @@ const NavBarHome = () => {
     setOpen(true);
     setOpenDrop(!openDrop);
   };
+
+  const navigate = useNavigate()
+
+  const handleNavigate = (navStr, dataStage) => {
+    console.log("click")
+    navigate(navStr, { state: dataStage })
+  }
+
+  const checkUserLogin = () => {
+    if (
+      !sessionStorage.getItem("token") ||
+      !sessionStorage.getItem("firstname") ||
+      !sessionStorage.getItem("user_id") ||
+      !sessionStorage.getItem("role")
+    ) {
+      setOpen(true)
+      return false
+    }
+    return true
+
+  }
 
   const handleOk = () => {
     setLoading(true);
@@ -80,7 +102,7 @@ const NavBarHome = () => {
 
     const handleMouseOverandOut = (e) => {
       if (!e?.type) return
-      
+
       switch (e?.type) {
         case "mouseover":
           e.target.style.backgroundColor = "rgba(230, 230, 230, 0.9)";
@@ -117,7 +139,11 @@ const NavBarHome = () => {
               </Row>
               <Row style={{ ...rowOffset }}>
                 <Title level={5}>
-                  {sessionStorage.getItem("role").charAt(0).toUpperCase() + sessionStorage.getItem("role").slice(1)}
+                  {
+                    sessionStorage.getItem("role") ?
+                      sessionStorage.getItem("role").charAt(0).toUpperCase() +
+                      sessionStorage.getItem("role").slice(1) : null
+                  }
                 </Title>
               </Row>
               <Divider style={{ marginTop: "5%", marginBottom: "5%" }} />
@@ -164,26 +190,29 @@ const NavBarHome = () => {
       <div className={`full-screen ${bg}`}>
         <h2 className="logo">Logo</h2>
         <nav className="navigation">
-          <a className="a-nav" href="/">
-            Home
-          </a>
-          <a className="a-nav" href="/student/page/home">
-            Public Course
-          </a>
-          <a className="a-nav" href="/teacher/page/home">
-            Private Course
-          </a>
-          <a className="a-nav" href="/admin/page/home">
-            Contact
-          </a>
           {
             checkLogedin() ?
               (
-                <a className="a-nav">
-                  {
-                    renderProfile()
-                  }
-                </a>
+                <>
+                  <a className="a-nav" href={sessionStorage.getItem("role") ? `/${sessionStorage.getItem("role")}/page/home` : "/#"}>
+                    Home
+                  </a>
+                  <a className="a-nav" onClick={() => handleNavigate("/student/page/browes-course", { filter: "Public" })} style={{ cursor: "pointer" }}>
+                    Public Course
+                  </a>
+                  <a className="a-nav" onClick={() => handleNavigate("/student/page/browes-course", { filter: "Private" })} style={{ cursor: "pointer" }}>
+                    Private Course
+                  </a>
+                  {/* <a className="a-nav" href="/#">
+                    Contact
+                  </a> */}
+                  <a className="a-nav">
+                    {
+                      renderProfile()
+                    }
+                  </a>
+                </>
+
               )
               :
               (
@@ -245,7 +274,7 @@ const NavBarHome = () => {
         footer={[]}
         mask={false}
       >
-        <LogAndRe onClose={setOpen}/>
+        <LogAndRe onClose={setOpen} />
       </Modal>
     </div >
   );

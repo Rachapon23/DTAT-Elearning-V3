@@ -4,9 +4,9 @@ import { checkRole } from "../../function/auth";
 // import { routeTeacher } from "../function/funcroute";
 
 const AdminRoute = () => {
-    const [status, setStatus] = useState(true);
+    const [status, setStatus] = useState(null);
 
-    const CheckTeacher = async () => {
+    const CheckAdmin = async () => {
         await checkRole(sessionStorage.getItem("token"))
             .then((res) => {
                 const data = res.data.data
@@ -16,18 +16,26 @@ const AdminRoute = () => {
                         break
                     default: setStatus(false)
                 }
+                if (sessionStorage.getItem("role") !== data.role) {
+                    sessionStorage.setItem("role", data.role)
+                }
             }).catch(err => {
                 console.log(err)
                 setStatus(false)
             })
     }
 
+    const renderPage = () => {
+        if(status === null) {
+            return <>Please wait...</>
+        }
+        return status ? <Outlet /> : <Navigate to="/" />
+    }
+
     useEffect(() => {
-        CheckTeacher()
-    }, [])
-    return (
-        status ? <Outlet /> : <Navigate to="/" />
-    )
+        CheckAdmin()
+    }, [status])
+    return renderPage()
 }
 
 export default AdminRoute

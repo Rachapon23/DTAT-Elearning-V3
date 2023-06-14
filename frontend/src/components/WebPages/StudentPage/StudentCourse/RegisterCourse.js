@@ -75,6 +75,7 @@ const RegisterCourse = () => {
                 (res) => {
                     const data = res.data.data
                     console.log(data)
+                    pageChange(true)
                 }
             )
             .catch(
@@ -125,6 +126,9 @@ const RegisterCourse = () => {
     useEffect(() => {
         fetchUser()
         fetchCourse()
+        return () => {
+            setPageChange(false)
+        }
     }, [pageChange])
 
     const registerCourseTitle = () => {

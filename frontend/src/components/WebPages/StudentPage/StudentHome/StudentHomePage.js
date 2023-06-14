@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./studenthome.css";
-import { Button, Card, Image, Table } from "antd";
+import { Button, Card, Image, Table, Tabs, Typography } from "antd";
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 import CalendarShow from "../../CalendarPage/CalendarShow";
 
@@ -10,6 +10,7 @@ import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import { listActivity, listCourse } from "../../../../function/Student/course";
 import { Link, useNavigate } from "react-router-dom";
 
+const { Text } = Typography
 const { Header, Content, Footer } = Layout;
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
 
@@ -202,17 +203,11 @@ const StudentHomePage = () => {
             )
     }
 
-    useEffect(() => {
-        fetchActivity()
-    }, [])
-
-    return (
-        <div className="bg-st-home">
-            <NavBarHome />
-            <div className="content-home">
+    const tabContent = (tab) => {
+        switch (tab) {
+            case 0: return (
                 <div className="">
-                    <p className="label-home-st" htmlFor="">My Course</p>
-                    <Button onClick={() => handleNavigate(`/student/page/browes-course`)}>Browes Course</Button>
+                    {/* <p className="label-home-st" htmlFor="">My Course</p> */}
                     <Table
                         columns={columns("Course")}
                         dataSource={courses.filter((item) => item.result === 0)}
@@ -224,8 +219,10 @@ const StudentHomePage = () => {
                         }}
                     />
                 </div>
+            )
+            case 1: return (
                 <div className="">
-                    <p htmlFor="" className="label-home-st">My History</p>
+                    {/* <p htmlFor="" className="label-home-st">My History</p> */}
                     <Table
                         columns={columns("History")}
                         dataSource={courses.filter((item) => item.result !== 0)}
@@ -237,14 +234,50 @@ const StudentHomePage = () => {
                         }}
                     />
                 </div>
+            )
+            case 2: return (
                 <div className="">
-                    <p htmlFor="" className="label-home-st">Calendar</p>
+                    {/* <p htmlFor="" className="label-home-st">Calendar</p> */}
                     <Card>
                         <CalendarShow />
                     </Card>
                 </div>
-            </div>
+            )
+            default: return null
+        }
+    }
 
+    const tabList = [
+        {
+            key: '1',
+            label: <Text strong> My Course </Text>,
+            children: tabContent(0),
+        },
+        {
+            key: '2',
+            label: <Text strong> My History </Text>,
+            children: tabContent(1),
+        },
+        {
+            key: '3',
+            label: <Text strong> Calendar </Text>,
+            children: tabContent(2),
+        },
+    ]
+
+    useEffect(() => {
+        fetchActivity()
+    }, [])
+
+    return (
+        <div className="bg-st-course">
+            <NavBarHome />
+            <div className="content-home">
+                <Tabs
+                    defaultActiveKey="0"
+                    items={tabList}
+                />
+            </div>
         </div>
     );
 };

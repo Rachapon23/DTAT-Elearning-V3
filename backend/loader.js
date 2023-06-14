@@ -211,7 +211,7 @@ exports.loadData = async () => {
     )
 
     // Condition
-    await Condition.findOneAndUpdate(
+    const condition1 =  await Condition.findOneAndUpdate(
         { _id: "64264e62440e75505b4d5032" },
         {
             _id: "64264e62440e75505b4d5032",
@@ -222,7 +222,7 @@ exports.loadData = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
-    await Condition.findOneAndUpdate(
+    const condition2 = await Condition.findOneAndUpdate(
         { _id: "64264e62440e75505b4d5035" },
         {
             _id: "64264e62440e75505b4d5035",
@@ -233,7 +233,7 @@ exports.loadData = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
-    await Condition.findOneAndUpdate(
+    const condition3 = await Condition.findOneAndUpdate(
         { _id: "64264e62440e75505b4d5038" },
         {
             _id: "64264e62440e75505b4d5038",
@@ -277,6 +277,7 @@ exports.loadData = async () => {
             type: true,
             enabled: true,
             teacher: await User.findOne({ employee: "6100319" }),
+            // condition: [condition1]
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -289,7 +290,7 @@ exports.loadData = async () => {
             room: await Room.findOne({ name: "Technical Skill 1" }).select("_id"),
             image: null,
             video: 2,
-            type: true,//false,
+            type: false,
             enabled: true,
             teacher: await User.findOne({ employee: "6100319" }),
         },

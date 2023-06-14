@@ -4,8 +4,11 @@ import "./logandre.css";
 import { Col, Row } from "antd";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { login } from '../../../function/auth';
+import { useNavigate } from 'react-router-dom';
 
 const Login = ({ layout, setLayout, onClose }) => {
+
+  const navigate = useNavigate()
 
   const [inputData, setInputData] = useState({
     employee: "",
@@ -25,7 +28,8 @@ const Login = ({ layout, setLayout, onClose }) => {
         sessionStorage.setItem("firstname", user?.firstname)
         sessionStorage.setItem("user_id", user?.user_id)
         sessionStorage.setItem("role", user?.role)
-        onClose(false) 
+        onClose(false)
+        // navigate(`/${sessionStorage.getItem("role")}/page/home`)
       })
       .catch((err) => {
         console.log(err.response?.data)

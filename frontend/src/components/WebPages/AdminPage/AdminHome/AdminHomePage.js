@@ -45,7 +45,7 @@ const AdminHomePage = () => {
           display: "flex",
         }}
       >
-        <Redirect />
+        {/* <Redirect /> */}
         <Tabs
           defaultActiveKey="0"
           items={tabList}

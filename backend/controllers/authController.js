@@ -101,7 +101,8 @@ exports.login = async (req, res) => {
       };
 
       // Generate Token Time_limit( 1 day )
-      jwt.sign(payload, "jwtSecret", { expiresIn: '1d' }, (err, token) => {
+      // JWT_CODE="jwtSecret"
+      jwt.sign(payload, process.env.JWT_CODE, { expiresIn: '1d' }, (err, token) => {
         if (err) throw err;
         return res.json({ token, payload });
       });
@@ -131,12 +132,12 @@ exports.sendEmail = async (req, res) => {
       }
     });
 
-    const token = jwt.sign({ email: email }, "jwtSecret", { expiresIn: '5m' });
+    const token = jwt.sign({ email: email }, process.env.JWT_CODE, { expiresIn: '5m' });
     const reset_password_data = await ResetPassword.findOne({ email: email })
 
     let isTokenExpire = true;
     if (reset_password_data) {
-      jwt.verify(reset_password_data.token, "jwtSecret", (err, _) => {
+      jwt.verify(reset_password_data.token, process.env.JWT_CODE, (err, _) => {
         if (!err) {
           isTokenExpire = false;
           return res.status(500).json({ error: "Cannot reset password because previous token is not expire" });
@@ -159,7 +160,7 @@ exports.sendEmail = async (req, res) => {
       await reset_password_request.save()
 
       const mailOptions = {
-        from: 'densoeleaning@gmail.com',
+        from: process.env.EMAIL_SENDER,
         to: email,
         subject: 'Reseting your elearning password',
         html: `
@@ -193,7 +194,7 @@ exports.sendEmail = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   try {
     const userEmail = req.body.email;
-    const decoded = jwt.verify(req.headers.authtoken, "jwtSecret");
+    const decoded = jwt.verify(req.headers.authtoken, process.env.JWT_CODE);
     const tokenEmail = decoded.email;
 
     const reset_password_data = await ResetPassword.findOne({ token: req.headers.authtoken }).exec()
