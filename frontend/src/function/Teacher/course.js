@@ -69,3 +69,14 @@ export const deleteFileCourse = async (authtoken, course_id) =>
         }
     });
 
+// POST: /update-course/:id/enabled
+export const updateCourseenabled = async (authtoken, id, value) =>
+  await axios.put(
+    process.env.REACT_APP_API + `/update-course/${id}/enabled`,
+    value,
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );

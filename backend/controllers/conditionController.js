@@ -40,7 +40,7 @@ exports.createCondition = async (req, res) => {
 // GET: /list-condition/course/:id
 exports.listConditionCourse = async (req, res) => {
     try {
-        const condition = await Condition.find({ course: req.params.id })
+        const condition = await Condition.find({ course: req.params.id }).populate('plant')
             .populate('plant')
         res.json(condition);
     } catch (err) {
