@@ -7,7 +7,7 @@ const { checkUser, checkTeacher } = require('../middleware/middleware')
 const {
     createCalendar,
     // listCalendarRole,
-    // listCalendarCourse,
+    listCalendarStudent,
     updateCalendar,
     listCalendar,
     deleteCalendar
@@ -24,7 +24,7 @@ router.put("/update-calendar/:id", updateCalendar);
 router.delete("/delete-calendar/:id", deleteCalendar);
 
 // student
-// router.get("/get-calendar/course/:id", checkUser, listCalendarCourse);
+router.get("/list-calendar-student", checkUser, listCalendarStudent);
 
 
 

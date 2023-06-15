@@ -24,7 +24,7 @@ const {
 
 // teacher
 router.post("/create-topic/:id", createTopic); // error role แบบเดียวกับ condition
-router.get("/list-topic/course/:id", listTopic); // error role แบบเดียวกับ condition
+
 router.delete("/remove-topic/:id", deleteTopic);
 router.put("/update-topic/course/:id", updateTopic);
 
@@ -38,4 +38,6 @@ router.put("/update-link/topic/:id", updateTopicLink);
 
 router.put("/remove-file/topic/:id", removeTopicFile);
 
+// teacher && student
+router.get("/list-topic/course/:id", listTopic); // error role แบบเดียวกับ condition
 module.exports = router;

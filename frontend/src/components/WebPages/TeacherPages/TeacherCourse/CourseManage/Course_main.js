@@ -7,6 +7,7 @@ import Course_Room from "./Course_Room";
 import Course_condition from "./Course_condition";
 import Course_topic from "./Course_topic";
 import Course_finished from "./Course_finished";
+import Course_topic_children from "./Course_topic_children";
 
 import "./CourseManage.css";
 // ant
@@ -23,12 +24,9 @@ import {
   ColorPicker,
 } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
+import { debounce } from "lodash";
 //course Context
 import { CourseContext } from "./CourseContext";
-import { debounce } from "lodash";
-// fucntion : GET
-import { getCourse } from "../../../../../function/Teacher/course";
-
 // fucntion : POST
 import { createFile } from "../../../../../function/Teacher/course_update";
 // fucntion : PUT
@@ -39,7 +37,6 @@ import { deleteCalendar } from "../../../../../function/Teacher/calendar";
 //momentJS
 import moment from "moment";
 import "moment/locale/th";
-import Course_topic_children from "./Course_topic_children";
 moment.locale("th");
 
 const Course_main = () => {
@@ -116,7 +113,7 @@ const Course_main = () => {
           <Button
             type="primary"
             onClick={() => {
-              console.log(courseData);
+              console.log(courseData.calendar);
             }}
           >
             {" "}
@@ -237,13 +234,13 @@ const Course_main = () => {
             <Row justify="center">
               <Col className="col-card-calendar" span={6}>
                 start :{" "}
-                {moment(courseData?.calendar?.start?.substring(0, 10)).format(
+                {moment(courseData?.calendar?.start).format(
                   "LL"
                 )}
               </Col>
               <Col className="col-card-calendar" span={6}>
                 end :{" "}
-                {moment(courseData?.calendar?.end?.substring(0, 10)).format(
+                {moment(courseData?.calendar?.end).format(
                   "LL"
                 )}
               </Col>
@@ -251,43 +248,43 @@ const Course_main = () => {
                 <ColorPicker
                   onChange={debounceOnChange}
                   value={courseData?.calendar?.color}
-                  presets={[
-                    {
-                      label: "Recommended",
-                      colors: [
-                        "#000000",
-                        "#000000E0",
-                        "#000000A6",
-                        "#00000073",
-                        "#00000040",
-                        "#00000026",
-                        "#0000001A",
-                        "#00000012",
-                        "#0000000A",
-                        "#00000005",
-                        "#F5222D",
-                        "#FA8C16",
-                        "#FADB14",
-                        "#8BBB11",
-                        "#52C41A",
-                        "#13A8A8",
-                        "#1677FF",
-                        "#2F54EB",
-                        "#722ED1",
-                        "#EB2F96",
-                        "#F5222D4D",
-                        "#FA8C164D",
-                        "#FADB144D",
-                        "#8BBB114D",
-                        "#52C41A4D",
-                        "#13A8A84D",
-                        "#1677FF4D",
-                        "#2F54EB4D",
-                        "#722ED14D",
-                        "#EB2F964D",
-                      ],
-                    },
-                  ]}
+                  // presets={[
+                  //   {
+                  //     label: "Recommended",
+                  //     colors: [
+                  //       "#000000",
+                  //       "#000000E0",
+                  //       "#000000A6",
+                  //       "#00000073",
+                  //       "#00000040",
+                  //       "#00000026",
+                  //       "#0000001A",
+                  //       "#00000012",
+                  //       "#0000000A",
+                  //       "#00000005",
+                  //       "#F5222D",
+                  //       "#FA8C16",
+                  //       "#FADB14",
+                  //       "#8BBB11",
+                  //       "#52C41A",
+                  //       "#13A8A8",
+                  //       "#1677FF",
+                  //       "#2F54EB",
+                  //       "#722ED1",
+                  //       "#EB2F96",
+                  //       "#F5222D4D",
+                  //       "#FA8C164D",
+                  //       "#FADB144D",
+                  //       "#8BBB114D",
+                  //       "#52C41A4D",
+                  //       "#13A8A84D",
+                  //       "#1677FF4D",
+                  //       "#2F54EB4D",
+                  //       "#722ED14D",
+                  //       "#EB2F964D",
+                  //     ],
+                  //   },
+                  // ]}
                 />
               </Col>
               <Col className="col-card-calendar" span={6}>
@@ -343,25 +340,6 @@ const Course_main = () => {
           )}
         </>
       )}
-
-      {/* {topicData.length !== 0 &&
-      (step[3]?.title === "topic" || step[1]?.title === "topic") &&
-      (currentPage === 3 || currentPage === 1) ? (
-        <>
-          {topicData.map((item, index) => (
-            <Course_topic_children
-              nextState={nextState}
-              setNextState={setNextState}
-              key={item._id}
-              item={item}
-              index={index}
-            />
-          ))}
-        </>
-      ) : (
-        <>{console.log(currentPage)}</>
-      )} */}
-
       <Row className="course-main-btn-bottom">
         <Col flex={"auto"}>
           {currentPage < pageList.length ? renderPageNav() : null}

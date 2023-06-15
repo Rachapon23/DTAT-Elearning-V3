@@ -31,7 +31,7 @@
   -webkit-backdrop-filter: blur(2em);
   transition: background-color 0.3s ease-in;
 }
-li {
+.dropdown_menu li {
   list-style: none;
 }
 .navigation a {
