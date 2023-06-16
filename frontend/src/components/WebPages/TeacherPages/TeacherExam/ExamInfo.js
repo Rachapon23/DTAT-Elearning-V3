@@ -145,7 +145,7 @@ const ExamInfo = ({
                         }
                     </Form.Item>
 
-                    <Form.Item
+                    {/* <Form.Item
                         label={<Text strong> Status </Text>}
                         required
                         tooltip={editMode ? <Row><Col><Row>Open: student can access exam</Row><Row> Close: student can not access exam</Row></Col></Row> : null}
@@ -167,7 +167,7 @@ const ExamInfo = ({
                                     null
                                 )
                         }
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item
                         label={<Text strong> Detail </Text>}

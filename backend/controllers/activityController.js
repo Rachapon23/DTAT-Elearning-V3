@@ -27,36 +27,21 @@ exports.createActivity = async (req, res) => {
 
         console.log(searchedCourse)
 
-        // check plant
+        // find required data
         if (!searchedCourse) return res.status(404).json({ error: "Course not found for this private course" })
         if (!searchedCourse.condition) return res.status(404).json({ error: "Conditions not found for this private course" })
-        // if (!Array.isArray(searchedCourse)) return res.status(500).json({ error: "Query error on create activity" })
-        // if (searchedCourse.length === 0) return res.status(404).json({ error: "Condition not found for this private course" })
         if (!searchedUser) return res.status(404).json({ error: "User not found" })
-        let inPlant = false
-        let currentStudent = 0
-        let conditionIndex = null
-        for (let i = 0; i < searchedCourse.condition.length; i++) {
-            currentStudent += 1
-            console.log(searchedCourse.condition[i].plant.name, searchedUser.plant.name)
-            if (searchedCourse.condition[i].plant.name === searchedUser.plant.name) {
-                inPlant = true
-                conditionIndex = i
-                break
-            }
 
-        }
-        if (!inPlant) return res.status(403).json({ error: "Plant does not match with condition" })
-        if(!Number.isInteger(conditionIndex)) return res.status(500).json({ error: "Condition data corrupted, data type is not array" })
+        // check plant
+        const searchedCondition = await Condition.findOne({ course: course, plant: searchedUser.plant._id })
+        if (!searchedCondition) return res.status(403).json({ error: "Plant does not match with condition" })
+        if (!Number.isInteger(searchedCondition.maximum)) return res.status(500).json({ error: "Condition data corrupted, data is not a number" })
+        if (searchedCondition.current + 1 > searchedCondition.maximum) return res.status(500).json({ error: "Student exceed course limit" })
 
-        console.log(currentStudent + 1, searchedCourse.condition[conditionIndex].maximum)
-        if (!Number.isInteger(searchedCourse?.condition[conditionIndex]?.maximum)) return res.status(500).json({ error: "Condition data corrupted, data is not a number" })
-        if (currentStudent + 1 > searchedCourse.condition[conditionIndex].maximum) return res.status(500).json({ error: "Student exceed course limit" })
-
+        const currentAmount = searchedCondition.current + 1
+        await Condition.findOneAndUpdate({ _id: searchedCondition._id }, { current: currentAmount})
 
         // check current student in course
-
-
         const activity = await new Activity({
             score_max: null,
             score_value: null,

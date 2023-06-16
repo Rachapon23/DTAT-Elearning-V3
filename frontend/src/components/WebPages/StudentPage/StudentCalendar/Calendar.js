@@ -25,7 +25,7 @@ const Calendar = () => {
           .catch((err) => {
             console.log(err);
             // alert for user
-            alert(err.response.data.error);
+            // alert(err.response.data.error);
           });
       };
 

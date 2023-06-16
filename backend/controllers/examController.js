@@ -60,6 +60,7 @@ exports.getExam = async (req, res) => {
     const allowedSelect = []
     const allowedFetch = []
     try {
+        const check = req?.query?.check
         const result = validateQuery(
             "get",
             "get exam",
@@ -101,7 +102,19 @@ exports.getExam = async (req, res) => {
             .populate(result.options.fieldParams ? result.options.fieldParams : result.options.subPropsParams)
             .select(result.options.selectParams)
         // console.log(user)
-        return res.json({ data: exam })
+
+        console.log(check)
+        if(!check) return res.json({ data: exam })
+        switch(check) {
+            case "enable":
+                console.log("this exam is ", exam.enable)
+                if(!exam.enable) return res.status(403).json({ error: "Exam not avaliable"});
+                return res.json({ data: exam })
+            default:
+                return res.status(400).json({ error: "Unkonw check condition"});
+        }
+
+
     }
     catch (err) {
         console.log(err)
@@ -177,6 +190,27 @@ exports.updateExam = async (req, res) => {
         const exam = await Exam.findOneAndUpdate(
             { _id: req.params.id },
             data,
+            { new: true },
+        )
+
+        res.json({ data: exam })
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).json({ error: "Unexpeccted error on update exam" })
+    }
+}
+
+
+// PUT: /update-exam/:id/enable
+exports.updateExamEnable = async (req, res) => {
+    try {
+        const { enable } = req.body
+        // const { user_id } = req?.user;
+
+        const exam = await Exam.findOneAndUpdate(
+            { _id: req.params.id },
+            { enable: enable },
             { new: true },
         )
 

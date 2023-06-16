@@ -9,6 +9,7 @@ import DoExam from "../StudentExam/DoExam";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { listActivity, listCourse } from "../../../../function/Student/course";
 import { Link, useNavigate } from "react-router-dom";
+import { getExam } from "../../../../function/Teacher/exam";
 
 const { Text } = Typography
 const { Header, Content, Footer } = Layout;
@@ -98,10 +99,19 @@ const StudentHomePage = () => {
             align: "center",
             width: "10%",
             render: (data) => {
-              console.log(data?.course?.exam);
+
+              //-----------------------------------------------
+              const index = courses.indexOf(data)
+              let enable = false
+              if (courses[index]?.course?.exam) {
+                enable = getExamStatus(courses.indexOf(data))
+              }
+              enable = enable || data?.course?.exam
+              //-----------------------------------------------
+
               return (
                 <Button
-                  disabled={!data?.course?.exam}
+                  disabled={!enable}//{!data?.course?.exam}
                   onClick={() =>
                     handleNavigate(`/student/page/exam/${data?.course?.exam}`, {
                       activity: data?._id,
@@ -164,7 +174,7 @@ const StudentHomePage = () => {
             },
           },
           {
-            title: `result`,
+            title: `Result`,
             align: "center",
             // dataIndex: "result",
             width: "10%",
@@ -190,67 +200,41 @@ const StudentHomePage = () => {
               );
             },
           },
-          {
-            title: `Action`,
-            align: "center",
-            width: "10%",
-            render: (data) => {
-              console.log(data?.course?.exam);
-              return (
-                <Button
-                  disabled={!data?.course?.exam}
-                  onClick={() =>
-                    handleNavigate(`/student/page/exam/${data?.course?.exam}`, {
-                      activity: data?._id,
-                    })
-                  }
-                >
-                  Exam
-                </Button>
-              );
-            },
-          },
+          // {
+          //   title: `Action`,
+          //   align: "center",
+          //   width: "10%",
+          //   render: (data) => {
+          //     console.log(data?.course?.exam);
+          //     return (
+          //       <Button
+          //         // disabled={!data?.course?.exam}
+          //         disabled={true}
+          //         onClick={() =>
+          //           handleNavigate(`/student/page/exam/${data?.course?.exam}`, {
+          //             activity: data?._id,
+          //           })
+          //         }
+          //       >
+          //         Exam
+          //       </Button>
+          //     );
+          //   },
+          // },
         ];
       default:
         return null;
     }
   };
 
-  const fetchActivity = async () => {
-    // search=user:${sessionStorage.getItem("user_id")}&
-    // do not forget to add pops allowed field in activity backend
-    await listActivity(
-      sessionStorage.getItem("token"),
-      `?search=user:
-      ${sessionStorage.getItem("user_id")}
-      &fetch=-ans,-__v&pops=path:course$select:name exam image
-      `
-    )
-      .then((res) => {
-        const data = res.data.data;
-        setCourses(data);
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
-  useEffect(() => {
-    fetchActivity();
-  }, []);
-
-  return (
-    <div className="bg-st-home">
-      <NavBarHome />
-      <div className="content-home">
+  const tabContent = (tab) => {
+    switch (tab) {
+      case 0: return (
         <div className="">
-          <p className="label-home-st" htmlFor="">
-            My Course
-          </p>
-          <Button onClick={() => handleNavigate(`/student/page/browes-course`)}>
+          {/* <Button onClick={() => handleNavigate(`/student/page/browes-course`)}>
             Browes Course
-          </Button>
+          </Button> */}
           <Table
             columns={columns("Course")}
             dataSource={courses.filter((item) => item.result === 0)}
@@ -262,10 +246,10 @@ const StudentHomePage = () => {
             }}
           />
         </div>
+      )
+      case 1: return (
         <div className="">
-          <p htmlFor="" className="label-home-st">
-            My History
-          </p>
+
           <Table
             columns={columns("History")}
             dataSource={courses.filter((item) => item.result !== 0)}
@@ -277,12 +261,96 @@ const StudentHomePage = () => {
             }}
           />
         </div>
+      )
+      case 2: return (
         <div className="">
-          <p htmlFor="" className="label-home-st">
-            Calendar
-          </p>
           <Calendar />
         </div>
+      )
+      default: return null
+    }
+  }
+
+  const tabList = [
+    {
+      key: '1',
+      label: (
+        <a className="label-home-st" htmlFor="">
+          My Course
+        </a>
+      ),
+      children: tabContent(0),
+    },
+    {
+      key: '2',
+      label: (
+        <a htmlFor="" className="label-home-st">
+          My History
+        </a>
+      ),
+      children: tabContent(1),
+    },
+    {
+      key: '3',
+      label: (
+        <a htmlFor="" className="label-home-st">
+          Calendar
+        </a>
+      ),
+      children: tabContent(2),
+    },
+  ]
+
+  const getExamStatus = async (index) => {
+    let enable = false
+    await getExam(sessionStorage.getItem("token"), courses[index].course.exam, `?check=enable`)
+      .then(
+        (res) => {
+          const data = res.data.data;
+          enable = data
+          console.log("enable: ", data);
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      );
+    return enable
+  }
+
+  const fetchActivity = async () => {
+    // search=user:${sessionStorage.getItem("user_id")}&
+    // do not forget to add pops allowed field in activity backend
+    await listActivity(
+      sessionStorage.getItem("token"), `?search=user:${sessionStorage.getItem("user_id")}&fetch=-ans,-__v&pops=path:course$select:name exam image`
+    )
+      .then(
+        (res) => {
+          const data = res.data.data;
+          setCourses(data);
+          console.log(data);
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      );
+  };
+
+  useEffect(() => {
+    fetchActivity();
+  }, []);
+
+  return (
+    <div className="bg-st-course">
+      <NavBarHome />
+      <div className="content-home">
+        <Tabs
+          defaultActiveKey="0"
+          items={tabList}
+        />
       </div>
     </div>
   );

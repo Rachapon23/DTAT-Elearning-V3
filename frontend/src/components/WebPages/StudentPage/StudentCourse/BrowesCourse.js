@@ -69,11 +69,9 @@ const BrowesCourse = () => {
                     />
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-                    {/* <Link to="/teacher/page/create-exam" state={{ mode: "Create" }}> */}
                     <Button onClick={() => navigate("/student/page/home")}>
                         Back
                     </Button>
-                    {/* </Link> */}
                 </Col>
             </Row>
         )

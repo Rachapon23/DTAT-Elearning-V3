@@ -24,12 +24,13 @@ const RegisterCourse = () => {
     const isPassCondition = async () => {
         // check registered
         await checkRegistered()
+        console.log(conditionData)
 
         // check plant
         let inPlant = false
         for (let i = 0; i < conditionData.length; i++) {
-            // console.log("condition: ",conditionData[i]," plant: ",plant)
-            // console.log("plant: ",conditionData[i].plant.name," plant: ",plant)
+            console.log("condition: ",conditionData[i]," plant: ",plant)
+            console.log("plant: ",conditionData[i].plant.name," plant: ",plant)
             if (conditionData[i].plant.name === plant) {
                 inPlant = true
                 break
@@ -77,8 +78,8 @@ const RegisterCourse = () => {
                 (res) => {
                     const data = res.data.data
                     console.log(data)
-                    pageChange(true)
                     fetchCourse()
+                    pageChange(true)
                 }
             )
             .catch(
@@ -92,11 +93,12 @@ const RegisterCourse = () => {
         e.target.src = DEFAULT_IMAGE
     }
 
-    const fetchCondition = (id) => {
-        listCondition(sessionStorage.getItem("token"), id)
+    const fetchCondition = async (id) => {
+        await listCondition(sessionStorage.getItem("token"), id)
           .then((res) => {
-            // console.log(res.data)
-            setConditionData(res.data);
+            const data = res.data
+            // console.log(data)
+            setConditionData(data);
             isPassCondition()
           })
           .catch((err) => {
@@ -141,9 +143,6 @@ const RegisterCourse = () => {
     useEffect(() => {
         fetchUser()
         fetchCourse()
-        return () => {
-            setPageChange(false)
-        }
     }, [pageChange])
 
     const registerCourseTitle = () => {

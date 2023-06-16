@@ -14,6 +14,7 @@ const DoExam = () => {
     const [pageStepLength, setPageStepLength] = useState(0)
     const params = useParams()
     const location = useLocation()
+    const [error, setError] = useState(null)
 
     const [form] = Form.useForm();
     const [requiredMark, setRequiredMarkType] = useState('optional');
@@ -89,7 +90,7 @@ const DoExam = () => {
 
     const fetchExam = async () => {
         //&fetch=-answer
-        await getExam(sessionStorage.getItem("token"), params?.id, `?field=quiz`)
+        await getExam(sessionStorage.getItem("token"), params?.id, `?field=quiz&check=enable`)
             .then(
                 (res) => {
                     const data = res.data.data
@@ -104,7 +105,10 @@ const DoExam = () => {
             )
             .catch(
                 (err) => {
+                    const errorMsg = err.response.data.error
+                    setError(errorMsg)
                     console.log(err)
+                    // console.log(err)
                 }
             )
     }
@@ -131,7 +135,15 @@ const DoExam = () => {
                                     (
                                         <Row justify={"center"}>
                                             <Col >
-                                                <h4>No Exam Info</h4>
+                                                {
+                                                    error ?
+                                                        (
+                                                            <h4>{error}</h4>
+                                                        ) :
+                                                        (
+                                                            <h4>No Exam Info</h4>
+                                                        )
+                                                }
                                             </Col>
                                         </Row>
                                     )
