@@ -216,6 +216,7 @@ exports.removeCourse = async (req, res) => {
         error_deleteFile = true;
       }
     });
+    await Calendar.findOneAndDelete({_id:courses.calendar})
     const topic = await Topic.find({ course: req.params.id });
     await topic.forEach(async (item, index) => {
       await item.file.forEach(async (ttem, ddex) => {
@@ -244,6 +245,7 @@ exports.updateEnableCourse = async (req, res) => {
       { enabled: enabled },
       { new: true }
     );
+    // console.log(req.body)
 
     res.json({ data: course });
   } catch (err) {

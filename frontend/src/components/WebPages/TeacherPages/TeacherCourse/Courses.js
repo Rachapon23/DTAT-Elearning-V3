@@ -9,6 +9,7 @@ import {
 	Breadcrumb,
 	Segmented,
 	Divider,
+	Switch
 } from "antd";
 import {
 	BarsOutlined,
@@ -21,8 +22,9 @@ import NavBar from "../../../Layout/NavBar";
 import { useState } from "react";
 import "./courses.css";
 import "../teach.css";
+
 import { Link, useNavigate } from "react-router-dom";
-import { listCourse, removeCourse, createCourse } from "../../../../function/Teacher/course";
+import { listCourse, removeCourse, createCourse,updateCourseenabled } from "../../../../function/Teacher/course";
 import { TeacherCourseContext } from "./TeacherCourseContext";
 const { Title } = Typography;
 const { Meta } = Card;
@@ -74,6 +76,18 @@ const Courses = () => {
 			});
 	};
 
+	const onChange = async (value,id) => {
+		await updateCourseenabled(sessionStorage.getItem("token"),id,
+		{enabled:value}
+		)
+			.then((res) => {
+				fetchCourse()
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	  };
+
 	// Data-Page-Start
 	const columns = [
 		{
@@ -116,10 +130,25 @@ const Courses = () => {
 		},
 		{
 			title: "Status",
-			dataIndex: "enabled",
 			key: "enabled",
-			render: (enabled) => (enabled === true ? "Open" : "Close"),//"Enable" : "Disable"),
 			align: "center",
+			width: "10%",
+			render: (data) => {
+				const index = courses.indexOf(data);
+				return (
+					
+						// <Button onClick={()=>{
+						// 	console.log(courses[index]?._id)
+						// }}>
+						// 	<EditOutlined />
+						// </Button>
+						<Switch  checked={courses[index]?.enabled} 
+						onChange={(value)=>{
+							onChange(value,courses[index]?._id)
+						}}
+						/>
+				);
+			},
 		},
 		{
 			title: "Edit",

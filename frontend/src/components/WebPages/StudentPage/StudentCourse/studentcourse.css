@@ -8,3 +8,11 @@
   background-size: cover;
   padding: 0 100px;
 }
+
+.li-list::marker{
+  color: #002c8c;
+  margin-bottom: 10px;
+}
+.li-list{
+  margin-bottom: 10px;
+}

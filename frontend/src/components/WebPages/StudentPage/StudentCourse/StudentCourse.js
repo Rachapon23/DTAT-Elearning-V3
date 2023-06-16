@@ -1,149 +1,218 @@
-import { Breadcrumb, Button, Card, Col, Image, Row, Typography } from "antd";
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  Col,
+  Image,
+  Row,
+  Timeline,
+  Typography,
+} from "antd";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { getCourse } from "../../../../function/Student/course";
-import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-const { Text, Title } = Typography
-const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
+import { getCourse } from "../../../../function/Student/course";
+import { listTopicCourse } from "../../../../function/Student/topic";
+
+import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
+import "./studentcourse.css";
+import StudentCourse_file from "./StudentCourse_file";
+import StudentCourse_link from "./StudentCourse_link";
+
+const { Text, Title } = Typography;
+const DEFAULT_IMAGE =
+  "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
 
 const StudentExam = () => {
-    const params = useParams()
-    const navigate = useNavigate()
+  const params = useParams();
+  const navigate = useNavigate();
 
-    const [course, setCourse] = useState()
+  const [course, setCourse] = useState([]);
+  const [topicData, setTopicData] = useState([]);
 
-    const handleUnloadImage = (e) => {
-        e.target.src = DEFAULT_IMAGE
-    }
+  const handleUnloadImage = (e) => {
+    e.target.src = DEFAULT_IMAGE;
+  };
 
-    const studentCourseTitle = () => {
-        return (
-            <Row align={"middle"} justify={"space-between"} >
-                <Col>
-                    <Breadcrumb
-                        separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
-                        items={[
-                            {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><p >Course</p></Title>,
-                                key: "courses"
-                            },
-                            {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><p>{course?.name}</p></Title>,
-                                key: "courses_create",
-                            },
-                        ]}
-                    />
-                </Col>
-                <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-                    <Row>
-                        <Button onClick={() => navigate(-1)}>
-                            Back
-                        </Button>
-                    </Row>
-                </Col>
-            </Row >
-        )
-    }
-
-    const fetchCourse = async () => {
-        await getCourse(sessionStorage.getItem("token"), params.id, `?pops=path:teacher$select:firstname lastname`)
-            .then(
-                (res) => {
-                    const data = res.data.data
-                    console.log(data)
-                    setCourse(data)
-                }
-            )
-            .catch(
-                (err) => {
-                    console.log(err)
-                }
-            )
-    }
-
-    useEffect(() => {
-        fetchCourse()
-    }, [])
-
+  const studentCourseTitle = () => {
     return (
-        <div className="bg-st-course">
-            <NavBarHome />
-            <div style={{ width: "100%", marginTop: "100px", marginBottom: "50px" }}>
-                <Row justify={"center"}>
-                    <Col flex={"auto"}>
-                        <Card title={studentCourseTitle()} style={{ width: "100%" }}>
-                            <Row justify={"center"}>
-                                <Col flex={"auto"}>
-                                    <Row>
-                                        <Col flex={"auto"}>
-                                            <Card>
-                                                <Row justify={"start"} style={{ paddingTop: "0.5%", paddingBottom: "1%" }}>
-                                                    <Col style={{ width: "330px" }}>
-                                                        <Image
-                                                            width={300}
-                                                            preview={false}
-                                                            onError={handleUnloadImage}
-                                                            src={course?.image?.url ? (process.env.REACT_APP_IMG + course?.image?.url) : DEFAULT_IMAGE}
-                                                        />
-                                                    </Col>
-                                                    <Col flex={"auto"} style={{ minWidth: "30%" }}>
-                                                        <Row>
-                                                            <Col flex={"auto"} style={{ width: "80%" }}>
-                                                                <h4>{course?.name}</h4>
-                                                            </Col>
-                                                        </Row>
-                                                        <Row justify={"start"} align={"middle"}>
-                                                            <Col>
-                                                                by {course?.teacher?.firstname} {course?.teacher?.lastname}
-                                                            </Col>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col style={{ paddingTop: "25px" }}>
-                                                                <Text >{course?.detail}</Text>
-                                                            </Col>
-                                                        </Row>
-                                                    </Col>
-                                                </Row>
+      <Row align={"middle"} justify={"space-between"}>
+        <Col>
+          <Breadcrumb
+            separator={
+              <Title level={5} style={{ marginTop: "10px" }}>
+                {" "}
+                {">"}{" "}
+              </Title>
+            }
+            items={[
+              {
+                title: (
+                  <Title level={5} style={{ marginTop: "10px" }}>
+                    <p>Course</p>
+                  </Title>
+                ),
+                key: "courses",
+              },
+              {
+                title: (
+                  <Title level={5} style={{ marginTop: "10px" }}>
+                    <p>{course?.name}</p>
+                  </Title>
+                ),
+                key: "courses_create",
+              },
+            ]}
+          />
+        </Col>
+        <Col style={{ paddingTop: "1px", paddingBottom: "1px" }}>
+          <Row>
+            <Button onClick={() => navigate(-1)}>Back</Button>
+          </Row>
+        </Col>
+      </Row>
+    );
+  };
 
-                                                <Row style={{ paddingTop: "2%", }}>
-                                                    <Col style={{ width: "100%" }}>
-                                                        {/* <Button
-                                                            // disabled={!passedCondition}
-                                                            type="primary"
-                                                            size="large"
-                                                            block
-                                                        >
-                                                            {
-                                                                (
-                                                                    "Add Course"
-                                                                )
-                                                            }
-
-                                                        </Button> */}
-                                                    </Col>
-
-                                                </Row>
-                                            </Card>
-                                        </Col>
-                                    </Row>
-
-                                    <Row style={{ paddingTop: "1%" }}>
-                                        <Col flex={"auto"}>
-                                            <Card >
-                                                Contents and quizes...
-                                            </Card>
-                                        </Col>
-                                    </Row>
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
-                </Row>
-            </div>
-        </div>
-
+  const fetchCourse = async () => {
+    await getCourse(
+      sessionStorage.getItem("token"),
+      params.id,
+      `?pops=path:teacher$select:firstname lastname`
     )
-}
+      .then((res) => {
+        const data = res.data.data;
+        fetchTopic(data._id);
+        setCourse(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const fetchTopic = (id) => {
+    listTopicCourse(sessionStorage.getItem("token"), id)
+      .then((res) => {
+        setTopicData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    fetchCourse();
+  }, []);
+
+  return (
+    <div className="bg-st-course">
+      <NavBarHome />
+      <div style={{ width: "100%", marginTop: "100px", marginBottom: "50px" }}>
+        <Row justify={"center"} style={{ marginBottom: "15px" }}>
+          <Col flex={"auto"}>
+            <Card
+            // cover={
+            //   <img
+            //     alt="example"
+            //     src={`http://localhost:5500/uploads/course/${course?.image?.name}`}
+            //   />
+            // }
+            title={studentCourseTitle()} style={{ width: "100%" }}
+            >
+              <Row gutter={16}>
+                <Col span={6}>
+                  <Image
+                    style={{borderRadius:"5px"}}
+                    preview={false}
+                    onError={handleUnloadImage}
+                    src={`http://localhost:5500/uploads/course/${course?.image?.name}`}
+                  />
+                </Col>
+                <Col span={6}>
+                  <Title style={{ color: "#002c8c" }} level={3}>
+                    {course?.name}
+                  </Title>
+                  <Text style={{ fontSize: "13px" }}>
+                    {course?.detail}</Text>
+                  
+                </Col>
+              </Row>
+              <Row justify={'end'}>
+              <Text style={{ fontSize: "12px" }}>
+                    by {course?.teacher?.firstname} {course?.teacher?.lastname}
+                  </Text>
+              </Row>
+              {/* <Row justify={"center"}>
+                <Col flex={"auto"}>
+                  <Row
+                    justify={"start"}
+                    style={{ paddingTop: "0.5%", paddingBottom: "1%" }}
+                  >
+                    <Col style={{ width: "330px" }}></Col>
+                    <Col flex={"auto"} style={{ minWidth: "30%" }}>
+                      <Row>
+                        <Col flex={"auto"} style={{ width: "80%" }}>
+                          <Title style={{ color: "#002c8c" }} level={3}>
+                            {course?.name}
+                          </Title>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <Text>{course?.detail}</Text>
+                        </Col>
+                      </Row>
+                      <Row justify={"end"} align={"end"}>
+                        <Col style={{ fontSize: "12px" }}>
+                          by {course?.teacher?.firstname}{" "}
+                          {course?.teacher?.lastname}
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row> */}
+            </Card>
+          </Col>
+        </Row>
+        {topicData.map((item, index) => (
+          <Row key={index} justify={"center"} style={{ marginBottom: "15px" }}>
+            <Col flex={"auto"}>
+              <Card style={{ padding: "20px", width: "100%" }}>
+                <Title style={{ color: "#002c8c" }} level={3}>
+                  {item.title}
+                </Title>
+                <Text>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  {item.detail}
+                </Text>
+                <br />
+                {item.sub_content.length > 0 ? (
+                  <ul style={{ marginTop: "15px" }}>
+                    {item.sub_content.map((ttem, ddex) => (
+                      <li className="li-list">{ttem}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <></>
+                )}
+                {item.file.length > 0 ? (
+                  <StudentCourse_file item={item} />
+                ) : (
+                  <></>
+                )}
+                {item.link.length > 0 ? (
+                  <StudentCourse_link item={item} />
+                ) : (
+                  <></>
+                )}
+              </Card>
+            </Col>
+          </Row>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default StudentExam;

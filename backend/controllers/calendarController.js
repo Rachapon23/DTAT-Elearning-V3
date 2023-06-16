@@ -3,6 +3,7 @@ const Room = require("../models/room");
 const Course = require("../models/course");
 const Role = require("../models/role");
 const User = require("../models/user");
+const Activity = require("../models/activity");
 
 exports.createCalendar = async (req, res) => {
   try {
@@ -48,7 +49,7 @@ exports.listCalendar = async (req, res) => {
     res.send(calendar);
   } catch (err) {
     console.log(err);
-    res.status(500).send("Server Error!!! on list calendar ", rr);
+    res.status(500).send("Server Error!!! on list calendar ");
   }
 };
 
@@ -66,6 +67,23 @@ exports.deleteCalendar = async (req, res) => {
   }
 };
 
+// ===== Student ======
+exports.listCalendarStudent = async (req, res) => {
+  try {
+    let calendar = [];
+    const course = await Activity.find({ user: req.user.user_id })
+      .populate({ path: "course", populate: { path: "calendar" } })
+      .select("course");
+    course.forEach((item) => {
+      calendar.push(item.course.calendar);
+    });
+
+    res.send(calendar);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error!!! on list calendar ");
+  }
+};
 // exports.listCalendarRole = async (req, res) => {
 //   try {
 //     // const user = await User.find({ role : req.params.id }).select("_id")

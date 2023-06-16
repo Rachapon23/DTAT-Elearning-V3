@@ -1,7 +1,8 @@
 import { Avatar, Breadcrumb, Button, Card, Col, Image, Row, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { createActivity, getActivity, getCourse, getUser, listCondition } from "../../../../function/Student/course";
+import { createActivity, getActivity, getCourse, getUser } from "../../../../function/Student/course";
+import { listCondition } from "../../../../function/Student/condition";
 import "./studentcourse.css";
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 
@@ -18,7 +19,7 @@ const RegisterCourse = () => {
     const [registered, setRegistered] = useState(false)
     const [passedCondition, setPassedCondition] = useState(false)
     const [pageChange, setPageChange] = useState(false)
-
+    const [conditionData, setConditionData] = useState([]);
 
     const isPassCondition = async () => {
         // check registered
@@ -26,9 +27,10 @@ const RegisterCourse = () => {
 
         // check plant
         let inPlant = false
-        for (let i = 0; i < course?.condition.length; i++) {
-            console.log(course?.condition[i].plant.name, plant)
-            if (course?.condition[i].plant.name === plant) {
+        for (let i = 0; i < conditionData.length; i++) {
+            // console.log("condition: ",conditionData[i]," plant: ",plant)
+            // console.log("plant: ",conditionData[i].plant.name," plant: ",plant)
+            if (conditionData[i].plant.name === plant) {
                 inPlant = true
                 break
             }
@@ -45,7 +47,7 @@ const RegisterCourse = () => {
                 (res) => {
                     const data = res.data.data
                     if (data) setRegistered(true)
-                    // console.log("check: ",data)
+                    console.log("check: ",data)
                 }
             )
             .catch(
@@ -76,6 +78,7 @@ const RegisterCourse = () => {
                     const data = res.data.data
                     console.log(data)
                     pageChange(true)
+                    fetchCourse()
                 }
             )
             .catch(
@@ -89,12 +92,23 @@ const RegisterCourse = () => {
         e.target.src = DEFAULT_IMAGE
     }
 
+    const fetchCondition = (id) => {
+        listCondition(sessionStorage.getItem("token"), id)
+          .then((res) => {
+            // console.log(res.data)
+            setConditionData(res.data);
+            isPassCondition()
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      };
+
     const fetchUser = async () => {
         await getUser(sessionStorage.getItem("token"), sessionStorage.getItem("user_id"), `?fetch=plant,-_id&field=plant`)
             .then(
                 (res) => {
                     const data = res.data.data
-                    console.log(data)
                     setPlant(data.plant.name)
                 }
             )
@@ -111,9 +125,10 @@ const RegisterCourse = () => {
             .then(
                 (res) => {
                     const data = res.data.data
-                    console.log(data)
+                    // console.log("Course",data)
                     setCourse(data)
-                    isPassCondition()
+                    fetchCondition(data._id);
+                    
                 }
             )
             .catch(
