@@ -48,7 +48,7 @@ const { Text, Link } = Typography;
 const Course_topic_children = ({ item, index, nextState, setNextState }) => {
   const { loadTopic, course_id } = useContext(CourseContext);
   const [loading, setLoading] = useState(false);
-  const [imageData, setImageData] = useState([])
+  const [fileData, setfileData] = useState([])
 
   const deleteTopic = () => {
     removeTopic(sessionStorage.getItem("token"), item._id)
@@ -115,10 +115,10 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
       });
   };
   const handleRemoveLink = (index) => {
-    const prevData = imageData.slice(0, index)
-    const nextData = imageData.slice(index + 1, imageData.length)
-    setImageData(() => [...prevData, ...nextData])
-    console.log("imageData update: ", imageData)
+    const prevData = fileData.slice(0, index)
+    const nextData = fileData.slice(index + 1, fileData.length)
+    setfileData(() => [...prevData, ...nextData])
+    console.log("fileData update: ", fileData)
 
     removeLinkTopic(sessionStorage.getItem("token"), item._id, {
       index: index,
@@ -184,7 +184,7 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
         const data = res.data.data
         if (data.file_type && data.file_type.includes("image")) {
           const objectUrl = URL.createObjectURL(image?.file);
-          setImageData((prev) => [...prev, objectUrl])
+          setfileData((prev) => [...prev, objectUrl])
         }
         loadTopic();
       })
@@ -234,7 +234,7 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
 
       const objectUrl = URL.createObjectURL(response.data);
       console.log(objectUrl)
-      setImageData((prev) => [...prev, objectUrl])
+      setfileData((prev) => [...prev, objectUrl])
     }
   }
 
@@ -396,68 +396,103 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
           <label>File</label>
           <hr />
           {/* {JSON.stringify(item)} */}
-          {item?.file.map((ttem, ddex) => (
-            <div style={{ marginBottom: "10px" }} key={ddex}>
-              {ttem?.file_type && ttem?.file_type.includes("image")
-                ? (
-                  <Row justify={"center"} align={"middle"}>
-                    <Col>
-                      <Badge
-                        count={
-                          <Row justify={"center"} align={"middle"}>
-                            <DeleteOutlined
-                              onClick={() => handleRemoveFile(ddex)}
-                              style={{
-                                fontSize: "120%",
-                                color: "white",
-                                backgroundColor: "#f5222d",
-                                borderRadius: "50%",
-                                padding: "20%",
-                              }}
+          {
+            item?.file.map((ttem, ddex) => (
+              <div style={{ marginBottom: "10px" }} key={ddex}>
+                {
+                  ttem?.file_type && ttem?.file_type.includes("image")
+                    ? (
+                      <Row justify={"center"} align={"middle"}>
+                        <Col>
+                          <Badge
+                            count={
+                              <Row justify={"center"} align={"middle"}>
+                                <DeleteOutlined
+                                  onClick={() => handleRemoveFile(ddex)}
+                                  style={{
+                                    fontSize: "120%",
+                                    color: "white",
+                                    backgroundColor: "#f5222d",
+                                    borderRadius: "50%",
+                                    padding: "20%",
+                                  }}
+                                />
+                              </Row>
+                            }
+                          >
+                            <Image
+                              height={250}
+                              src={fileData[ddex]}
                             />
+                          </Badge>
+                        </Col>
+                      </Row>
+                    )
+                    :
+                    (
+                      ttem?.file_type && ttem?.file_type.includes("video") ?
+                        (
+                          <Row justify={"center"} align={"middle"}>
+                            <Col>
+                              <Badge
+                                count={
+                                  <Row justify={"center"} align={"middle"}>
+                                    <DeleteOutlined
+                                      onClick={() => handleRemoveFile(ddex)}
+                                      style={{
+                                        fontSize: "120%",
+                                        color: "white",
+                                        backgroundColor: "#f5222d",
+                                        borderRadius: "50%",
+                                        padding: "20%",
+                                      }}
+                                    />
+                                  </Row>
+                                }
+                              >
+                                <video controls src={fileData[ddex]} width={500} />
+                              </Badge>
+                            </Col>
                           </Row>
-                        }
-                      >
-                        <Image
-                          height={250}
-                          src={imageData[ddex]}
-                        />
-                      </Badge>
-                    </Col>
-                  </Row>
-                ) : (
-                  <Row>
-                    <Col style={{ width: "94%" }}>
-                      <Link
-                        href={process.env.REACT_APP_IMG + `/topic/${ttem?.name}`}
-                        target="_blank">{ttem?.original_name}</Link>
-                    </Col>
-                    <Col
-                      style={{
-                        width: "5%",
-                        display: "flex",
-                        justifyContent: "center",
-                        marginLeft: "1%",
-                        // alignItems: "center",
-                        // backgroundColor:"red"
-                      }}
-                    >
-                      <MinusCircleOutlined
-                        style={{ fontSize: "130%" }}
-                        className="dynamic-delete-button"
-                        onClick={() => handleRemoveFile(ddex)}
-                      />
-                    </Col>
-                  </Row>
-                )}
-            </div>
-          ))}
+                        )
+                        :
+                        (
+                          <Row>
+                            <Col style={{ width: "94%" }}>
+                              <Link
+                                href={process.env.REACT_APP_IMG + `/topic/${ttem?.name}`}
+                                target="_blank">{ttem?.original_name}</Link>
+                            </Col>
+                            <Col
+                              style={{
+                                width: "5%",
+                                display: "flex",
+                                justifyContent: "center",
+                                marginLeft: "1%",
+                                // alignItems: "center",
+                                // backgroundColor:"red"
+                              }}
+                            >
+                              <MinusCircleOutlined
+                                style={{ fontSize: "130%" }}
+                                className="dynamic-delete-button"
+                                onClick={() => handleRemoveFile(ddex)}
+                              />
+                            </Col>
+                          </Row>
+                        )
+                    )
+
+                }
+              </div>
+            ))
+          }
           <Upload showUploadList={false} customRequest={handleAddFile}>
             <Button icon={<UploadOutlined />}>Click to Upload</Button>
           </Upload>
         </div>
       </Card>
-    </Row>
+    </Row >
   );
 };
 

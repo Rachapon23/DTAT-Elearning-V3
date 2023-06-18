@@ -74,8 +74,12 @@ exports.listCalendarStudent = async (req, res) => {
     const course = await Activity.find({ user: req.user.user_id })
       .populate({ path: "course", populate: { path: "calendar" } })
       .select("course");
-    course.forEach((item) => {
-      calendar.push(item.course.calendar);
+    console.log("vvvv-----------------------------------")
+    console.log(course)
+    course.map((item) => {
+      if (item?.course?.calendar) {
+        calendar.push(item.course.calendar);
+      }
     });
 
     res.send(calendar);
