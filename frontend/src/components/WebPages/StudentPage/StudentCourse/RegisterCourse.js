@@ -21,6 +21,11 @@ const RegisterCourse = () => {
     const [pageChange, setPageChange] = useState(false)
     const [conditionData, setConditionData] = useState([]);
 
+    const handleNavigate = (navStr, dataStage) => {
+        console.log( dataStage)
+        navigate(navStr, { state: dataStage })
+    }
+
     const isPassCondition = async () => {
         // check registered
         await checkRegistered()
@@ -29,8 +34,8 @@ const RegisterCourse = () => {
         // check plant
         let inPlant = false
         for (let i = 0; i < conditionData.length; i++) {
-            console.log("condition: ",conditionData[i]," plant: ",plant)
-            console.log("plant: ",conditionData[i].plant.name," plant: ",plant)
+            console.log("condition: ", conditionData[i], " plant: ", plant)
+            console.log("plant: ", conditionData[i].plant.name, " plant: ", plant)
             if (conditionData[i].plant.name === plant) {
                 inPlant = true
                 break
@@ -48,7 +53,7 @@ const RegisterCourse = () => {
                 (res) => {
                     const data = res.data.data
                     if (data) setRegistered(true)
-                    console.log("check: ",data)
+                    console.log("check: ", data)
                 }
             )
             .catch(
@@ -95,16 +100,16 @@ const RegisterCourse = () => {
 
     const fetchCondition = async (id) => {
         await listCondition(sessionStorage.getItem("token"), id)
-          .then((res) => {
-            const data = res.data
-            // console.log(data)
-            setConditionData(data);
-            isPassCondition()
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      };
+            .then((res) => {
+                const data = res.data
+                // console.log(data)
+                setConditionData(data);
+                isPassCondition()
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
 
     const fetchUser = async () => {
         await getUser(sessionStorage.getItem("token"), sessionStorage.getItem("user_id"), `?fetch=plant,-_id&field=plant`)
@@ -130,7 +135,7 @@ const RegisterCourse = () => {
                     // console.log("Course",data)
                     setCourse(data)
                     fetchCondition(data._id);
-                    
+
                 }
             )
             .catch(
@@ -166,7 +171,7 @@ const RegisterCourse = () => {
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
                     {/* <Link to="/teacher/page/create-exam" state={{ mode: "Create" }}> */}
-                    <Button onClick={() => navigate(-1)}>
+                    <Button onClick={() => handleNavigate("/student/page/home", { tabIndex: 4 })}>
                         Back
                     </Button>
                     {/* </Link> */}
@@ -178,7 +183,7 @@ const RegisterCourse = () => {
     return (
         <div className="bg-st-course">
             <NavBarHome />
-            <div style={{width: "100%", marginTop: "100px", marginBottom: "50px"}}>
+            <div style={{ width: "100%", marginTop: "100px", marginBottom: "50px" }}>
                 <Row justify={"center"} >
                     <NavBarHome />
                     <Col flex={"auto"} >

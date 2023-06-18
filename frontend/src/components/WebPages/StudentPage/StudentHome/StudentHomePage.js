@@ -8,16 +8,20 @@ import DoExam from "../StudentExam/DoExam";
 
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { listActivity, listCourse } from "../../../../function/Student/course";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getExam } from "../../../../function/Teacher/exam";
+import BrowseCourse from "./BrowesCourse"
 
 const { Text } = Typography
 const { Header, Content, Footer } = Layout;
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
 
 const StudentHomePage = () => {
-  const [courses, setCourses] = useState([]);
+  const location = useLocation()
   const navigate = useNavigate();
+
+  const [courses, setCourses] = useState([]);
+  const [selectedTab] = useState(location?.state?.tabIndex ? location.state.tabIndex : 0)
 
   const handleNavigate = (navStr, dataStage) => {
     navigate(navStr, { state: dataStage });
@@ -227,14 +231,15 @@ const StudentHomePage = () => {
     }
   };
 
+  const handleChangeTab = (e) => {
+    console.log("this -> ", e)
+  }
+
 
   const tabContent = (tab) => {
     switch (tab) {
       case 0: return (
         <div className="">
-          {/* <Button onClick={() => handleNavigate(`/student/page/browes-course`)}>
-            Browes Course
-          </Button> */}
           <Table
             columns={columns("Course")}
             dataSource={courses.filter((item) => item.result === 0)}
@@ -265,6 +270,11 @@ const StudentHomePage = () => {
       case 2: return (
         <div className="">
           <Calendar />
+        </div>
+      )
+      case 3: return (
+        <div className="">
+          <BrowseCourse />
         </div>
       )
       default: return null
@@ -299,6 +309,15 @@ const StudentHomePage = () => {
       ),
       children: tabContent(2),
     },
+    {
+      key: '4',
+      label: (
+        <a htmlFor="" className="label-home-st">
+          Browse Courses
+        </a>
+      ),
+      children: tabContent(3),
+    }
   ]
 
   const getExamStatus = async (index) => {
@@ -348,7 +367,7 @@ const StudentHomePage = () => {
       <NavBarHome />
       <div className="content-home">
         <Tabs
-          defaultActiveKey="0"
+          defaultActiveKey={`${selectedTab}`}
           items={tabList}
         />
       </div>
