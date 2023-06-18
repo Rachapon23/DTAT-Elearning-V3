@@ -321,12 +321,12 @@ const Exams = () => {
     }
 
     return (
-        <Layout className="layout-content">
+        <Layout className="layout-content-card">
             {/* <NavBar page={"Exams"} /> */}
             <Row>
                 {/* <Col sm={2} /> */}
                 <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
-                    <Card title={myQuizesTitle()} style={{ maxWidth: "100%", }}>
+                    <Card className="card-shadow" title={myQuizesTitle()} style={{ maxWidth: "100%", }}>
                         <Row justify="space-between" style={{ marginBottom: "1%" }}>
                             <Col>
                                 <Segmented

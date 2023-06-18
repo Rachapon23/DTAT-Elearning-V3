@@ -120,11 +120,12 @@ const Course_condition = () => {
   };
 
   const handleAddCondition = () => {
-    console.log(condition);
+
     createCondition(sessionStorage.getItem("token"), condition, course_id)
       .then((res) => {
         loadCondition();
         loadPlant()
+        form.resetFields();
       })
       .catch((err) => {
         console.log(err);
@@ -138,6 +139,7 @@ const Course_condition = () => {
       .then((res) => {
         loadCondition();
         loadPlant();
+
       })
       .catch((err) => {
         console.log(err);
@@ -165,6 +167,7 @@ const Course_condition = () => {
           }
         );
     }, [values]);
+
     return (
       <Button
         onClick={handleAddCondition}
@@ -185,6 +188,16 @@ const Course_condition = () => {
         layout="vertical"
         autoComplete="off"
         style={{ paddingTop: "2%" }}
+        // fields={[
+        //   {
+        //     name: ["plant"],
+        //     value: "",
+        //   },
+        //   {
+        //     name: ["maximum"],
+        //     value: "",
+        //   },
+        // ]}
       >
         <Form.Item style={{ marginBottom: "5px" }}>
           <Form.Item

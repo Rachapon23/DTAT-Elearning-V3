@@ -17,28 +17,23 @@
 }
 
 .contentTeacher {
-  margin: 24px 16px;
-  padding: 20px;
+  margin: 24px 80px  16px 80px ;
 }
 .site-layout-teacher {
   background-image: url("../../../../public/background-teacher.jpg");
   min-height: 100vh;
-  max-height: 3000px;
 }
-/* .layout-content{
-  border-radius: 6px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-} */
-.layout-content-create {
+
+.layout-content-card {
   background-color: transparent;
   border-radius: 6px;
 }
-.layout-content-create .content {
+.layout-content-card .content {
   max-height: auto;
   min-height: auto;
   margin-top: auto;
 }
-.layout-content-create .btn-bottom {
+.layout-content-card .btn-bottom {
   margin-top: 20px;
 }
 
@@ -64,7 +59,7 @@
   color: #c0c0c0;
 }
 
-.card-create {
+.card-shadow {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .card-nlf{

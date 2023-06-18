@@ -479,12 +479,12 @@ const TeacherHome = () => {
 
 
   return (
-    <Layout className="layout-content">
+    <Layout className="layout-content-card">
       {/* <NavBar page={"logo--------------"} /> */}
       <Row>
         {/* <Col sm={2} /> */}
         <Col flex="auto">
-          <Card title="Home">
+          <Card title="Home" className="card-shadow">
             <Row justify={"space-between"} >
 
               <Col flex={"auto"} style={{ paddingRight: "1.5%", width: "25%" }}>
