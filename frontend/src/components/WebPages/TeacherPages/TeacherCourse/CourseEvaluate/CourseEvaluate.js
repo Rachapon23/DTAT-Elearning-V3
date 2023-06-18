@@ -109,12 +109,12 @@ const CourseEvaluate = () => {
     }, [])
 
     return (
-        <Layout>
+        <Layout className="layout-content-card">
             {/* <NavBar page={"Courses"} /> */}
             <Row>
                 {/* <Col sm={2} /> */}
                 <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
-                    <Card title={CourseEvaluateTitle()} style={{ maxWidth: "100%" }}>
+                    <Card className="card-shadow" title={CourseEvaluateTitle()} style={{ maxWidth: "100%" }}>
                         <Row justify="space-between" style={{ marginBottom: "1%" }}>
                             {/* <Col>
                                 <Segmented

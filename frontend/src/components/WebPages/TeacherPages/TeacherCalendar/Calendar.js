@@ -60,7 +60,7 @@ const Calendar = () => {
         )
     }
     return (
-        <Card title={CalendarTitle()}>
+        <Card title={CalendarTitle()} className="card-shadow">
            <FullCalendar
         plugins={[
           dayGridPlugin,

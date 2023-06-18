@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { TeacherCourseContext } from "../TeacherCourseContext";
 import { listActivity } from "../../../../../function/Teacher/course";
 import { updateActivityResult } from "../../../../../function/Teacher/course";
-
+import "../../teach.css";
 const { Title } = Typography
 
 const EvaluateStudent = () => {
@@ -202,10 +202,12 @@ const EvaluateStudent = () => {
     }, [pageChange])
 
     return (
-        <Layout>
+        <Layout >
             <Row>
                 <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
-                    <Card title={CourseEvaluateTitle()} style={{ maxWidth: "100%" }}>
+                    <Card 
+                    title={CourseEvaluateTitle()}
+                     style={{ maxWidth: "100%" }}>
                         <Row justify="center">
                             <Col flex={"auto"} style={{ width: "2000px" }}>
                                 <Table

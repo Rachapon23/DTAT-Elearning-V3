@@ -665,11 +665,11 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
 
 
     return (
-        <Layout className="layout-content-create">
+        <Layout className="layout-content-card">
             <Row className="content">
 
                 <Col flex="auto" style={{ justifyContent: "center" }}>
-                    <Card title={examCreateTitle()} className="card-create">
+                    <Card title={examCreateTitle()} className="card-shadow">
                         {
                             editMode || createMode ?
                                 (
