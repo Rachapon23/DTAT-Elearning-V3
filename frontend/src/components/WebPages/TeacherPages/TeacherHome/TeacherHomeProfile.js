@@ -71,7 +71,7 @@ const TeacherHomeProfile = ({ actionMode, setActionMode }) => {
                     <Row justify={"center"} >
                         <Col>
                             {
-                                profile?.firstname && <Avatar shape="square" size={200} icon={<p>{profile?.firstname.substring(0, 1)}</p>} />
+                                profile?.firstname && <Avatar shape="square" size={200} icon={<p>{profile?.firstname ? profile?.firstname.substring(0, 1): null}</p>} />
                             }
                         </Col>
                     </Row>

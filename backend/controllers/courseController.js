@@ -418,7 +418,7 @@ exports.listCourseGraphData = async (req, res) => {
             }
           })
 
-        const searchedActivity = await Activity.find({}).populate("user")
+        // const searchedActivity = await Activity.find({}).populate("user")
         // console.log(searchedActivity.map((item) =>{
         //   if(item.completed && item.user) return item.user
         //   else return 0
@@ -450,7 +450,48 @@ exports.listCourseGraphData = async (req, res) => {
         console.log(payload)
         return res.json({ data: payload });
       case "teacher":
-        return res.json({ data: await Course.find({ teacher: user_id }).populate("condition") });
+        const searchedCourseTeacher = await Course.find({ teacher: user_id })
+          .populate({
+            path: "condition",
+            populate: {
+              path: "plant"
+              // select: ""
+            }
+          })
+          .populate({
+            path: "activity",
+            populate: {
+              path: "user",
+              populate: {
+                path: "plant"
+                // select: ""
+              }
+            }
+          })
+
+        const payloadTeacher = searchedCourseTeacher
+          .filter((fitem) => fitem.condition && Array.isArray(fitem.condition) && fitem.condition.length > 0)
+          .map(
+            (item) => (
+              {
+                name: item.name,
+                plant: item.condition?.map((citem) => citem.plant.name),
+                plant_amount: item.condition?.map((amount) => amount.maximum),
+                plant_current: item.condition?.map((citem) => item.activity.map((aitem) => {
+                  if (citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1)) {
+                    console.log("match: ", citem.plant.name, aitem.user.plant.name)
+                    console.log("result: ", aitem.result)
+                    console.log("logic: ", citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0)
+                  }
+                  return citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0
+                }).reduce((prev, curr) => prev + curr, 0)),
+                current: item.activity.map((aitem) => aitem.result === 2 || aitem.result === 1 ? 1 : 0).reduce((prev, curr) => prev + curr, 0),
+                maximum: item.condition.map((amount) => amount.maximum).reduce((prev, curr) => prev + curr, 0),
+              }
+            )
+          )
+        // console.log(payloadTeacher)
+        return res.json({ data: payloadTeacher });
       case "student":
         return res.status(403).json({ error: "Access denine for student" });
       default:

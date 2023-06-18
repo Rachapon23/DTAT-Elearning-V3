@@ -65,9 +65,17 @@ export const createExam = async (authtoken, data) =>
         }
     });
 
-// POST: /create-exam
+// POST: /update-exam/:id
 export const updateExam = async (authtoken, id, data) =>
     await axios.put(process.env.REACT_APP_API + `/update-exam/${id}`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// POST: /update-exam/:id/enable
+export const updateExamEnable = async (authtoken, id, data) =>
+    await axios.put(process.env.REACT_APP_API + `/update-exam/${id}/enable`, data, {
         headers: {
             authtoken,
         }

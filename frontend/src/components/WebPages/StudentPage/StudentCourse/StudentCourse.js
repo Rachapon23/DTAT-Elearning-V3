@@ -120,15 +120,15 @@ const StudentExam = () => {
             title={studentCourseTitle()} style={{ width: "100%" }}
             >
               <Row gutter={16}>
-                <Col span={12}>
+                <Col span={6}>
                   <Image
                     style={{borderRadius:"5px"}}
                     preview={false}
                     onError={handleUnloadImage}
-                    src={`http://localhost:5500/uploads/course/${course.image.name}`}
+                    src={`http://localhost:5500/uploads/course/${course?.image?.name}`}
                   />
                 </Col>
-                <Col span={12}>
+                <Col span={6}>
                   <Title style={{ color: "#002c8c" }} level={3}>
                     {course?.name}
                   </Title>

@@ -34,11 +34,18 @@ const Course_condition = () => {
     maximum: "",
   });
   const { course_id } = useContext(CourseContext);
+  // const [ hasChange, setHasChange] = useState(false)
+  const [options, setOptions] = useState([]);
 
   const loadPlant = () => {
-    listPlant(sessionStorage.getItem("token"))
+    listPlant(sessionStorage.getItem("token"), `?course_id=${course_id}`)
       .then((res) => {
-        setPlantData(res.data.data);
+        const data = res.data.data
+        setPlantData(data);
+        setOptions(() => data.map((item) => ({
+          value: item._id,
+          label: item.name,
+        })))
       })
       .catch((err) => {
         console.log(err);
@@ -47,7 +54,8 @@ const Course_condition = () => {
   const loadCondition = () => {
     listConditionCourse(sessionStorage.getItem("token"), course_id)
       .then((res) => {
-        setConditionData(res.data);
+        const data = res.data
+        setConditionData(data);
       })
       .catch((err) => {
         console.log(err);
@@ -55,18 +63,11 @@ const Course_condition = () => {
   };
 
   useEffect(() => {
-    loadPlant();
     loadCondition();
+    loadPlant();
   }, []);
 
-  const options = [];
-  for (let i = 0; i < plantData.length; i++) {
-    options.push({
-      value: plantData[i]._id,
-      label: plantData[i].name,
-    });
-  }
-
+  
   const columns = [
     {
       title: "No",
@@ -96,9 +97,9 @@ const Course_condition = () => {
       render: (_, item) => {
         return (
           <Button
-          onClick={() => handleDeleteCondition(item._id)}
+            onClick={() => handleDeleteCondition(item._id)}
           >
-          <DeleteOutlined />
+            <DeleteOutlined />
           </Button>
         );
       },
@@ -123,6 +124,7 @@ const Course_condition = () => {
     createCondition(sessionStorage.getItem("token"), condition, course_id)
       .then((res) => {
         loadCondition();
+        loadPlant()
       })
       .catch((err) => {
         console.log(err);
@@ -135,6 +137,7 @@ const Course_condition = () => {
     removeCondition(sessionStorage.getItem("token"), id)
       .then((res) => {
         loadCondition();
+        loadPlant();
       })
       .catch((err) => {
         console.log(err);

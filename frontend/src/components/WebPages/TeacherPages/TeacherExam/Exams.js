@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Breadcrumb, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert } from 'antd';
+import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Breadcrumb, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Switch } from 'antd';
 import NavBar from "../../../Layout/NavBar"
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../teach.css"
-import { getCourseCount, listExam, removeExam } from "../../../../function/Teacher/exam";
+import { getCourseCount, listExam, removeExam, updateExamEnable } from "../../../../function/Teacher/exam";
 const { Title } = Typography;
 const { Meta } = Card;
 const { Header, Content, Footer, Sider } = Layout;
@@ -75,6 +75,22 @@ const Exams = () => {
 
     const handleRemoveCourse = async (index) => {
         await removeExam(sessionStorage.getItem("token"), exams[index]?._id)
+            .then(
+                (res) => {
+                    console.log(res.data.data)
+                    setHasChanged(true);
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }
+
+    const handleChangeExamStatus = async (value, index) => {
+        console.log(value)
+        await updateExamEnable(sessionStorage.getItem("token"), exams[index]._id, { enable: value })
             .then(
                 (res) => {
                     console.log(res.data.data)
@@ -162,7 +178,12 @@ const Exams = () => {
             align: 'center',
             key: '_id',
             width: '10%',
-            render: (enable) => enable ? "Open" : "Close"
+            render: (enable, objData) => {
+                // console.log(objData._id)
+                const index = exams.indexOf(objData)
+                return <Switch checked={enable} onChange={(e) => handleChangeExamStatus(e, index)} />
+                // return enable ? "Open" : "Close"
+            }
         },
         {
             title: 'Edit',
@@ -170,8 +191,7 @@ const Exams = () => {
             align: 'center',
             width: '10%',
             render: (data) => {
-                const index = exams.indexOf(data);
-                console.log()
+                // const index = exams.indexOf(data);
                 return (
                     <Link to={`/teacher/page/edit-exam/${data?._id}`} state={{ mode: "Edit", exam_name: data?.name }}>
                         <Button onClick={() => null}>

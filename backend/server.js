@@ -11,7 +11,7 @@ const app = express()
 module.exports = { app, express }
 
 // Static file for displat image
-app.use(express.static('private'))
+app.use(express.static('public'))
 
 //connect cloud Database
 mongoose.connect(process.env.DATABASE2, {

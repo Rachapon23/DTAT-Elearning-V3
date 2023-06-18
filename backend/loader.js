@@ -210,45 +210,10 @@ exports.loadData = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
-    // Condition
-    await Condition.findOneAndUpdate(
-        { _id: "64264e62440e75505b4d5032" },
-        {
-            _id: "64264e62440e75505b4d5032",
-            plant: await Plant.findOne({ name: "A" }).select("_id"),
-            maximum: 10,
-            course: "64264f3c7e51c155540e7750"
-        },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-    )
-
-    await Condition.findOneAndUpdate(
-        { _id: "64264e62440e75505b4d5035" },
-        {
-            _id: "64264e62440e75505b4d5035",
-            plant: await Plant.findOne({ name: "B" }).select("_id"),
-            maximum: 20,
-            course: "64264f3c7e51c155540e7750"
-        },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-    )
-
-    await Condition.findOneAndUpdate(
-        { _id: "64264e62440e75505b4d5038" },
-        {
-            _id: "64264e62440e75505b4d5038",
-            plant: await Plant.findOne({ name: "C" }).select("_id"),
-            maximum: 30,
-            course: "64264f3c7e51c155540e7750"
-        },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-    )
-
     // Course
     const course1 = await Course.findOneAndUpdate(
-        { _id: "64264f3c7e51c155540e7750" },
+        { name: "First load course", },
         {
-            _id: "64264f3c7e51c155540e7750",
             name: "First load course",
             detail: "First load course",
             room: await Room.findOne({ name: "Technical Skill 3" }).select("_id"),
@@ -289,7 +254,7 @@ exports.loadData = async () => {
             room: await Room.findOne({ name: "Technical Skill 1" }).select("_id"),
             image: null,
             video: 2,
-            type: true,//false,
+            type: false,
             enabled: true,
             teacher: await User.findOne({ employee: "6100319" }),
         },
@@ -325,6 +290,103 @@ exports.loadData = async () => {
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
+
+    // Condition
+    const condition1 = await Condition.findOneAndUpdate(
+        { course: course1, plant: await Plant.findOne({ name: "B" }).select("_id") },
+        {
+            plant: await Plant.findOne({ name: "B" }).select("_id"),
+            maximum: 20,
+            course: course1,
+            current: 0,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    const condition2 = await Condition.findOneAndUpdate(
+        { course: course1, plant: await Plant.findOne({ name: "C" }).select("_id") },
+        {
+            plant: await Plant.findOne({ name: "C" }).select("_id"),
+            maximum: 30,
+            course: course1,
+            current: 0,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+
+    const condition3 = await Condition.findOneAndUpdate(
+        { course: course1, plant: await Plant.findOne({ name: "A" }).select("_id") },
+        {
+            plant: await Plant.findOne({ name: "A" }).select("_id"),
+            maximum: 10,
+            course: course1,
+            current: 0,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+
+    const condition4 = await Condition.findOneAndUpdate(
+        { course: course2, plant: await Plant.findOne({ name: "A" }).select("_id") },
+        {
+            plant: await Plant.findOne({ name: "A" }).select("_id"),
+            maximum: 10,
+            course: course2,
+            current: 0,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+
+    const condition5 = await Condition.findOneAndUpdate(
+        { course: course3, plant: await Plant.findOne({ name: "A" }).select("_id") },
+        {
+            plant: await Plant.findOne({ name: "A" }).select("_id"),
+            maximum: 10,
+            course: course3,
+            current: 0,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+
+    const condition6 = await Condition.findOneAndUpdate(
+        { course: course4, plant: await Plant.findOne({ name: "B" }).select("_id") },
+        {
+            plant: await Plant.findOne({ name: "B" }).select("_id"),
+            maximum: 10,
+            course: course4,
+            current: 0,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    const condition7 = await Condition.findOneAndUpdate(
+        { course: course5, plant: await Plant.findOne({ name: "A" }).select("_id") },
+        {
+            plant: await Plant.findOne({ name: "A" }).select("_id"),
+            maximum: 10,
+            course: course5,
+            current: 0,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    course1.condition = [condition4]
+    // course1.save()
+
+    course2.condition = [condition1, condition2, condition3]
+    // course2.save()
+
+    course3.condition = [condition5]
+    // course3.save()
+
+    course4.condition = [condition6]
+    // course4.save()
+
+    course5.condition = [condition7]
+    // course4.save()
 
     // Quiz
     const quiz1 = await Quiz.findOneAndUpdate(

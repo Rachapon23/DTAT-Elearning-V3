@@ -34,19 +34,26 @@ exports.createPrivateFile = async (req, res) => {
         { _id: req.body.course_id },
         { image: image }
       );
-      res.json(Course);
+      res.json(course);
     } else if (field === "topic") {
       const topic = await Topic.findOne({ _id: req.body.topic_id });
       topic.file.push({
         name: req?.body?.name,
         original_name: req?.body?.original_name,
-        file_type:req.file.mimetype
+        file_type: req.file.mimetype
       });
       await Topic.findOneAndUpdate(
         { _id: req.body.topic_id },
         { file: topic.file }
       );
-      res.json(topic);
+      // res.json(topic);
+      res.json({
+        data: {
+          name: req?.body?.name,
+          original_name: req?.body?.original_name,
+          file_type: req.file.mimetype
+        }
+      })
     }
   } catch (err) {
     console.log(err);

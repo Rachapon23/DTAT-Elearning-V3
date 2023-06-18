@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useState, useEffect, useContext } from "react";
 
 import {
@@ -26,9 +26,9 @@ import { CourseContext } from "./CourseContext";
 // fucntion : POST
 import { createFile } from "../../../../../function/Teacher/course_update";
 // fucntion : DELETE
-import { deleteFileCourse } from "../../../../../function/Teacher/course";
+import { deleteFileCourse, getPrivateFieldImage } from "../../../../../function/Teacher/course";
 // function Update : PUT
-import { updateCourseStatus,updateCourseInfo } from "../../../../../function/Teacher/course_update";
+import { updateCourseStatus, updateCourseInfo } from "../../../../../function/Teacher/course_update";
 
 const { TextArea } = Input;
 const Course_info = () => {
@@ -40,7 +40,9 @@ const Course_info = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const createFileField = "course";
   const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState();
+  const [imageData, setImageData] = useState(null)
+
+  console.log("courseData: ", courseData)
 
   const uploadButton = (
     <div>
@@ -122,7 +124,41 @@ const Course_info = () => {
       });
   };
 
+  const handleFetchImage = useCallback(async () => {
+
+    const image_name = courseData?.image?.name
+    if (!image_name) return
+
+    const createFileField = "course"
+    const createFileParam = "file"
+
+    let response
+    await getPrivateFieldImage(sessionStorage.getItem("token"), createFileField, createFileParam, image_name)
+      .then(
+        (res) => {
+          response = res
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err)
+        }
+      )
+
+
+    const objectUrl = URL.createObjectURL(response.data);
+    // console.log(objectUrl)
+    setImageData(objectUrl)
+
+  }, [courseData?.image?.name])
+
   const debounceOnChange = debounce(handleChangeInfo, 500);
+
+  useEffect(() => {
+    if (!imageData) {
+      handleFetchImage()
+    }
+  }, [handleFetchImage, imageData])
 
   return (
     <Form
@@ -177,7 +213,7 @@ const Course_info = () => {
                   >
                     <Image
                       height={250}
-                      src={process.env.REACT_APP_IMG + courseData?.image?.name}
+                      src={imageData}
                     />
                   </Badge>
                 )}

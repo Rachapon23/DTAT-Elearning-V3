@@ -6,7 +6,7 @@ import {
   ScheduleOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, theme, Row, Col, Alert, Card, } from "antd";
+import { Layout, Menu, theme, Row, Col, Alert, Card, Avatar, Divider, Popover, Typography, } from "antd";
 import React, { useState, useEffect } from "react";
 import "./adminpage.css";
 import { useParams, useNavigate } from "react-router-dom";
@@ -19,6 +19,7 @@ import AdminManageStudent from "./AdminManageStudent/AdminManageStudent";
 import { AdminProvider } from "./AdminManageHome/AdminManageContext";
 
 const { Header, Sider, Content } = Layout;
+const { Title, Text } = Typography
 
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -37,6 +38,100 @@ const App = () => {
       label,
       type,
     };
+  }
+
+  const renderProfile = () => {
+    const rowOffset = { paddingInlineStart: "6%" }
+
+    const handleMouseOverandOut = (e) => {
+      if (!e?.type) return
+
+      switch (e?.type) {
+        case "mouseover":
+          e.target.style.backgroundColor = "rgba(230, 230, 230, 0.9)";
+          break
+        case "mouseleave":
+          e.target.style.backgroundColor = "rgba(230, 230, 230, 0)";
+          break
+        default:
+          return
+      }
+    }
+
+    return (
+      <Popover
+        placement="bottomRight"
+        content={
+          <Row style={{ width: "150px", }}>
+            <Col flex={"auto"}>
+
+              <Row style={{ ...rowOffset }}>
+                <Text strong={false}>
+                  Signed in as
+                </Text>
+              </Row>
+              <Row style={{ ...rowOffset }}>
+                <Title level={5}>
+                  {sessionStorage.getItem("firstname")}
+                </Title>
+              </Row>
+
+              <Divider style={{ marginTop: "5%", marginBottom: "5%" }} />
+              <Row style={{ ...rowOffset }}>
+                Role as
+              </Row>
+              <Row style={{ ...rowOffset }}>
+                <Title level={5}>
+                  {
+                    sessionStorage.getItem("role") ?
+                      sessionStorage.getItem("role").charAt(0).toUpperCase() +
+                      sessionStorage.getItem("role").slice(1) : null
+                  }
+                </Title>
+              </Row>
+              <Divider style={{ marginTop: "5%", marginBottom: "5%" }} />
+
+              <Row
+                onMouseOver={handleMouseOverandOut}
+                onMouseLeave={handleMouseOverandOut}
+                style={{
+                  ...rowOffset,
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  touchAction: "inherit"
+                }}
+                onClick={() => {
+                  sessionStorage.clear()
+                  navigate("/")
+                  // window.location.reload()
+                }}
+              >
+                Log out
+              </Row>
+
+            </Col>
+          </Row>
+        }
+        trigger="click"
+      >
+        <Avatar
+          style={{
+            cursor: "pointer",
+            paddingBottom: "0.5%",
+            verticalAlign: 'middle',
+          }}
+          size="large"
+        >
+          <Text strong style={{ color: "white" }}>
+            {
+              sessionStorage.getItem("firstname") ?
+                sessionStorage.getItem("firstname").substring(0, 1) : null
+            }
+          </Text>
+        </Avatar>
+      </Popover>
+
+    )
   }
 
   const items2 = [
@@ -67,19 +162,19 @@ const App = () => {
       case 'acnounce':
         return (
           <AdminProvider>
-            <AdminManageHome manage={"Acnounce"} initAction={"Preview"}/>
+            <AdminManageHome manage={"Acnounce"} initAction={"Preview"} />
           </AdminProvider>
         );
       case 'public-course':
         return (
           <AdminProvider>
-            <AdminManageHome manage={"Public Course"} initAction={"Preview"}/>
+            <AdminManageHome manage={"Public Course"} initAction={"Preview"} />
           </AdminProvider>
         );
       case 'private-course':
         return (
           <AdminProvider>
-            <AdminManageHome manage={"Private Course"} initAction={"Preview"}/>
+            <AdminManageHome manage={"Private Course"} initAction={"Preview"} />
           </AdminProvider>
         );
       case 'listuser':
@@ -115,9 +210,19 @@ const App = () => {
       </Sider>
       <Layout className="site-layout-admin">
         <Header className="header-admin">
-          <Menu className="header-menu"
-            onClick={(e) => navigate(`${e.key}`)}
-            mode="horizontal" items={items2} />
+          <Row justify={"end"}>
+            {/* <Col flex={"auto"}>
+              <Menu className="header-menu"
+                onClick={(e) => navigate(`${e.key}`)}
+                mode="horizontal" items={items2}
+              />
+            </Col> */}
+            <Col style={{ paddingRight: "50px" }}>
+              {
+                renderProfile()
+              }
+            </Col>
+          </Row>
         </Header>
         <Content
           className="contentTeacher"

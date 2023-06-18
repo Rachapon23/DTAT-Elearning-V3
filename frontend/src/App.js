@@ -13,6 +13,7 @@ import DevNav from "./components/Dev/DevNav";
 import StudentRoute from "./components/ProtectedRoute/StudentRoute";
 import AdminRoute from "./components/ProtectedRoute/AdminRoute";
 import TeacherRoute from "./components/ProtectedRoute/TeacherRoute";
+import { useEffect, useState } from "react";
 
 function App() {
   return (
@@ -42,7 +43,9 @@ function App() {
         </Route>
       </Routes>
 
+
       <DevNav />
+
     </div>
   );
 }

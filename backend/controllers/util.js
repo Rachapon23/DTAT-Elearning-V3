@@ -46,6 +46,7 @@ exports.validateQuery = (
         },
     },
     debug = false,
+    disableRole = false,
 ) => {
     const ROLE_AMOUNT = 3
     const NATIVE_OPTIONS = {
@@ -138,30 +139,32 @@ exports.validateQuery = (
 
 
     // checkrole for default query
-    switch (role) {
-        case "admin":
-            searchParams = searchParams ? searchParams : NATIVE_OPTIONS.admin.search
-            fieldParams = fieldParams ? fieldParams : NATIVE_OPTIONS.admin.fields
-            fetchParams = fetchParams ? fetchParams : NATIVE_OPTIONS.admin.fetchs
-            subPropsParams = subPropsParams ? subPropsParams : NATIVE_OPTIONS.admin.subPops
-            selectParams = selectParams ? selectParams : NATIVE_OPTIONS.admin.selects
-            break;
-        case "teacher":
-            searchParams = searchParams ? searchParams : NATIVE_OPTIONS.teacher.search
-            fieldParams = fieldParams ? fieldParams : NATIVE_OPTIONS.teacher.fields
-            fetchParams = fetchParams ? fetchParams : NATIVE_OPTIONS.teacher.fetchs
-            subPropsParams = subPropsParams ? subPropsParams : NATIVE_OPTIONS.teacher.subPops
-            selectParams = selectParams ? selectParams : NATIVE_OPTIONS.teacher.selects
-            break;
-        case "student":
-            searchParams = searchParams ? searchParams : NATIVE_OPTIONS.student.search
-            fieldParams = fieldParams ? fieldParams : NATIVE_OPTIONS.student.fields
-            fetchParams = fetchParams ? fetchParams : NATIVE_OPTIONS.student.fetchs
-            subPropsParams = subPropsParams ? subPropsParams : NATIVE_OPTIONS.student.subPops
-            selectParams = selectParams ? selectParams : NATIVE_OPTIONS.student.selects
-            break;
-        default:
-            return { success: false, code: 400, message: "This role does not exist in system", options: null }
+    if (!disableRole) {
+        switch (role) {
+            case "admin":
+                searchParams = searchParams ? searchParams : NATIVE_OPTIONS.admin.search
+                fieldParams = fieldParams ? fieldParams : NATIVE_OPTIONS.admin.fields
+                fetchParams = fetchParams ? fetchParams : NATIVE_OPTIONS.admin.fetchs
+                subPropsParams = subPropsParams ? subPropsParams : NATIVE_OPTIONS.admin.subPops
+                selectParams = selectParams ? selectParams : NATIVE_OPTIONS.admin.selects
+                break;
+            case "teacher":
+                searchParams = searchParams ? searchParams : NATIVE_OPTIONS.teacher.search
+                fieldParams = fieldParams ? fieldParams : NATIVE_OPTIONS.teacher.fields
+                fetchParams = fetchParams ? fetchParams : NATIVE_OPTIONS.teacher.fetchs
+                subPropsParams = subPropsParams ? subPropsParams : NATIVE_OPTIONS.teacher.subPops
+                selectParams = selectParams ? selectParams : NATIVE_OPTIONS.teacher.selects
+                break;
+            case "student":
+                searchParams = searchParams ? searchParams : NATIVE_OPTIONS.student.search
+                fieldParams = fieldParams ? fieldParams : NATIVE_OPTIONS.student.fields
+                fetchParams = fetchParams ? fetchParams : NATIVE_OPTIONS.student.fetchs
+                subPropsParams = subPropsParams ? subPropsParams : NATIVE_OPTIONS.student.subPops
+                selectParams = selectParams ? selectParams : NATIVE_OPTIONS.student.selects
+                break;
+            default:
+                return { success: false, code: 400, message: "This role does not exist in system", options: null }
+        }
     }
 
     // console.log("-->> ", searchParams)
@@ -255,7 +258,7 @@ function generateSubProps(subProps = "", allowed = { method: [], fields: [] }, a
             if (!popsLayers[j]) break
 
             const splitedData = popsLayers[j].split(":")
-            if(splitedData.length !== 2) return { success: false, code: 400, message: "Invalid query params", data: null }
+            if (splitedData.length !== 2) return { success: false, code: 400, message: "Invalid query params", data: null }
             const method = splitedData[0]
             const fields = splitedData[1]
 

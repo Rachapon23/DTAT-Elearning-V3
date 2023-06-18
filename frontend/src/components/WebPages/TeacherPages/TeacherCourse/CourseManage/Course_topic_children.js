@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useState, useEffect, useContext } from "react";
 import {
   Row,
@@ -41,12 +41,15 @@ import {
 
 //course Context
 import { CourseContext } from "./CourseContext";
+import { getPrivateFieldImage } from "../../../../../function/Teacher/course";
 
 const { Text, Link } = Typography;
 
 const Course_topic_children = ({ item, index, nextState, setNextState }) => {
   const { loadTopic, course_id } = useContext(CourseContext);
   const [loading, setLoading] = useState(false);
+  const [fileData, setfileData] = useState([])
+
   const deleteTopic = () => {
     removeTopic(sessionStorage.getItem("token"), item._id)
       .then((res) => {
@@ -112,6 +115,11 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
       });
   };
   const handleRemoveLink = (index) => {
+    const prevData = fileData.slice(0, index)
+    const nextData = fileData.slice(index + 1, fileData.length)
+    setfileData(() => [...prevData, ...nextData])
+    console.log("fileData update: ", fileData)
+
     removeLinkTopic(sessionStorage.getItem("token"), item._id, {
       index: index,
     })
@@ -173,11 +181,17 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
 
     await createFile(sessionStorage.getItem("token"), formData, createFileField)
       .then((res) => {
+        const data = res.data.data
+        if (data.file_type && data.file_type.includes("image")) {
+          const objectUrl = URL.createObjectURL(image?.file);
+          setfileData((prev) => [...prev, objectUrl])
+        }
         loadTopic();
       })
       .catch((err) => {
         console.log(err);
       });
+
   };
   const handleRemoveFile = (index) => {
     removeFileTopic(sessionStorage.getItem("token"), item._id, {
@@ -192,6 +206,41 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
         alert(err.response.data.error);
       });
   };
+
+  const handleFetchImage = async () => {
+
+    if (!item?.file) return
+    if (!Array.isArray(item?.file)) return
+
+    for (let i = 0; i < item?.file.length; i++) {
+      const image_name = item?.file[i]?.name
+      if (!image_name) return
+
+      const createFileField = "topic"
+      const createFileParam = "file"
+
+      let response
+      await getPrivateFieldImage(sessionStorage.getItem("token"), createFileField, createFileParam, image_name)
+        .then(
+          (res) => {
+            response = res
+          }
+        )
+        .catch(
+          (err) => {
+            console.log(err)
+          }
+        )
+
+      const objectUrl = URL.createObjectURL(response.data);
+      console.log(objectUrl)
+      setfileData((prev) => [...prev, objectUrl])
+    }
+  }
+
+  useEffect(() => {
+    handleFetchImage()
+  }, [])
 
   return (
     <Row className="course-main-for-topic">
@@ -346,69 +395,104 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
         <div style={{ marginBottom: "20px" }}>
           <label>File</label>
           <hr />
-          {item?.file.map((ttem, ddex) => (
-            <div style={{marginBottom:"10px"}} key={ddex}>
-              {ttem?.file_type === "image/jpeg" ||
-              ttem?.file_type === "image/png" 
-               ? (
-                <Row justify={"center"} align={"middle"}>
-                  <Col>
-                    <Badge
-                      count={
-                        <Row justify={"center"} align={"middle"}>
-                          <DeleteOutlined
-                            onClick={() => handleRemoveFile(ddex)}
-                            style={{
-                              fontSize: "120%",
-                              color: "white",
-                              backgroundColor: "#f5222d",
-                              borderRadius: "50%",
-                              padding: "20%",
-                            }}
-                          />
-                        </Row>
-                      }
-                    >
-                      <Image
-                        height={250}
-                        src={`http://localhost:5500/uploads/topic/${ttem?.name}`}
-                      />
-                    </Badge>
-                  </Col>
-                </Row>
-              ) : (
-                <Row>
-                  <Col style={{ width: "94%" }}>
-                    <Link 
-                    href={`http://localhost:5500/uploads/topic/${ttem?.name}`}
-                    target="_blank">{ttem?.original_name}</Link>
-                  </Col>
-                  <Col
-                    style={{
-                      width: "5%",
-                      display: "flex",
-                      justifyContent: "center",
-                      marginLeft: "1%",
-                      // alignItems: "center",
-                      // backgroundColor:"red"
-                    }}
-                  >
-                    <MinusCircleOutlined
-                      style={{ fontSize: "130%" }}
-                      className="dynamic-delete-button"
-                      onClick={() => handleRemoveFile(ddex)}
-                    />
-                  </Col>
-                </Row>
-              )}
-            </div>
-          ))}
+          {/* {JSON.stringify(item)} */}
+          {
+            item?.file.map((ttem, ddex) => (
+              <div style={{ marginBottom: "10px" }} key={ddex}>
+                {
+                  ttem?.file_type && ttem?.file_type.includes("image")
+                    ? (
+                      <Row justify={"center"} align={"middle"}>
+                        <Col>
+                          <Badge
+                            count={
+                              <Row justify={"center"} align={"middle"}>
+                                <DeleteOutlined
+                                  onClick={() => handleRemoveFile(ddex)}
+                                  style={{
+                                    fontSize: "120%",
+                                    color: "white",
+                                    backgroundColor: "#f5222d",
+                                    borderRadius: "50%",
+                                    padding: "20%",
+                                  }}
+                                />
+                              </Row>
+                            }
+                          >
+                            <Image
+                              height={250}
+                              src={fileData[ddex]}
+                            />
+                          </Badge>
+                        </Col>
+                      </Row>
+                    )
+                    :
+                    (
+                      ttem?.file_type && ttem?.file_type.includes("video") ?
+                        (
+                          <Row justify={"center"} align={"middle"}>
+                            <Col>
+                              <Badge
+                                count={
+                                  <Row justify={"center"} align={"middle"}>
+                                    <DeleteOutlined
+                                      onClick={() => handleRemoveFile(ddex)}
+                                      style={{
+                                        fontSize: "120%",
+                                        color: "white",
+                                        backgroundColor: "#f5222d",
+                                        borderRadius: "50%",
+                                        padding: "20%",
+                                      }}
+                                    />
+                                  </Row>
+                                }
+                              >
+                                <video controls src={fileData[ddex]} width={500} />
+                              </Badge>
+                            </Col>
+                          </Row>
+                        )
+                        :
+                        (
+                          <Row>
+                            <Col style={{ width: "94%" }}>
+                              <Link
+                                href={process.env.REACT_APP_IMG + `/topic/${ttem?.name}`}
+                                target="_blank">{ttem?.original_name}</Link>
+                            </Col>
+                            <Col
+                              style={{
+                                width: "5%",
+                                display: "flex",
+                                justifyContent: "center",
+                                marginLeft: "1%",
+                                // alignItems: "center",
+                                // backgroundColor:"red"
+                              }}
+                            >
+                              <MinusCircleOutlined
+                                style={{ fontSize: "130%" }}
+                                className="dynamic-delete-button"
+                                onClick={() => handleRemoveFile(ddex)}
+                              />
+                            </Col>
+                          </Row>
+                        )
+                    )
+
+                }
+              </div>
+            ))
+          }
           <Upload showUploadList={false} customRequest={handleAddFile}>
             <Button icon={<UploadOutlined />}>Click to Upload</Button>
           </Upload>
         </div>
       </Card>
-    </Row>
+    </Row >
   );
 };
 

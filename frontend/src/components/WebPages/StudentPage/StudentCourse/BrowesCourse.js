@@ -2,7 +2,7 @@ import { Breadcrumb, Button, Card, Col, Empty, Radio, Row, Segmented, Tabs, Typo
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import CardCourse from "../../../Card/CardCourse"
 import { StudentContext } from "./StudentCourseContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./studentcourse.css";
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 
@@ -10,10 +10,10 @@ const GROUP_NUMBER = 4
 const { Title } = Typography
 
 const BrowesCourse = () => {
+    const location = useLocation()
 
     const { courses } = useContext(StudentContext)
     const [filterType, setFilterType] = useState(null)
-    const [filteredCourse, setFilteredCourse] = useState(courses)
     const navigate = useNavigate()
 
     const handleNavigate = (navStr, dataStage) => {
@@ -33,15 +33,15 @@ const BrowesCourse = () => {
     }
 
     const fileterCourse = (courses) => {
-        console.log("filtered")
+        // console.log("filtered")
         if (!filterType) setFilterType("All")
-        console.log(filterType)
+        // console.log(filterType)
         switch (filterType) {
             case "Public":
-                console.log(courses.filter((item) => item?.type))
+                // console.log(courses.filter((item) => item?.type))
                 return courses.filter((item) => item?.type)
             case "Private":
-                console.log(courses.filter((item) => !item?.type))
+                // console.log(courses.filter((item) => !item?.type))
                 return courses.filter((item) => !item?.type)
             case "All":
                 return courses
@@ -69,11 +69,9 @@ const BrowesCourse = () => {
                     />
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-                    {/* <Link to="/teacher/page/create-exam" state={{ mode: "Create" }}> */}
-                    <Button onClick={() => navigate(-1)}>
+                    <Button onClick={() => navigate("/student/page/home")}>
                         Back
                     </Button>
-                    {/* </Link> */}
                 </Col>
             </Row>
         )
@@ -102,11 +100,18 @@ const BrowesCourse = () => {
             </Row>
         )
 
-    }, [courses])
+    }, [fileterCourse(courses)])
 
     useEffect(() => {
-        setFilterType("All")
-    }, [])
+        // console.log("gettt ---> : ", location?.state)
+        if (location?.state?.filter && courses) {
+            setFilterType(location?.state?.filter)
+        }
+        if (!location?.state?.filter && courses) {
+            setFilterType("All")
+        }
+
+    }, [location?.state, location?.state?.filter])
 
 
     return (
@@ -122,6 +127,7 @@ const BrowesCourse = () => {
                                     <Row style={{ paddingLeft: "3%", paddingRight: "3%", paddingBottom: "0.5%", }}>
                                         <Segmented
                                             style={{ width: "220px" }}
+                                            value={filterType}
                                             block
                                             onChange={handleFilterCourseType}
                                             options={[
