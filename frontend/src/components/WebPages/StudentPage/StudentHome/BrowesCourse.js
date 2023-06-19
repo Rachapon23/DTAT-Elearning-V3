@@ -5,34 +5,36 @@ import { useLocation, useNavigate } from "react-router-dom";
 // import "./studentcourse.css";
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 import { listCourse } from "../../../../function/Student/course";
+import { getPrivateFieldImage } from "../../../../function/Student/topic";
 
 const GROUP_NUMBER = 4
 const { Title } = Typography
 
 const BrowesCourse = () => {
     const location = useLocation()
+    const navigate = useNavigate()
 
     const [courses, setCourses] = useState([])
     const [filterType, setFilterType] = useState(null)
-    const navigate = useNavigate()
+    const [imageData, setImageData] = useState(null);
 
-    const handleNavigate = (navStr, dataStage) => {
+    const handleNavigate = useCallback((navStr, dataStage) => {
         navigate(navStr, { state: dataStage })
-    }
+    }, [navigate])
 
-    const handleClickCourse = (e, data) => {
+    const handleClickCourse = useCallback((e, data) => {
         // console.log(e)
         e.target.id = data?._id
         // if(!e?.target?.id) return
         handleNavigate(`/student/page/register-course/${e?.target?.id}`)
-    }
+    }, [handleNavigate])
 
     const handleFilterCourseType = (courseType) => {
         console.log(courseType)
         setFilterType(courseType)
     }
 
-    const fileterCourse = (courses) => {
+    const fileterCourse = useCallback((courses) => {
         // console.log("filtered")
         if (!filterType) setFilterType("All")
         // console.log(filterType)
@@ -48,25 +50,26 @@ const BrowesCourse = () => {
             default:
                 return courses
         }
-    }
+    }, [filterType])
 
-    const browesCourseTitle = () => {
-        return (
-            <Row align={"middle"} justify={"space-between"} >
-                <Col>
-                    <Breadcrumb
-                        separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
-                        items={[
-                            {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><p >Browes Course</p></Title>,
-                                key: "courses"
-                            },
-                        ]}
-                    />
-                </Col>
-            </Row>
-        )
-    }
+    // just in case
+    // const browesCourseTitle = () => {
+    //     return (
+    //         <Row align={"middle"} justify={"space-between"} >
+    //             <Col>
+    //                 <Breadcrumb
+    //                     separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
+    //                     items={[
+    //                         {
+    //                             title: <Title level={5} style={{ marginTop: "10px" }}><p >Browes Course</p></Title>,
+    //                             key: "courses"
+    //                         },
+    //                     ]}
+    //                 />
+    //             </Col>
+    //         </Row>
+    //     )
+    // }
 
     const renderContent = useCallback((index) => {
         // console.log("index:", filteredCourse)
@@ -110,18 +113,38 @@ const BrowesCourse = () => {
             )
     }
 
+    const handleFetchImage = async (imageName) => {
+        console.log("course: ", imageName)
+    
+        const image_name = imageName
+        if (!image_name) return
+    
+        const field = "course"
+        const param = "file"
+    
+        let response
+        await getPrivateFieldImage(sessionStorage.getItem("token"), field, param, image_name)
+          .then(
+            (res) => {
+              response = res
+            }
+          )
+          .catch(
+            (err) => {
+              console.log(err)
+            }
+          )
+    
+    
+        const objectUrl = URL.createObjectURL(response.data);
+        setImageData(objectUrl)
+    
+      }
+
     useEffect(() => {
         fetchCourse()
-        // console.log("gettt ---> : ", location?.state)
-        // if (location?.state?.filter && courses) {
-        //     setFilterType(location?.state?.filter)
-        // }
-        // if (!location?.state?.filter && courses) {
-        //     setFilterType("All")
-        // }
 
     }, [])
-    // location?.state, location?.state?.filter
 
 
     return (

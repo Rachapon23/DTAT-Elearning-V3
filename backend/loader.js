@@ -293,9 +293,9 @@ exports.loadData = async () => {
 
     // Condition
     const condition1 = await Condition.findOneAndUpdate(
-        { course: course1, plant: await Plant.findOne({ name: "B" }).select("_id") },
+        { course: course1, plant: await Plant.findOne({ name: "A" }).select("_id") },
         {
-            plant: await Plant.findOne({ name: "B" }).select("_id"),
+            plant: await Plant.findOne({ name: "A" }).select("_id"),
             maximum: 20,
             course: course1,
             current: 0,
@@ -304,34 +304,10 @@ exports.loadData = async () => {
     )
 
     const condition2 = await Condition.findOneAndUpdate(
-        { course: course1, plant: await Plant.findOne({ name: "C" }).select("_id") },
-        {
-            plant: await Plant.findOne({ name: "C" }).select("_id"),
-            maximum: 30,
-            course: course1,
-            current: 0,
-        },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-    )
-
-
-    const condition3 = await Condition.findOneAndUpdate(
-        { course: course1, plant: await Plant.findOne({ name: "A" }).select("_id") },
-        {
-            plant: await Plant.findOne({ name: "A" }).select("_id"),
-            maximum: 10,
-            course: course1,
-            current: 0,
-        },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-    )
-
-
-    const condition4 = await Condition.findOneAndUpdate(
         { course: course2, plant: await Plant.findOne({ name: "A" }).select("_id") },
         {
             plant: await Plant.findOne({ name: "A" }).select("_id"),
-            maximum: 10,
+            maximum: 30,
             course: course2,
             current: 0,
         },
@@ -339,7 +315,7 @@ exports.loadData = async () => {
     )
 
 
-    const condition5 = await Condition.findOneAndUpdate(
+    const condition3 = await Condition.findOneAndUpdate(
         { course: course3, plant: await Plant.findOne({ name: "A" }).select("_id") },
         {
             plant: await Plant.findOne({ name: "A" }).select("_id"),
@@ -351,10 +327,10 @@ exports.loadData = async () => {
     )
 
 
-    const condition6 = await Condition.findOneAndUpdate(
-        { course: course4, plant: await Plant.findOne({ name: "B" }).select("_id") },
+    const condition4 = await Condition.findOneAndUpdate(
+        { course: course4, plant: await Plant.findOne({ name: "A" }).select("_id") },
         {
-            plant: await Plant.findOne({ name: "B" }).select("_id"),
+            plant: await Plant.findOne({ name: "A" }).select("_id"),
             maximum: 10,
             course: course4,
             current: 0,
@@ -362,7 +338,8 @@ exports.loadData = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
-    const condition7 = await Condition.findOneAndUpdate(
+
+    const condition5 = await Condition.findOneAndUpdate(
         { course: course5, plant: await Plant.findOne({ name: "A" }).select("_id") },
         {
             plant: await Plant.findOne({ name: "A" }).select("_id"),
@@ -373,19 +350,42 @@ exports.loadData = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
-    course1.condition = [condition4]
+
+    const condition6 = await Condition.findOneAndUpdate(
+        { course: course1, plant: await Plant.findOne({ name: "B" }).select("_id") },
+        {
+            plant: await Plant.findOne({ name: "B" }).select("_id"),
+            maximum: 10,
+            course: course1,
+            current: 0,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    const condition7 = await Condition.findOneAndUpdate(
+        { course: course2, plant: await Plant.findOne({ name: "B" }).select("_id") },
+        {
+            plant: await Plant.findOne({ name: "B" }).select("_id"),
+            maximum: 10,
+            course: course2,
+            current: 0,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    course1.condition = [condition1, condition6]
     // course1.save()
 
-    course2.condition = [condition1, condition2, condition3]
+    course2.condition = [condition2, condition7]
     // course2.save()
 
-    course3.condition = [condition5]
+    course3.condition = [condition3]
     // course3.save()
 
-    course4.condition = [condition6]
+    course4.condition = [condition4]
     // course4.save()
 
-    course5.condition = [condition7]
+    course5.condition = [condition5]
     // course4.save()
 
     // Quiz

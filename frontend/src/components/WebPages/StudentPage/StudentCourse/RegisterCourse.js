@@ -5,6 +5,7 @@ import { createActivity, getActivity, getCourse, getUser } from "../../../../fun
 import { listCondition } from "../../../../function/Student/condition";
 import "./studentcourse.css";
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
+import { getPrivateFieldImage } from "../../../../function/Student/topic";
 
 const { Text, Title } = Typography
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
@@ -20,29 +21,30 @@ const RegisterCourse = () => {
     const [passedCondition, setPassedCondition] = useState(false)
     const [pageChange, setPageChange] = useState(false)
     const [conditionData, setConditionData] = useState([]);
+    const [imageData, setImageData] = useState(null);
 
     const handleNavigate = (navStr, dataStage) => {
-        console.log( dataStage)
+        console.log(dataStage)
         navigate(navStr, { state: dataStage })
     }
 
     const isPassCondition = async () => {
         // check registered
         await checkRegistered()
-        console.log(conditionData)
+        // console.log(conditionData)
 
         // check plant
         let inPlant = false
         for (let i = 0; i < conditionData.length; i++) {
-            console.log("condition: ", conditionData[i], " plant: ", plant)
-            console.log("plant: ", conditionData[i].plant.name, " plant: ", plant)
+            // console.log("condition: ", conditionData[i], " plant: ", plant)
+            // console.log("plant: ", conditionData[i].plant.name, " plant: ", plant)
             if (conditionData[i].plant.name === plant) {
                 inPlant = true
                 break
             }
         }
         //TODO: check course limit
-        console.log("in plant: ", inPlant)
+        // console.log("in plant: ", inPlant)
         setPassedCondition(inPlant)
         setPageChange(true)
     }
@@ -102,7 +104,7 @@ const RegisterCourse = () => {
         await listCondition(sessionStorage.getItem("token"), id)
             .then((res) => {
                 const data = res.data
-                // console.log(data)
+                console.log("DATA: ", data)
                 setConditionData(data);
                 isPassCondition()
             })
@@ -128,14 +130,14 @@ const RegisterCourse = () => {
 
     const fetchCourse = async () => {
         // console.log("id: ", params.id)
-        await getCourse(sessionStorage.getItem("token"), params.id, `?fetch=name,detail,image,condition,teacher&pops=path:condition$populate:plant$select:plant maximum,path:teacher$select:firstname lastname -_id`)
+        await getCourse(sessionStorage.getItem("token"), params.id, `?fetch=name,detail,image,condition,teacher&pops=path:condition$populate:plant$select:plant maximum current,path:teacher$select:firstname lastname -_id`)
             .then(
                 (res) => {
                     const data = res.data.data
-                    // console.log("Course",data)
+                    console.log("Course", data)
                     setCourse(data)
                     fetchCondition(data._id);
-
+                    handleFetchImage(data.image.name)
                 }
             )
             .catch(
@@ -143,6 +145,32 @@ const RegisterCourse = () => {
                     console.log(err)
                 }
             )
+    }
+
+    const handleFetchImage = async (imageName) => {
+        console.log("course: ", imageName)
+
+        const image_name = imageName
+        if (!image_name) return
+
+        const field = "course"
+        const param = "file"
+
+        let response
+        await getPrivateFieldImage(sessionStorage.getItem("token"), field, param, image_name)
+            .then(
+                (res) => {
+                    response = res
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+
+        const objectUrl = URL.createObjectURL(response.data);
+        setImageData(objectUrl)
     }
 
     useEffect(() => {
@@ -200,7 +228,7 @@ const RegisterCourse = () => {
                                                             width={300}
                                                             preview={false}
                                                             onError={handleUnloadImage}
-                                                            src={course?.image?.url ? (process.env.REACT_APP_IMG + course?.image?.url) : DEFAULT_IMAGE}
+                                                            src={imageData ? imageData : DEFAULT_IMAGE}
                                                         />
                                                     </Col>
                                                     <Col flex={"auto"} style={{ minWidth: "30%" }}>
@@ -295,10 +323,11 @@ const RegisterCourse = () => {
                                                         (item) => (
                                                             <Row >
                                                                 <Col style={{ paddingRight: "2%" }}>
-                                                                    Maximum: {item.maximum}
+                                                                    Plant: {item.plant.name}
+
                                                                 </Col>
                                                                 <Col>
-                                                                    Plant: {item.plant.name}
+                                                                    Amount:  {item.current} / {item.maximum}
                                                                 </Col>
                                                             </Row>
                                                         )

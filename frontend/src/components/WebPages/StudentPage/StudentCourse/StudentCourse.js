@@ -8,11 +8,11 @@ import {
   Timeline,
   Typography,
 } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { getCourse } from "../../../../function/Student/course";
-import { listTopicCourse } from "../../../../function/Student/topic";
+import { getPrivateFieldImage, listTopicCourse } from "../../../../function/Student/topic";
 
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 import "./studentcourse.css";
@@ -27,8 +27,9 @@ const StudentExam = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const [course, setCourse] = useState([]);
+  const [course, setCourse] = useState(null);
   const [topicData, setTopicData] = useState([]);
+  const [imageData, setImageData] = useState(null);
 
   const handleUnloadImage = (e) => {
     e.target.src = DEFAULT_IMAGE;
@@ -84,6 +85,7 @@ const StudentExam = () => {
         const data = res.data.data;
         fetchTopic(data._id);
         setCourse(data);
+        handleFetchImage(data.image.name)
       })
       .catch((err) => {
         console.log(err);
@@ -100,6 +102,34 @@ const StudentExam = () => {
       });
   };
 
+  const handleFetchImage = async (imageName) => {
+    console.log("course: ", imageName)
+
+    const image_name = imageName
+    if (!image_name) return
+
+    const field = "course"
+    const param = "file"
+
+    let response
+    await getPrivateFieldImage(sessionStorage.getItem("token"), field, param, image_name)
+      .then(
+        (res) => {
+          response = res
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err)
+        }
+      )
+
+
+    const objectUrl = URL.createObjectURL(response.data);
+    setImageData(objectUrl)
+
+  }
+
   useEffect(() => {
     fetchCourse();
   }, []);
@@ -111,21 +141,21 @@ const StudentExam = () => {
         <Row justify={"center"} style={{ marginBottom: "15px" }}>
           <Col flex={"auto"}>
             <Card
-            // cover={
-            //   <img
-            //     alt="example"
-            //     src={`http://localhost:5500/uploads/course/${course?.image?.name}`}
-            //   />
-            // }
-            title={studentCourseTitle()} style={{ width: "100%" }}
+              // cover={
+              //   <img
+              //     alt="example"
+              //     src={`http://localhost:5500/uploads/course/${course?.image?.name}`}
+              //   />
+              // }
+              title={studentCourseTitle()} style={{ width: "100%" }}
             >
               <Row gutter={16}>
                 <Col span={6}>
                   <Image
-                    style={{borderRadius:"5px"}}
+                    style={{ borderRadius: "5px" }}
                     preview={false}
                     onError={handleUnloadImage}
-                    src={`http://localhost:5500/uploads/course/${course?.image?.name}`}
+                    src={imageData ? imageData : DEFAULT_IMAGE}
                   />
                 </Col>
                 <Col span={6}>
@@ -134,13 +164,13 @@ const StudentExam = () => {
                   </Title>
                   <Text style={{ fontSize: "13px" }}>
                     {course?.detail}</Text>
-                  
+
                 </Col>
               </Row>
               <Row justify={'end'}>
-              <Text style={{ fontSize: "12px" }}>
-                    by {course?.teacher?.firstname} {course?.teacher?.lastname}
-                  </Text>
+                <Text style={{ fontSize: "12px" }}>
+                  by {course?.teacher?.firstname} {course?.teacher?.lastname}
+                </Text>
               </Row>
               {/* <Row justify={"center"}>
                 <Col flex={"auto"}>

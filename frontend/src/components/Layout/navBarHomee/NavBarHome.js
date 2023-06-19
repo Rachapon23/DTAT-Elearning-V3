@@ -197,14 +197,11 @@ const NavBarHome = () => {
                   <a className="a-nav" href={sessionStorage.getItem("role") ? `/${sessionStorage.getItem("role")}/page/home` : "/#"}>
                     Home
                   </a>
-                  <a className="a-nav" onClick={() => handleNavigate("/student/page/browes-course", { filter: "Public" })} style={{ cursor: "pointer" }}>
+                  {/* <a className="a-nav" onClick={() => handleNavigate("/student/page/browes-course", { filter: "Public" })} style={{ cursor: "pointer" }}>
                     Public Course
                   </a>
                   <a className="a-nav" onClick={() => handleNavigate("/student/page/browes-course", { filter: "Private" })} style={{ cursor: "pointer" }}>
                     Private Course
-                  </a>
-                  {/* <a className="a-nav" href="/#">
-                    Contact
                   </a> */}
                   <a className="a-nav">
                     {

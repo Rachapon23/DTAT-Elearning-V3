@@ -9,6 +9,7 @@ import ExamInfo from "./ExamInfo";
 import ExamSelectCourse from "./ExamSelectCourse";
 import ExamContent from "./ExamContent";
 import ExamCreateFinished from "./ExamCreateFinished";
+import { debounce } from "lodash";
 
 const { Title } = Typography;
 
@@ -137,6 +138,34 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         )
     }
 
+    const submmitUpdateExam = useCallback(async () => {
+        let status;
+        const examData = {
+            head: inputInfoData,
+            body: inputContentData,
+        }
+        const id = mainManagementMode === "Edit" ? examEditId :
+            mainManagementMode === "Create" ? examId : null
+
+        console.log("examData: ", examData)
+        if (!id) return
+
+        await updateExam(sessionStorage.getItem("token"), id, examData)
+            .then(
+                (res) => {
+                    console.log(res.data.data)
+                    status = true
+                    // setExamId(res.data.data._id)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+        return status
+    }, [examEditId, examId, inputContentData, inputInfoData, mainManagementMode])
+
 
     const handleAddCardContent = useCallback(() => {
         setInputContentData((prev) => [...prev, inputContentTemplate])
@@ -161,6 +190,9 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
 
     }, [inputContentData])
 
+    
+    const debounceOnChange = useCallback(debounce(submmitUpdateExam, 500), [])
+
     const onChangeCardContent = useCallback((card_index, data) => {
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
@@ -176,7 +208,8 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             ...nextCard,
         ])
         setHasChanged(true)
-    }, [inputContentData])
+        debounceOnChange()
+    }, [debounceOnChange, inputContentData])
 
     const onAddCardChoice = useCallback(async (card_index) => {
 
@@ -269,8 +302,6 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         setHasChanged(true)
     }, [inputContentData])
 
-
-
     const handleUploadImage = useCallback((card_index, data) => {
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
@@ -323,7 +354,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
 
 
     const fetchExam = useCallback(async () => {
-        await getExam(sessionStorage.getItem("token"), examEditId)
+        await getExam(sessionStorage.getItem("token"), examEditId, `?field=quiz`)
             .then(
                 (res) => {
                     const data = res.data.data
@@ -460,33 +491,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             )
     }, [inputInfoData])
 
-    const submmitUpdateExam = useCallback(async () => {
-        let status;
-        const examData = {
-            head: inputInfoData,
-            body: inputContentData,
-        }
-        const id = mainManagementMode === "Edit" ? examEditId :
-            mainManagementMode === "Create" ? examId : null
 
-        console.log(examData)
-        if (!id) return
-
-        await updateExam(sessionStorage.getItem("token"), id, examData)
-            .then(
-                (res) => {
-                    console.log(res.data.data)
-                    status = true
-                    // setExamId(res.data.data._id)
-                }
-            )
-            .catch(
-                (err) => {
-                    console.log(err)
-                }
-            )
-        return status
-    }, [examEditId, examId, inputContentData, inputInfoData])
 
     const handleDisplay = useCallback((e) => {
         const createMode = managementMode === "Create"

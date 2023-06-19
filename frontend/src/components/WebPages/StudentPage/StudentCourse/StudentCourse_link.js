@@ -11,15 +11,51 @@ import {
 } from "antd";
 import { LinkOutlined } from "@ant-design/icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
+
 const StudentCourse_link = ({ item }) => {
+  const renderLinkContent = (item, index) => {
+    if (!item?.link) return null
+    if (item?.link?.includes("youtube.com")) {
+      return (
+        <div key={index} className="mb-2 d-flex justify-content-center">
+          <iframe
+            width="400"
+            height="270"
+            src={item?.link.replace("watch?v=", "embed/")}
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        </div>
+      )
+    }
+    if (item?.link?.includes("youtu.be")) {
+      return (
+        <div key={index}>
+          <iframe
+            width="400"
+            height="270"
+            src={item?.link.replace(".be/", "be.com/embed/")}
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        </div>
+      )
+    }
+    return (
+      <a key={index} href={item?.link}>
+        <LinkOutlined />
+        {"  "}
+        {item?.name}
+      </a>
+    )
+
+  }
   return (
     <div>
       {item.link.map((ttem, ddex) => (
-        <a key={ddex} href={ttem?.link}>
-          <LinkOutlined />
-          {"  "}
-          {ttem.name}
-        </a>
+        renderLinkContent(ttem, ddex)
       ))}
     </div>
   );

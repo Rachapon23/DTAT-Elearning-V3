@@ -66,7 +66,7 @@ exports.createCourse = async (req, res) => {
 exports.getCourse = async (req, res) => {
   const allowField = ["calendar"]
   const allowedSearch = ["_id"]
-  const allowedProps = ["condition", "plant", "plant maximum", "teacher", "firstname lastname -_id", "firstname lastname"]
+  const allowedProps = ["condition", "plant", "plant maximum current", "teacher", "firstname lastname -_id", "firstname lastname"]
   const allowedPropsField = ["path", "populate", "select"]
   const allowedSelect = ["firstname", "lastname"]
   const allowedFetch = ["name", "detail", "image", "condition", "teacher"]

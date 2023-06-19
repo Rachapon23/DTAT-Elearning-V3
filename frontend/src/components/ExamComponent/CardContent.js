@@ -81,7 +81,7 @@ const CardContent = ({
         // console.log(actionMode)
         setRadioCurentSelected(data?.index)
         if (previewMode) {
-            console.log("you select: ", data?.quiz_id)
+            // console.log("you select: ", data?.quiz_id)
             onChangeChoiceAnswer(data?.quiz_id, index, { answer: data?.index })
         }
 
@@ -114,7 +114,7 @@ const CardContent = ({
         setRadioCurentSelected(data?.answer)
     }
 
-    console.log(index)
+    // console.log(index)
 
     const handleAddImage = async (image) => {
         let formData = new FormData()
@@ -195,7 +195,7 @@ const CardContent = ({
 
 
         const objectUrl = URL.createObjectURL(response.data);
-        console.log(objectUrl)
+        // console.log(objectUrl)
         setImageData(objectUrl)
 
     }, [data?.image?.name])
