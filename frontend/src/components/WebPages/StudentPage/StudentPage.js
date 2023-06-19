@@ -13,7 +13,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import StudentHomePage from "./StudentHome/StudentHomePage";
 import DoExam from "./StudentExam/DoExam";
 import StudentCourse from "./StudentCourse/StudentCourse"
-import BrowesCourse from "./StudentCourse/BrowesCourse";
 import { StudentProvider } from "./StudentCourse/StudentCourseContext";
 import RegisterCourse from "./StudentCourse/RegisterCourse";
 
@@ -76,15 +75,9 @@ const App = () => {
         return <DoExam />
       case 'course':
         return <StudentCourse />
-      case 'browes-course':
-        return (
-          <StudentProvider>
-            <BrowesCourse />
-          </StudentProvider>
-        )
       case 'register-course':
         return (
-          <RegisterCourse/>
+          <RegisterCourse />
         )
       // case 'preview-exam':
       //   return <ExamCreate mode={"Preview"}/>;
