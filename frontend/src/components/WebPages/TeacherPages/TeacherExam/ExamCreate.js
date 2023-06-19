@@ -167,6 +167,35 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     }, [examEditId, examId, inputContentData, inputInfoData, mainManagementMode])
 
 
+    const onUpdateExam = useCallback(async (examData) => {
+        // let status;
+        // const examData = {
+        //     head: inputInfoData,
+        //     body: inputContentData,
+        // }
+        const id = mainManagementMode === "Edit" ? examEditId :
+            mainManagementMode === "Create" ? examId : null
+
+        console.log("examData: ", examData)
+        if (!id) return
+
+        await updateExam(sessionStorage.getItem("token"), id, examData)
+            .then(
+                (res) => {
+                    console.log(res.data.data)
+                    // status = true
+                    // setExamId(res.data.data._id)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+        // return status
+    }, [examEditId, examId, mainManagementMode])
+
+
     const handleAddCardContent = useCallback(() => {
         setInputContentData((prev) => [...prev, inputContentTemplate])
         // console.log(inputContentData)
@@ -190,8 +219,6 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
 
     }, [inputContentData])
 
-    
-    const debounceOnChange = useCallback(debounce(submmitUpdateExam, 500), [])
 
     const onChangeCardContent = useCallback((card_index, data) => {
         const prevCard = inputContentData.slice(0, card_index)
@@ -208,8 +235,8 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             ...nextCard,
         ])
         setHasChanged(true)
-        debounceOnChange()
-    }, [debounceOnChange, inputContentData])
+
+    }, [inputContentData])
 
     const onAddCardChoice = useCallback(async (card_index) => {
 
@@ -491,12 +518,17 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             )
     }, [inputInfoData])
 
-
+    const debounceOnChange = useCallback(debounce(onUpdateExam, 500), [])
 
     const handleDisplay = useCallback((e) => {
         const createMode = managementMode === "Create"
         const editMode = managementMode === "Edit"
         const previewMode = managementMode === "Preview"
+
+        debounceOnChange({
+            head: inputInfoData,
+            body: inputContentData,
+        })
 
         if (e) {
             const action = e.target.innerText
@@ -533,7 +565,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         // console.log("HEY UPDATED")
         // setCurrentDisplay(pageList[currentPage]);
 
-    }, [createSteps, currentPage, examCreated, managementMode, pageStepLength, submmitCreateExam, submmitUpdateExam])
+    }, [createSteps, currentPage, debounceOnChange, examCreated, managementMode, pageStepLength, submmitCreateExam, submmitUpdateExam])
 
     // console.log(currentPage, examCreated, pageList)
 
