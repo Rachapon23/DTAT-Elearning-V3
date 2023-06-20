@@ -166,7 +166,7 @@ exports.updateExam = async (req, res) => {
         const { user_id } = req?.user;
 
         console.log("-----------------------------------------------------------------------")
-        console.log(body)
+        console.log(head,body)
 
         const exam_data = await Exam.findOne({ _id: req.params.id }).select("quiz -_id")
         if (exam_data) {

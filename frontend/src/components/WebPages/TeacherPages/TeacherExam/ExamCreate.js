@@ -167,24 +167,16 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     }, [examEditId, examId, inputContentData, inputInfoData, mainManagementMode])
 
 
-    const onUpdateExam = useCallback(async (examData) => {
-        // let status;
-        // const examData = {
-        //     head: inputInfoData,
-        //     body: inputContentData,
-        // }
-        const id = mainManagementMode === "Edit" ? examEditId :
-            mainManagementMode === "Create" ? examId : null
-
-        console.log("examData: ", examData)
+    const onUpdateExam = useCallback(async (id, examData) => {
+        // this function use in auto save operation
+        if (!id) id = examEditId
         if (!id) return
 
         await updateExam(sessionStorage.getItem("token"), id, examData)
             .then(
                 (res) => {
-                    console.log(res.data.data)
-                    // status = true
-                    // setExamId(res.data.data._id)
+                    const data = res.data.data
+                    console.log(data)
                 }
             )
             .catch(
@@ -192,8 +184,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                     console.log(err)
                 }
             )
-        // return status
-    }, [examEditId, examId, mainManagementMode])
+    }, [])
 
 
     const handleAddCardContent = useCallback(() => {
@@ -500,6 +491,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     }, [mode, currentPage, inputInfoData, managementMode, cousreWithOutQuiz, currentSelectedRadio, examEditId, createdCard, inputContentData, handleAddCardContent, onDeleteCardContent, onChangeCardContent, onAddCardChoice, onRemoveCardChoice, handleChangeChoiceAnswer, handleChangeChoiceQuestion, handleUploadImage, inputContentTemplate, examId])
 
     const submmitCreateExam = useCallback(async () => {
+        let id = null
         const examData = {
             head: inputInfoData,
         }
@@ -507,7 +499,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         await createExam(sessionStorage.getItem("token"), examData)
             .then(
                 (res) => {
-                    // console.log(res.data.data._id)
+                    console.log(res.data.data._id)
                     setExamId(res.data.data._id)
                 }
             )
@@ -516,6 +508,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                     console.log(err)
                 }
             )
+        return id
     }, [inputInfoData])
 
     const debounceOnChange = useCallback(debounce(onUpdateExam, 500), [])
@@ -525,11 +518,6 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         const editMode = managementMode === "Edit"
         const previewMode = managementMode === "Preview"
 
-        debounceOnChange({
-            head: inputInfoData,
-            body: inputContentData,
-        })
-
         if (e) {
             const action = e.target.innerText
 
@@ -537,12 +525,13 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                 if (currentPage + 1 <= pageStepLength) {
                     setCurrentPage(currentPage + 1);
                 }
-                if (createMode && createSteps[currentPage].title === "Exam Info" && !examCreated) {
+
+                // noraml condition is Exam Info
+                if (createMode && createSteps[currentPage].title === "Select Course" && !examCreated) {
                     submmitCreateExam()
                     setExamCreated(true)
                 }
                 // setKeyword("")
-
             }
             else if (action === "Previous") {
                 if (currentPage - 1 >= 0) {
@@ -550,25 +539,39 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                     setCurrentPage(currentPage - 1);
                 }
                 // setKeyword("")
-
             }
             else if ((createMode || editMode) && action === "Done") {
-                let success = submmitUpdateExam()
+                // un-comment line below to return to the normal mode
+                // let success = submmitUpdateExam()
                 // setKeyword("")
-                if (success) {
-                    setCurrentPage(pageStepLength - 1)
-                }
-
+                // if (success) {
+                setCurrentPage(pageStepLength - 1)
+                // }
             }
             setHasChanged(true)
         }
-        // console.log("HEY UPDATED")
-        // setCurrentDisplay(pageList[currentPage]);
 
-    }, [createSteps, currentPage, debounceOnChange, examCreated, managementMode, pageStepLength, submmitCreateExam, submmitUpdateExam])
+        // remove if below to return to normal mode
+        if (
+            createSteps[currentPage]?.title === "Content" ||
+            editSteps[currentPage]?.title === "Content" ||
+            createSteps[currentPage]?.title === "Exam Info" ||
+            editSteps[currentPage]?.title === "Exam Info"
+        ) {
+            // console.log(currentPage)
+            console.log("IN1: ", createSteps[currentPage]?.title)
+            console.log("IN2: ", editSteps[currentPage]?.title)
+            // console.log("VVVVV", examId)
+            debounceOnChange(
+                examId,
+                {
+                    head: inputInfoData,
+                    body: inputContentData,
+                }
+            )
+        }
 
-    // console.log(currentPage, examCreated, pageList)
-
+    }, [createSteps, currentPage, debounceOnChange, editSteps, examCreated, examId, inputContentData, inputInfoData, managementMode, pageStepLength, submmitCreateExam])
 
     useEffect(() => {
         // console.log("re render")
@@ -580,8 +583,10 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             setCreatedCard(false)
         }
 
+        // remove inputInfoData to return to the normal mode
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hasChanged, currentPage, managementMode, examEditId, editMode, editExamLoaeded])
+    }, [hasChanged, currentPage, managementMode, examEditId, editMode, editExamLoaeded, inputInfoData])
+
 
     // in the future may use this
     // const isExamValid = useCallback(() => {
@@ -665,10 +670,12 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                                                             disabled={!pageValidation(currentPage)}
                                                             onClick={handleDisplay}
                                                         >
+                                                            {/* Exam Info */}
                                                             {
                                                                 currentPage === pageStepLength - 2 ?
-                                                                    "Done" : createSteps[currentPage].title === "Exam Info" && !examId ?
-                                                                        "Create" : "Next"}
+                                                                    "Done" : createSteps[currentPage].title === "Select Course" && !examId ?
+                                                                        "Create" : "Next"
+                                                            }
                                                         </Button>
                                                     )
                                                     :

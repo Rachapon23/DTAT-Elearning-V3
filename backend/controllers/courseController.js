@@ -373,7 +373,7 @@ exports.listCourseWoQuiz = async (req, res) => {
   try {
     switch (req?.user?.role) {
       case "admin":
-        console.log(await Course.find({}));
+        console.log(await Course.find({ exam: null }));
         return res.json({ data: await Course.find({ exam: null }) });
       case "teacher":
         return res.json({

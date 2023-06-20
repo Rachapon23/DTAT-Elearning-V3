@@ -39,7 +39,7 @@ exports.createActivity = async (req, res) => {
         if (searchedCondition.current + 1 > searchedCondition.maximum) return res.status(500).json({ error: "Student exceed course limit" })
 
         const currentAmount = searchedCondition.current + 1
-        await Condition.findOneAndUpdate({ _id: searchedCondition._id }, { current: currentAmount})
+        await Condition.findOneAndUpdate({ _id: searchedCondition._id }, { current: currentAmount })
 
         // check current student in course
         const activity = await new Activity({
@@ -272,12 +272,12 @@ exports.getActivity = async (req, res) => {
 exports.sendExam = async (req, res) => {
     try {
 
-        res.send({ data: "You answer has been send" })
+
         const { answer } = req?.body
         const { user_id } = req.user
         const activity_id = req?.params?.id
 
-        const database_activity = await Activity.findOne({ _id: activity_id }, "course -_id").populate({
+        const database_activity = await Activity.findOne({ _id: activity_id }, "course -_id completed").populate({
             path: "course",
             select: "exam",
             populate: {
@@ -289,6 +289,9 @@ exports.sendExam = async (req, res) => {
         console.log(database_activity)
 
         if (!quiz) return console.log("Cannot find quiz for this activity")
+        if (database_activity.completed) return res.status(403).json({ error: "You cannot do this exam again" })
+
+        res.send({ data: "You answer has been send" })
 
         const quizList = await Quiz.find({ _id: quiz }, "")
 
@@ -305,7 +308,6 @@ exports.sendExam = async (req, res) => {
             }
         }
         // console.log(activity_id)
-
         // console.log(await Activity.findOne({_id: activity_id}))
 
         const activity = await Activity.findOneAndUpdate(
@@ -314,6 +316,7 @@ exports.sendExam = async (req, res) => {
                 user: user_id,
             },
             {
+                completed: true,
                 score_value: totalScore,
                 score_max: answerKeys.length,
                 ans: answer,

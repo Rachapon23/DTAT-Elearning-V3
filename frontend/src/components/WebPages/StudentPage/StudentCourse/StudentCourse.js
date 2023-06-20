@@ -31,6 +31,10 @@ const StudentExam = () => {
   const [topicData, setTopicData] = useState([]);
   const [imageData, setImageData] = useState(null);
 
+  const handleNavigate = (navStr, dataStage) => {
+    navigate(navStr, { state: dataStage })
+  }
+
   const handleUnloadImage = (e) => {
     e.target.src = DEFAULT_IMAGE;
   };
@@ -68,7 +72,7 @@ const StudentExam = () => {
         </Col>
         <Col style={{ paddingTop: "1px", paddingBottom: "1px" }}>
           <Row>
-            <Button onClick={() => navigate(-1)}>Back</Button>
+            <Button onClick={() => handleNavigate(`/student/page/home`, { tabIndex: 1 })}>Back</Button>
           </Row>
         </Col>
       </Row>

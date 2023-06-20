@@ -55,29 +55,41 @@ const StudentHomePage = () => {
             },
           },
           {
-            title: `course`,
+            title: `Course`,
             render: (data) => data?.course?.name,
           },
-
           {
-            title: `score`,
+            title: `Type`,
             align: "center",
+            width: "10%",
             render: (data) => {
-              if (!data?.score_value && data?.result === 0)
-                return "waiting for test";
-              if (!data?.score_value && data?.result !== 0)
+              if(data.course.type) return "Public"
+              return "Private"
+              // console.log(data.course.type)
+              // return data.course.type
+            },
+          },
+          {
+            title: `Score`,
+            align: "center",
+            width: "10%",
+            render: (data) => {
+              if (!Number.isInteger(data?.score_value) && data?.result === 0)
+                return "Waiting for test";
+              if (!Number.isInteger(data?.score_value) && data?.result !== 0)
                 return "No examination";
               return data?.score_value;
             },
           },
 
           {
-            title: `max score`,
+            title: `Max Score`,
             align: "center",
+            width: "10%",
             render: (data) => {
-              if (!data?.score_max && data?.result === 0)
-                return "waiting for test";
-              if (!data?.score_max && data?.result !== 0)
+              if (!Number.isInteger(data?.score_max) && data?.result === 0)
+                return "Waiting for test";
+              if (!Number.isInteger(data?.score_max) && data?.result !== 0)
                 return "No examination";
               return data?.score_max;
             },
@@ -103,14 +115,13 @@ const StudentHomePage = () => {
             align: "center",
             width: "10%",
             render: (data) => {
-
               //-----------------------------------------------
               const index = courses.indexOf(data)
               let enable = false
               if (courses[index]?.course?.exam) {
                 enable = getExamStatus(courses.indexOf(data))
               }
-              enable = enable || data?.course?.exam
+              enable = (enable || data?.course?.exam) && !data.completed
               //-----------------------------------------------
 
               return (
@@ -150,16 +161,16 @@ const StudentHomePage = () => {
             },
           },
           {
-            title: `course`,
+            title: `Course`,
             render: (data) => data?.course?.name,
           },
 
           {
-            title: `score`,
+            title: `Score`,
             align: "center",
             render: (data) => {
               if (!data?.score_value && data?.result === 0)
-                return "waiting for test";
+                return "Waiting for test";
               if (!data?.score_value && data?.result !== 0)
                 return "No examination";
               return data?.score_value;
@@ -167,11 +178,11 @@ const StudentHomePage = () => {
           },
 
           {
-            title: `max score`,
+            title: `Max Score`,
             align: "center",
             render: (data) => {
               if (!data?.score_max && data?.result === 0)
-                return "waiting for test";
+                return "Waiting for test";
               if (!data?.score_max && data?.result !== 0)
                 return "No examination";
               return data?.score_max;
@@ -342,7 +353,7 @@ const StudentHomePage = () => {
     // search=user:${sessionStorage.getItem("user_id")}&
     // do not forget to add pops allowed field in activity backend
     await listActivity(
-      sessionStorage.getItem("token"), `?search=user:${sessionStorage.getItem("user_id")}&fetch=-ans,-__v&pops=path:course$select:name exam image`
+      sessionStorage.getItem("token"), `?search=user:${sessionStorage.getItem("user_id")}&fetch=-ans,-__v&pops=path:course$select:name exam image type completed`
     )
       .then(
         (res) => {

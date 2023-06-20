@@ -80,7 +80,7 @@ const ExamInfo = ({
     ]
 
     const handleInputInfoData = (e) => {
-        console.log(e.target)
+        // console.log(e.target)
         if(e?.target?.name) {
             onSetInputInfoData((inputInfoData) => ({ ...inputInfoData, [e.target.name]: e.target.value }))
         }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import CardContent from "../../../ExamComponent/CardContent";
 import { getExam, sendExam } from "../../../../function/Student/exam";
 import { Button, Card, Col, Empty, Form, Row } from "antd";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 
 const DoExam = () => {
@@ -10,6 +10,7 @@ const DoExam = () => {
     const [infoData, setInfoData] = useState({})
     const [answer, setAnswer] = useState({})
     const actionMode = "Preview"
+    const navigate = useNavigate();
 
     const [currentPage] = useState(0);
     const [pageStepLength, setPageStepLength] = useState(0)
@@ -49,6 +50,7 @@ const DoExam = () => {
                     console.log(err)
                 }
             )
+        navigate(`/student/page/home`, { tabIndex: 1 })
     }
 
     const renderPageNav = () => {
@@ -90,6 +92,7 @@ const DoExam = () => {
     }
 
     const fetchExam = async () => {
+        // fetch from activity instead
         //&fetch=-answer
         await getExam(sessionStorage.getItem("token"), params?.id, `?field=quiz&check=enable`)
             .then(
