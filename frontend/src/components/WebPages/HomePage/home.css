@@ -1,14 +1,6 @@
-.body-home {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: auto;
+.layout-home {
   min-height: 100vh;
-  background-image: url("../../../../../public/background.jpg");
-  background-size: cover;
-}
-
-.home-sub {
+  background-image: url("../../../../public/background.jpg");
 }
 
 .top-content {
@@ -30,9 +22,6 @@
   width: 50%;
 }
 
-.content {
-  /* background-color: aquamarine; */
-}
 .home-container {
   padding: 80px 50px 0 50px;
 }
@@ -63,7 +52,6 @@
   background-color: #ffa69a;
   color: #fff;
 }
-
 .iconHome {
   width: 100%;
 }
@@ -73,7 +61,7 @@
   min-height: 1000px;
 }
 
-@media (max-width: 825px) {
+/* @media (max-width: 825px) {
   .top-content {
     flex-direction: column;
   }
@@ -108,7 +96,7 @@
   }
   .content{
     margin-top: 60px;
-    /* background-color: #ffa69a; */
+
   }
   .btn-navigate{
     margin-top: 20px;
@@ -155,9 +143,4 @@
   .content{
     margin-top: 30px;
   }
-}
-
-/* .bg-test{
-  background-color: #ffa69a;
-  height: 100vh;
 } */

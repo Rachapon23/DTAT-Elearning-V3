@@ -18,7 +18,7 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import React, { useContext, useEffect } from "react";
-import NavBar from "../../../Layout/NavBar";
+// import NavBar from "../../../Layout/NavBar";
 import { useState } from "react";
 import "./courses.css";
 import "../teach.css";

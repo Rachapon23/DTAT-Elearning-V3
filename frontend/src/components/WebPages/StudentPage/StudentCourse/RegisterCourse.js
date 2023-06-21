@@ -4,7 +4,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createActivity, getActivity, getCourse, getUser } from "../../../../function/Student/course";
 import { listCondition } from "../../../../function/Student/condition";
 import "./studentcourse.css";
-import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 
 const { Text, Title } = Typography
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
@@ -177,10 +176,8 @@ const RegisterCourse = () => {
 
     return (
         <div className="bg-st-course">
-            <NavBarHome />
             <div style={{width: "100%", marginTop: "100px", marginBottom: "50px"}}>
                 <Row justify={"center"} >
-                    <NavBarHome />
                     <Col flex={"auto"} >
                         {/* style={{ padding: "2%", paddingTop: "4%" }} */}
                         <Card title={registerCourseTitle()}>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, InfoCircleOutlined, CloseOutlined, PictureOutlined, UpOutlined, DownOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result } from 'antd';
-import NavBar from "../../../Layout/NavBar"
+// import NavBar from "../../../Layout/NavBar"
 import CardContent from "./CardContent";
 import "../teach.css"
 import { createExam, getCourseWoQuiz, getExam, updateExam } from "../../../../function/Teacher/exam";

@@ -3,7 +3,7 @@ import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress
 import React, { useContext, useEffect, useState } from 'react';
 import { Column, Pie } from '@ant-design/plots';
 import { Link, useNavigate } from 'react-router-dom';
-import NavBar from "../../../Layout/NavBar"
+// import NavBar from "../../../Layout/NavBar"
 import "../teach.css"
 import { TeacherHomeContext } from './TeacherHomeContext';
 import TeacherHomeProfile from './TeacherHomeProfile';
