@@ -1,7 +1,7 @@
 import { Link, Route, Routes } from "react-router-dom";
 
 import ExamCreate from "./components/WebPages/TeacherPages/TeacherExam/ExamCreate";
-import Home from "./components/WebPages/HomePage/Home/Home";
+import Home from "./components/WebPages/HomePage/Home";
 import StudentPage from "./components/WebPages/StudentPage/StudentPage";
 import AdminPage from "./components/WebPages/AdminPage/AdminPage"
 import TeacherPage from "./components/WebPages/TeacherPages/TeacherPage";

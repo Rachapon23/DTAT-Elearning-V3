@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./studenthome.css";
 import { Button, Card, Image, Table, Tabs, Typography } from "antd";
-import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 import Calendar from "../StudentCalendar/Calendar";
 
 import DoExam from "../StudentExam/DoExam";
@@ -345,7 +344,6 @@ const StudentHomePage = () => {
 
   return (
     <div className="bg-st-course">
-      <NavBarHome />
       <div className="content-home">
         <Tabs
           defaultActiveKey="0"

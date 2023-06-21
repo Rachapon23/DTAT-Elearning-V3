@@ -4,7 +4,6 @@ import CardCourse from "../../../Card/CardCourse"
 import { StudentContext } from "./StudentCourseContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./studentcourse.css";
-import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 
 const GROUP_NUMBER = 4
 const { Title } = Typography
@@ -116,7 +115,6 @@ const BrowesCourse = () => {
 
     return (
         <div className="bg-st-course">
-            <NavBarHome />
             <div style={{ width: "100%", marginTop: "100px", marginBottom: "50px" }}>
                 <Row justify={"center"} >
                     <Col flex={"auto"} >

@@ -14,7 +14,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { getCourse } from "../../../../function/Student/course";
 import { listTopicCourse } from "../../../../function/Student/topic";
 
-import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 import "./studentcourse.css";
 import StudentCourse_file from "./StudentCourse_file";
 import StudentCourse_link from "./StudentCourse_link";
@@ -106,7 +105,6 @@ const StudentExam = () => {
 
   return (
     <div className="bg-st-course">
-      <NavBarHome />
       <div style={{ width: "100%", marginTop: "100px", marginBottom: "50px" }}>
         <Row justify={"center"} style={{ marginBottom: "15px" }}>
           <Col flex={"auto"}>

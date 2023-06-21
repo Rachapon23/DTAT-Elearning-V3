@@ -34,6 +34,10 @@ import { TeacherCourseProvider } from "./TeacherCourse/TeacherCourseContext";
 import EvaluateStudent from "./TeacherCourse/CourseEvaluate/EvaluateStudent";
 import Calendar from "./TeacherCalendar/Calendar";
 
+// for haeder or navbar
+import Navbar from "../Navbar/Navbar";
+import { NavbarProvider } from "../Navbar/NavbarContext";
+
 const { Header, Sider, Content } = Layout;
 const { Title, Text } = Typography;
 
@@ -201,46 +205,6 @@ const App = () => {
   }, [params]);
 
   return (
-    // <Layout
-    // // className="layout-teacher"
-    // >
-    //     <Sider
-    //     // className="sider-teacher"
-    //     collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-    //         <div className="logo-teacher d-flex justify-content-center my-3">
-    //             <img alt="iconTeacher" style={{width:"75%"}} src="/Teacher.png" />
-    //         </div>
-    //         <Menu
-    //             onClick={(e) => navigate(`/teacher/page/${e.key}`)}
-    //             className="menu-teacher"
-    //             mode="inline"
-    //             defaultSelectedKeys={[`${params}`]}
-    //             selectedKeys={[`${params}`]}
-    //             items={items}
-    //         />
-    //     </Sider>
-    //     <Layout
-    //     className="site-layout-teacher"
-    //     >
-    //         <Header className="header-teacher">
-    //             <Row justify={"end"}>
-    //                 <Col style={{ paddingRight: "50px" }}>
-    //                     {
-    //                         renderProfile()
-    //                     }
-    //                 </Col>
-    //             </Row>
-
-    //         </Header>
-    //         <Content
-    //             className="contentTeacher"
-    //         >
-    //             {renderContent()}
-    //         </Content>
-
-    //     </Layout>
-    // </Layout>
-
     <Layout className="layout-teacher">
       <Sider
         className="sider-teacher"
@@ -255,27 +219,16 @@ const App = () => {
           onClick={(e) => navigate(`/teacher/page/${e.key}`)}
           className="menu-teacher"
           mode="inline"
-        //   defaultSelectedKeys={["create"]}
+          //   defaultSelectedKeys={["create"]}
           // selectedKeys={[`${params}`]}
           items={items}
         />
       </Sider>
       <Layout className="site-layout-teacher">
-        <Header className="header-teacher">
-          <Row justify={"end"}>
-            <Col style={{ paddingRight: "50px" }}>
-              {
-                renderProfile()
-                // nav Bar
-              }
-            </Col>
-          </Row>
-        </Header>
-        <Content
-                className="contentTeacher"
-            >
-                {renderContent()}
-            </Content>
+        <NavbarProvider>
+          <Navbar />
+        </NavbarProvider>
+        <Content className="contentTeacher">{renderContent()}</Content>
       </Layout>
     </Layout>
   );
