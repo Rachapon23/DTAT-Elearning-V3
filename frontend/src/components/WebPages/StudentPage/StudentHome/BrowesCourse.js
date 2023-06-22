@@ -1,14 +1,12 @@
-import { Breadcrumb, Button, Card, Col, Empty, Radio, Row, Segmented, Tabs, Typography } from "antd";
+import { Card, Col, Empty, Row, Segmented } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
-import CardCourse from "../../../Card/CardCourse"
+import CardCourse from "../../../common/CourseCard/CardCourse"
 import { useLocation, useNavigate } from "react-router-dom";
 // import "./studentcourse.css";
-import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 import { listCourse } from "../../../../function/Student/course";
 import { getPrivateFieldImage } from "../../../../function/Student/topic";
 
 const GROUP_NUMBER = 4
-const { Title } = Typography
 
 const BrowesCourse = () => {
     const location = useLocation()
@@ -80,14 +78,16 @@ const BrowesCourse = () => {
                 {
                     fileterCourse(courses).slice(index, index + GROUP_NUMBER).map((data) => (
                         <Col span={6} style={{ padding: "1%", }}>
+                            {console.log("data: ", data)}
                             <CardCourse
                                 onClick={(e) => handleClickCourse(e, data)}
                                 data={{
                                     _id: data?._id,
                                     name: data?.name,
                                     detail: data?.detail,
-                                    image: data?.image?.url
-                                }} />
+                                    image: data?.image?.name
+                                }}
+                            />
                         </Col>
                     ))
                 }
@@ -115,31 +115,31 @@ const BrowesCourse = () => {
 
     const handleFetchImage = async (imageName) => {
         console.log("course: ", imageName)
-    
+
         const image_name = imageName
         if (!image_name) return
-    
+
         const field = "course"
         const param = "file"
-    
+
         let response
         await getPrivateFieldImage(sessionStorage.getItem("token"), field, param, image_name)
-          .then(
-            (res) => {
-              response = res
-            }
-          )
-          .catch(
-            (err) => {
-              console.log(err)
-            }
-          )
-    
-    
+            .then(
+                (res) => {
+                    response = res
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+
+
         const objectUrl = URL.createObjectURL(response.data);
         setImageData(objectUrl)
-    
-      }
+
+    }
 
     useEffect(() => {
         fetchCourse()

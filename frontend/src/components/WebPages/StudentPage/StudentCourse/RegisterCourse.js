@@ -4,7 +4,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createActivity, getActivity, getCourse, getUser } from "../../../../function/Student/course";
 import { listCondition } from "../../../../function/Student/condition";
 import "./studentcourse.css";
-import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 import { getPrivateFieldImage } from "../../../../function/Student/topic";
 
 const { Text, Title } = Typography
@@ -22,9 +21,9 @@ const RegisterCourse = () => {
     const [pageChange, setPageChange] = useState(false)
     const [conditionData, setConditionData] = useState([]);
     const [imageData, setImageData] = useState(null);
+    const [courseResult, setCourseResult] = useState(false)
 
     const handleNavigate = (navStr, dataStage) => {
-        console.log(dataStage)
         navigate(navStr, { state: dataStage })
     }
 
@@ -50,12 +49,16 @@ const RegisterCourse = () => {
     }
 
     const checkRegistered = async () => {
-        await getActivity(sessionStorage.getItem("token"), null, `?search=user:${sessionStorage.getItem("user_id")},course:${params.id}&fetch=_id`)
+        await getActivity(sessionStorage.getItem("token"), null, `?search=user:${sessionStorage.getItem("user_id")},course:${params.id}&fetch=_id,result`)
             .then(
                 (res) => {
                     const data = res.data.data
-                    if (data) setRegistered(true)
-                    console.log("check: ", data)
+                    console.log(data)
+                    if (data) {
+                        setCourseResult(data.result)
+                        setRegistered(true)
+                    }
+                    console.log("result: ", courseResult)
                 }
             )
             .catch(
@@ -66,14 +69,19 @@ const RegisterCourse = () => {
     }
 
     const handleOpenCourse = () => {
-        navigate(`/student/page/course/${params.id}`)
+        if (courseResult === 0) {
+            handleNavigate(`/student/page/course/${params.id}`, { tabIndex: 1 })
+        }
+        else {
+            handleNavigate(`/student/page/course/${params.id}`, { tabIndex: 2 })
+        }
     }
 
     const handleAddCourse = async () => {
 
         if (!isPassCondition()) {
             // alert user or something
-            console.log("????")
+            // console.log("????")
             return
         }
         // when add course create activity -> in student's home, use activity to fetch all student added course
@@ -84,7 +92,6 @@ const RegisterCourse = () => {
             .then(
                 (res) => {
                     const data = res.data.data
-                    console.log(data)
                     fetchCourse()
                     pageChange(true)
                 }
@@ -104,7 +111,7 @@ const RegisterCourse = () => {
         await listCondition(sessionStorage.getItem("token"), id)
             .then((res) => {
                 const data = res.data
-                console.log("DATA: ", data)
+                // console.log("DATA: ", data)
                 setConditionData(data);
                 isPassCondition()
             })
@@ -134,7 +141,6 @@ const RegisterCourse = () => {
             .then(
                 (res) => {
                     const data = res.data.data
-                    console.log("Course", data)
                     setCourse(data)
                     fetchCondition(data._id);
                     handleFetchImage(data.image.name)
@@ -148,7 +154,6 @@ const RegisterCourse = () => {
     }
 
     const handleFetchImage = async (imageName) => {
-        console.log("course: ", imageName)
 
         const image_name = imageName
         if (!image_name) return
@@ -165,7 +170,7 @@ const RegisterCourse = () => {
             )
             .catch(
                 (err) => {
-                    console.log(err)
+                    // console.log(err)
                 }
             )
 
@@ -210,10 +215,8 @@ const RegisterCourse = () => {
 
     return (
         <div className="bg-st-course">
-            <NavBarHome />
-            <div style={{ width: "100%", marginTop: "100px", marginBottom: "50px" }}>
+            <div style={{ width: "100%", marginTop: "20px", marginBottom: "50px" }}>
                 <Row justify={"center"} >
-                    <NavBarHome />
                     <Col flex={"auto"} >
                         {/* style={{ padding: "2%", paddingTop: "4%" }} */}
                         <Card title={registerCourseTitle()}>

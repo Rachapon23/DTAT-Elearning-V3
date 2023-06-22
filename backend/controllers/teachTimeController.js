@@ -49,8 +49,7 @@ exports.listCoursesInTeachTime = async (req, res) => {
         
         const payload = []
         teachTimes.forEach((teachTime) => {
-            console.log("start--------------------")
-            console.log(teachTime)
+            // console.log(teachTime)
             
             if(new Date(time).getFullYear() >= new Date(teachTime.start).getFullYear() && new Date(time).getFullYear() <= new Date(teachTime.start).getFullYear()) {
                 // console.log(teachTime.start)
@@ -61,11 +60,9 @@ exports.listCoursesInTeachTime = async (req, res) => {
                     }
                 }
             }
-            console.log("end--------------------")
             
         })
         
-        // console.log(payload)
         res.json(payload);
     }
     catch (err) {

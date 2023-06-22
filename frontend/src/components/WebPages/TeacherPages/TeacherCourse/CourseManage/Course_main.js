@@ -22,6 +22,8 @@ import {
   Button,
   Col,
   ColorPicker,
+  Breadcrumb,
+  Typography,
 } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { debounce } from "lodash";
@@ -37,7 +39,10 @@ import { deleteCalendar } from "../../../../../function/Teacher/calendar";
 //momentJS
 import moment from "moment";
 import "moment/locale/th";
+import { Link } from "react-router-dom";
 moment.locale("th");
+
+const { Title } = Typography
 
 const Course_main = () => {
   const {
@@ -204,11 +209,42 @@ const Course_main = () => {
   };
   const debounceOnChange = debounce(onChangeColor, 200);
 
+  const courseCreateTitle = () => {
+    return (
+        <Row align={"middle"} justify={"space-between"} >
+            <Col>
+                <Breadcrumb
+                    separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
+                    items={
+                        [
+                            {
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p >Course</p></Title>,
+                                key: "courses"
+                            },
+                            {
+                                title: <Title level={5} style={{ marginTop: "10px" }}><p>Create Exam</p></Title>,
+                                key: "courses_action",
+                            },
+                        ]
+                      }
+                />
+            </Col>
+            <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
+                <Link to="/teacher/page/list-course">
+                    <Button>
+                        Back
+                    </Button>
+                </Link>
+            </Col>
+        </Row>
+    )
+}
+
   return (
     <Layout className="course-main-layout">
       <Row className="course-main-content">
         <Col flex="auto" style={{ justifyContent: "center" }}>
-          <Card title={"Course"} className="card-shadow">
+          <Card title={courseCreateTitle()} className="card-shadow">
             <Row justify="space-between"></Row>
             <Row>
               <Steps items={items} current={currentPage} />

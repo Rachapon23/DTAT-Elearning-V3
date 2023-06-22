@@ -19,9 +19,8 @@ const Calendar = () => {
   const loadCalendar = () => {
     listCalendar(sessionStorage.getItem("token"))
       .then((res) => {
-        console.log(res.data)
-        setEven(res.data);
         // console.log(res.data)
+        setEven(res.data);
       })
       .catch((err) => {
         console.log(err);

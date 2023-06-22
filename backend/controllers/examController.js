@@ -103,15 +103,15 @@ exports.getExam = async (req, res) => {
             .select(result.options.selectParams)
         // console.log(user)
 
-        console.log(check)
-        if(!check) return res.json({ data: exam })
-        switch(check) {
+        // console.log(check)
+        if (!check) return res.json({ data: exam })
+        switch (check) {
             case "enable":
-                console.log("this exam is ", exam.enable)
-                if(!exam.enable) return res.status(403).json({ error: "Exam not avaliable"});
+                // console.log("this exam is ", exam.enable)
+                if (!exam.enable) return res.status(403).json({ error: "Exam not avaliable" });
                 return res.json({ data: exam })
             default:
-                return res.status(400).json({ error: "Unkonw check condition"});
+                return res.status(400).json({ error: "Unkonw check condition" });
         }
 
 
@@ -165,8 +165,19 @@ exports.updateExam = async (req, res) => {
         const { head, body } = req.body
         const { user_id } = req?.user;
 
-        console.log("-----------------------------------------------------------------------")
-        console.log(head,body)
+        // console.log(head, body, body.length)
+        for (let i = 0; i < body.length && Array.isArray(body); i++) {
+            // console.log(body[i])
+            if (body[i]?.image?.delete) {
+                fs.unlink(`./private/uploads/exam/${body[i]?.image?.name}`,
+                    (err) => {
+                        if (err) {
+                            console.log(err)
+                        }
+                    }
+                )
+            }
+        }
 
         const exam_data = await Exam.findOne({ _id: req.params.id }).select("quiz -_id")
         if (exam_data) {
@@ -231,7 +242,7 @@ exports.removeExam = async (req, res) => {
         let error_deleteFile = false
         if (exam) {
             await Quiz.deleteMany({ _id: { $in: exam?.quiz } })
-            console.log(exam?.quiz)
+            // console.log(exam?.quiz)
             if (exam?.quiz) {
                 exam?.quiz.forEach(item => {
                     if (item?.image?.name) {
@@ -280,79 +291,3 @@ exports.getExamImage = async (req, res) => {
         return res.status(500).json({ error: "Unexpected error on get course image" });
     }
 };
-
-
-// ======================================================================================================
-// exports.listquizUser = async (req, res) => {
-//     try {
-//         const {params} = req.params
-//         const examiner = await Examiner.find({ examiner_id : params }).populate('quiz')
-//         .exec()
-//         // console.log("papapa :: ", params)
-//         res.send(examiner)
-//     } catch (err) {
-//         console.log(err)
-//         res.status(500).send('Server Error!!! on list quiz user')
-//     }
-// }
-
-
-
-
-
-
-
-exports.updateQuiz = async (req, res) => {
-    try {
-        // const quiz = await Quiz.find({})
-        //     .populate('teacher')
-        //     .exec()
-        console.log(req.body)
-
-
-        const { head, body } = req.body
-        // console.log(head,body)
-
-        const course = await Quize.findOneAndUpdate(
-            { _id: head._id }
-            , {
-                new: true,
-                name: head.name,
-                explanation: head.explanation,
-                question: body,
-                // attemp: head.attemp,
-            },
-
-
-        ).exec()
-
-
-        res.send("update success")
-    } catch (err) {
-        console.log(err)
-        res.status(500).send('Server Error!!! on update quiz')
-    }
-}
-
-exports.listquizby = async (req, res) => {
-    try {
-        const quiz = await Quize.findOne({ _id: req.params.params }).exec()
-        res.send(quiz)
-    } catch (err) {
-        console.log(err)
-        res.status(500).send('Server Error!!! on list quiz By')
-    }
-}
-
-exports.getQuizByCourseID = async (req, res) => {
-    try {
-        console.log("THIS ID ", req.params.id)
-        const quiz = await Quize.findOne({ course: req.params.id }).exec()
-        console.log("quiz: ", quiz)
-        res.send(quiz)
-
-    } catch (err) {
-        console.log(err)
-        res.status(500).send('Server Error!!! on list quiz get Quiz')
-    }
-}

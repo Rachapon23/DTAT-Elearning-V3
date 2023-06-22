@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useMemo } from "react";
-import { Card, Col, Layout, Row, Button, Typography, Breadcrumb, Steps, Form, } from 'antd';
+import { Card, Col, Layout, Row, Button, Typography, Breadcrumb, Steps, } from 'antd';
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "../teach.css"
@@ -19,8 +19,8 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     const [managementMode, setManagementMode] = useState(mode ? mode : location?.state?.mode)
     const [mainManagementMode] = useState(managementMode)
     const [examEditName] = useState(location?.state?.exam_name)
-
     const [editExamLoaeded, setEditExamLoaeded] = useState(false)
+    const [validContent, setValidContent] = useState(false)
 
     // do not use these variable to check before change mode, it may cause to mode cannot change 
     const createMode = mode && mode === "Create"
@@ -147,13 +147,12 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         const id = mainManagementMode === "Edit" ? examEditId :
             mainManagementMode === "Create" ? examId : null
 
-        console.log("examData: ", examData)
         if (!id) return
 
         await updateExam(sessionStorage.getItem("token"), id, examData)
             .then(
                 (res) => {
-                    console.log(res.data.data)
+                    // console.log(res.data.data)
                     status = true
                     // setExamId(res.data.data._id)
                 }
@@ -171,12 +170,13 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         // this function use in auto save operation
         if (!id) id = examEditId
         if (!id) return
+        // if(!validContent) return
 
         await updateExam(sessionStorage.getItem("token"), id, examData)
             .then(
                 (res) => {
                     const data = res.data.data
-                    console.log(data)
+                    // console.log(data)
                 }
             )
             .catch(
@@ -185,7 +185,6 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                 }
             )
     }, [])
-
 
     const handleAddCardContent = useCallback(() => {
         setInputContentData((prev) => [...prev, inputContentTemplate])
@@ -238,7 +237,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             image: inputContentData[card_index]?.image,
             choices: [
                 ...inputContentData[card_index].choices,
-                "",
+                null,
             ],
         }
         const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
@@ -247,6 +246,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             currentCard,
             ...nextCard
         ]))
+        setValidContent(false)
 
         setHasChanged(true)
     }, [inputContentData])
@@ -256,7 +256,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         // const { [choice_uuid]: removedChoice, ...updatedChoice } = inputContentData[card_uuid].choices
         // const { [card_uuid]: removedCard, ...updatedCard } = inputContentData
         // console.log("delete:", choice_index)
-        console.log(inputContentData[card_index].choices.slice(0, choice_index), " to ", inputContentData[card_index].choices.slice(choice_index + 1, inputContentData[card_index].choices.length))
+        // console.log(inputContentData[card_index].choices.slice(0, choice_index), " to ", inputContentData[card_index].choices.slice(choice_index + 1, inputContentData[card_index].choices.length))
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: inputContentData[card_index]?.question,
@@ -299,6 +299,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     }, [inputContentData])
 
     const handleChangeChoiceQuestion = useCallback((card_index, choice_index, data) => {
+        // console.log(inputContentData, card_index)
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: inputContentData[card_index]?.question,
@@ -382,7 +383,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                         detail: data?.detail,
                         name: data?.name,
                     }))
-                    console.log(data)
+                    // console.log(data)
                     setInputContentData(data?.quiz ? data?.quiz : [])
                     setEditExamLoaeded(true)
 
@@ -499,7 +500,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         await createExam(sessionStorage.getItem("token"), examData)
             .then(
                 (res) => {
-                    console.log(res.data.data._id)
+                    // console.log(res.data.data._id)
                     setExamId(res.data.data._id)
                 }
             )
@@ -558,10 +559,6 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             createSteps[currentPage]?.title === "Exam Info" ||
             editSteps[currentPage]?.title === "Exam Info"
         ) {
-            // console.log(currentPage)
-            console.log("IN1: ", createSteps[currentPage]?.title)
-            console.log("IN2: ", editSteps[currentPage]?.title)
-            // console.log("VVVVV", examId)
             debounceOnChange(
                 examId,
                 {
@@ -599,8 +596,6 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     // console.log(managementMode)
     const handleRenderPagebyMode = () => {
         // console.log(managementMode, mainManagementMode)
-
-
         switch (managementMode) {
             case "Edit":
                 // console.log("set to preview")
@@ -632,28 +627,27 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     const renderPageNav = () => {
         return (
             <Row justify={"space-between"} style={{ height: "10%", marginBottom: "1%" }} >
-                {/* {JSON.stringify(currentPage)} */}
                 {
                     currentPage !== pageStepLength - 1 ?
                         (
                             <>
                                 <Col>
-                                    <Button onClick={handleRenderPagebyMode}>
+                                    {/* <Button onClick={handleRenderPagebyMode}>
                                         {
                                             managementMode === "Edit" ? "Preview" :
                                                 managementMode === "Preview" ? "Edit" :
                                                     "Preview"
                                         }
-                                    </Button>
+                                    </Button> */}
                                 </Col>
 
-                                <Col>
+                                {/* <Col>
                                     <Button
                                         onClick={() => console.log(inputInfoData, inputContentData)}
                                     >
                                         Debug
                                     </Button>
-                                </Col>
+                                </Col> */}
 
                                 <Col>
                                     <Row>

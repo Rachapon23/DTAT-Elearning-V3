@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
-import CardContent from "../../../ExamComponent/CardContent";
+import CardContent from "../../../common/ExamCard/CardContent";
 import { getExam, sendExam } from "../../../../function/Student/exam";
-import { Button, Card, Col, Empty, Form, Row } from "antd";
+import { Button, Card, Col, Empty, Form, Modal, Row, Typography } from "antd";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
+import { getActivity } from "../../../../function/Student/course";
+
+const { Title, Text } = Typography
 
 const DoExam = () => {
     const [exam, setExam] = useState({})
     const [infoData, setInfoData] = useState({})
     const [answer, setAnswer] = useState({})
+    const [openConfirmSubmit, setOpenConfirmSubmit] = useState(false)
+    const [result, setResult] = useState(null)
     const actionMode = "Preview"
     const navigate = useNavigate();
 
@@ -34,15 +38,13 @@ const DoExam = () => {
         setAnswer((prev) => ({ ...prev, [`${quiz_id}`]: data?.answer }))
         // setHasChanged(true)
     }
-    console.log(answer)
 
     const submitExam = async () => {
-        console.log(answer)
         await sendExam(sessionStorage.getItem("token"), location.state.activity, { answer: answer })
             .then(
                 (res) => {
                     const data = res.data.data
-                    console.log(data)
+                    // console.log(data)
                 }
             )
             .catch(
@@ -56,7 +58,6 @@ const DoExam = () => {
     const renderPageNav = () => {
         return (
             <Row justify={"end"} style={{ height: "10%", marginBottom: "1%" }} >
-                {/* {console.log("----> ",exam?.quiz)} */}
                 {
                     currentPage > -1 ?
                         (
@@ -67,11 +68,14 @@ const DoExam = () => {
                                         {
                                             exam?.quiz ?
                                                 (
-                                                    (
-                                                        <Button type="primary" onClick={submitExam}>
+                                                    <>
+                                                        <Button type="primary" onClick={() => setOpenConfirmSubmit(true)}>
                                                             Submit
                                                         </Button>
-                                                    )
+                                                        <Modal title="Notification" open={openConfirmSubmit} onOk={submitExam} onCancel={() => setOpenConfirmSubmit(false)} closable={false} >
+                                                            Are you sure to submit this exam
+                                                        </Modal>
+                                                    </>
                                                 )
                                                 :
                                                 (
@@ -91,20 +95,16 @@ const DoExam = () => {
         )
     }
 
-    const fetchExam = async () => {
-        // fetch from activity instead
-        //&fetch=-answer
-        await getExam(sessionStorage.getItem("token"), params?.id, `?field=quiz&check=enable`)
+    const fetchActivity = async (course_id) => {
+        await getActivity(
+            sessionStorage.getItem("token"),
+            null,
+            `?search=user:${sessionStorage.getItem("user_id")},course:${course_id}&fetch=completed,score_value,score_max`
+        )
             .then(
                 (res) => {
                     const data = res.data.data
-                    console.log(res)
-                    setExam(data)
-                    setInfoData({
-                        name: data.name,
-                        detail: data.detail,
-                    })
-                    setPageStepLength(data.quiz.length)
+                    setResult(data)
                 }
             )
             .catch(
@@ -117,13 +117,89 @@ const DoExam = () => {
             )
     }
 
+    const fetchExam = async () => {
+        // fetch from activity instead
+        //&fetch=-answer
+        await getExam(sessionStorage.getItem("token"), params?.id, `?field=quiz&check=enable`)
+            .then(
+                (res) => {
+                    const data = res.data.data
+                    // console.log(res)
+                    setExam(data)
+                    setInfoData({
+                        name: data.name,
+                        detail: data.detail,
+                    })
+                    setPageStepLength(data.quiz.length)
+                    if (data.course) fetchActivity(data.course)
+                }
+            )
+            .catch(
+                (err) => {
+                    const errorMsg = err.response.data.error
+                    setError(errorMsg)
+                    console.log(err)
+                    // console.log(err)
+                }
+            )
+    }
+
+    const renderContent = () => {
+        if(!result) return <>Please wait...</>
+        if (!result?.completed) {
+            return (
+                <Col flex="auto">
+                    {
+                        exam?.quiz && exam?.quiz.length > 0 ?
+                            (
+                                exam.quiz.map((item, index) => (
+                                    <CardContent
+                                        key={item._id}
+                                        index={index}
+                                        head={infoData}
+                                        actionMode={actionMode}
+                                        data={{ ...item, answer: answer[`${item._id}`] }}
+                                        examID={exam._id}
+                                        onChangeChoiceAnswer={handleChangeChoiceAnswer}
+                                    />
+                                ))
+                            )
+                            :
+                            (
+                                <Card>
+                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                </Card>
+                            )
+                    }
+                </Col>
+            )
+        }
+        else {
+            return (
+                <Col flex={"auto"}>
+                    <Card>
+                        <Row justify={"center"}>
+                            <Title level={4}>You already done this exam</Title>
+                        </Row>
+                        <Row justify={"center"}>
+                            <Text>Your scoure is {result.score_value} / {result.score_max}</Text>
+                        </Row>
+                        <Row justify={"center"} style={{ paddingTop: "20px" }}>
+                            <Button type="primary" onClick={() => navigate("/student/page/home")}>Back to My Course</Button>
+                        </Row>
+                    </Card>
+                </Col>
+            )
+        }
+    }
+
     useEffect(() => {
         if (params?.id) fetchExam()
     }, [])
 
     return (
         <div className="bg-st-course">
-            <NavBarHome />
+            {/* <NavBarHome /> */}
             <div className="content-home">
                 <Row>
                     <Col flex={"auto"}>
@@ -171,43 +247,12 @@ const DoExam = () => {
                                     onValuesChange={onRequiredTypeChange}
                                     requiredMark={requiredMark}
                                 >
-                                    {/* {JSON.stringify(Object.keys(inputContentData).length)} */}
                                     <Row justify={"center"}>
-                                        {/* <Col style={{ width: "5%" }} /> */}
-                                        {/* {console.log(selectedCard)} */}
                                         <Col style={{ width: "95%" }} >
                                             <Row style={{ paddingTop: "1%" }}>
-                                                <Col
-                                                    flex="auto"
-                                                // style={{ height: "570px", }}
-                                                >
-                                                    {console.log(exam)}
-                                                    {
-
-                                                        exam?.quiz && exam?.quiz.length > 0 ?
-                                                            (
-                                                                exam.quiz.map((item, index) => (
-                                                                    <CardContent
-                                                                        key={item._id}
-                                                                        index={index}
-                                                                        head={infoData}
-                                                                        actionMode={actionMode}
-                                                                        data={{ ...item, answer: answer[`${item._id}`] }}
-                                                                        examID={exam._id}
-                                                                        onChangeChoiceAnswer={handleChangeChoiceAnswer}
-                                                                    />
-                                                                ))
-                                                                // null
-                                                            )
-                                                            :
-                                                            (
-                                                                <Card>
-                                                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                                                                </Card>
-                                                            )
-
-                                                    }
-                                                </Col>
+                                                {
+                                                    renderContent()
+                                                }
                                             </Row>
                                         </Col>
                                     </Row>
@@ -217,7 +262,7 @@ const DoExam = () => {
                         <Row justify={"space-between"} style={{ paddingTop: "0.5%", paddingLeft: "2.5%", paddingRight: "2.5%", paddingBottom: "0.5%" }}>
                             <Col flex={"auto"}>
                                 {
-                                    exam?.quiz && exam?.quiz.length > 0 ?
+                                    !result?.completed && exam?.quiz && exam?.quiz.length > 0 ?
                                         (
                                             renderPageNav()
                                         )

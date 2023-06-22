@@ -1,35 +1,37 @@
 import {
+  Avatar,
   Breadcrumb,
   Button,
   Card,
   Col,
   Image,
+  Modal,
   Row,
-  Timeline,
   Typography,
 } from "antd";
-import React, { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-
-import { getCourse } from "../../../../function/Student/course";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { getCourse, getProfile } from "../../../../function/Student/course";
 import { getPrivateFieldImage, listTopicCourse } from "../../../../function/Student/topic";
-
-import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 import "./studentcourse.css";
 import StudentCourse_file from "./StudentCourse_file";
 import StudentCourse_link from "./StudentCourse_link";
 
 const { Text, Title } = Typography;
-const DEFAULT_IMAGE =
-  "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
+const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
 
 const StudentExam = () => {
   const params = useParams();
+  const location = useLocation()
   const navigate = useNavigate();
 
   const [course, setCourse] = useState(null);
   const [topicData, setTopicData] = useState([]);
   const [imageData, setImageData] = useState(null);
+  const [openProfile, setOpenProfile] = useState(false)
+  const [teacherProfile, setTeacherProfile] = useState(null);
+  const [selectedTabIndex] = useState(location?.state?.tabIndex ? location.state.tabIndex : 0)
+  console.log("from: ", location)
 
   const handleNavigate = (navStr, dataStage) => {
     navigate(navStr, { state: dataStage })
@@ -72,7 +74,7 @@ const StudentExam = () => {
         </Col>
         <Col style={{ paddingTop: "1px", paddingBottom: "1px" }}>
           <Row>
-            <Button onClick={() => handleNavigate(`/student/page/home`, { tabIndex: 1 })}>Back</Button>
+            <Button onClick={() => handleNavigate(`/student/page/home`, { tabIndex: selectedTabIndex })}>Back</Button>
           </Row>
         </Col>
       </Row>
@@ -83,12 +85,13 @@ const StudentExam = () => {
     await getCourse(
       sessionStorage.getItem("token"),
       params.id,
-      `?pops=path:teacher$select:firstname lastname`
+      `?pops=path:teacher$select:firstname lastname _id`
     )
       .then((res) => {
         const data = res.data.data;
         fetchTopic(data._id);
         setCourse(data);
+        fetchTeacherProfile(data.teacher._id);
         handleFetchImage(data.image.name)
       })
       .catch((err) => {
@@ -106,8 +109,22 @@ const StudentExam = () => {
       });
   };
 
+  const fetchTeacherProfile = async (id) => {
+    await getProfile(sessionStorage.getItem("token"), id)
+      .then(
+        (res) => {
+          const data = res.data.data
+          setTeacherProfile(data);
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      );
+  }
+
   const handleFetchImage = async (imageName) => {
-    console.log("course: ", imageName)
 
     const image_name = imageName
     if (!image_name) return
@@ -128,11 +145,10 @@ const StudentExam = () => {
         }
       )
 
-
     const objectUrl = URL.createObjectURL(response.data);
     setImageData(objectUrl)
-
   }
+
 
   useEffect(() => {
     fetchCourse();
@@ -140,8 +156,7 @@ const StudentExam = () => {
 
   return (
     <div className="bg-st-course">
-      <NavBarHome />
-      <div style={{ width: "100%", marginTop: "100px", marginBottom: "50px" }}>
+      <div style={{ width: "100%", marginTop: "20px", marginBottom: "50px" }}>
         <Row justify={"center"} style={{ marginBottom: "15px" }}>
           <Col flex={"auto"}>
             <Card
@@ -172,9 +187,50 @@ const StudentExam = () => {
                 </Col>
               </Row>
               <Row justify={'end'}>
-                <Text style={{ fontSize: "12px" }}>
-                  by {course?.teacher?.firstname} {course?.teacher?.lastname}
-                </Text>
+                <Link>
+                  <Text style={{ fontSize: "12px", color: "blue" }} onClick={() => setOpenProfile(true)}>
+                    by {course?.teacher?.firstname} {course?.teacher?.lastname}
+                  </Text>
+                </Link>
+
+                <Modal title="Teacher Profile" open={openProfile} onOk={() => setOpenProfile(false)} onCancel={() => setOpenProfile(false)} footer={null}>
+                  <Row>
+                    <Col flex={"auto"} style={{ maxWidth: "150px" }}>
+                      <Avatar
+                        shape="square"
+                        size={120}
+                        style={{
+                          cursor: "pointer",
+                          paddingBottom: "0.5%",
+                          verticalAlign: "middle",
+                        }}
+                      >
+                        <Row justify={"center"} align={"middle"}>
+                          <Col flex={"auto"} style={{ paddingTop: "10px" }}>
+                            <Text style={{ fontSize: "300%", color: "white" }}>
+                              {teacherProfile?.firstname ? teacherProfile?.firstname.substring(0, 1) : ""}
+                            </Text>
+                          </Col>
+                        </Row>
+                      </Avatar>
+                    </Col>
+                    <Col>
+                      <Row>
+                        <Col style={{ paddingRight: "10px" }}><Text strong> Name: </Text> </Col>
+                        <Col style={{ paddingRight: "10px" }}>{teacherProfile?.firstname}</Col>
+                        <Col >{teacherProfile?.lastname}</Col>
+                      </Row>
+                      <Row>
+                        <Col style={{ paddingRight: "15px" }}><Text strong> Email: </Text> </Col>
+                        <Col>{teacherProfile?.email}</Col>
+                      </Row>
+                      <Row>
+                        <Col style={{ paddingRight: "30px" }}><Text strong> Tel: </Text> </Col>
+                        <Col>{teacherProfile?.tel}</Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                </Modal>
               </Row>
               {/* <Row justify={"center"}>
                 <Col flex={"auto"}>
