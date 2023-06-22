@@ -63,7 +63,7 @@ const StudentHomePage = () => {
             align: "center",
             width: "10%",
             render: (data) => {
-              if(data.course.type) return "Public"
+              if(data?.course?.type) return "Public"
               return "Private"
               // console.log(data.course.type)
               // return data.course.type
