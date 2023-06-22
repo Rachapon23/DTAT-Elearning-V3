@@ -2,7 +2,7 @@ import { UserSwitchOutlined } from '@ant-design/icons';
 import { FloatButton } from "antd";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { checkRole } from '../../function/auth';
+import { checkRole } from '../../../function/auth';
 
 const DevNav = () => {
     const navigate = useNavigate()

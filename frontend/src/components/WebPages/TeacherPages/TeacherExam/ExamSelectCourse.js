@@ -1,15 +1,11 @@
-import React, { useEffect, useRef, useCallback, useMemo, useState } from "react";
-import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, InfoCircleOutlined, CloseOutlined, PictureOutlined, UpOutlined, DownOutlined, PlusSquareOutlined } from '@ant-design/icons';
-import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result } from 'antd';
-import NavBar from "../../../Layout/NavBar"
-import CardContent from "./CardContent";
+import React, { useEffect, useCallback, useState } from "react";
+import { SearchOutlined } from '@ant-design/icons';
+import { Col, Row, Input, Table, Form, Radio, Image } from 'antd';
 import "../teach.css"
-import { createExam, getCourseWoQuiz, getExam, updateExam } from "../../../../function/Teacher/exam";
+import { getCourseWoQuiz } from "../../../../function/Teacher/exam";
 
-const { Title } = Typography;
-const { Meta } = Card;
-const { Header, Content, Footer, Sider } = Layout;
-const { TextArea } = Input;
+const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
+const PAGE_SIZE = 4
 
 const ExamSelectCourse = ({
     // cousresWithOutQuiz = null,
@@ -20,12 +16,8 @@ const ExamSelectCourse = ({
     onSetCurentSelectedRadio = null,
     onSetCousreWithOutQuiz = null,
 }) => {
-    const pageSize = 4
+    
     const [selectedRadio, setSelectedRadio] = useState(inputInfoData?.course);
-
-    // const [firstLoad, setFirstLoad] = useState(false);
-    // console.log("course must be: ",selectedRadio,  " END")
-
     const [cousresWithOutQuiz, setCousresWithOutQuiz] = useState(null | [{
         enabled: null,
         name: "",
@@ -42,7 +34,12 @@ const ExamSelectCourse = ({
             key: 'image',
             align: "center",
             width: "15%",
-            render: (data) => (<></>)
+            render: (image) => (
+                <Image
+                    width={150}
+                    src={image?.name ? `${process.env.REACT_APP_IMG}/course/${image?.name}` : DEFAULT_IMAGE}
+                />
+            )
         },
         {
             title: "Course",
@@ -89,15 +86,15 @@ const ExamSelectCourse = ({
 
     const filterCourse = useCallback((data) => {
         if (!data) return
-        
-        console.log(data.filter((item) => {
-            return item?.name?.toLowerCase().indexOf(keyword) >= 0;
-        }).slice(pageSize * (currentCoursePage - 1), (pageSize * (currentCoursePage - 1)) + pageSize))
-        
+
+        // console.log(data.filter((item) => {
+        //     return item?.name?.toLowerCase().indexOf(keyword) >= 0;
+        // }).slice(PAGE_SIZE * (currentCoursePage - 1), (PAGE_SIZE * (currentCoursePage - 1)) + PAGE_SIZE))
+
         return data.filter((item) => {
-            console.log(item)
+            // console.log(item)
             return item?.name?.toLowerCase().indexOf(keyword) >= 0;
-        }).slice(pageSize * (currentCoursePage - 1), (pageSize * (currentCoursePage - 1)) + pageSize)
+        }).slice(PAGE_SIZE * (currentCoursePage - 1), (PAGE_SIZE * (currentCoursePage - 1)) + PAGE_SIZE)
     }, [currentCoursePage, keyword])
 
     const fetchCourseWoQuiz = async () => {
@@ -142,7 +139,6 @@ const ExamSelectCourse = ({
 
     useEffect(() => {
         fetchCourseWoQuiz()
-        console.log(cousresWithOutQuiz)
     }, [])
 
 
@@ -161,7 +157,6 @@ const ExamSelectCourse = ({
                 <Col style={{ width: "100%" }}>
                     <Form.Item label="Select Course" required tooltip="This is a required field">
                         <Input placeholder="Search course" prefix={<SearchOutlined />} onChange={handleSearch} />
-                        {/* {console.log(cousresWithOutQuiz)} */}
                         {
                             cousresWithOutQuiz ?
                                 (

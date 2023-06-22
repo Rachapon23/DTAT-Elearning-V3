@@ -1,16 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
-  Breadcrumb,
-  Button,
-  Card,
   Col,
   Image,
   Row,
-  Timeline,
-  Typography,
 } from "antd";
-import { Link, useNavigate, useParams } from "react-router-dom";
 import { FileOutlined } from "@ant-design/icons";
 import { getPrivateFieldImage } from "../../../../function/Student/topic";
 
@@ -44,7 +38,6 @@ const StudentCourse_file = ({ item }) => {
         )
 
       const objectUrl = URL.createObjectURL(response.data);
-      console.log(objectUrl)
       setfileData((prev) => [...prev, objectUrl])
     }
   }

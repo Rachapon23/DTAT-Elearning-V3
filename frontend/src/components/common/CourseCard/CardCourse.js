@@ -1,6 +1,6 @@
 import React from 'react'
 import './card.css'
-import { Button, Card, Col, Image, Row } from 'antd';
+import { Card, Col, Row } from 'antd';
 
 const { Meta } = Card;
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
@@ -23,7 +23,7 @@ const CardCourse = ({
       onClick={onClick}
       className='card-content'
       hoverable
-      style={{height: "100%"}}
+      style={{ height: "100%" }}
       cover={
         <img
           // width={350}
@@ -34,7 +34,7 @@ const CardCourse = ({
         />
       }
     >
-      <Row  id={data?._id}>
+      <Row id={data?._id}>
         <Col flex={"auto"} id={data?._id}>
           <Meta
             id={data?._id}

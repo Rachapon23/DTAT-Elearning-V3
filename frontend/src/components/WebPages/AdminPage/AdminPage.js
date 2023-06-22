@@ -6,10 +6,22 @@ import {
   ScheduleOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, theme, Row, Col, Alert, Card, Avatar, Divider, Popover, Typography, } from "antd";
+import {
+  Layout,
+  Menu,
+  theme,
+  Row,
+  Col,
+  Alert,
+  Card,
+  Avatar,
+  Divider,
+  Popover,
+  Typography,
+} from "antd";
 import React, { useState, useEffect } from "react";
 import "./adminpage.css";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import AdminHomePage from "./AdminHome/AdminHomePage";
 import AdminManageHome from "./AdminManageHome/AdminManageHome";
 import AdminListUser from "./AdminListUser/AdminListUser";
@@ -18,8 +30,12 @@ import AdminManageStudent from "./AdminManageStudent/AdminManageStudent";
 
 import { AdminProvider } from "./AdminManageHome/AdminManageContext";
 
+// for haeder or navbar
+import Navbar from "../Navbar/Navbar";
+import { NavbarProvider } from "../Navbar/NavbarContext";
+
 const { Header, Sider, Content } = Layout;
-const { Title, Text } = Typography
+const { Title, Text } = Typography;
 
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -28,7 +44,7 @@ const App = () => {
   // } = theme.useToken();
 
   const { params } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   function getItem(label, key, icon, children, type) {
     return {
@@ -41,52 +57,44 @@ const App = () => {
   }
 
   const renderProfile = () => {
-    const rowOffset = { paddingInlineStart: "6%" }
+    const rowOffset = { paddingInlineStart: "6%" };
 
     const handleMouseOverandOut = (e) => {
-      if (!e?.type) return
+      if (!e?.type) return;
 
       switch (e?.type) {
         case "mouseover":
           e.target.style.backgroundColor = "rgba(230, 230, 230, 0.9)";
-          break
+          break;
         case "mouseleave":
           e.target.style.backgroundColor = "rgba(230, 230, 230, 0)";
-          break
+          break;
         default:
-          return
+          return;
       }
-    }
+    };
 
     return (
       <Popover
         placement="bottomRight"
         content={
-          <Row style={{ width: "150px", }}>
+          <Row style={{ width: "150px" }}>
             <Col flex={"auto"}>
-
               <Row style={{ ...rowOffset }}>
-                <Text strong={false}>
-                  Signed in as
-                </Text>
+                <Text strong={false}>Signed in as</Text>
               </Row>
               <Row style={{ ...rowOffset }}>
-                <Title level={5}>
-                  {sessionStorage.getItem("firstname")}
-                </Title>
+                <Title level={5}>{sessionStorage.getItem("firstname")}</Title>
               </Row>
 
               <Divider style={{ marginTop: "5%", marginBottom: "5%" }} />
-              <Row style={{ ...rowOffset }}>
-                Role as
-              </Row>
+              <Row style={{ ...rowOffset }}>Role as</Row>
               <Row style={{ ...rowOffset }}>
                 <Title level={5}>
-                  {
-                    sessionStorage.getItem("role") ?
-                      sessionStorage.getItem("role").charAt(0).toUpperCase() +
-                      sessionStorage.getItem("role").slice(1) : null
-                  }
+                  {sessionStorage.getItem("role")
+                    ? sessionStorage.getItem("role").charAt(0).toUpperCase() +
+                      sessionStorage.getItem("role").slice(1)
+                    : null}
                 </Title>
               </Row>
               <Divider style={{ marginTop: "5%", marginBottom: "5%" }} />
@@ -98,17 +106,16 @@ const App = () => {
                   ...rowOffset,
                   borderRadius: "4px",
                   cursor: "pointer",
-                  touchAction: "inherit"
+                  touchAction: "inherit",
                 }}
                 onClick={() => {
-                  sessionStorage.clear()
-                  navigate("/")
+                  sessionStorage.clear();
+                  navigate("/");
                   // window.location.reload()
                 }}
               >
                 Log out
               </Row>
-
             </Col>
           </Row>
         }
@@ -118,83 +125,84 @@ const App = () => {
           style={{
             cursor: "pointer",
             paddingBottom: "0.5%",
-            verticalAlign: 'middle',
+            verticalAlign: "middle",
           }}
           size="large"
         >
           <Text strong style={{ color: "white" }}>
-            {
-              sessionStorage.getItem("firstname") ?
-                sessionStorage.getItem("firstname").substring(0, 1) : null
-            }
+            {sessionStorage.getItem("firstname")
+              ? sessionStorage.getItem("firstname").substring(0, 1)
+              : null}
           </Text>
         </Avatar>
       </Popover>
-
-    )
-  }
+    );
+  };
 
   const items2 = [
-    getItem('Home', '/'),
-    getItem('Public Course', '/teacher/page/home'),
-    getItem('Private Course', '/admin/page/home'),
+    getItem("Home", "/"),
+    getItem("Public Course", "/teacher/page/home"),
+    getItem("Private Course", "/admin/page/home"),
     // getItem('Contact', '#',),
   ];
 
   const items = [
-    getItem('Home', 'home', <HomeOutlined />),
-    getItem('Manage Home', 'managehome', <HomeOutlined />, [
-      getItem('Acnounce', 'acnounce'),
-      getItem('Public Course', 'public-course'),
-      getItem('Private Course', 'private-course'),
+    getItem("Home", "home", <HomeOutlined />),
+    getItem("Manage Home", "managehome", <HomeOutlined />, [
+      getItem("Acnounce", "acnounce"),
+      getItem("Public Course", "public-course"),
+      getItem("Private Course", "private-course"),
     ]),
-    getItem('List User', 'listuser', <HomeOutlined />),
-    getItem('Manage Teacher', 'manageteacher', <HomeOutlined />),
-    getItem('Manage Student', 'managestudent', <CalendarOutlined />),
+    getItem("List User", "listuser", <HomeOutlined />),
+    getItem("Manage Teacher", "manageteacher", <HomeOutlined />),
+    getItem("Manage Student", "managestudent", <CalendarOutlined />),
   ];
 
   const renderContent = React.useCallback(() => {
     switch (params) {
-      case 'home':
+      case "home":
         return <AdminHomePage />;
-      case 'managehome':
+      case "managehome":
         return <AdminManageHome />;
-      case 'acnounce':
+      case "acnounce":
         return (
           <AdminProvider>
             <AdminManageHome manage={"Acnounce"} initAction={"Preview"} />
           </AdminProvider>
         );
-      case 'public-course':
+      case "public-course":
         return (
           <AdminProvider>
             <AdminManageHome manage={"Public Course"} initAction={"Preview"} />
           </AdminProvider>
         );
-      case 'private-course':
+      case "private-course":
         return (
           <AdminProvider>
             <AdminManageHome manage={"Private Course"} initAction={"Preview"} />
           </AdminProvider>
         );
-      case 'listuser':
+      case "listuser":
         return <AdminListUser />;
-      case 'manageteacher':
+      case "manageteacher":
         return <AdminManageTeacher />;
-      case 'managestudent':
+      case "managestudent":
         return <AdminManageStudent />;
-      // case 'calendar': 
+      // case 'calendar':
       //   return <p className="success">Calendar</p>;
       default:
         return <p className="success">404 not found ... </p>;
-
     }
   }, [params]);
 
   return (
     <Layout className="layout-admin">
-      <Sider className="sider-admin"
-        collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+      <Sider
+        className="sider-admin"
+        collapsible
+        collapsed={collapsed}
+        onCollapse={(value) => setCollapsed(value)}
+      >
         <div className="logo-admin">
           <img alt="iconAdmin" className="w-100" src="/Admin.png" />
         </div>
@@ -205,33 +213,16 @@ const App = () => {
           mode="inline"
           defaultSelectedKeys={[`${params}`]}
           items={items}
-
         />
       </Sider>
       <Layout className="site-layout-admin">
-        <Header className="header-admin">
-          <Row justify={"end"}>
-            {/* <Col flex={"auto"}>
-              <Menu className="header-menu"
-                onClick={(e) => navigate(`${e.key}`)}
-                mode="horizontal" items={items2}
-              />
-            </Col> */}
-            <Col style={{ paddingRight: "50px" }}>
-              {
-                renderProfile()
-              }
-            </Col>
-          </Row>
-        </Header>
-        <Content
-          className="contentTeacher"
-        >
+        <NavbarProvider>
+          <Navbar />
+        </NavbarProvider>
+        <Content className="contentTeacher">
           <Layout className="layout-content">
             <Row className="row-admin">
-              <Col className="col-admin">
-                {renderContent()}
-              </Col>
+              <Col className="col-admin">{renderContent()}</Col>
             </Row>
           </Layout>
         </Content>

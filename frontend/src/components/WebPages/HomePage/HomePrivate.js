@@ -1,10 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react'
 import "./content.css";
-import CardCourse from "../../../Card/CardCourse";
-import { Col, Row, Image, Modal } from "antd";
+import CardCourse from "../../common/CourseCard/CardCourse";
+import { Col, Modal, Row } from "antd";
 import { HomeContext } from './HomeContext';
-import LogAndRe from "../../../Layout/navBarHomee/LogAndRe";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import Auth from "../Navbar/Auth";
 
 const GROUP_NUMBER = 3
 const DEFAULT_DATA = {
@@ -15,9 +15,9 @@ const DEFAULT_DATA = {
 
 const arrayTemplate = new Array(6).fill(false)
 
-const HomePublic = () => {
+const HomePrivate = () => {
 
-  const { coursePublic } = useContext(HomeContext)
+  const { coursePrivate } = useContext(HomeContext)
   const navigate = useNavigate()
 
   const [loading, setLoading] = useState(false);
@@ -45,10 +45,10 @@ const HomePublic = () => {
     console.log(data?._id)
     e.target.id = data?._id
 
-    if (!e?.target?.id) return
-    if (!checkUserLogin()) return
+    // if (!e?.target?.id) return
+    // if (!checkUserLogin()) return
 
-    handleNavigate(`/student/page/register-course/${e?.target?.id}`)
+    // handleNavigate(`/student/page/register-course/${e?.target?.id}`)
   }
 
   const handleOk = () => {
@@ -69,9 +69,9 @@ const HomePublic = () => {
     return (
       <div className="row-content">
         {
-          coursePublic.length > 0 ?
+          coursePrivate.length > 0 ?
             (
-              coursePublic.slice(index, index + GROUP_NUMBER).map((data) => (
+              coursePrivate.slice(index, index + GROUP_NUMBER).map((data) => (
                 <Col span={6} >
                   <div className="col-content">
                     <CardCourse
@@ -89,11 +89,9 @@ const HomePublic = () => {
             :
             (
               arrayTemplate.slice(index, index + GROUP_NUMBER).map(() => (
-                <Row>
-                  <div className="col-content">
-                    <CardCourse data={DEFAULT_DATA} />
-                  </div>
-                </Row>
+                <div className="col-content">
+                  <CardCourse data={DEFAULT_DATA} />
+                </div>
               ))
             )
         }
@@ -105,7 +103,7 @@ const HomePublic = () => {
   return (
     <div className="content-course">
       <div className="title-content">
-        <p className="title-1">Public Course</p>
+        <p className="title-1">Private Course</p>
         <p className="title-2">
           It is a long established fact that a reader will be distracted by the
           readable content of a page when looking at its layout.
@@ -114,9 +112,9 @@ const HomePublic = () => {
       <div className="">
         <div className="row-content">
           {
-            coursePublic.length > 0 ?
+            coursePrivate.length > 0 ?
               (
-                coursePublic.map((_, index) => (
+                coursePrivate.map((_, index) => (
                   renderContent(index)
                 ))
               )
@@ -147,10 +145,10 @@ const HomePublic = () => {
         footer={[]}
         mask={false}
       >
-        <LogAndRe />
+        <Auth/>
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default HomePublic;
+export default HomePrivate

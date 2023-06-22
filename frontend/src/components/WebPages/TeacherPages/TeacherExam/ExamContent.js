@@ -1,10 +1,8 @@
-import React, { useEffect, useRef, useCallback, useMemo } from "react";
-import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, InfoCircleOutlined, CloseOutlined, PictureOutlined, UpOutlined, DownOutlined, PlusSquareOutlined } from '@ant-design/icons';
-import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result } from 'antd';
-import NavBar from "../../../Layout/NavBar"
+import React from "react";
+import { UpOutlined, DownOutlined, PlusSquareOutlined } from '@ant-design/icons';
+import { Card, Col, Row, Tooltip, Button, Form } from 'antd';
 import { useState } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
-import CardContent from "../../../ExamComponent/CardContent";
+import CardContent from "../../../common/ExamCard/CardContent";
 import "../teach.css"
 
 import CardEmptyContent from "./CardEmptyContent";
@@ -34,8 +32,6 @@ const ExamContent = ({
     setRequiredMarkType(requiredMarkValue);
   };
 
-
-
   return (
     <Form
       style={{ paddingTop: "2%" }}
@@ -47,10 +43,8 @@ const ExamContent = ({
       onValuesChange={onRequiredTypeChange}
       requiredMark={requiredMark}
     >
-      {/* {JSON.stringify(Object.keys(inputContentData).length)} */}
       <Row justify={"center"}>
         {/* <Col style={{ width: "5%" }} /> */}
-        {/* {console.log(selectedCard)} */}
         <Col style={{ width: "95%" }} >
           <Row style={{ paddingTop: "1%" }}>
             <Col
@@ -58,7 +52,6 @@ const ExamContent = ({
             // style={{ height: "570px", }}
 
             >
-              {/* {JSON.stringify(Object.keys(inputContentData).length === 0)} */}
               {
                 Object.keys(inputContentData).length === 0 ?
                   (

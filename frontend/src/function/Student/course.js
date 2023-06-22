@@ -64,8 +64,8 @@ export const getUser = async (authtoken, id, query) => {
 }
 
 // GET: /get-activity
-export const getActivity = async(authtoken, id, query) => {
-    let reqStr = id ? `/get-activity/${id}`:`/get-activity`
+export const getActivity = async (authtoken, id, query) => {
+    let reqStr = id ? `/get-activity/${id}` : `/get-activity`
     if (query) reqStr += query
     return await axios.get(process.env.REACT_APP_API + reqStr, {
         headers: {
@@ -73,3 +73,10 @@ export const getActivity = async(authtoken, id, query) => {
         }
     });
 }
+
+export const getProfile = async (authtoken, id) =>
+    await axios.get(process.env.REACT_APP_API + `/get-profile/user/${id}`, {
+        headers: {
+            authtoken,
+        }
+    });

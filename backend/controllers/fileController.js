@@ -112,33 +112,14 @@ exports.getPrivateFieldImage = async (req, res) => {
       const image_data = await allowedField[field]
         .findOne({ _id: id })
         .select("image -_id");
-      res.sendFile(
-        `private/uploads/${field}/${image_data?.image?.name}`,
-        { root: "." },
-        (err) => {
-          if (err) {
-            console.log(err);
-            hasError = true;
-          }
-        }
-      );
-      if (hasError)
-        return res
-          .status(500)
-          .json({ error: "Cannot get private field image by ID" });
+
+      res.sendFile(`private/uploads/${field}/${image_data?.image?.name}`, { root: "." },);
+
     } else if (req?.query?.file) {
       const file = req?.query?.file;
       let hasError = false;
-      res.sendFile(`private/uploads/${field}/${file}`, { root: "." }, (err) => {
-        if (err) {
-          console.log(err);
-          hasError = true;
-        }
-      });
-      if (hasError)
-        return res
-          .status(500)
-          .json({ error: "Cannot get private field image by name" });
+      res.sendFile(`private/uploads/${field}/${file}`, { root: "." });
+
     } else {
       return res.status(500).json({
         error: "Cannot get private field image (invalid query parameter)",

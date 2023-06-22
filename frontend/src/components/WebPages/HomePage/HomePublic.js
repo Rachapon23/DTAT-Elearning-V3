@@ -1,10 +1,10 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState } from "react";
 import "./content.css";
-import CardCourse from "../../../Card/CardCourse";
-import { Col, Modal, Row } from "antd";
+import CardCourse from "../../common/CourseCard/CardCourse";
+import { Col, Row, Image, Modal } from "antd";
 import { HomeContext } from './HomeContext';
-import { useNavigate } from 'react-router-dom';
-import LogAndRe from '../../../Layout/navBarHomee/LogAndRe';
+import Auth from "../Navbar/Auth";
+import { useNavigate } from "react-router-dom";
 
 const GROUP_NUMBER = 3
 const DEFAULT_DATA = {
@@ -15,9 +15,9 @@ const DEFAULT_DATA = {
 
 const arrayTemplate = new Array(6).fill(false)
 
-const HomePrivate = () => {
+const HomePublic = () => {
 
-  const { coursePrivate } = useContext(HomeContext)
+  const { coursePublic } = useContext(HomeContext)
   const navigate = useNavigate()
 
   const [loading, setLoading] = useState(false);
@@ -69,9 +69,9 @@ const HomePrivate = () => {
     return (
       <div className="row-content">
         {
-          coursePrivate.length > 0 ?
+          coursePublic.length > 0 ?
             (
-              coursePrivate.slice(index, index + GROUP_NUMBER).map((data) => (
+              coursePublic.slice(index, index + GROUP_NUMBER).map((data) => (
                 <Col span={6} >
                   <div className="col-content">
                     <CardCourse
@@ -89,9 +89,11 @@ const HomePrivate = () => {
             :
             (
               arrayTemplate.slice(index, index + GROUP_NUMBER).map(() => (
-                <div className="col-content">
-                  <CardCourse data={DEFAULT_DATA} />
-                </div>
+                <Row>
+                  <div className="col-content">
+                    <CardCourse data={DEFAULT_DATA} />
+                  </div>
+                </Row>
               ))
             )
         }
@@ -103,7 +105,7 @@ const HomePrivate = () => {
   return (
     <div className="content-course">
       <div className="title-content">
-        <p className="title-1">Private Course</p>
+        <p className="title-1">Public Course</p>
         <p className="title-2">
           It is a long established fact that a reader will be distracted by the
           readable content of a page when looking at its layout.
@@ -112,9 +114,9 @@ const HomePrivate = () => {
       <div className="">
         <div className="row-content">
           {
-            coursePrivate.length > 0 ?
+            coursePublic.length > 0 ?
               (
-                coursePrivate.map((_, index) => (
+                coursePublic.map((_, index) => (
                   renderContent(index)
                 ))
               )
@@ -145,10 +147,10 @@ const HomePrivate = () => {
         footer={[]}
         mask={false}
       >
-        <LogAndRe />
+        <Auth/>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default HomePrivate
+export default HomePublic;

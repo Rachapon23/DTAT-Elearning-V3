@@ -1,14 +1,9 @@
-import React, { useEffect, useRef, useCallback, useMemo, useState } from "react";
-import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, InfoCircleOutlined, CloseOutlined, PictureOutlined, UpOutlined, DownOutlined, PlusSquareOutlined } from '@ant-design/icons';
-import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Breadcrumb, Steps, Form, Radio, Image, Empty, Affix, Result } from 'antd';
-import NavBar from "../../../Layout/NavBar"
-import CardContent from "./CardContent";
+import React, { useState } from "react";
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Col, Row, Input, Typography, Table, Form, Radio, } from 'antd';
 import "../teach.css"
-import { createExam, getCourseWoQuiz, getExam, updateExam } from "../../../../function/Teacher/exam";
 
-const { Title, Text } = Typography;
-const { Meta } = Card;
-const { Header, Content, Footer, Sider } = Layout;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 
@@ -18,8 +13,6 @@ const ExamInfo = ({
     cousreWithOutQuiz = null,
     onSetInputInfoData = null,
 }) => {
-
-    // console.log(actionMode)
     const [form] = Form.useForm();
     const [requiredMark, setRequiredMarkType] = useState('optional');
     const onRequiredTypeChange = ({ requiredMarkValue }) => {
@@ -29,16 +22,16 @@ const ExamInfo = ({
     const editMode = actionMode === "Edit"
     const previewMode = actionMode === "Preview"
 
-    const enableExamOptions = [
-        {
-            label: "Close",
-            value: false
-        },
-        {
-            label: "Open",
-            value: true
-        },
-    ]
+    // const enableExamOptions = [
+    //     {
+    //         label: "Close",
+    //         value: false
+    //     },
+    //     {
+    //         label: "Open",
+    //         value: true
+    //     },
+    // ]
 
 
     const coursesCol = [
@@ -80,8 +73,7 @@ const ExamInfo = ({
     ]
 
     const handleInputInfoData = (e) => {
-        // console.log(e.target)
-        if(e?.target?.name) {
+        if (e?.target?.name) {
             onSetInputInfoData((inputInfoData) => ({ ...inputInfoData, [e.target.name]: e.target.value }))
         }
         else {

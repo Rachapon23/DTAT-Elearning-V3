@@ -1,16 +1,5 @@
 import React from "react";
-import {
-  Breadcrumb,
-  Button,
-  Card,
-  Col,
-  Image,
-  Row,
-  Timeline,
-  Typography,
-} from "antd";
 import { LinkOutlined } from "@ant-design/icons";
-import { Link, useNavigate, useParams } from "react-router-dom";
 
 const StudentCourse_link = ({ item }) => {
   const renderLinkContent = (item, index) => {

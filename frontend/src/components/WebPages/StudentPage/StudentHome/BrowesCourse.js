@@ -1,14 +1,12 @@
-import { Breadcrumb, Button, Card, Col, Empty, Radio, Row, Segmented, Tabs, Typography } from "antd";
+import { Card, Col, Empty, Row, Segmented } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
-import CardCourse from "../../../Card/CardCourse"
+import CardCourse from "../../../common/CourseCard/CardCourse"
 import { useLocation, useNavigate } from "react-router-dom";
 // import "./studentcourse.css";
-import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
 import { listCourse } from "../../../../function/Student/course";
 import { getPrivateFieldImage } from "../../../../function/Student/topic";
 
 const GROUP_NUMBER = 4
-const { Title } = Typography
 
 const BrowesCourse = () => {
     const location = useLocation()

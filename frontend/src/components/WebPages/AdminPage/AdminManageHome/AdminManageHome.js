@@ -57,7 +57,6 @@ const RowTable = ({ children, ...props }) => {
                 align={"middle"}
                 style={{
                   height: "70px",
-                  // backgroundColor: "aqua",
                   touchAction: 'none',
                   cursor: 'move',
                 }}
@@ -196,24 +195,14 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
       }
       if (actionMode === "Add") {
         return (
-          <>
-            <Button
-              color="primary"
-              onClick={() => {
-                console.log(coursePublic)
-              }}>
-              Debug
-            </Button>
-
-            <Button
-              color="primary"
-              onClick={() => {
-                setActionMode("Preview")
-                handleUpdateCourse()
-              }}>
-              Save
-            </Button>
-          </>
+          <Button
+            type="primary"
+            onClick={() => {
+              setActionMode("Preview")
+              handleUpdateCourse()
+            }}>
+            Save
+          </Button>
         )
       }
     }
@@ -354,8 +343,6 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
 
     }
   };
-
-  // 
 
   const columnsEdit = () => {
     switch (manage) {

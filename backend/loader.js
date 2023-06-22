@@ -235,8 +235,8 @@ exports.loadData = async () => {
             room: await Room.findOne({ name: "Technical Skill 2" }).select("_id"),
             image: {
                 original_name: "course-pic1",
-                name: "file-1684511836883-779460665.png",
-                url: `/course/file-1684511836883-779460665.png`,
+                name: "file-1686314592046-712090448.jpg",
+                url: `/course/file-1686314592046-712090448.jpg`,
             },
             video: 2,
             type: true,

@@ -1,19 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./studenthome.css";
-import { Button, Card, Image, Table, Tabs, Typography } from "antd";
-import NavBarHome from "../../../Layout/navBarHomee/NavBarHome";
+import { Button, Image, Table, Tabs } from "antd";
 import Calendar from "../StudentCalendar/Calendar";
-
-import DoExam from "../StudentExam/DoExam";
-
-import { Breadcrumb, Layout, Menu, theme } from "antd";
-import { listActivity, listCourse } from "../../../../function/Student/course";
+import { listActivity } from "../../../../function/Student/course";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getExam } from "../../../../function/Teacher/exam";
 import BrowseCourse from "./BrowesCourse"
 
-const { Text } = Typography
-const { Header, Content, Footer } = Layout;
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
 
 const StudentHomePage = () => {
@@ -22,6 +15,7 @@ const StudentHomePage = () => {
 
   const [courses, setCourses] = useState([]);
   const [selectedTab] = useState(location?.state?.tabIndex ? location.state.tabIndex : 0)
+  const [changedTabIndex, setChangedTabIndex] = useState(1)
 
   const handleNavigate = (navStr, dataStage) => {
     navigate(navStr, { state: dataStage });
@@ -40,7 +34,6 @@ const StudentHomePage = () => {
             align: "center",
             width: "20%",
             render: (data) => {
-              console.log("data: ", data)
               return (
                 <Image
                   preview={false}
@@ -64,7 +57,7 @@ const StudentHomePage = () => {
             align: "center",
             width: "10%",
             render: (data) => {
-              if(data.course.type) return "Public"
+              if (data?.course?.type) return "Public"
               return "Private"
               // console.log(data.course.type)
               // return data.course.type
@@ -104,7 +97,7 @@ const StudentHomePage = () => {
               return (
                 <Link
                   to={`/student/page/course/${data?.course?._id}`}
-                  state={{ mode: "Preview", exam_name: data?.name }}
+                  state={{ mode: "Preview", exam_name: data?.name, tabIndex: 1 }}
                 >
                   <Button onClick={null}> Course </Button>
                 </Link>
@@ -209,7 +202,7 @@ const StudentHomePage = () => {
               return (
                 <Link
                   to={`/student/page/course/${data?.course?._id}`}
-                  state={{ mode: "Preview", exam_name: data?.name }}
+                  state={{ mode: "Preview", exam_name: data?.name, tabIndex: 2 }}
                 >
                   <Button onClick={null}> Course </Button>
                 </Link>
@@ -242,11 +235,6 @@ const StudentHomePage = () => {
         return null;
     }
   };
-
-  const handleChangeTab = (e) => {
-    console.log("this -> ", e)
-  }
-
 
   const tabContent = (tab) => {
     switch (tab) {
@@ -339,7 +327,6 @@ const StudentHomePage = () => {
         (res) => {
           const data = res.data.data;
           enable = data
-          console.log("enable: ", data);
         }
       )
       .catch(
@@ -360,7 +347,6 @@ const StudentHomePage = () => {
         (res) => {
           const data = res.data.data;
           setCourses(data);
-          console.log(data);
         }
       )
       .catch(
@@ -374,12 +360,16 @@ const StudentHomePage = () => {
     fetchActivity();
   }, []);
 
+  const updateTabIndex = (index) => {
+    setChangedTabIndex(index)
+  }
+
   return (
     <div className="bg-st-course">
-      <NavBarHome />
       <div className="content-home">
         <Tabs
           defaultActiveKey={`${selectedTab}`}
+          onChange={updateTabIndex}
           items={tabList}
         />
       </div>

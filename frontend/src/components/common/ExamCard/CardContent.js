@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react"
 import { useEffect, useRef } from "react"
-import { PictureOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined, UploadOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image, Badge, Space, Typography, Alert } from 'antd';
+import { PictureOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image, Badge, Typography } from 'antd';
 import { Link } from "react-router-dom";
-import { createFile, getPrivateFieldImage, updateExam } from "../../function/Teacher/exam";
+import { createFile, getPrivateFieldImage, updateExam } from "../../../function/Teacher/exam";
 
 const { Text } = Typography
 
@@ -152,7 +152,7 @@ const CardContent = ({
         await updateExam(sessionStorage.getItem("token"), examID, examData)
             .then(
                 (res) => {
-                    console.log("res update: ",res)
+                    // console.log("res update: ",res)
                     setAddedImage(true)
                 }
             )
