@@ -40,14 +40,15 @@ const StudentHomePage = () => {
             align: "center",
             width: "20%",
             render: (data) => {
+              console.log("data: ", data)
               return (
                 <Image
                   preview={false}
                   width={150}
                   onError={handleUnloadImage}
                   src={
-                    data?.course?.image?.url
-                      ? process.env.REACT_APP_IMG + data?.course?.image?.url
+                    data?.course?.image?.name
+                      ? `${process.env.REACT_APP_IMG}/course/${data?.course?.image?.name}`
                       : DEFAULT_IMAGE
                   }
                 />

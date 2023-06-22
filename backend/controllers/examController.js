@@ -104,14 +104,14 @@ exports.getExam = async (req, res) => {
         // console.log(user)
 
         console.log(check)
-        if(!check) return res.json({ data: exam })
-        switch(check) {
+        if (!check) return res.json({ data: exam })
+        switch (check) {
             case "enable":
                 console.log("this exam is ", exam.enable)
-                if(!exam.enable) return res.status(403).json({ error: "Exam not avaliable"});
+                if (!exam.enable) return res.status(403).json({ error: "Exam not avaliable" });
                 return res.json({ data: exam })
             default:
-                return res.status(400).json({ error: "Unkonw check condition"});
+                return res.status(400).json({ error: "Unkonw check condition" });
         }
 
 
@@ -166,7 +166,20 @@ exports.updateExam = async (req, res) => {
         const { user_id } = req?.user;
 
         console.log("-----------------------------------------------------------------------")
-        console.log(head,body)
+        console.log(head, body, body.length)
+        for (let i = 0; i < body.length && Array.isArray(body); i++) {
+            // console.log(body[i])
+            if (body[i]?.image?.delete) {
+                fs.unlink(`./private/uploads/exam/${body[i]?.image?.name}`,
+                    (err) => {
+                        if (err) {
+                            console.log(err)
+                        }
+                    }
+                )
+            }
+        }
+
 
         const exam_data = await Exam.findOne({ _id: req.params.id }).select("quiz -_id")
         if (exam_data) {

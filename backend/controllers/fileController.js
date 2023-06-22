@@ -25,6 +25,21 @@ exports.createPrivateFile = async (req, res) => {
         // upload_type: req?.body?.upload_type,
       };
       res.json({ data: payload });
+
+      if (!req?.body?.exam_id) return
+      if (!req?.body?.quiz_index) return
+
+      const exam = await Exam.findOne({ _id: req.body.exam_id }).populate("quiz", "image").select("quiz")
+      if (!exam.quiz[req.body.quiz_index]?.image) return
+
+      fs.unlink(`./private/uploads/exam/${exam.quiz[req.body.quiz_index]?.image?.name}`,
+        (err) => {
+          if (err) {
+            console.log(err)
+          }
+        }
+      )
+
     } else if (field === "course") {
       const image = {
         name: req?.body?.name,
@@ -138,17 +153,32 @@ exports.getPrivateFieldImage = async (req, res) => {
 };
 
 // POST: /create-file/public/:field
-exports.createPublicFile = (req, res) => {
+exports.createPublicFile = async (req, res) => {
   try {
-    // this API take action like acknowledge from server thst file has been created
-    // real action of save file to backend are in middleware
-    // console.log(req?.body)
-    const payload = {
-      name: req?.body?.name,
-      original_name: req?.body?.original_name,
-      // upload_type: req?.body?.upload_type,
-    };
-    res.json({ data: payload });
+
+    const field = req?.params?.field;
+    if (field === "course") {
+      const image = {
+        name: req?.body?.name,
+        original_name: req?.body?.original_name,
+      };
+      const course = await Course.findOneAndUpdate(
+        { _id: req.body.course_id },
+        { image: image }
+      );
+      res.json(course);
+    }
+    else {
+      // this API take action like acknowledge from server thst file has been created
+      // real action of save file to backend are in middleware
+      // console.log(req?.body)
+      const payload = {
+        name: req?.body?.name,
+        original_name: req?.body?.original_name,
+        // upload_type: req?.body?.upload_type,
+      };
+      res.json({ data: payload });
+    }
   } catch (err) {
     console.log(err);
     res.status(500).send({ error: "Server Error!!! on create file" });

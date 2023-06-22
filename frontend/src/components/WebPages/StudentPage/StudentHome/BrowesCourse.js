@@ -80,14 +80,16 @@ const BrowesCourse = () => {
                 {
                     fileterCourse(courses).slice(index, index + GROUP_NUMBER).map((data) => (
                         <Col span={6} style={{ padding: "1%", }}>
+                            {console.log("data: ", data)}
                             <CardCourse
                                 onClick={(e) => handleClickCourse(e, data)}
                                 data={{
                                     _id: data?._id,
                                     name: data?.name,
                                     detail: data?.detail,
-                                    image: data?.image?.url
-                                }} />
+                                    image: data?.image?.name
+                                }}
+                            />
                         </Col>
                     ))
                 }
@@ -115,31 +117,31 @@ const BrowesCourse = () => {
 
     const handleFetchImage = async (imageName) => {
         console.log("course: ", imageName)
-    
+
         const image_name = imageName
         if (!image_name) return
-    
+
         const field = "course"
         const param = "file"
-    
+
         let response
         await getPrivateFieldImage(sessionStorage.getItem("token"), field, param, image_name)
-          .then(
-            (res) => {
-              response = res
-            }
-          )
-          .catch(
-            (err) => {
-              console.log(err)
-            }
-          )
-    
-    
+            .then(
+                (res) => {
+                    response = res
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+
+
         const objectUrl = URL.createObjectURL(response.data);
         setImageData(objectUrl)
-    
-      }
+
+    }
 
     useEffect(() => {
         fetchCourse()

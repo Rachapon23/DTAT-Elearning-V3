@@ -72,16 +72,18 @@ const HomePrivate = () => {
           coursePrivate.length > 0 ?
             (
               coursePrivate.slice(index, index + GROUP_NUMBER).map((data) => (
-                <div className="col-content">
-                  <CardCourse
-                    onClick={(e) => handleClickCourse(e, data)}
-                    data={{
-                      name: data?.name,
-                      detail: data?.detail,
-                      image: data?.image?.url
-                    }}
-                  />
-                </div>
+                <Col span={6} >
+                  <div className="col-content">
+                    <CardCourse
+                      onClick={(e) => handleClickCourse(e, data)}
+                      data={{
+                        name: data?.name,
+                        detail: data?.detail,
+                        image: data?.image?.name
+                      }}
+                    />
+                  </div>
+                </Col>
               ))
             )
             :

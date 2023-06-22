@@ -25,7 +25,7 @@ const HomePublic = () => {
 
   const handleNavigate = (navStr, dataStage) => {
     navigate(navStr, { state: dataStage })
-}
+  }
 
   const checkUserLogin = () => {
     if (
@@ -46,7 +46,7 @@ const HomePublic = () => {
     e.target.id = data?._id
 
     if (!e?.target?.id) return
-    if(!checkUserLogin()) return
+    if (!checkUserLogin()) return
 
     handleNavigate(`/student/page/register-course/${e?.target?.id}`)
   }
@@ -72,24 +72,28 @@ const HomePublic = () => {
           coursePublic.length > 0 ?
             (
               coursePublic.slice(index, index + GROUP_NUMBER).map((data) => (
-                <div className="col-content">
-                  <CardCourse
-                    onClick={(e) => handleClickCourse(e, data)}
-                    data={{
-                      name: data?.name,
-                      detail: data?.detail,
-                      image: data?.image?.url
-                    }}
-                  />
-                </div>
+                <Col span={6} >
+                  <div className="col-content">
+                    <CardCourse
+                      onClick={(e) => handleClickCourse(e, data)}
+                      data={{
+                        name: data?.name,
+                        detail: data?.detail,
+                        image: data?.image?.name
+                      }}
+                    />
+                  </div>
+                </Col>
               ))
             )
             :
             (
               arrayTemplate.slice(index, index + GROUP_NUMBER).map(() => (
-                <div className="col-content">
-                  <CardCourse data={DEFAULT_DATA} />
-                </div>
+                <Row>
+                  <div className="col-content">
+                    <CardCourse data={DEFAULT_DATA} />
+                  </div>
+                </Row>
               ))
             )
         }
