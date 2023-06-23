@@ -18,31 +18,38 @@ import {
   PlusOutlined,
   LoadingOutlined,
   DeleteOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import { debounce } from "lodash";
+
+//crop
+import ImgCrop from "antd-img-crop";
 
 //course Context
 import { CourseContext } from "./CourseContext";
 // fucntion : POST
-import { createFile, createFilePublic } from "../../../../../function/Teacher/course_update";
+import {
+  createFile,
+  createFilePublic,
+} from "../../../../../function/Teacher/course_update";
 // fucntion : DELETE
-import { deleteFileCourse, getPrivateFieldImage } from "../../../../../function/Teacher/course";
+import {
+  deleteFileCourse,
+  getPrivateFieldImage,
+} from "../../../../../function/Teacher/course";
 // function Update : PUT
-import { updateCourseStatus, updateCourseInfo } from "../../../../../function/Teacher/course_update";
+import {
+  updateCourseStatus,
+  updateCourseInfo,
+} from "../../../../../function/Teacher/course_update";
 
 const { TextArea } = Input;
 const Course_info = () => {
-  const {
-    courseData,
-    course_id,
-    loadDataCourse,
-  } = useContext(CourseContext);
+  const { courseData, course_id, loadDataCourse } = useContext(CourseContext);
   const [selectedImage, setSelectedImage] = useState(null);
   const createFileField = "course";
   const [loading, setLoading] = useState(false);
-  const [imageData, setImageData] = useState(null)
-
-  console.log("courseData: ", courseData)
+  const [imageData, setImageData] = useState(null);
 
   const uploadButton = (
     <div>
@@ -104,7 +111,11 @@ const Course_info = () => {
     formData.append("original_name", image?.file?.name);
     formData.append("course_id", course_id);
 
-    await createFilePublic(sessionStorage.getItem("token"), formData, createFileField)
+    await createFilePublic(
+      sessionStorage.getItem("token"),
+      formData,
+      createFileField
+    )
       .then((res) => {
         loadDataCourse();
       })
@@ -124,40 +135,49 @@ const Course_info = () => {
   };
 
   const handleFetchImage = useCallback(async () => {
+    const image_name = courseData?.image?.name;
+    if (!image_name) return;
 
-    const image_name = courseData?.image?.name
-    if (!image_name) return
+    const createFileField = "course";
+    const createFileParam = "file";
 
-    const createFileField = "course"
-    const createFileParam = "file"
-
-    let response
-    await getPrivateFieldImage(sessionStorage.getItem("token"), createFileField, createFileParam, image_name)
-      .then(
-        (res) => {
-          response = res
-        }
-      )
-      .catch(
-        (err) => {
-          console.log(err)
-        }
-      )
-
+    let response;
+    await getPrivateFieldImage(
+      sessionStorage.getItem("token"),
+      createFileField,
+      createFileParam,
+      image_name
+    )
+      .then((res) => {
+        response = res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     const objectUrl = URL.createObjectURL(response.data);
     // console.log(objectUrl)
-    setImageData(objectUrl)
-
-  }, [courseData?.image?.name])
+    setImageData(objectUrl);
+  }, [courseData?.image?.name]);
 
   const debounceOnChange = debounce(handleChangeInfo, 500);
 
-  // useEffect(() => {
-    // if (!imageData) {
-    //   handleFetchImage()
-    // }
-  // }, [handleFetchImage, imageData])
+  const renderButton = () => {
+    return (
+      <ImgCrop showReset aspect={2.63 / 1}>
+        <Upload
+          accept="image/*"
+          showUploadList={false}
+          customRequest={handleAddImage}
+          name="avatar"
+          listType="picture-card"
+          className="avatar-uploader"
+        >
+          {uploadButton}
+        </Upload>
+      </ImgCrop>
+    );
+  };
 
   return (
     <Form
@@ -184,15 +204,16 @@ const Course_info = () => {
             <Row justify={"center"} align={"middle"}>
               <Col>
                 {courseData?.image?.name === null ? (
-                  <Upload
-                    name="avatar"
-                    listType="picture-card"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    customRequest={handleAddImage}
-                  >
-                    {uploadButton}
-                  </Upload>
+                  // <Upload
+                  //   name="avatar"
+                  //   listType="picture-card"
+                  //   className="avatar-uploader"
+                  //   showUploadList={false}
+                  //   customRequest={handleAddImage}
+                  // >
+                  //   {uploadButton}
+                  // </Upload>
+                  <>{renderButton()}</>
                 ) : (
                   <Badge
                     count={
