@@ -1,21 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Space,
-  Col,
-  Row,
-  Typography,
-  Select,
-} from "antd";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Form, } from "antd";
 import Form_login from "./Form_login";
 import Form_register from "./Form_register";
 
-const { Text, Link } = Typography;
 const Auth = () => {
   // const navigate = useNavigate()
 

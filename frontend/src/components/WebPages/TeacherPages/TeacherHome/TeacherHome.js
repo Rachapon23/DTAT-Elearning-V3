@@ -25,22 +25,7 @@ const TeacherHome = () => {
   const [actionMode, setActionMode] = useState("Preview")
   const [dataMode, setDataMode] = useState("Overview")
   const [selectedCourseIndex, setSelectedCourseIndex] = useState(-1)
-  // Variable-End -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-  // Data-Mockup-Start
-  const createCourseProcess = (courseAmount) => {
-    let array = []
-    for (let i = 1; i <= courseAmount; i++) {
-      array.push(`Course ${i}`)
-    }
-    return array
-  }
-  // Data-Mockup-End ----------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-  // Data-Page-Start
   const config = {
     appendPadding: 10,
     data: graphData,//[{name: "HI",maximum: 10 },{name: "HIT",maximum: 10 }],//,
@@ -59,11 +44,8 @@ const TeacherHome = () => {
       position: 'left'
     }
   };
-  // Data-Page-End ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-  // Function-Start
   const onChange = (page) => {
     setCurrent(page);
   };
@@ -77,11 +59,7 @@ const TeacherHome = () => {
     courseAmount = array.length
     return array
   }
-  // Function-End -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-  // Sub-Component-Page-Start
   const courseProgressCard = (course, index, last_index) => {
     return (
       <div>
@@ -323,13 +301,12 @@ const TeacherHome = () => {
                         Target
                       </Col>
                       <Col>
-                        {console.log("pie: ", graphData.map((data) => data.current))}
                         {graphData ? graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0) : 0} / {profile.target}
                       </Col>
                     </Row>
                     <Row justify={"space-between"}>
                       <Col flex={"auto"}>
-                        <Tooltip title={`600 / ${profile.target}`}>
+                        <Tooltip title={`${graphData ? graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0) : 0} / ${profile.target}`}>
                           {/* graphData.map((data) => data.maximum).reduce((prev, curr) => prev + curr, 0) */}
                           <Progress percent={Math.round((graphData ? graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0) : 0) * 100 / profile.target * 100) / 100} />
                         </Tooltip>
@@ -348,7 +325,7 @@ const TeacherHome = () => {
                     </Row>
                     <Row justify={"space-between"}>
                       <Col flex={"auto"}>
-                        <Tooltip title={`600 / ${profile.target}`}>
+                        <Tooltip title={`${graphData ? graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0) : 0} / ${graphData ? graphData.map((data) => data.maximum).reduce((prev, curr) => prev + curr, 0) : 0}`}>
                           <Progress percent={Math.round(graphData ? graphData.map((data) => data.current).reduce((prev, curr) => prev + curr, 0) * 100 / graphData.map((data) => data.maximum).reduce((prev, curr) => prev + curr, 0) * 100 : 0) / 100} />
                         </Tooltip>
                       </Col>
@@ -457,11 +434,8 @@ const TeacherHome = () => {
       </Row>
     )
   }
-  // Sub-Component-Page-End ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-  // Page-Conttoller-Start
   const ProgressSumPage = [
     {
       key: '1',
@@ -474,13 +448,10 @@ const TeacherHome = () => {
       children: detailedProgress(),
     },
   ];
-  // Page-Conttoller-End ------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 
   return (
     <Layout className="layout-content-card">
-      {/* <NavBar page={"logo--------------"} /> */}
       <Row>
         {/* <Col sm={2} /> */}
         <Col flex="auto">

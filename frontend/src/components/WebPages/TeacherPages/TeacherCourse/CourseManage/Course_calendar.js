@@ -21,13 +21,12 @@ import { updateCalendar } from "../../../../../function/Teacher/calendar";
 import "react-color-palette/lib/css/styles.css";
 
 const Course_calendar = () => {
-  const { courseData,loadDataCourse, course_id,loadCalendar,
-    even } =
-    useContext(CourseContext);
+  const { courseData, loadDataCourse, course_id, loadCalendar, even } = useContext(CourseContext);
+  
 
   const handleSelect = (info) => {
-    if (courseData.calendar === null) {
-      createCalendar(sessionStorage.getItem("token"), course_id,{
+    if (courseData?.calendar === null || courseData?.calendar === undefined) {
+      createCalendar(sessionStorage.getItem("token"), course_id, {
         start: info.startStr,
         end: info.endStr,
         color: "#0288D1",
@@ -42,7 +41,7 @@ const Course_calendar = () => {
           alert(err.response.data.error);
         });
     } else {
-      updateCalendar(sessionStorage.getItem("token"), courseData.calendar._id,{
+      updateCalendar(sessionStorage.getItem("token"), courseData.calendar._id, {
         start: info.startStr,
         end: info.endStr,
         color: "#0288D1",

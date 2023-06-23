@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
-import { getProfile, listCourseGraphData } from "../../../../function/Teacher/home";
-import { getCourse, listCourse } from "../../../../function/Teacher/course";
+import { listCourseGraphData } from "../../../../function/Teacher/home";
+import { listCourse } from "../../../../function/Teacher/course";
 
 export const TeacherCourseContext = createContext();
 
@@ -15,7 +15,6 @@ export const TeacherCourseProvider = ({ children }) => {
                 (res) => {
                     const data = res.data.data
                     setCousrses(data)
-                    console.log("eva: ",data)
                 }
             )
             .catch(

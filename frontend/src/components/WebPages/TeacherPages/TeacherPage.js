@@ -1,6 +1,4 @@
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
   HomeOutlined,
   ReadOutlined,
   ScheduleOutlined,
@@ -10,24 +8,19 @@ import {
   Avatar,
   Col,
   Divider,
-  Card,
   Layout,
   Menu,
   Popover,
   Row,
   Typography,
-  theme,
 } from "antd";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./teach.css";
 import { useParams, useNavigate } from "react-router-dom";
-
 import Courses from "./TeacherCourse/Courses";
-// import CourseCreate from "./TeacherCourse/CourseCreate"
 import Exames from "./TeacherExam/Exams";
 import ExamCreate from "./TeacherExam/ExamCreate";
 import TeacherHome from "./TeacherHome/TeacherHome";
-
 import { TeacherHomeProvider } from "./TeacherHome/TeacherHomeContext";
 import CourseEvaluate from "./TeacherCourse/CourseEvaluate/CourseEvaluate";
 import { TeacherCourseProvider } from "./TeacherCourse/TeacherCourseContext";
@@ -38,14 +31,11 @@ import Calendar from "./TeacherCalendar/Calendar";
 import Navbar from "../Navbar/Navbar";
 import { NavbarProvider } from "../Navbar/NavbarContext";
 
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 const { Title, Text } = Typography;
 
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
 
   const onClick = (e) => {
     console.log("click ", e);
@@ -103,7 +93,7 @@ const App = () => {
                 <Title level={5}>
                   {sessionStorage.getItem("role")
                     ? sessionStorage.getItem("role").charAt(0).toUpperCase() +
-                      sessionStorage.getItem("role").slice(1)
+                    sessionStorage.getItem("role").slice(1)
                     : null}
                 </Title>
               </Row>

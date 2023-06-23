@@ -1,27 +1,22 @@
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
   HomeOutlined,
   ReadOutlined,
   ScheduleOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, theme } from "antd";
-import React, { useState, useEffect } from "react";
-
+import { Layout, theme } from "antd";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import StudentHomePage from "./StudentHome/StudentHomePage";
 import DoExam from "./StudentExam/DoExam";
-import StudentCourse from "./StudentCourse/StudentCourse";
-import BrowesCourse from "./StudentCourse/BrowesCourse";
+import StudentCourse from "./StudentCourse/StudentCourse"
 import RegisterCourse from "./StudentCourse/RegisterCourse";
-import { StudentProvider } from "./StudentCourse/StudentCourseContext";
 
 // for haeder or navbar
 import Navbar from "../Navbar/Navbar";
 import { NavbarProvider } from "../Navbar/NavbarContext";
 
-const { Header, Sider, Content } = Layout;
+const { Content } = Layout;
 
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -71,19 +66,16 @@ const App = () => {
 
   const renderContent = React.useCallback(() => {
     switch (params) {
-      case "home":
-        return <StudentHomePage />;
-      case "exam":
-        return <DoExam />;
-      case "course":
-        return <StudentCourse />;
-      case "browes-course":
-        return;
-        <StudentProvider>
-          <BrowesCourse />;
-        </StudentProvider>;
-      case "register-course":
-        return <RegisterCourse />;
+      case 'home':
+        return <StudentHomePage />
+      case 'exam':
+        return <DoExam />
+      case 'course':
+        return <StudentCourse />
+      case 'register-course':
+        return (
+          <RegisterCourse />
+        )
       // case 'preview-exam':
       //   return <ExamCreate mode={"Preview"}/>;
       case "calendar":

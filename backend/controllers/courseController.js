@@ -7,6 +7,8 @@ const User = require("../models/user");
 const Topic = require("../models/topic");
 const Activity = require("../models/activity");
 const Condition = require("../models/condition");
+const Exam = require("../models/exam")
+const Quiz = require("../models/quiz")
 
 const { validateQuery } = require("./util");
 
@@ -58,6 +60,9 @@ exports.createCourse = async (req, res) => {
     res.json({ data: course });
   } catch (err) {
     console.log("fail to create the course : ", err);
+    if(err?.code === 11000) {
+      return res.status(400).json({ error: "Course name cannot be empty, change name before create a new one" });
+    }
     res.status(500).json({ error: "Unexpected error on create course" });
   }
 };
@@ -66,7 +71,7 @@ exports.createCourse = async (req, res) => {
 exports.getCourse = async (req, res) => {
   const allowField = ["calendar"]
   const allowedSearch = ["_id"]
-  const allowedProps = ["condition", "plant", "plant maximum", "teacher", "firstname lastname -_id", "firstname lastname"]
+  const allowedProps = ["condition", "plant", "plant maximum current", "teacher", "firstname lastname -_id", "firstname lastname _id"]
   const allowedPropsField = ["path", "populate", "select"]
   const allowedSelect = ["firstname", "lastname"]
   const allowedFetch = ["name", "detail", "image", "condition", "teacher"]
@@ -210,24 +215,38 @@ exports.removeCourse = async (req, res) => {
   try {
     const courses = await Course.findOneAndDelete({ _id: req.params.id });
     await Condition.deleteMany({ course: req.params.id });
-    fs.unlink(`./private/uploads/course/${courses.image.name}`, (err) => {
+    fs.unlink(`./private/uploads/course/${courses?.image?.name}`, (err) => {
       if (err) {
         console.log(err);
-        error_deleteFile = true;
       }
     });
-    await Calendar.findOneAndDelete({_id:courses.calendar})
+    await Calendar.findOneAndDelete({ _id: courses.calendar })
     const topic = await Topic.find({ course: req.params.id });
-    await topic.forEach(async (item, index) => {
-      await item.file.forEach(async (ttem, ddex) => {
+    await topic.forEach(async (item) => {
+      await item.file.forEach(async (ttem) => {
         await fs.unlink(`./private/uploads/topic/${ttem.name}`, (err) => {
           if (err) {
             console.log(err);
-            error_deleteFile = true;
           }
         });
       })
+      await Topic.findOneAndDelete({ _id: item._id })
     })
+
+    const exam = await Exam.findOneAndDelete({ _id: courses.exam }).populate("quiz", "_id image")
+    if (Array.isArray(exam?.quiz)) {
+      exam.quiz.forEach(async (item) => {
+        if (item.image) {
+          fs.unlink(`./private/uploads/exam/${item.image.name}`, (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
+        }
+        await Quiz.findOneAndDelete({ _id: item._id })
+      })
+    }
+
     res.json("{ data: courses }");
   } catch (err) {
     console.log(err);
@@ -373,7 +392,7 @@ exports.listCourseWoQuiz = async (req, res) => {
   try {
     switch (req?.user?.role) {
       case "admin":
-        console.log(await Course.find({}));
+        console.log(await Course.find({ exam: null }));
         return res.json({ data: await Course.find({ exam: null }) });
       case "teacher":
         return res.json({
@@ -435,11 +454,11 @@ exports.listCourseGraphData = async (req, res) => {
                 plant: item.condition?.map((citem) => citem.plant.name),
                 plant_amount: item.condition?.map((amount) => amount.maximum),
                 plant_current: item.condition?.map((citem) => item.activity.map((aitem) => {
-                  if (citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1)) {
-                    console.log("match: ", citem.plant.name, aitem.user.plant.name)
-                    console.log("result: ", aitem.result)
-                    console.log("logic: ", citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0)
-                  }
+                  // if (citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1)) {
+                  //   console.log("match: ", citem.plant.name, aitem.user.plant.name)
+                  //   console.log("result: ", aitem.result)
+                  //   console.log("logic: ", citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0)
+                  // }
                   return citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0
                 }).reduce((prev, curr) => prev + curr, 0)),
                 current: item.activity.map((aitem) => aitem.result === 2 || aitem.result === 1 ? 1 : 0).reduce((prev, curr) => prev + curr, 0),
@@ -447,7 +466,7 @@ exports.listCourseGraphData = async (req, res) => {
               }
             )
           )
-        console.log(payload)
+        // console.log(payload)
         return res.json({ data: payload });
       case "teacher":
         const searchedCourseTeacher = await Course.find({ teacher: user_id })
@@ -503,5 +522,3 @@ exports.listCourseGraphData = async (req, res) => {
     res.status(500).json({ error: "Unexpected error on list courses" });
   }
 };
-
-// ==============================================================================================================

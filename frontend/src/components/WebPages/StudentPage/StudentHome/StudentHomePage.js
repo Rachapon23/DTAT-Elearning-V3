@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
 import "./studenthome.css";
-import { Button, Card, Image, Table, Tabs, Typography } from "antd";
+import { Button, Image, Table, Tabs } from "antd";
 import Calendar from "../StudentCalendar/Calendar";
-
-import DoExam from "../StudentExam/DoExam";
-
-import { Breadcrumb, Layout, Menu, theme } from "antd";
-import { listActivity, listCourse } from "../../../../function/Student/course";
-import { Link, useNavigate } from "react-router-dom";
+import { listActivity } from "../../../../function/Student/course";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getExam } from "../../../../function/Teacher/exam";
+import BrowseCourse from "./BrowesCourse"
 
-const { Text } = Typography
-const { Header, Content, Footer } = Layout;
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
 
 const StudentHomePage = () => {
-  const [courses, setCourses] = useState([]);
+  const location = useLocation()
   const navigate = useNavigate();
+
+  const [courses, setCourses] = useState([]);
+  const [selectedTab] = useState(location?.state?.tabIndex ? location.state.tabIndex : 0)
+  const [changedTabIndex, setChangedTabIndex] = useState(1)
 
   const handleNavigate = (navStr, dataStage) => {
     navigate(navStr, { state: dataStage });
@@ -41,8 +40,8 @@ const StudentHomePage = () => {
                   width={150}
                   onError={handleUnloadImage}
                   src={
-                    data?.course?.image?.url
-                      ? process.env.REACT_APP_IMG + data?.course?.image?.url
+                    data?.course?.image?.name
+                      ? `${process.env.REACT_APP_IMG}/course/${data?.course?.image?.name}`
                       : DEFAULT_IMAGE
                   }
                 />
@@ -50,29 +49,41 @@ const StudentHomePage = () => {
             },
           },
           {
-            title: `course`,
+            title: `Course`,
             render: (data) => data?.course?.name,
           },
-
           {
-            title: `score`,
+            title: `Type`,
             align: "center",
+            width: "10%",
             render: (data) => {
-              if (!data?.score_value && data?.result === 0)
-                return "waiting for test";
-              if (!data?.score_value && data?.result !== 0)
+              if (data?.course?.type) return "Public"
+              return "Private"
+              // console.log(data.course.type)
+              // return data.course.type
+            },
+          },
+          {
+            title: `Score`,
+            align: "center",
+            width: "10%",
+            render: (data) => {
+              if (!Number.isInteger(data?.score_value) && data?.result === 0)
+                return "Waiting for test";
+              if (!Number.isInteger(data?.score_value) && data?.result !== 0)
                 return "No examination";
               return data?.score_value;
             },
           },
 
           {
-            title: `max score`,
+            title: `Max Score`,
             align: "center",
+            width: "10%",
             render: (data) => {
-              if (!data?.score_max && data?.result === 0)
-                return "waiting for test";
-              if (!data?.score_max && data?.result !== 0)
+              if (!Number.isInteger(data?.score_max) && data?.result === 0)
+                return "Waiting for test";
+              if (!Number.isInteger(data?.score_max) && data?.result !== 0)
                 return "No examination";
               return data?.score_max;
             },
@@ -86,7 +97,7 @@ const StudentHomePage = () => {
               return (
                 <Link
                   to={`/student/page/course/${data?.course?._id}`}
-                  state={{ mode: "Preview", exam_name: data?.name }}
+                  state={{ mode: "Preview", exam_name: data?.name, tabIndex: 1 }}
                 >
                   <Button onClick={null}> Course </Button>
                 </Link>
@@ -98,14 +109,13 @@ const StudentHomePage = () => {
             align: "center",
             width: "10%",
             render: (data) => {
-
               //-----------------------------------------------
               const index = courses.indexOf(data)
               let enable = false
               if (courses[index]?.course?.exam) {
                 enable = getExamStatus(courses.indexOf(data))
               }
-              enable = enable || data?.course?.exam
+              enable = (enable || data?.course?.exam) && !data.completed
               //-----------------------------------------------
 
               return (
@@ -145,16 +155,16 @@ const StudentHomePage = () => {
             },
           },
           {
-            title: `course`,
+            title: `Course`,
             render: (data) => data?.course?.name,
           },
 
           {
-            title: `score`,
+            title: `Score`,
             align: "center",
             render: (data) => {
               if (!data?.score_value && data?.result === 0)
-                return "waiting for test";
+                return "Waiting for test";
               if (!data?.score_value && data?.result !== 0)
                 return "No examination";
               return data?.score_value;
@@ -162,11 +172,11 @@ const StudentHomePage = () => {
           },
 
           {
-            title: `max score`,
+            title: `Max Score`,
             align: "center",
             render: (data) => {
               if (!data?.score_max && data?.result === 0)
-                return "waiting for test";
+                return "Waiting for test";
               if (!data?.score_max && data?.result !== 0)
                 return "No examination";
               return data?.score_max;
@@ -192,7 +202,7 @@ const StudentHomePage = () => {
               return (
                 <Link
                   to={`/student/page/course/${data?.course?._id}`}
-                  state={{ mode: "Preview", exam_name: data?.name }}
+                  state={{ mode: "Preview", exam_name: data?.name, tabIndex: 2 }}
                 >
                   <Button onClick={null}> Course </Button>
                 </Link>
@@ -226,14 +236,10 @@ const StudentHomePage = () => {
     }
   };
 
-
   const tabContent = (tab) => {
     switch (tab) {
       case 0: return (
         <div className="">
-          {/* <Button onClick={() => handleNavigate(`/student/page/browes-course`)}>
-            Browes Course
-          </Button> */}
           <Table
             columns={columns("Course")}
             dataSource={courses.filter((item) => item.result === 0)}
@@ -264,6 +270,11 @@ const StudentHomePage = () => {
       case 2: return (
         <div className="">
           <Calendar />
+        </div>
+      )
+      case 3: return (
+        <div className="">
+          <BrowseCourse />
         </div>
       )
       default: return null
@@ -298,6 +309,15 @@ const StudentHomePage = () => {
       ),
       children: tabContent(2),
     },
+    {
+      key: '4',
+      label: (
+        <a htmlFor="" className="label-home-st">
+          Browse Courses
+        </a>
+      ),
+      children: tabContent(3),
+    }
   ]
 
   const getExamStatus = async (index) => {
@@ -307,7 +327,6 @@ const StudentHomePage = () => {
         (res) => {
           const data = res.data.data;
           enable = data
-          console.log("enable: ", data);
         }
       )
       .catch(
@@ -322,13 +341,12 @@ const StudentHomePage = () => {
     // search=user:${sessionStorage.getItem("user_id")}&
     // do not forget to add pops allowed field in activity backend
     await listActivity(
-      sessionStorage.getItem("token"), `?search=user:${sessionStorage.getItem("user_id")}&fetch=-ans,-__v&pops=path:course$select:name exam image`
+      sessionStorage.getItem("token"), `?search=user:${sessionStorage.getItem("user_id")}&fetch=-ans,-__v&pops=path:course$select:name exam image type completed`
     )
       .then(
         (res) => {
           const data = res.data.data;
           setCourses(data);
-          console.log(data);
         }
       )
       .catch(
@@ -342,11 +360,16 @@ const StudentHomePage = () => {
     fetchActivity();
   }, []);
 
+  const updateTabIndex = (index) => {
+    setChangedTabIndex(index)
+  }
+
   return (
     <div className="bg-st-course">
       <div className="content-home">
         <Tabs
-          defaultActiveKey="0"
+          defaultActiveKey={`${selectedTab}`}
+          onChange={updateTabIndex}
           items={tabList}
         />
       </div>

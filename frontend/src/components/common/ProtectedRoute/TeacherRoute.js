@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Outlet, Navigate, useParams, useLocation } from "react-router-dom";
-import { checkRole } from "../../function/auth";
-// import { routeTeacher } from "../function/funcroute";
+import { Outlet, Navigate, } from "react-router-dom";
+import { checkRole } from "../../../function/auth";
 
 const TeacherRoute = () => {
     const [status, setStatus] = useState(null);

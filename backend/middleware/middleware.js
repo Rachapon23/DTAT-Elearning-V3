@@ -78,7 +78,6 @@ const storagePublic = Multer.diskStorage({
     destination: (req, file, cb) => {
 
         if (!fs.existsSync("./public/uploads")) {
-            console.log("LLSLSLSLSLSLSLLSLS")
             fs.mkdirSync("./public/uploads", { recursive: true })
         }
         if (req?.params?.field && allowedField.includes(req?.params?.field)) {
@@ -96,6 +95,7 @@ const storagePublic = Multer.diskStorage({
         const fileExtension = splitedFileName[splitedFileName.length - 1]
         req.body["name"] = `${file.fieldname}-${uniqueStr}.${fileExtension}`
         req.body["upload_type"] = "public";
+        req.body["field"] = `${req.params.field}`
         cb(null, `${file.fieldname}-${uniqueStr}.${fileExtension}`)
 
     }

@@ -1,14 +1,13 @@
 import React, { useEffect } from "react";
-import { LaptopOutlined, NotificationOutlined, UserOutlined, SearchOutlined, BarsOutlined, AppstoreOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Card, Col, Layout, Menu, Row, theme, Avatar, Divider, Tooltip, Progress, Breadcrumb, Tabs, Button, Pagination, Input, Typography, Table, Segmented, Badge, Alert, Switch } from 'antd';
-// import NavBar from "../../../Layout/NavBar"
+import { BarsOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Col, Layout, Row, Breadcrumb, Button, Typography, Table, Segmented, Alert, Switch } from 'antd';
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import "../teach.css"
 import { getCourseCount, listExam, removeExam, updateExamEnable } from "../../../../function/Teacher/exam";
+import { Link } from "react-router-dom";
+
 const { Title } = Typography;
 const { Meta } = Card;
-const { Header, Content, Footer, Sider } = Layout;
 
 const Exams = () => {
 

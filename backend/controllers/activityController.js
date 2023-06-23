@@ -39,7 +39,7 @@ exports.createActivity = async (req, res) => {
         if (searchedCondition.current + 1 > searchedCondition.maximum) return res.status(500).json({ error: "Student exceed course limit" })
 
         const currentAmount = searchedCondition.current + 1
-        await Condition.findOneAndUpdate({ _id: searchedCondition._id }, { current: currentAmount})
+        await Condition.findOneAndUpdate({ _id: searchedCondition._id }, { current: currentAmount })
 
         // check current student in course
         const activity = await new Activity({
@@ -272,12 +272,12 @@ exports.getActivity = async (req, res) => {
 exports.sendExam = async (req, res) => {
     try {
 
-        res.send({ data: "You answer has been send" })
+
         const { answer } = req?.body
         const { user_id } = req.user
         const activity_id = req?.params?.id
 
-        const database_activity = await Activity.findOne({ _id: activity_id }, "course -_id").populate({
+        const database_activity = await Activity.findOne({ _id: activity_id }, "course -_id completed").populate({
             path: "course",
             select: "exam",
             populate: {
@@ -289,6 +289,9 @@ exports.sendExam = async (req, res) => {
         console.log(database_activity)
 
         if (!quiz) return console.log("Cannot find quiz for this activity")
+        if (database_activity.completed) return res.status(403).json({ error: "You cannot do this exam again" })
+
+        res.send({ data: "You answer has been send" })
 
         const quizList = await Quiz.find({ _id: quiz }, "")
 
@@ -305,7 +308,6 @@ exports.sendExam = async (req, res) => {
             }
         }
         // console.log(activity_id)
-
         // console.log(await Activity.findOne({_id: activity_id}))
 
         const activity = await Activity.findOneAndUpdate(
@@ -314,6 +316,7 @@ exports.sendExam = async (req, res) => {
                 user: user_id,
             },
             {
+                completed: true,
                 score_value: totalScore,
                 score_max: answerKeys.length,
                 ans: answer,
@@ -347,134 +350,5 @@ exports.updateActivityResult = async (req, res) => {
     catch (err) {
         console.log(err);
         return res.status(500).json({ error: "Uncexpected error on update activity result" })
-    }
-}
-
-// =============================================================
-
-exports.listScore = async (req, res) => {
-    try {
-        const {
-            quiz,
-        } = req.body
-        const { user_id } = req.user
-
-        const quize = await Quiz.findOne({ _id: quiz })
-            .populate('course')
-            .exec()
-
-        const activity = await studentActivity.findOne(
-            {
-                coursee: quize.course._id,
-                user: user_id
-            }
-        ).exec()
-
-        // console.log("---->",examiners)
-        // const query_quiz = await Quiz.findOne({_id: quiz}).exec()
-
-        // let payload = []
-        // examiners.forEach((examiner, index) => {
-        //     payload.push({key: index+1, score: activity, max_score: query_quiz.question.length})    
-        // });
-        // console.log(payload)
-
-        res.send(activity)
-
-    }
-    catch (err) {
-        console.log("fail to list score");
-        res.status(500).json({ error: "fail to list score" })
-    }
-}
-
-
-exports.getAccessNumber = async (req, res) => {
-    try {
-        const {
-            quiz,
-        } = req.body
-
-        const { user_id } = req.user
-
-        const quize = await Quiz.findOne({ _id: quiz })
-            .populate('course')
-            .exec()
-
-        const activity = await studentActivity.findOne(
-            {
-                coursee: quize.course._id,
-                user: user_id
-            }
-        ).exec()
-
-        // console.log(!!!activity.score)
-        // res.send("ok")
-        // console.log(!activity.score,activity.score)
-        if (activity.score == undefined) {
-
-            return res.send({
-                quiz_active: true,
-                // access_number: 0,
-                maximum_access: quize.attemp,
-            })
-        }
-        else {
-
-            // if (examiners.length < quiz_access_number.attemp) {
-            //     return res.send({
-            //         quiz_active: true,
-            //         // access_number: examiners.length,
-            //         maximum_access: quize.attemp,
-            //     })
-            // }
-            return res.send({
-                quiz_active: false,
-                // access_number: examiners.length,
-                maximum_access: quize.attemp,
-            })
-        }
-
-    }
-    catch (err) {
-        console.log(err, "fail to get access number");
-        res.status(500).json({ error: "fail to get access number" })
-
-    }
-}
-
-exports.updateProcess = async (req, res) => {
-    try {
-        const { course, process, completed } = req.body;
-        const { user_id } = req.user
-        console.log("process -> ", process, user_id, course)
-        console.log("process data: ", process)
-        if (!process) {
-            console.log("HI ITS ME")
-            const data = await studentActivity.findOneAndUpdate({ user: user_id, coursee: course }, { completed: completed }).exec()
-            console.log("after update", data)
-        }
-        else {
-            await studentActivity.findOneAndUpdate({ user: user_id, coursee: course }, { process: process, completed: completed }).exec()
-        }
-        res.send("update process success")
-    }
-    catch (err) {
-        console.log(err)
-        res.status(500).send('Server Error!!! on update process')
-    }
-}
-
-exports.getProcess = async (req, res) => {
-    try {
-        const { course } = req.body;
-        const { user_id } = req.user
-        // console.log("process -> ",process, user_id)
-        const student_activity = await studentActivity.findOne({ user: user_id, coursee: course }).exec()
-        res.send(student_activity)
-    }
-    catch (err) {
-        console.log(err)
-        res.status(500).send('Server Error!!! on update process')
     }
 }

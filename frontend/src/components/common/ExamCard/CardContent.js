@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react"
 import { useEffect, useRef } from "react"
-import { PictureOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined, UploadOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image, Badge, Space, Typography } from 'antd';
+import { PictureOutlined, CloseOutlined, MinusCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Col, Row, Tooltip, Button, Input, Form, Radio, Upload, Image, Badge, Typography } from 'antd';
 import { Link } from "react-router-dom";
-import { createFile, getPrivateFieldImage, updateExam } from "../../function/Teacher/exam";
+import { createFile, getPrivateFieldImage, updateExam } from "../../../function/Teacher/exam";
 
 const { Text } = Typography
 
@@ -81,15 +81,13 @@ const CardContent = ({
         // console.log(actionMode)
         setRadioCurentSelected(data?.index)
         if (previewMode) {
-            console.log("you select: ", data?.quiz_id)
+            // console.log("you select: ", data?.quiz_id)
             onChangeChoiceAnswer(data?.quiz_id, index, { answer: data?.index })
         }
 
         if (editMode || createMode) {
             onChangeChoiceAnswer(data?.quiz_id, index, { answer: data?.index })
         }
-
-
     }
 
     const handleQuestionChange = (e, choice_index) => {
@@ -114,12 +112,12 @@ const CardContent = ({
         setRadioCurentSelected(data?.answer)
     }
 
-    console.log(index)
-
     const handleAddImage = async (image) => {
         let formData = new FormData()
         formData.append("file", image?.file)
         formData.append("original_name", image?.file?.name)
+        formData.append("exam_id", examID)
+        formData.append("quiz_index", index)
         // onChange(index, { image: formData })
 
         // create image for preview before upload to server
@@ -133,7 +131,7 @@ const CardContent = ({
                     const data = res.data.data
                     imageData = data
                     onUploadImage(index, data)
-
+                    setImageData(objectUrl)
                 }
             )
             .catch(
@@ -154,7 +152,7 @@ const CardContent = ({
         await updateExam(sessionStorage.getItem("token"), examID, examData)
             .then(
                 (res) => {
-                    console.log(res)
+                    // console.log("res update: ",res)
                     setAddedImage(true)
                 }
             )
@@ -166,13 +164,15 @@ const CardContent = ({
     }
 
     const handleRemoveSelectedImage = () => {
-        onChange(index, { image: null })
+        onChange(index, { image: { ...data?.image, delete: true } })
         setSelectedImage(null)
+        setImageData(null)
     }
 
     const handleFetchImage = useCallback(async () => {
-
+        
         const image_name = data?.image?.name
+        
         if (!image_name) return
         const split_image_name = data?.image?.name.split(".")
         const split_image_name_lenght = split_image_name.length
@@ -195,7 +195,7 @@ const CardContent = ({
 
 
         const objectUrl = URL.createObjectURL(response.data);
-        console.log(objectUrl)
+        // console.log(objectUrl)
         setImageData(objectUrl)
 
     }, [data?.image?.name])
@@ -204,13 +204,13 @@ const CardContent = ({
         if (onCreate) {
             scrollToBottom()
         }
-        if (!imageData) {
+        if (!imageData && !data?.image?.delete) {
             handleFetchImage()
         }
         return () => {
             setAddedImage(false)
         }
-    }, [handleFetchImage, imageData, lastCard, onCreate, onUploadImage])
+    }, [data?.image?.delete, handleFetchImage, imageData, lastCard, onCreate, onUploadImage])
 
     return (
         <Row justify={"center"} style={{ paddingBottom: "1%" }} ref={lastCard}
@@ -218,9 +218,9 @@ const CardContent = ({
         >
             <Col style={{ width: "100%" }}>
                 <Card >
-                    {/* {JSON.stringify(data.choices)} */}
                     <Row justify={"center"} align={"middle"}>
                         <Col style={{ width: "100%" }} >
+
                             <Row style={{ marginTop: "-0.5%", marginBottom: "-0.2%", marginRight: "-0.5%" }} justify={"end"} align={"middle"}>
                                 {
                                     editMode || createMode ?
@@ -231,11 +231,14 @@ const CardContent = ({
                                         ) : (null)
                                 }
                             </Row>
+
                             <Row justify={"space-between"} align={"middle"}>
 
                                 <Col style={{ width: "95%" }}>
                                     <Form.Item
-                                        label={<Text strong>{`Question ${index + 1}`}</Text>}
+                                        label={
+                                            <Text strong>{`Question ${index + 1}`}</Text>
+                                        }
                                         required={previewMode}
                                         tooltip={editMode || createMode ? "This is a required field" : null}
                                     >
@@ -370,6 +373,7 @@ const CardContent = ({
                                                                             (e) => handleRadioChange({ checked: e?.target?.checked, index: choice_index, quiz_id: data?._id }) : null
                                                                     }
                                                                 />
+
                                                             </Col>
                                                             <Col style={{ width: "95%" }}>
                                                                 {

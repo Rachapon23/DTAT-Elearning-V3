@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useContext } from "react";
 import {
   Button,
-  Checkbox,
   Form,
   Input,
-  Space,
   Col,
   Row,
   Typography,
@@ -19,27 +17,29 @@ import {
 } from "@ant-design/icons";
 import { listPlant, listDepartment, register } from "../../../function/auth";
 import { NavbarContext } from "./NavbarContext";
-const { Text, Link } = Typography;
+
+const { Link, Title } = Typography;
 const { Option } = Select;
+
 const Form_register = ({ setStatus, }) => {
   const [departments, setDepartments] = useState([]);
   const [plants, setPlants] = useState([]);
-  const [valueRegister,setValueRegister] = useState({
-    employee:"",
-    department:"",
-    password:"",
-    confirm:"",
-    email:"",
-    plant:"",
-    firstname:"",
-    lastname:""
+  const [valueRegister, setValueRegister] = useState({
+    employee: "",
+    department: "",
+    password: "",
+    confirm: "",
+    email: "",
+    plant: "",
+    firstname: "",
+    lastname: ""
   })
   const {
     isModalOpenAuth,
-        setIsModalOpenAuth,
-        showModalAuth,
-        handleOkAuth,
-        handleCancelAuth,
+    setIsModalOpenAuth,
+    showModalAuth,
+    handleOkAuth,
+    handleCancelAuth,
   } = useContext(NavbarContext);
 
   const handleInput = (e) => {
@@ -47,10 +47,10 @@ const Form_register = ({ setStatus, }) => {
   };
   const handleSelectPlant = (e) => {
     setValueRegister({ ...valueRegister, 'plant': e });
-};
+  };
   const handleSelectDepartment = (e) => {
     setValueRegister({ ...valueRegister, 'department': e });
-};
+  };
 
   const fetchDepartment = async () => {
     await listDepartment()
@@ -114,7 +114,13 @@ const Form_register = ({ setStatus, }) => {
 
   return (
     <>
-    {contextHolder}
+      <Row
+        justify={"center"}
+        style={{ paddingBottom: "10px", marginTop: "-20px" }}
+      >
+        <Title style={{ fontSize: "200%" }}>Registeration</Title>
+      </Row>
+      {contextHolder}
       {/* name="employee" */}
       <Form.Item
         rules={[
@@ -128,7 +134,7 @@ const Form_register = ({ setStatus, }) => {
           name="employee"
           prefix={<UserOutlined />}
           placeholder="Employee ID"
-            onChange={handleInput}
+          onChange={handleInput}
         />
       </Form.Item>
 
@@ -142,7 +148,7 @@ const Form_register = ({ setStatus, }) => {
         ]}
       >
         <Select placeholder="Please select a Department"
-        onChange={handleSelectDepartment}
+          onChange={handleSelectDepartment}
         >
           {departments.map((department) => (
             <Option key={department._id} value={department._id}>
@@ -167,7 +173,7 @@ const Form_register = ({ setStatus, }) => {
           name="password"
           prefix={<LockOutlined />}
           placeholder="Password"
-            onChange={handleInput}
+          onChange={handleInput}
         />
       </Form.Item>
 
@@ -184,7 +190,7 @@ const Form_register = ({ setStatus, }) => {
           name="confirm"
           prefix={<LockOutlined />}
           placeholder="Confirm Password"
-            onChange={handleInput}
+          onChange={handleInput}
         />
       </Form.Item>
 
@@ -201,7 +207,7 @@ const Form_register = ({ setStatus, }) => {
           name="email"
           prefix={<MailOutlined />}
           placeholder="Email"
-            onChange={handleInput}
+          onChange={handleInput}
         />
       </Form.Item>
 
@@ -215,7 +221,7 @@ const Form_register = ({ setStatus, }) => {
         ]}
       >
         <Select placeholder="Please select a Plant"
-        onChange={handleSelectPlant}
+          onChange={handleSelectPlant}
         >
           {plants.map((plant) => (
             <Option key={plant._id} value={plant._id}>
@@ -239,7 +245,7 @@ const Form_register = ({ setStatus, }) => {
           name="firstname"
           prefix={<SolutionOutlined />}
           placeholder="First Name"
-            onChange={handleInput}
+          onChange={handleInput}
         />
       </Form.Item>
 
@@ -256,13 +262,13 @@ const Form_register = ({ setStatus, }) => {
           name="lastname"
           prefix={<SolutionOutlined />}
           placeholder="Last Name"
-            onChange={handleInput}
+          onChange={handleInput}
         />
       </Form.Item>
 
       <Form.Item>
         <Button type="primary" htmlType="submit" block
-        onClick={onRegister}
+          onClick={onRegister}
         >
           Register
         </Button>

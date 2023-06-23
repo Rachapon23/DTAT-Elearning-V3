@@ -1,4 +1,4 @@
-import { Link, Route, Routes } from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 
 import ExamCreate from "./components/WebPages/TeacherPages/TeacherExam/ExamCreate";
 import Home from "./components/WebPages/HomePage/Home";
@@ -9,16 +9,17 @@ import TeacherPage from "./components/WebPages/TeacherPages/TeacherPage";
 //test page
 // import CourseMain from "./components/WebPages/TeacherPages/TeacherCourse/CourseOld/CourseMain";
 import Course from "./components/WebPages/TeacherPages/TeacherCourse/CourseManage/Course";
-import DevNav from "./components/Dev/DevNav";
-import StudentRoute from "./components/ProtectedRoute/StudentRoute";
-import AdminRoute from "./components/ProtectedRoute/AdminRoute";
-import TeacherRoute from "./components/ProtectedRoute/TeacherRoute";
-import { useEffect, useState } from "react";
+import DevNav from "./components/common/Dev/DevNav";
+import StudentRoute from "./components/common/ProtectedRoute/StudentRoute";
+import AdminRoute from "./components/common/ProtectedRoute/AdminRoute";
+import TeacherRoute from "./components/common/ProtectedRoute/TeacherRoute";
 
 function App() {
+  const navigate = useNavigate()
   return (
     <div>
       <Routes>
+        <Route path="*" element={<>404 Not Found...</>}/>
         <Route path="/" element={<Home />} />
 
         <Route element={<StudentRoute />}>

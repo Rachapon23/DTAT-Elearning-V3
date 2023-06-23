@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import "./content.css";
-import CardCourse from "../../Card/CardCourse";
+import CardCourse from "../../common/CourseCard/CardCourse";
 import { Col, Modal, Row } from "antd";
 import { HomeContext } from './HomeContext';
 import { useNavigate } from 'react-router-dom';
@@ -72,16 +72,18 @@ const HomePrivate = () => {
           coursePrivate.length > 0 ?
             (
               coursePrivate.slice(index, index + GROUP_NUMBER).map((data) => (
-                <div className="col-content">
-                  <CardCourse
-                    onClick={(e) => handleClickCourse(e, data)}
-                    data={{
-                      name: data?.name,
-                      detail: data?.detail,
-                      image: data?.image?.url
-                    }}
-                  />
-                </div>
+                <Col span={6} >
+                  <div className="col-content">
+                    <CardCourse
+                      onClick={(e) => handleClickCourse(e, data)}
+                      data={{
+                        name: data?.name,
+                        detail: data?.detail,
+                        image: data?.image?.name
+                      }}
+                    />
+                  </div>
+                </Col>
               ))
             )
             :
@@ -125,9 +127,9 @@ const HomePrivate = () => {
           }
         </div>
       </div>
-      <div className="btn-navigate">
+      {/* <div className="btn-navigate">
         <button className="btn-show-more">Show More</button>
-      </div>
+      </div> */}
       <Modal
         className="modal-ant"
         style={{

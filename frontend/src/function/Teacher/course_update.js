@@ -35,7 +35,7 @@ export const updateCourseRoom = async (authtoken, value, id) =>
     }
   );
 
-  
+
 // POST: /create-file/private/:field (course)
 export const createFile = async (authtoken, data, field) =>
   await axios.post(
@@ -47,3 +47,11 @@ export const createFile = async (authtoken, data, field) =>
       },
     }
   );
+
+// POST: /create-file/public/:field
+export const createFilePublic = async (authtoken, data, field) =>
+  await axios.post(process.env.REACT_APP_API + `/create-file/public/${field}`, data, {
+    headers: {
+      authtoken,
+    }
+  });

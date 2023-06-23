@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useMemo } from "react";
-import { Card, Col, Layout, Row, Button, Typography, Breadcrumb, Steps, Form, } from 'antd';
+import { Card, Col, Layout, Row, Button, Typography, Breadcrumb, Steps, } from 'antd';
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "../teach.css"
@@ -9,6 +9,7 @@ import ExamInfo from "./ExamInfo";
 import ExamSelectCourse from "./ExamSelectCourse";
 import ExamContent from "./ExamContent";
 import ExamCreateFinished from "./ExamCreateFinished";
+import { debounce } from "lodash";
 
 const { Title } = Typography;
 
@@ -18,8 +19,8 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     const [managementMode, setManagementMode] = useState(mode ? mode : location?.state?.mode)
     const [mainManagementMode] = useState(managementMode)
     const [examEditName] = useState(location?.state?.exam_name)
-
     const [editExamLoaeded, setEditExamLoaeded] = useState(false)
+    const [validContent, setValidContent] = useState(false)
 
     // do not use these variable to check before change mode, it may cause to mode cannot change 
     const createMode = mode && mode === "Create"
@@ -137,6 +138,53 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         )
     }
 
+    const submmitUpdateExam = useCallback(async () => {
+        let status;
+        const examData = {
+            head: inputInfoData,
+            body: inputContentData,
+        }
+        const id = mainManagementMode === "Edit" ? examEditId :
+            mainManagementMode === "Create" ? examId : null
+
+        if (!id) return
+
+        await updateExam(sessionStorage.getItem("token"), id, examData)
+            .then(
+                (res) => {
+                    // console.log(res.data.data)
+                    status = true
+                    // setExamId(res.data.data._id)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+        return status
+    }, [examEditId, examId, inputContentData, inputInfoData, mainManagementMode])
+
+
+    const onUpdateExam = useCallback(async (id, examData) => {
+        // this function use in auto save operation
+        if (!id) id = examEditId
+        if (!id) return
+        // if(!validContent) return
+
+        await updateExam(sessionStorage.getItem("token"), id, examData)
+            .then(
+                (res) => {
+                    const data = res.data.data
+                    // console.log(data)
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                }
+            )
+    }, [])
 
     const handleAddCardContent = useCallback(() => {
         setInputContentData((prev) => [...prev, inputContentTemplate])
@@ -161,6 +209,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
 
     }, [inputContentData])
 
+
     const onChangeCardContent = useCallback((card_index, data) => {
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
@@ -176,6 +225,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             ...nextCard,
         ])
         setHasChanged(true)
+
     }, [inputContentData])
 
     const onAddCardChoice = useCallback(async (card_index) => {
@@ -187,7 +237,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             image: inputContentData[card_index]?.image,
             choices: [
                 ...inputContentData[card_index].choices,
-                "",
+                null,
             ],
         }
         const nextCard = inputContentData.slice(card_index + 1, inputContentData.length)
@@ -196,6 +246,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             currentCard,
             ...nextCard
         ]))
+        setValidContent(false)
 
         setHasChanged(true)
     }, [inputContentData])
@@ -205,7 +256,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         // const { [choice_uuid]: removedChoice, ...updatedChoice } = inputContentData[card_uuid].choices
         // const { [card_uuid]: removedCard, ...updatedCard } = inputContentData
         // console.log("delete:", choice_index)
-        console.log(inputContentData[card_index].choices.slice(0, choice_index), " to ", inputContentData[card_index].choices.slice(choice_index + 1, inputContentData[card_index].choices.length))
+        // console.log(inputContentData[card_index].choices.slice(0, choice_index), " to ", inputContentData[card_index].choices.slice(choice_index + 1, inputContentData[card_index].choices.length))
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: inputContentData[card_index]?.question,
@@ -248,6 +299,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     }, [inputContentData])
 
     const handleChangeChoiceQuestion = useCallback((card_index, choice_index, data) => {
+        // console.log(inputContentData, card_index)
         const prevCard = inputContentData.slice(0, card_index)
         const currentCard = {
             question: inputContentData[card_index]?.question,
@@ -268,8 +320,6 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
         ]))
         setHasChanged(true)
     }, [inputContentData])
-
-
 
     const handleUploadImage = useCallback((card_index, data) => {
         const prevCard = inputContentData.slice(0, card_index)
@@ -323,7 +373,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
 
 
     const fetchExam = useCallback(async () => {
-        await getExam(sessionStorage.getItem("token"), examEditId)
+        await getExam(sessionStorage.getItem("token"), examEditId, `?field=quiz`)
             .then(
                 (res) => {
                     const data = res.data.data
@@ -333,7 +383,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                         detail: data?.detail,
                         name: data?.name,
                     }))
-                    console.log(data)
+                    // console.log(data)
                     setInputContentData(data?.quiz ? data?.quiz : [])
                     setEditExamLoaeded(true)
 
@@ -442,6 +492,7 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     }, [mode, currentPage, inputInfoData, managementMode, cousreWithOutQuiz, currentSelectedRadio, examEditId, createdCard, inputContentData, handleAddCardContent, onDeleteCardContent, onChangeCardContent, onAddCardChoice, onRemoveCardChoice, handleChangeChoiceAnswer, handleChangeChoiceQuestion, handleUploadImage, inputContentTemplate, examId])
 
     const submmitCreateExam = useCallback(async () => {
+        let id = null
         const examData = {
             head: inputInfoData,
         }
@@ -458,35 +509,10 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                     console.log(err)
                 }
             )
+        return id
     }, [inputInfoData])
 
-    const submmitUpdateExam = useCallback(async () => {
-        let status;
-        const examData = {
-            head: inputInfoData,
-            body: inputContentData,
-        }
-        const id = mainManagementMode === "Edit" ? examEditId :
-            mainManagementMode === "Create" ? examId : null
-
-        console.log(examData)
-        if (!id) return
-
-        await updateExam(sessionStorage.getItem("token"), id, examData)
-            .then(
-                (res) => {
-                    console.log(res.data.data)
-                    status = true
-                    // setExamId(res.data.data._id)
-                }
-            )
-            .catch(
-                (err) => {
-                    console.log(err)
-                }
-            )
-        return status
-    }, [examEditId, examId, inputContentData, inputInfoData])
+    const debounceOnChange = useCallback(debounce(onUpdateExam, 500), [])
 
     const handleDisplay = useCallback((e) => {
         const createMode = managementMode === "Create"
@@ -500,12 +526,13 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                 if (currentPage + 1 <= pageStepLength) {
                     setCurrentPage(currentPage + 1);
                 }
-                if (createMode && createSteps[currentPage].title === "Exam Info" && !examCreated) {
+
+                // noraml condition is Exam Info
+                if (createMode && createSteps[currentPage].title === "Select Course" && !examCreated) {
                     submmitCreateExam()
                     setExamCreated(true)
                 }
                 // setKeyword("")
-
             }
             else if (action === "Previous") {
                 if (currentPage - 1 >= 0) {
@@ -513,25 +540,35 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                     setCurrentPage(currentPage - 1);
                 }
                 // setKeyword("")
-
             }
             else if ((createMode || editMode) && action === "Done") {
-                let success = submmitUpdateExam()
+                // un-comment line below to return to the normal mode
+                // let success = submmitUpdateExam()
                 // setKeyword("")
-                if (success) {
-                    setCurrentPage(pageStepLength - 1)
-                }
-
+                // if (success) {
+                setCurrentPage(pageStepLength - 1)
+                // }
             }
             setHasChanged(true)
         }
-        // console.log("HEY UPDATED")
-        // setCurrentDisplay(pageList[currentPage]);
 
-    }, [createSteps, currentPage, examCreated, managementMode, pageStepLength, submmitCreateExam, submmitUpdateExam])
+        // remove if below to return to normal mode
+        if (
+            createSteps[currentPage]?.title === "Content" ||
+            editSteps[currentPage]?.title === "Content" ||
+            createSteps[currentPage]?.title === "Exam Info" ||
+            editSteps[currentPage]?.title === "Exam Info"
+        ) {
+            debounceOnChange(
+                examId,
+                {
+                    head: inputInfoData,
+                    body: inputContentData,
+                }
+            )
+        }
 
-    // console.log(currentPage, examCreated, pageList)
-
+    }, [createSteps, currentPage, debounceOnChange, editSteps, examCreated, examId, inputContentData, inputInfoData, managementMode, pageStepLength, submmitCreateExam])
 
     useEffect(() => {
         // console.log("re render")
@@ -543,8 +580,10 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             setCreatedCard(false)
         }
 
+        // remove inputInfoData to return to the normal mode
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hasChanged, currentPage, managementMode, examEditId, editMode, editExamLoaeded])
+    }, [hasChanged, currentPage, managementMode, examEditId, editMode, editExamLoaeded, inputInfoData])
+
 
     // in the future may use this
     // const isExamValid = useCallback(() => {
@@ -557,8 +596,6 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     // console.log(managementMode)
     const handleRenderPagebyMode = () => {
         // console.log(managementMode, mainManagementMode)
-
-
         switch (managementMode) {
             case "Edit":
                 // console.log("set to preview")
@@ -590,28 +627,27 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
     const renderPageNav = () => {
         return (
             <Row justify={"space-between"} style={{ height: "10%", marginBottom: "1%" }} >
-                {/* {JSON.stringify(currentPage)} */}
                 {
                     currentPage !== pageStepLength - 1 ?
                         (
                             <>
                                 <Col>
-                                    <Button onClick={handleRenderPagebyMode}>
+                                    {/* <Button onClick={handleRenderPagebyMode}>
                                         {
                                             managementMode === "Edit" ? "Preview" :
                                                 managementMode === "Preview" ? "Edit" :
                                                     "Preview"
                                         }
-                                    </Button>
+                                    </Button> */}
                                 </Col>
 
-                                <Col>
+                                {/* <Col>
                                     <Button
                                         onClick={() => console.log(inputInfoData, inputContentData)}
                                     >
                                         Debug
                                     </Button>
-                                </Col>
+                                </Col> */}
 
                                 <Col>
                                     <Row>
@@ -628,10 +664,12 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
                                                             disabled={!pageValidation(currentPage)}
                                                             onClick={handleDisplay}
                                                         >
+                                                            {/* Exam Info */}
                                                             {
                                                                 currentPage === pageStepLength - 2 ?
-                                                                    "Done" : createSteps[currentPage].title === "Exam Info" && !examId ?
-                                                                        "Create" : "Next"}
+                                                                    "Done" : createSteps[currentPage].title === "Select Course" && !examId ?
+                                                                        "Create" : "Next"
+                                                            }
                                                         </Button>
                                                     )
                                                     :

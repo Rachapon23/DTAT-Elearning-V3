@@ -1,35 +1,31 @@
-import React, { useEffect, useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Avatar,
   Col,
   Divider,
-  Card,
   Layout,
-  Menu,
   Popover,
   Row,
   Typography,
-  theme,
   Button,
   Modal,
 } from "antd";
 import "./navbar.css";
 
 import { NavbarContext } from "./NavbarContext";
-import { StudentContext } from "../StudentPage/StudentCourse/StudentCourseContext";
 
 import Auth from "./Auth";
-const { Header, Sider, Content } = Layout;
+const { Header } = Layout;
 const { Title, Text } = Typography;
 const Navbar = () => {
   const navigate = useNavigate();
   const {
     isModalOpenAuth,
-        setIsModalOpenAuth,
-        showModalAuth,
-        handleOkAuth,
-        handleCancelAuth,
+    setIsModalOpenAuth,
+    showModalAuth,
+    handleOkAuth,
+    handleCancelAuth,
   } = useContext(NavbarContext);
 
   const checkLogedin = () => {
@@ -74,7 +70,7 @@ const Navbar = () => {
                 <Title level={5}>
                   {sessionStorage.getItem("role")
                     ? sessionStorage.getItem("role").charAt(0).toUpperCase() +
-                      sessionStorage.getItem("role").slice(1)
+                    sessionStorage.getItem("role").slice(1)
                     : null}
                 </Title>
               </Row>

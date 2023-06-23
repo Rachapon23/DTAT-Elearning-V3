@@ -1,8 +1,6 @@
-import { Breadcrumb, Button, Card, Col, Divider, Dropdown, Image, Layout, Row, Select, Space, Table, Typography, message } from "antd";
-import { SolutionOutlined, DownOutlined, UserOutlined } from '@ant-design/icons';
-import React, { useEffect, useContext, useState } from "react"
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { TeacherCourseContext } from "../TeacherCourseContext";
+import { Breadcrumb, Button, Card, Col, Layout, Row, Select, Table, Typography, message } from "antd";
+import React, { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom";
 import { listActivity } from "../../../../../function/Teacher/course";
 import { updateActivityResult } from "../../../../../function/Teacher/course";
 import "../../teach.css";
@@ -23,11 +21,9 @@ const EvaluateStudent = () => {
 
     const handleEvaluate = async (activityIndex, value, user_id) => {
         message.info(`Evaluate as ${value}`);
-        console.log('click left button', value);
 
         if (!user_id) return
         if (value === undefined) return
-        console.log("user_id: ", user_id)
 
         await updateActivityResult(
             sessionStorage.getItem("token"),
@@ -40,7 +36,6 @@ const EvaluateStudent = () => {
             .then(
                 (res) => {
                     const data = res.data.data
-                    console.log("updated result: ", data)
                     setPageChange(true)
                 }
             )
@@ -82,7 +77,6 @@ const EvaluateStudent = () => {
             align: "center",
             width: "13%",
             render: (data) => {
-                console.log("this data -> ", data)
                 const user_id = data?.user?._id
                 const activityIndex = activity.indexOf(data)
                 return (
@@ -121,7 +115,6 @@ const EvaluateStudent = () => {
             title: `Action`,
             align: "center",
             render: (data) => {
-                console.log(data?.course?.exam)
                 return (
                     <Button
                         disabled={!data?.course?.exam}
@@ -184,7 +177,6 @@ const EvaluateStudent = () => {
                 (res) => {
                     const data = res.data.data
                     setActivity(data)
-                    console.log("activity: ", data)
                 }
             )
             .catch(
@@ -205,9 +197,9 @@ const EvaluateStudent = () => {
         <Layout >
             <Row>
                 <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
-                    <Card 
-                    title={CourseEvaluateTitle()}
-                     style={{ maxWidth: "100%" }}>
+                    <Card
+                        title={CourseEvaluateTitle()}
+                        style={{ maxWidth: "100%" }}>
                         <Row justify="center">
                             <Col flex={"auto"} style={{ width: "2000px" }}>
                                 <Table

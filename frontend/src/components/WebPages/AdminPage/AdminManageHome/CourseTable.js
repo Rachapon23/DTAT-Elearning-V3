@@ -3,7 +3,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { AdminContext } from "./AdminManageContext";
 import { listCourse } from "../../../../function/Admin/adminFunction";
 
-const CourseTable = ({ manage = null, home_course=null }) => {
+const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
+
+const CourseTable = ({ manage = null, home_course = null }) => {
     const { coursePublic, setCoursePublic } = useContext(AdminContext)
     const { coursePrivate, setCoursePrivate } = useContext(AdminContext)
     // const [publicCourse, setPublicCourse] = useState([]);
@@ -26,9 +28,6 @@ const CourseTable = ({ manage = null, home_course=null }) => {
         }
         // console.log("mapped: ", mappedData)
         return mappedData
-
-
-
     }
 
     const handleCheckBoxChange = (index, dataId) => {
@@ -66,7 +65,10 @@ const CourseTable = ({ manage = null, home_course=null }) => {
                 break;
             default: return
         }
-        
+    }
+
+    const handleUnloadImage = (e) => {
+        e.target.src = DEFAULT_IMAGE
     }
 
     const col = [
@@ -77,11 +79,12 @@ const CourseTable = ({ manage = null, home_course=null }) => {
             align: "center",
             width: "15%",
             render: (data) => {
-                if (!data?.url) return
+                // if (!data?.url) return
                 return (
                     <Image
                         width={150}
-                        src={process.env.REACT_APP_IMG + data.url}
+                        onError={handleUnloadImage}
+                        src={data?.url ? `${process.env.REACT_APP_IMG}${data.url}` : DEFAULT_IMAGE}
                     />
                 )
             }
@@ -92,11 +95,11 @@ const CourseTable = ({ manage = null, home_course=null }) => {
             key: 'name',
             width: "50%",
         },
-        {
-            title: "ID",
-            dataIndex: '_id',
-            key: '_id',
-        },
+        // {
+        //     title: "ID",
+        //     dataIndex: '_id',
+        //     key: '_id',
+        // },
         {
             title: "Type",
             dataIndex: 'type',
@@ -127,7 +130,6 @@ const CourseTable = ({ manage = null, home_course=null }) => {
             },
         },
     ]
-    // console.log("---------------------------------------------------")
 
     const fetchData = () => {
         let queryStr = null
@@ -172,10 +174,6 @@ const CourseTable = ({ manage = null, home_course=null }) => {
         //     default: return mappedData
         // }
     }, [])
-
-    // useEffect(() => {
-    //     console.log(coursePublic);
-    // }, [coursePublic])
 
     return (
         <Row >

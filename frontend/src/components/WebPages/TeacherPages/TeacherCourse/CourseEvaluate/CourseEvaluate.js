@@ -52,9 +52,8 @@ const CourseEvaluate = () => {
             align: "center",
             width: "10%",
             render: (data) => {
-                console.log(data)
                 return (
-                    <Link to={`/teacher/page/evaluate-course/${data._id}` }>
+                    <Link to={`/teacher/page/evaluate-course/${data._id}`}>
                         <Button>
                             <SolutionOutlined />
                         </Button>

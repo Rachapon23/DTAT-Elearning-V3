@@ -17,6 +17,7 @@ import ImgCrop from 'antd-img-crop';
 import CourseTable from './CourseTable';
 
 const { Title } = Typography;
+const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
 
 const RowTable = ({ children, ...props }) => {
   const {
@@ -57,7 +58,6 @@ const RowTable = ({ children, ...props }) => {
                 align={"middle"}
                 style={{
                   height: "70px",
-                  // backgroundColor: "aqua",
                   touchAction: 'none',
                   cursor: 'move',
                 }}
@@ -196,24 +196,14 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
       }
       if (actionMode === "Add") {
         return (
-          <>
-            <Button
-              color="primary"
-              onClick={() => {
-                console.log(coursePublic)
-              }}>
-              Debug
-            </Button>
-
-            <Button
-              color="primary"
-              onClick={() => {
-                setActionMode("Preview")
-                handleUpdateCourse()
-              }}>
-              Save
-            </Button>
-          </>
+          <Button
+            type="primary"
+            onClick={() => {
+              setActionMode("Preview")
+              handleUpdateCourse()
+            }}>
+            Save
+          </Button>
         )
       }
     }
@@ -275,6 +265,10 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
         }
       )
 
+  }
+
+  const handleUnloadImage = (e) => {
+    e.target.src = DEFAULT_IMAGE
   }
 
   async function handleDeleteAcnounce(index) {
@@ -355,8 +349,6 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
     }
   };
 
-  // 
-
   const columnsEdit = () => {
     switch (manage) {
       case "Acnounce":
@@ -420,11 +412,12 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
             width: "10%",
             render: (data) => {
               // console.log(data?.url)
-              if (!data?.url) return
+              // if (!data?.url) return
               return (
                 <Image
                   width={150}
-                  src={process.env.REACT_APP_IMG + data.url}
+                  onError={handleUnloadImage}
+                  src={data?.url ? `${process.env.REACT_APP_IMG}${data.url}` : DEFAULT_IMAGE}
                 />
               )
             }
@@ -435,11 +428,11 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
             key: 'name',
             width: "50%",
           },
-          {
-            title: "ID",
-            dataIndex: '_id',
-            key: '_id',
-          },
+          // {
+          //   title: "ID",
+          //   dataIndex: '_id',
+          //   key: '_id',
+          // },
           {
             title: "Type",
             dataIndex: 'type',

@@ -10,7 +10,8 @@ const {
     listCalendarStudent,
     updateCalendar,
     listCalendar,
-    deleteCalendar
+    deleteCalendar,
+    getCalendarByCourseId
 } = require('../controllers/calendarController')
 
 
@@ -18,13 +19,14 @@ const {
 // router.get("/list-calendar/role/:id", checkUser, checkTeacher, listCalendarRole);
 
 // teacher
-router.post("/create-calendar/course/:id", createCalendar);
-router.get("/list-calendar", listCalendar);
-router.put("/update-calendar/:id", updateCalendar);
-router.delete("/delete-calendar/:id", deleteCalendar);
+router.post("/create-calendar/course/:id", checkUser, checkTeacher, createCalendar);
+router.get("/list-calendar", checkUser, checkTeacher, listCalendar);
+router.put("/update-calendar/:id", checkUser, checkTeacher, updateCalendar);
+router.delete("/delete-calendar/:id", checkUser, checkTeacher, deleteCalendar);
 
 // student
 router.get("/list-calendar-student", checkUser, listCalendarStudent);
+router.get("/get-calendar/course/:id", checkUser, getCalendarByCourseId)
 
 
 

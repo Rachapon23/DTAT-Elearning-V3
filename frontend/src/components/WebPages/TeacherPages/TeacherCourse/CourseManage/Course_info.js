@@ -24,7 +24,7 @@ import { debounce } from "lodash";
 //course Context
 import { CourseContext } from "./CourseContext";
 // fucntion : POST
-import { createFile } from "../../../../../function/Teacher/course_update";
+import { createFile, createFilePublic } from "../../../../../function/Teacher/course_update";
 // fucntion : DELETE
 import { deleteFileCourse, getPrivateFieldImage } from "../../../../../function/Teacher/course";
 // function Update : PUT
@@ -104,9 +104,8 @@ const Course_info = () => {
     formData.append("original_name", image?.file?.name);
     formData.append("course_id", course_id);
 
-    await createFile(sessionStorage.getItem("token"), formData, createFileField)
+    await createFilePublic(sessionStorage.getItem("token"), formData, createFileField)
       .then((res) => {
-        // console.log(res);
         loadDataCourse();
       })
       .catch((err) => {
@@ -154,11 +153,11 @@ const Course_info = () => {
 
   const debounceOnChange = debounce(handleChangeInfo, 500);
 
-  useEffect(() => {
-    if (!imageData) {
-      handleFetchImage()
-    }
-  }, [handleFetchImage, imageData])
+  // useEffect(() => {
+    // if (!imageData) {
+    //   handleFetchImage()
+    // }
+  // }, [handleFetchImage, imageData])
 
   return (
     <Form
@@ -213,7 +212,8 @@ const Course_info = () => {
                   >
                     <Image
                       height={250}
-                      src={imageData}
+                      // src={imageData}
+                      src={`${process.env.REACT_APP_IMG}/course/${courseData?.image?.name}`}
                     />
                   </Badge>
                 )}

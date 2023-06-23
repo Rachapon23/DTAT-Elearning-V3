@@ -1,19 +1,17 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 import {
   Button,
-  Checkbox,
   Form,
   Input,
-  Space,
   Col,
   Row,
   Typography,
-  Select,
 } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { login } from "../../../function/auth";
 import { NavbarContext } from "./NavbarContext";
-const { Text, Link } = Typography;
+
+const { Link, Title } = Typography;
 
 const Form_login = ({ setStatus }) => {
   const [inputData, setInputData] = useState({
@@ -22,10 +20,10 @@ const Form_login = ({ setStatus }) => {
   });
   const {
     isModalOpenAuth,
-        setIsModalOpenAuth,
-        showModalAuth,
-        handleOkAuth,
-        handleCancelAuth,
+    setIsModalOpenAuth,
+    showModalAuth,
+    handleOkAuth,
+    handleCancelAuth,
   } = useContext(NavbarContext);
   const handleInput = (e) => {
     setInputData({ ...inputData, [e.target.name]: e.target.value });
@@ -48,6 +46,12 @@ const Form_login = ({ setStatus }) => {
   };
   return (
     <>
+      <Row
+        justify={"center"}
+        style={{ paddingBottom: "10px", marginTop: "-20px" }}
+      >
+        <Title style={{ fontSize: "200%" }}>Login</Title>
+      </Row>
       <Form.Item
         name="employee"
         rules={[
@@ -59,9 +63,9 @@ const Form_login = ({ setStatus }) => {
       >
         <Input
           name="employee"
-          prefix={<UserOutlined/>}
+          prefix={<UserOutlined />}
           placeholder="Employee ID"
-            onChange={handleInput}
+          onChange={handleInput}
         />
       </Form.Item>
       <Form.Item
@@ -75,13 +79,13 @@ const Form_login = ({ setStatus }) => {
       >
         <Input
           name="password"
-          prefix={<LockOutlined/>}
+          prefix={<LockOutlined />}
           type="password"
           placeholder="Password"
-            onChange={handleInput}
+          onChange={handleInput}
         />
       </Form.Item>
-      <Form.Item>
+      {/* <Form.Item>
         <Row justify={"space-between"}>
           <Col>
             <Form.Item name="remember" valuePropName="checked" noStyle>
@@ -97,7 +101,7 @@ const Form_login = ({ setStatus }) => {
             </Link>
           </Col>
         </Row>
-      </Form.Item>
+      </Form.Item> */}
 
       <Form.Item>
         <Button
