@@ -241,7 +241,7 @@ const Course_main = () => {
   }
 
   return (
-    <Layout className="course-main-layout">
+    <Layout className="course-main-layout" >
       <Row className="course-main-content">
         <Col flex="auto" style={{ justifyContent: "center" }}>
           <Card title={courseCreateTitle()} className="card-shadow">

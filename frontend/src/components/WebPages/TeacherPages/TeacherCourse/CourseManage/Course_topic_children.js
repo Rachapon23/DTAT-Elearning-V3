@@ -39,6 +39,7 @@ import {
   removeFileTopic,
 } from "../../../../../function/Teacher/course_topic";
 
+
 //course Context
 import { CourseContext } from "./CourseContext";
 import { getPrivateFieldImage } from "../../../../../function/Teacher/course";
@@ -49,6 +50,8 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
   const { loadTopic, course_id } = useContext(CourseContext);
   const [loading, setLoading] = useState(false);
   const [fileData, setfileData] = useState([])
+
+
 
   const deleteTopic = () => {
     removeTopic(sessionStorage.getItem("token"), item._id)
@@ -241,6 +244,8 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
   useEffect(() => {
     handleFetchImage()
   }, [])
+
+
 
   return (
     <Row className="course-main-for-topic">
@@ -490,6 +495,7 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
           <Upload showUploadList={false} customRequest={handleAddFile}>
             <Button icon={<UploadOutlined />}>Click to Upload</Button>
           </Upload>
+          
         </div>
       </Card>
     </Row >
