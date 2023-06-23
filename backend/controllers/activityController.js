@@ -25,7 +25,21 @@ exports.createActivity = async (req, res) => {
             })
         const searchedUser = await User.findOne({ user: user }).populate("plant", "name")
 
-        console.log(searchedCourse)
+        // console.log(searchedCourse)
+
+        if (searchedCourse.type === true && searchedCourse) {
+            const activity = await new Activity({
+                score_max: null,
+                score_value: null,
+                ans: null,
+                process: null,
+                completed: null,
+                user: user,
+                course: course,
+            }).save()
+
+            return res.json({ data: activity })
+        }
 
         // find required data
         if (!searchedCourse) return res.status(404).json({ error: "Course not found for this private course" })

@@ -54,22 +54,22 @@ exports.listConditionCourse = async (req, res) => {
 exports.deleteCondition = async (req, res) => {
     try {
 
-        // const courseFind = await Course.findOne({ _id: req.body.course_id });
-        // const condition_update = courseFind.condition
-        // await condition_update.splice(condition_update.indexOf(req.params.id), 1);
+        const courseFind = await Course.findOne({ _id: req.body.course_id });
+        const condition_update = courseFind.condition
+        await condition_update.splice(condition_update.indexOf(req.params.id), 1);
 
-        // const course = await Course.findOneAndUpdate(
-        //     { _id: req.params.id },
-        //     {
-        //         condition: condition_update
-        //     },
-        //     { new: true }
-        // );
-
-        // const condition = await Condition.findOneAndDelete({ _id: req.params.id })
-        // return res.json({ data: condition });
+        const course = await Course.findOneAndUpdate(
+            { _id: req.params.id },
+            {
+                condition: condition_update
+            },
+            { new: true }
+        );
 
         const condition = await Condition.findOneAndDelete({ _id: req.params.id })
+        return res.json({ data: condition });
+
+        // const condition = await Condition.findOneAndDelete({ _id: req.params.id })
         res.json(condition);
     }
     catch (err) {

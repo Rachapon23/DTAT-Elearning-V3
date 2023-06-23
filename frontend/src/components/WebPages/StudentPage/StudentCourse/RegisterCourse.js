@@ -165,6 +165,7 @@ const RegisterCourse = () => {
             .then(
                 (res) => {
                     const data = res.data.data
+                    console.log(data)
                     setCourse(data)
                     fetchCondition(data._id);
                     handleFetchImage(data.image.name)
