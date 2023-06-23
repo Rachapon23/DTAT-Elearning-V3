@@ -61,53 +61,53 @@ const Course_main = () => {
   const pageList = courseData?.type
     ? [<Course_info />, <Course_topic />, <Course_finished />]
     : [
-        <Course_info />,
-        <Course_Room />,
-        <Course_condition />,
-        <Course_topic />,
-        <Course_finished />,
-      ];
+      <Course_info />,
+      <Course_Room />,
+      <Course_condition />,
+      <Course_topic />,
+      <Course_finished />,
+    ];
 
   const [currentDisplay, setCurrentDisplay] = useState(pageList);
 
   useEffect(() => {
     courseData?.type
       ? setStep([
-          {
-            title: "Course Info",
-            content: "First-content",
-          },
-          {
-            title: "topic",
-            content: "second-content",
-          },
-          {
-            title: "Finished",
-            content: "Last-content",
-          },
-        ])
+        {
+          title: "Course Info",
+          content: "First-content",
+        },
+        {
+          title: "topic",
+          content: "second-content",
+        },
+        {
+          title: "Finished",
+          content: "Last-content",
+        },
+      ])
       : setStep([
-          {
-            title: "Course Info",
-            content: "First-content",
-          },
-          {
-            title: "Time & Room",
-            content: "second-content",
-          },
-          {
-            title: "Manage Plant",
-            content: "third-content",
-          },
-          {
-            title: "topic",
-            content: "fourth-content",
-          },
-          {
-            title: "Finished",
-            content: "Last-content",
-          },
-        ]);
+        {
+          title: "Course Info",
+          content: "First-content",
+        },
+        {
+          title: "Time & Room",
+          content: "second-content",
+        },
+        {
+          title: "Manage Plant",
+          content: "third-content",
+        },
+        {
+          title: "topic",
+          content: "fourth-content",
+        },
+        {
+          title: "Finished",
+          content: "Last-content",
+        },
+      ]);
     setCurrentDisplay(pageList);
   }, [courseData?.type]);
 
@@ -211,34 +211,34 @@ const Course_main = () => {
 
   const courseCreateTitle = () => {
     return (
-        <Row align={"middle"} justify={"space-between"} >
-            <Col>
-                <Breadcrumb
-                    separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
-                    items={
-                        [
-                            {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><p >Course</p></Title>,
-                                key: "courses"
-                            },
-                            {
-                                title: <Title level={5} style={{ marginTop: "10px" }}><p>Create Exam</p></Title>,
-                                key: "courses_action",
-                            },
-                        ]
-                      }
-                />
-            </Col>
-            <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-                <Link to="/teacher/page/list-course">
-                    <Button>
-                        Back
-                    </Button>
-                </Link>
-            </Col>
-        </Row>
+      <Row align={"middle"} justify={"space-between"} >
+        <Col>
+          <Breadcrumb
+            separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
+            items={
+              [
+                {
+                  title: <Title level={5} style={{ marginTop: "10px" }}><p >Course</p></Title>,
+                  key: "courses"
+                },
+                {
+                  title: <Title level={5} style={{ marginTop: "10px" }}><p>Create Exam</p></Title>,
+                  key: "courses_action",
+                },
+              ]
+            }
+          />
+        </Col>
+        <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
+          <Link to="/teacher/page/list-course">
+            <Button>
+              Back
+            </Button>
+          </Link>
+        </Col>
+      </Row>
     )
-}
+  }
 
   return (
     <Layout className="course-main-layout">
@@ -262,28 +262,24 @@ const Course_main = () => {
         </Col>
       </Row>
 
-      {courseData?.calendar !== null &&
-      step[1]?.title === "Time & Room" &&
-      currentPage === 1 ? (
+      {(courseData?.calendar !== null || courseData?.calendar !== undefined) &&
+        step[1]?.title === "Time & Room" &&
+        currentPage === 1 ? (
         <Row className="course-main-for-calendar">
           <Card className="card-calendar">
             <Row justify="center">
               <Col className="col-card-calendar" span={6}>
                 start :{" "}
-                {moment(courseData?.calendar?.start).format(
-                  "LL"
-                )}
+                {moment(courseData?.calendar?.start).format("LL")}
               </Col>
               <Col className="col-card-calendar" span={6}>
                 end :{" "}
-                {moment(courseData?.calendar?.end).format(
-                  "LL"
-                )}
+                {moment(courseData?.calendar?.end).format("LL")}
               </Col>
               <Col className="col-card-calendar" span={6}>
                 <ColorPicker
                   onChange={debounceOnChange}
-                  value={courseData?.calendar?.color}/>
+                  value={courseData?.calendar?.color} />
               </Col>
               <Col className="col-card-calendar" span={6}>
                 <Button onClick={handleRemoveCalendar}>
@@ -300,8 +296,8 @@ const Course_main = () => {
       {courseData.type === true ? (
         <>
           {topicData.length !== 0 &&
-          step[1]?.title === "topic" &&
-          currentPage === 1 ? (
+            step[1]?.title === "topic" &&
+            currentPage === 1 ? (
             <>
               {topicData.map((item, index) => (
                 <Course_topic_children
@@ -320,8 +316,8 @@ const Course_main = () => {
       ) : (
         <>
           {topicData.length !== 0 &&
-          step[3]?.title === "topic" &&
-          currentPage === 3 ? (
+            step[3]?.title === "topic" &&
+            currentPage === 3 ? (
             <>
               {topicData.map((item, index) => (
                 <Course_topic_children

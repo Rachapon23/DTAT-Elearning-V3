@@ -129,9 +129,9 @@ const HomePublic = () => {
           }
         </div>
       </div>
-      <div className="btn-navigate">
+      {/* <div className="btn-navigate">
         <button className="btn-show-more">Show More</button>
-      </div>
+      </div> */}
       <Modal
         className="modal-ant"
         style={{

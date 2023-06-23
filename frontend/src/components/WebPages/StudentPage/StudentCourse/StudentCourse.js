@@ -31,7 +31,6 @@ const StudentExam = () => {
   const [openProfile, setOpenProfile] = useState(false)
   const [teacherProfile, setTeacherProfile] = useState(null);
   const [selectedTabIndex] = useState(location?.state?.tabIndex ? location.state.tabIndex : 0)
-  console.log("from: ", location)
 
   const handleNavigate = (navStr, dataStage) => {
     navigate(navStr, { state: dataStage })
@@ -92,7 +91,7 @@ const StudentExam = () => {
         fetchTopic(data._id);
         setCourse(data);
         fetchTeacherProfile(data.teacher._id);
-        handleFetchImage(data.image.name)
+        // handleFetchImage(data.image.name)
       })
       .catch((err) => {
         console.log(err);
@@ -174,7 +173,7 @@ const StudentExam = () => {
                     style={{ borderRadius: "5px" }}
                     preview={false}
                     onError={handleUnloadImage}
-                    src={imageData ? imageData : DEFAULT_IMAGE}
+                    src={course?.image?.name ? `${process.env.REACT_APP_IMG}/course/${course?.image?.name}` : DEFAULT_IMAGE}
                   />
                 </Col>
                 <Col span={6}>

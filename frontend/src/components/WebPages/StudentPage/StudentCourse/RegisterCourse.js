@@ -1,10 +1,15 @@
-import { Avatar, Breadcrumb, Button, Card, Col, Image, Row, Typography } from "antd";
-import React, { useEffect, useState } from "react";
+import { Avatar, Breadcrumb, Button, Card, Col, Image, Progress, Row, Typography } from "antd";
+import React, { createRef, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { createActivity, getActivity, getCourse, getUser } from "../../../../function/Student/course";
+import { createActivity, getActivity, getCourse, getUser, getCalendarByCourseId } from "../../../../function/Student/course";
 import { listCondition } from "../../../../function/Student/condition";
 import "./studentcourse.css";
 import { getPrivateFieldImage } from "../../../../function/Student/topic";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
+import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
+import timeGridPlugin from "@fullcalendar/timegrid";
+import bootstrap5Plugin from "@fullcalendar/bootstrap5";
 
 const { Text, Title } = Typography
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
@@ -13,15 +18,18 @@ const RegisterCourse = () => {
 
     const params = useParams()
     const navigate = useNavigate()
+    const calendarRef = createRef()
 
-    const [course, setCourse] = useState()
-    const [plant, setPlant] = useState()
+    const [course, setCourse] = useState(null)
+    const [plant, setPlant] = useState(null)
     const [registered, setRegistered] = useState(false)
     const [passedCondition, setPassedCondition] = useState(false)
     const [pageChange, setPageChange] = useState(false)
     const [conditionData, setConditionData] = useState([]);
     const [imageData, setImageData] = useState(null);
     const [courseResult, setCourseResult] = useState(false)
+
+    const [even, setEven] = useState(null);
 
     const handleNavigate = (navStr, dataStage) => {
         navigate(navStr, { state: dataStage })
@@ -120,6 +128,22 @@ const RegisterCourse = () => {
             });
     };
 
+    const fetchCalendar = async () => {
+        await getCalendarByCourseId(sessionStorage.getItem("token"), params.id)
+            .then(
+                (res) => {
+                    const data = res.data
+                    // console.log("calendar:  ",data)
+                    setEven(() => [data])
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err);
+                }
+            );
+    }
+
     const fetchUser = async () => {
         await getUser(sessionStorage.getItem("token"), sessionStorage.getItem("user_id"), `?fetch=plant,-_id&field=plant`)
             .then(
@@ -153,6 +177,11 @@ const RegisterCourse = () => {
             )
     }
 
+    const goToDate = () => {
+        const calendarAPI = calendarRef?.current?.getApi()
+        if (calendarAPI && even?.start) calendarAPI.gotoDate(even[0].start)
+    }
+
     const handleFetchImage = async (imageName) => {
 
         const image_name = imageName
@@ -181,6 +210,8 @@ const RegisterCourse = () => {
     useEffect(() => {
         fetchUser()
         fetchCourse()
+        fetchCalendar()
+        goToDate()
     }, [pageChange])
 
     const registerCourseTitle = () => {
@@ -231,7 +262,7 @@ const RegisterCourse = () => {
                                                             width={300}
                                                             preview={false}
                                                             onError={handleUnloadImage}
-                                                            src={imageData ? imageData : DEFAULT_IMAGE}
+                                                            src={course?.image?.name ? `${process.env.REACT_APP_IMG}/course/${course?.image?.name}` : DEFAULT_IMAGE}
                                                         />
                                                     </Col>
                                                     <Col flex={"auto"} style={{ minWidth: "30%" }}>
@@ -321,21 +352,60 @@ const RegisterCourse = () => {
                                     <Row style={{ paddingTop: "1%" }}>
                                         <Col flex={"auto"}>
                                             <Card >
-                                                {
-                                                    course?.condition && course?.condition.map(
-                                                        (item) => (
-                                                            <Row >
-                                                                <Col style={{ paddingRight: "2%" }}>
-                                                                    Plant: {item.plant.name}
+                                                <Row justify={"space-between"}>
+                                                    <Col flex={"auto"} style={{ width: "20%", marginRight: "20px" }}>
+                                                        {
+                                                            course?.condition && course?.condition.map(
+                                                                (item) => (
+                                                                    <Row >
+                                                                        <Col flex={"auto"}>
+                                                                            <Row>
+                                                                                <Title level={4}>
+                                                                                    Plant: {item.plant.name}
+                                                                                </Title>
+                                                                            </Row>
+                                                                            <Row>
+                                                                                <Title level={5}>
+                                                                                    Amount: {item.current} / {item.maximum}
+                                                                                </Title>
+                                                                            </Row>
+                                                                            <Row>
+                                                                                <Progress percent={item.current / item.maximum} />
+                                                                            </Row>
+                                                                        </Col>
+                                                                    </Row>
+                                                                )
+                                                            )
+                                                        }
+                                                    </Col>
+                                                    <Col>
+                                                        <Card>
+                                                            <Row justify={"center"}>
+                                                                <Col style={{ width: "700px", maxWidth: "2000px", }}>
+                                                                    <FullCalendar
+                                                                        plugins={[
+                                                                            dayGridPlugin,
+                                                                            timeGridPlugin,
+                                                                            interactionPlugin,
+                                                                            bootstrap5Plugin,
+                                                                        ]}
+                                                                        headerToolbar={{
+                                                                            left: null,//"prev today",
+                                                                            center: "title",
+                                                                            right: null//"next",
+                                                                        }}
+                                                                        height={500}
+                                                                        themeSystem="bootstrap5"
+                                                                        events={even}
+                                                                        defaultTimedEventDuration={even}
+                                                                        ref={calendarRef}
+                                                                    />
+                                                                </Col>
 
-                                                                </Col>
-                                                                <Col>
-                                                                    Amount:  {item.current} / {item.maximum}
-                                                                </Col>
                                                             </Row>
-                                                        )
-                                                    )
-                                                }
+                                                        </Card>
+                                                    </Col>
+                                                </Row>
                                             </Card>
                                         </Col>
 

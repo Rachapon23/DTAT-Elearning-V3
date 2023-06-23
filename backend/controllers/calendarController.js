@@ -29,6 +29,26 @@ exports.createCalendar = async (req, res) => {
     res.status(500).json({ error: "Server Error!!! on create calendar" });
   }
 };
+
+// GET: /get-calennder/course/:id
+exports.getCalendarByCourseId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: "Invalid course ID" })
+
+    const course = await Course.findOne({ _id: id }).select("calendar")
+    if (!course.calendar) return res.send({})
+
+    // console.log(course)
+    const calendar = await Calendar.findOne({ _id: course.calendar });
+    res.send(calendar);
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error!!! on list calendar");
+  }
+}
+
 exports.updateCalendar = async (req, res) => {
   try {
     // console.log(req.params.id)

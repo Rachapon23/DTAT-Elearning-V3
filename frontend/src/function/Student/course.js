@@ -74,8 +74,17 @@ export const getActivity = async (authtoken, id, query) => {
     });
 }
 
+// GET: /get-profile/user/:id
 export const getProfile = async (authtoken, id) =>
     await axios.get(process.env.REACT_APP_API + `/get-profile/user/${id}`, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// GET: /get-calendar/course/:id
+export const getCalendarByCourseId = async (authtoken, id) =>
+    await axios.get(process.env.REACT_APP_API + `/get-calendar/course/${id}`, {
         headers: {
             authtoken,
         }
