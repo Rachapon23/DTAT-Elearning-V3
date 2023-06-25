@@ -16,7 +16,7 @@ import {
 // page Calendar
 import Course_calendar from "./Course_calendar";
 const Course_Room = () => {
-  const { course_id,courseData,loadDataCourse,} = useContext(CourseContext);
+  const { course_id, courseData, loadDataCourse, } = useContext(CourseContext);
   const [roomData, setRoomData] = useState([]);
 
   const loadRoom = () => {
@@ -82,7 +82,11 @@ const Course_Room = () => {
     >
       <Row align={"middle"}>
         <Col style={{ width: "100%" }}>
-          <Form.Item label="Room" name="fieldRoom" required>
+          <Form.Item
+            label="Room"
+            name="fieldRoom"
+            // required
+          >
             <Select
               onChange={handleChangeRoom}
               options={[

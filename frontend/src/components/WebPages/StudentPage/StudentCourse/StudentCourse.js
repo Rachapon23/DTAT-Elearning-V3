@@ -276,25 +276,40 @@ const StudentExam = () => {
                   {item.detail}
                 </Text>
                 <br />
-                {item.sub_content.length > 0 ? (
-                  <ul style={{ marginTop: "15px" }}>
-                    {item.sub_content.map((ttem, ddex) => (
-                      <li className="li-list">{ttem}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <></>
-                )}
-                {item.file.length > 0 ? (
-                  <StudentCourse_file item={item} />
-                ) : (
-                  <></>
-                )}
-                {item.link.length > 0 ? (
-                  <StudentCourse_link item={item} />
-                ) : (
-                  <></>
-                )}
+                {
+                  item.sub_content.length > 0 ?
+                    (
+                      <ul style={{ marginTop: "15px" }}>
+                        {item.sub_content.map((ttem, ddex) => (
+                          <li className="li-list">{ttem}</li>
+                        ))}
+                      </ul>
+                    )
+                    :
+                    (
+                      <></>
+                    )
+                }
+                {
+                  item.file.length > 0 ?
+                    (
+                      <StudentCourse_file item={item} />
+                    )
+                    :
+                    (
+                      <></>
+                    )
+                }
+                {
+                  item.link.length > 0 ?
+                    (
+                      <StudentCourse_link item={item} />
+                    )
+                    :
+                    (
+                      <></>
+                    )
+                }
               </Card>
             </Col>
           </Row>

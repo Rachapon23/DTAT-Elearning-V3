@@ -6,31 +6,33 @@ const { validateQuery } = require('./util')
 // POST: create-condition
 exports.createCondition = async (req, res) => {
     try {
-        // const condition = await new Condition({
-        //     plant: req.body.plant,
-        //     maximum: req.body.maximum,
-        // }).save();
+        const plant = req?.body?.plant
+        const maximum = req?.body?.maximum
+        const course_id = req?.params?.id
 
-        // const courseFind = await Course.findOne({ _id: req.params.id });
-        // const condition_update = courseFind.condition;
-        // condition_update.push(condition._id);
-
-        // const course = await Course.findOneAndUpdate(
-        //     { _id: req.params.id },
-        //     {
-        //         condition: condition_update,
-        //     },
-        //     { new: true }
-        // );
-        // return res.json({ data: condition });
+        if (!plant) return res.status(400).json({ error: "Missing plant ID" });
+        if (!maximum) return res.status(400).json({ error: "Missing maximum" });
+        if (!course_id) return res.status(400).json({ error: "Missing course ID" });
 
         const condition = await new Condition({
             plant: req.body.plant,
             maximum: req.body.maximum,
             course: req.params.id,
-            current: 0
+            current: 0,
         }).save();
-        res.json(condition);
+
+        const courseFind = await Course.findOne({ _id: req.params.id });
+        const condition_update = courseFind.condition;
+        condition_update.push(condition._id);
+
+        await Course.findOneAndUpdate(
+            { _id: req.params.id },
+            {
+                condition: condition_update,
+            },
+            { new: true }
+        );
+        return res.json(condition);
     }
     catch (err) {
         console.log(err);
@@ -53,24 +55,24 @@ exports.listConditionCourse = async (req, res) => {
 // DELETE: delete-condition
 exports.deleteCondition = async (req, res) => {
     try {
+        const course_id = req?.body?.course_id
+        const condition_id = req?.params?.id
+        if (!course_id) return res.status(400).json({ error: "Missing course ID" });
 
-        // const courseFind = await Course.findOne({ _id: req.body.course_id });
-        // const condition_update = courseFind.condition
-        // await condition_update.splice(condition_update.indexOf(req.params.id), 1);
+        const courseFind = await Course.findOne({ _id: course_id });
+        const condition_update = courseFind.condition
+        condition_update.splice(condition_update.indexOf(condition_id), 1);
 
-        // const course = await Course.findOneAndUpdate(
-        //     { _id: req.params.id },
-        //     {
-        //         condition: condition_update
-        //     },
-        //     { new: true }
-        // );
+        await Course.findOneAndUpdate(
+            { _id: course_id },
+            {
+                condition: condition_update
+            },
+            { new: true }
+        );
 
-        // const condition = await Condition.findOneAndDelete({ _id: req.params.id })
-        // return res.json({ data: condition });
-
-        const condition = await Condition.findOneAndDelete({ _id: req.params.id })
-        res.json(condition);
+        const condition = await Condition.findOneAndDelete({ _id: condition_id })
+        return res.json(condition);
     }
     catch (err) {
         console.log(err);

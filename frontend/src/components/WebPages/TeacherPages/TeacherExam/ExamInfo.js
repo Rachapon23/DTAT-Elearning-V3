@@ -164,17 +164,17 @@ const ExamInfo = ({
                     <Form.Item
                         label={<Text strong> Detail </Text>}
                         required={previewMode}
-                        tooltip={editMode ? {
-                            title: 'Tooltip with customize icon',
-                            icon: <InfoCircleOutlined />,
-                        } : null}
+                        // tooltip={editMode ? {
+                        //     title: 'Tooltip with customize icon',
+                        //     icon: <InfoCircleOutlined />,
+                        // } : null}
                     >
                         {
                             editMode || createMode ?
                                 (
                                     <TextArea
-                                        showCount
-                                        maxLength={250}
+                                        // showCount
+                                        // maxLength={250}
                                         style={{ height: 120 }}
                                         id="detail"
                                         onChange={handleInputInfoData}

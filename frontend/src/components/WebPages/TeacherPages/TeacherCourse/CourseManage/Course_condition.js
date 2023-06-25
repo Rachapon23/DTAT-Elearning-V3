@@ -67,7 +67,7 @@ const Course_condition = () => {
     loadPlant();
   }, []);
 
-  
+
   const columns = [
     {
       title: "No",
@@ -97,7 +97,7 @@ const Course_condition = () => {
       render: (_, item) => {
         return (
           <Button
-            onClick={() => handleDeleteCondition(item._id)}
+            onClick={() => handleDeleteCondition(item._id, item.course)}
           >
             <DeleteOutlined />
           </Button>
@@ -134,8 +134,8 @@ const Course_condition = () => {
       });
   };
 
-  const handleDeleteCondition = (id) => {
-    removeCondition(sessionStorage.getItem("token"), id)
+  const handleDeleteCondition = (id, course_id) => {
+    removeCondition(sessionStorage.getItem("token"), id, course_id)
       .then((res) => {
         loadCondition();
         loadPlant();
@@ -188,26 +188,26 @@ const Course_condition = () => {
         layout="vertical"
         autoComplete="off"
         style={{ paddingTop: "2%" }}
-        // fields={[
-        //   {
-        //     name: ["plant"],
-        //     value: "",
-        //   },
-        //   {
-        //     name: ["maximum"],
-        //     value: "",
-        //   },
-        // ]}
+      // fields={[
+      //   {
+      //     name: ["plant"],
+      //     value: "",
+      //   },
+      //   {
+      //     name: ["maximum"],
+      //     value: "",
+      //   },
+      // ]}
       >
         <Form.Item style={{ marginBottom: "5px" }}>
           <Form.Item
             name="plant"
             label="Plant"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+            // rules={[
+            //   {
+            //     required: true,
+            //   },
+            // ]}
             style={{
               display: "inline-block",
               width: "calc(50% - 8px)",
@@ -218,11 +218,11 @@ const Course_condition = () => {
           <Form.Item
             name="maximum"
             label="Maximum"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+            // rules={[
+            //   {
+            //     required: true,
+            //   },
+            // ]}
             style={{
               display: "inline-block",
               width: "calc(50% - 8px)",

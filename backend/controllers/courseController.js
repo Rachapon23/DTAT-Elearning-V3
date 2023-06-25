@@ -46,7 +46,7 @@ exports.createCourse = async (req, res) => {
         original_name: null,
         name: null,
       },
-      condition: null, //condition,
+      condition: [], //condition,
     }).save();
 
     // const course = await new Course({
@@ -74,7 +74,7 @@ exports.getCourse = async (req, res) => {
   const allowedProps = ["condition", "plant", "plant maximum current", "teacher", "firstname lastname -_id", "firstname lastname _id"]
   const allowedPropsField = ["path", "populate", "select"]
   const allowedSelect = ["firstname", "lastname"]
-  const allowedFetch = ["name", "detail", "image", "condition", "teacher"]
+  const allowedFetch = ["name", "detail", "image", "condition", "teacher", "type"]
   try {
     console.log(req?.params?.id)
     const result = validateQuery(

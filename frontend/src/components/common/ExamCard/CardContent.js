@@ -170,9 +170,9 @@ const CardContent = ({
     }
 
     const handleFetchImage = useCallback(async () => {
-        
+
         const image_name = data?.image?.name
-        
+
         if (!image_name) return
         const split_image_name = data?.image?.name.split(".")
         const split_image_name_lenght = split_image_name.length
@@ -239,8 +239,8 @@ const CardContent = ({
                                         label={
                                             <Text strong>{`Question ${index + 1}`}</Text>
                                         }
-                                        required={previewMode}
-                                        tooltip={editMode || createMode ? "This is a required field" : null}
+                                        required={true}
+                                    // tooltip={editMode || createMode ? "Question" : null}
                                     >
                                         {
                                             editMode || createMode ?
@@ -314,7 +314,6 @@ const CardContent = ({
                                                                                 <Image
                                                                                     height={250}
                                                                                     src={imageData}
-                                                                                // src={data?.image ? URL.createObjectURL(data?.image.get("file")) : null}
                                                                                 />
                                                                             </Badge>
                                                                         )
@@ -342,77 +341,79 @@ const CardContent = ({
                             }
                             <Row justify={"center"} align={"middle"}>
                                 <Col style={{ width: "100%" }}>
-                                    {data?.choices?.map((item, choice_index) => (
-                                        <Form.Item
-                                            {...(choice_index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                                            label={choice_index === 0 ? 'Choices' : ''}
-                                            required={previewMode}
-                                            key={choice_index}
-                                        >
+                                    {
+                                        data?.choices?.map((item, choice_index) => (
+                                            <Form.Item
+                                                {...(choice_index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+                                                label={choice_index === 0 ? <Text strong>Choices</Text> : ''}
+                                                required={true} //previewMode
+                                                key={choice_index}
+                                            >
 
-                                            <Row justify={"center"} align={"middle"}>
-                                                <Col style={{ width: "95%" }}>
-                                                    <Form.Item
-                                                        {...item}
-                                                        validateTrigger={['onChange', 'onBlur']}
-                                                        rules={[
-                                                            {
-                                                                required: true,
-                                                                whitespace: true,
-                                                                message: "Please input passenger's name or delete this field.",
-                                                            },
-                                                        ]}
-                                                        noStyle
-                                                    >
-                                                        <Row justify={"center"} align={"middle"}>
-                                                            <Col style={{ width: "5%", display: "flex", justifyContent: "center" }}>
-                                                                <Radio
-                                                                    checked={editMode || createMode || previewMode ? data?.answer === choice_index : null}
-                                                                    onChange={
-                                                                        editMode || createMode || previewMode ?
-                                                                            (e) => handleRadioChange({ checked: e?.target?.checked, index: choice_index, quiz_id: data?._id }) : null
-                                                                    }
-                                                                />
-
-                                                            </Col>
-                                                            <Col style={{ width: "95%" }}>
+                                                <Row justify={"center"} align={"middle"}>
+                                                    <Col style={{ width: "95%" }}>
+                                                        <Form.Item
+                                                            {...item}
+                                                            validateTrigger={['onChange', 'onBlur']}
+                                                            rules={[
                                                                 {
-                                                                    editMode || createMode ?
-                                                                        (
-                                                                            <Input
-                                                                                key={choice_index}
-                                                                                id="choice"
-                                                                                placeholder="choice"
-                                                                                style={{
-                                                                                    width: '100%',
-                                                                                }}
-                                                                                onChange={(e) => handleQuestionChange(e, choice_index)}
-                                                                                defaultValue={item}
-                                                                            />
-                                                                        ) : (<>{item}</>)
-                                                                }
+                                                                    required: true,
+                                                                    whitespace: true,
+                                                                    message: "Please input passenger's name or delete this field.",
+                                                                },
+                                                            ]}
+                                                            noStyle
+                                                        >
+                                                            <Row justify={"center"} align={"middle"}>
+                                                                <Col style={{ width: "5%", display: "flex", justifyContent: "center" }}>
+                                                                    <Radio
+                                                                        checked={editMode || createMode || previewMode ? data?.answer === choice_index : null}
+                                                                        onChange={
+                                                                            editMode || createMode || previewMode ?
+                                                                                (e) => handleRadioChange({ checked: e?.target?.checked, index: choice_index, quiz_id: data?._id }) : null
+                                                                        }
+                                                                    />
 
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Item>
-                                                </Col>
-                                                <Col style={{ width: "5%", display: "flex", justifyContent: "center", paddingLeft: "0.7%" }}>
-                                                    {
-                                                        (editMode || createMode) && data?.choices.length > 0 ?
-                                                            (
-                                                                <MinusCircleOutlined
-                                                                    key={choice_index}
-                                                                    style={{ fontSize: "130%" }}
-                                                                    className="dynamic-delete-button"
-                                                                    onClick={() => handleRemoveChoice(choice_index)}
-                                                                />
-                                                            ) : null
-                                                    }
-                                                </Col>
-                                            </Row>
+                                                                </Col>
+                                                                <Col style={{ width: "95%" }}>
+                                                                    {
+                                                                        editMode || createMode ?
+                                                                            (
+                                                                                <Input
+                                                                                    key={choice_index}
+                                                                                    id="choice"
+                                                                                    placeholder="Choice"
+                                                                                    style={{
+                                                                                        width: '100%',
+                                                                                    }}
+                                                                                    onChange={(e) => handleQuestionChange(e, choice_index)}
+                                                                                    defaultValue={item}
+                                                                                />
+                                                                            ) : (<>{item}</>)
+                                                                    }
 
-                                        </Form.Item>
-                                    ))}
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Item>
+                                                    </Col>
+                                                    <Col style={{ width: "5%", display: "flex", justifyContent: "center", paddingLeft: "0.7%" }}>
+                                                        {
+                                                            (editMode || createMode) && data?.choices.length > 0 ?
+                                                                (
+                                                                    <MinusCircleOutlined
+                                                                        key={choice_index}
+                                                                        style={{ fontSize: "130%" }}
+                                                                        className="dynamic-delete-button"
+                                                                        onClick={() => handleRemoveChoice(choice_index)}
+                                                                    />
+                                                                ) : null
+                                                        }
+                                                    </Col>
+                                                </Row>
+
+                                            </Form.Item>
+                                        ))
+                                    }
                                     {
                                         editMode || createMode ?
                                             (
@@ -424,11 +425,10 @@ const CardContent = ({
                                                             style={{
                                                                 width: '100%',
                                                             }}
-                                                            icon={<PlusOutlined />}
+                                                            icon={<div style={{ fontSize: "150%" }}>+</div>}
                                                         >
                                                             Add choice
                                                         </Button>
-                                                        {/* <Form.ErrorList errors={errors} /> */}
                                                     </Form.Item>
                                                 </>
                                             ) : (null)
