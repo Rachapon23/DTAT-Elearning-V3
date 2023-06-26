@@ -18,31 +18,40 @@ import {
   PlusOutlined,
   LoadingOutlined,
   DeleteOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import { debounce } from "lodash";
+
+//crop
+import ImgCrop from "antd-img-crop";
 
 //course Context
 import { CourseContext } from "./CourseContext";
 // fucntion : POST
-import { createFile, createFilePublic } from "../../../../../function/Teacher/course_update";
+import {
+  createFile,
+  createFilePublic,
+} from "../../../../../function/Teacher/course_update";
 // fucntion : DELETE
-import { deleteFileCourse, getPrivateFieldImage } from "../../../../../function/Teacher/course";
+import {
+  deleteFileCourse,
+  getPrivateFieldImage,
+} from "../../../../../function/Teacher/course";
 // function Update : PUT
-import { updateCourseStatus, updateCourseInfo } from "../../../../../function/Teacher/course_update";
+import {
+  updateCourseStatus,
+  updateCourseInfo,
+} from "../../../../../function/Teacher/course_update";
 
+const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
 const { TextArea } = Input;
+
 const Course_info = () => {
-  const {
-    courseData,
-    course_id,
-    loadDataCourse,
-  } = useContext(CourseContext);
+  const { courseData, course_id, loadDataCourse, setUpdateInfo } = useContext(CourseContext);
   const [selectedImage, setSelectedImage] = useState(null);
   const createFileField = "course";
   const [loading, setLoading] = useState(false);
-  const [imageData, setImageData] = useState(null)
-
-  console.log("courseData: ", courseData)
+  const [imageData, setImageData] = useState(null);
 
   const uploadButton = (
     <div>
@@ -79,6 +88,7 @@ const Course_info = () => {
   const handleChangeInfo = (e) => {
     const field = e.target.name;
     const value = e.target.value;
+
     updateCourseInfo(
       sessionStorage.getItem("token"),
       {
@@ -88,7 +98,7 @@ const Course_info = () => {
       course_id
     )
       .then((res) => {
-        console.log(res);
+        console.log("we got:", res.data);
         loadDataCourse();
       })
       .catch((err) => {
@@ -104,7 +114,11 @@ const Course_info = () => {
     formData.append("original_name", image?.file?.name);
     formData.append("course_id", course_id);
 
-    await createFilePublic(sessionStorage.getItem("token"), formData, createFileField)
+    await createFilePublic(
+      sessionStorage.getItem("token"),
+      formData,
+      createFileField
+    )
       .then((res) => {
         loadDataCourse();
       })
@@ -123,41 +137,33 @@ const Course_info = () => {
       });
   };
 
-  const handleFetchImage = useCallback(async () => {
-
-    const image_name = courseData?.image?.name
-    if (!image_name) return
-
-    const createFileField = "course"
-    const createFileParam = "file"
-
-    let response
-    await getPrivateFieldImage(sessionStorage.getItem("token"), createFileField, createFileParam, image_name)
-      .then(
-        (res) => {
-          response = res
-        }
-      )
-      .catch(
-        (err) => {
-          console.log(err)
-        }
-      )
-
-
-    const objectUrl = URL.createObjectURL(response.data);
-    // console.log(objectUrl)
-    setImageData(objectUrl)
-
-  }, [courseData?.image?.name])
+  const handleUnloadImage = (e) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.font = '30px Arial';
+    ctx.fillText('Cannot Get Image', 30, 85);
+    const dataUrl = canvas.toDataURL();
+    e.target.src = dataUrl
+  }
 
   const debounceOnChange = debounce(handleChangeInfo, 500);
 
-  // useEffect(() => {
-    // if (!imageData) {
-    //   handleFetchImage()
-    // }
-  // }, [handleFetchImage, imageData])
+  const renderUploadButton = () => {
+    return (
+      <ImgCrop showReset aspect={1.68 / 1}>
+        <Upload
+          accept="image/*"
+          showUploadList={false}
+          customRequest={handleAddImage}
+          name="avatar"
+          listType="picture-card"
+          className="avatar-uploader"
+        >
+          {uploadButton}
+        </Upload>
+      </ImgCrop>
+    );
+  };
 
   return (
     <Form
@@ -183,40 +189,33 @@ const Course_info = () => {
           <Form.Item label="Cover Image">
             <Row justify={"center"} align={"middle"}>
               <Col>
-                {courseData?.image?.name === null ? (
-                  <Upload
-                    name="avatar"
-                    listType="picture-card"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    customRequest={handleAddImage}
-                  >
-                    {uploadButton}
-                  </Upload>
-                ) : (
-                  <Badge
-                    count={
-                      <Row justify={"center"} align={"middle"}>
-                        <DeleteOutlined
-                          onClick={handleRemoveImage}
-                          style={{
-                            fontSize: "120%",
-                            color: "white",
-                            backgroundColor: "#f5222d",
-                            borderRadius: "50%",
-                            padding: "20%",
-                          }}
-                        />
-                      </Row>
-                    }
-                  >
-                    <Image
-                      height={250}
-                      // src={imageData}
-                      src={`${process.env.REACT_APP_IMG}/course/${courseData?.image?.name}`}
-                    />
-                  </Badge>
-                )}
+                {courseData?.image?.name === null ?
+                  (
+                    <>{renderUploadButton()}</>
+                  ) : (
+                    <Badge
+                      count={
+                        <Row justify={"center"} align={"middle"}>
+                          <DeleteOutlined
+                            onClick={handleRemoveImage}
+                            style={{
+                              fontSize: "120%",
+                              color: "white",
+                              backgroundColor: "#f5222d",
+                              borderRadius: "50%",
+                              padding: "20%",
+                            }}
+                          />
+                        </Row>
+                      }
+                    >
+                      <Image
+                        height={250}
+                        onError={handleUnloadImage}
+                        src={courseData?.image?.name ? `${process.env.REACT_APP_IMG}/course/${courseData?.image?.name}`: DEFAULT_IMAGE}
+                      />
+                    </Badge>
+                  )}
               </Col>
             </Row>
           </Form.Item>
@@ -224,12 +223,12 @@ const Course_info = () => {
         <Col style={{ width: "100%" }}>
           <Form.Item
             label="Course Name"
-            required
-            tooltip="This is a required field"
+            // require
+            tooltip="Name of the course"
             name="fieldName"
           >
             <Input
-              placeholder="input placeholder"
+              placeholder="Course name"
               name="name"
               onChange={debounceOnChange}
             />
@@ -238,23 +237,26 @@ const Course_info = () => {
           <Form.Item
             label="Detail"
             name="fieldDetail"
-            required
+            // required
             tooltip={{
-              title: "Tooltip with customize icon",
+              title: "Describe the information about course",
               icon: <InfoCircleOutlined />,
             }}
           >
             <TextArea
-              showCount
-              maxLength={250}
+              // showCount
+              // maxLength={250}
               style={{ height: 120 }}
-              placeholder="can resize"
+              placeholder="Detail"
               name="detail"
               onChange={debounceOnChange}
             />
           </Form.Item>
 
-          <Form.Item label="Course Type" required>
+          <Form.Item
+            label="Course Type"
+          // required
+          >
             <Radio.Group value={courseData?.type} buttonStyle="solid">
               <Radio.Button value={true} onClick={() => handleChangeType(true)}>
                 Public

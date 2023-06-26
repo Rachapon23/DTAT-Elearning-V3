@@ -39,6 +39,7 @@ import {
   removeFileTopic,
 } from "../../../../../function/Teacher/course_topic";
 
+
 //course Context
 import { CourseContext } from "./CourseContext";
 import { getPrivateFieldImage } from "../../../../../function/Teacher/course";
@@ -49,6 +50,8 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
   const { loadTopic, course_id } = useContext(CourseContext);
   const [loading, setLoading] = useState(false);
   const [fileData, setfileData] = useState([])
+
+
 
   const deleteTopic = () => {
     removeTopic(sessionStorage.getItem("token"), item._id)
@@ -242,6 +245,8 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
     handleFetchImage()
   }, [])
 
+
+
   return (
     <Row className="course-main-for-topic">
       <Card
@@ -250,7 +255,11 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
         title={`Topic Index ${index + 1}`}
         extra={
           <Button onClick={deleteTopic}>
-            <DeleteOutlined />
+            <Row justify={"center"} align={"middle"}>
+              <Col flex={"auto"} style={{ marginTop: "-5px" }}>
+                <DeleteOutlined />
+              </Col>
+            </Row>
           </Button>
         }
       >
@@ -301,6 +310,7 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
                     display: "flex",
                     justifyContent: "center",
                     marginLeft: "1%",
+                    paddingTop: "7px",
                     // alignItems: "center",
                     // backgroundColor:"red"
                   }}
@@ -320,7 +330,7 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
             style={{
               width: "100%",
             }}
-            icon={<PlusOutlined />}
+            icon={<div style={{ fontSize: "150%" }}>+</div>}
           >
             Add Sub Content
           </Button>
@@ -353,7 +363,7 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
                     />
                   </Form.Item>
                 </Col>
-                <Col style={{ width: "64%" }}>
+                <Col style={{ width: "64%", paddingLeft: "5px" }}>
                   <Form.Item name="fieldlink">
                     <Input
                       name={`${ddex}`}
@@ -368,6 +378,7 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
                     display: "flex",
                     justifyContent: "center",
                     marginLeft: "1%",
+                    paddingTop: "7px",
                     // alignItems: "center",
                     // backgroundColor:"red"
                   }}
@@ -387,7 +398,7 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
             style={{
               width: "100%",
             }}
-            icon={<PlusOutlined />}
+            icon={<div style={{ fontSize: "150%" }}>+</div>}
           >
             Add Link
           </Button>
@@ -490,6 +501,7 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
           <Upload showUploadList={false} customRequest={handleAddFile}>
             <Button icon={<UploadOutlined />}>Click to Upload</Button>
           </Upload>
+
         </div>
       </Card>
     </Row >

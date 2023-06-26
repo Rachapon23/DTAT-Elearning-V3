@@ -46,7 +46,7 @@ exports.createCourse = async (req, res) => {
         original_name: null,
         name: null,
       },
-      condition: null, //condition,
+      condition: [], //condition,
     }).save();
 
     // const course = await new Course({
@@ -74,9 +74,8 @@ exports.getCourse = async (req, res) => {
   const allowedProps = ["condition", "plant", "plant maximum current", "teacher", "firstname lastname -_id", "firstname lastname _id"]
   const allowedPropsField = ["path", "populate", "select"]
   const allowedSelect = ["firstname", "lastname"]
-  const allowedFetch = ["name", "detail", "image", "condition", "teacher"]
+  const allowedFetch = ["name", "detail", "image", "condition", "teacher", "type"]
   try {
-    console.log(req?.params?.id)
     const result = validateQuery(
       "get",
       "get course",
@@ -387,12 +386,11 @@ exports.getCourseCount = async (req, res) => {
   }
 };
 
-// GET: /list-course/sp/wo/quiz
+// GET: /list-course/sp/wo/quiz?course=<course_id>
 exports.listCourseWoQuiz = async (req, res) => {
   try {
     switch (req?.user?.role) {
       case "admin":
-        console.log(await Course.find({ exam: null }));
         return res.json({ data: await Course.find({ exam: null }) });
       case "teacher":
         return res.json({

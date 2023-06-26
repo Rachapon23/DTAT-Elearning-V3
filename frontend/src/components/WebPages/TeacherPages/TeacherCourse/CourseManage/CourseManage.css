@@ -42,7 +42,6 @@
 }
 
 
-/* .course-main-layout{
-  background-image: url("../../../../../../public/background-teacher.jpg");
-  min-height: 100vh;
-} */
+.course-main-layout{
+ background-color: transparent;
+}

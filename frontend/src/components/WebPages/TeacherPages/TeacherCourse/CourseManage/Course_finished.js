@@ -5,12 +5,12 @@ const Course_finished = () => {
   return (
     <Result
       status="success"
-      title="Successfully Purchased Cloud Server ECS!"
+      title="Successfully Created Course!"
       // subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
       extra={[
         <Link href='/teacher/page/list-course' type="primary" key="console">
           <Button type="primary">
-            Go List Course
+            Go to List Course
           </Button>
         </Link>,
       ]}

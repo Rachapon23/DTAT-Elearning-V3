@@ -38,7 +38,12 @@ const RegisterCourse = () => {
     const isPassCondition = async () => {
         // check registered
         await checkRegistered()
-        // console.log(conditionData)
+        console.log("conditionData: ", conditionData)
+        if (
+            Array.isArray(conditionData) &&
+            conditionData.length === 0 &&
+            course?.type === true
+        ) return setPassedCondition(true)
 
         // check plant
         let inPlant = false
@@ -161,7 +166,7 @@ const RegisterCourse = () => {
 
     const fetchCourse = async () => {
         // console.log("id: ", params.id)
-        await getCourse(sessionStorage.getItem("token"), params.id, `?fetch=name,detail,image,condition,teacher&pops=path:condition$populate:plant$select:plant maximum current,path:teacher$select:firstname lastname -_id`)
+        await getCourse(sessionStorage.getItem("token"), params.id, `?fetch=name,detail,image,condition,teacher,type&pops=path:condition$populate:plant$select:plant maximum current,path:teacher$select:firstname lastname -_id`)
             .then(
                 (res) => {
                     const data = res.data.data
@@ -274,11 +279,23 @@ const RegisterCourse = () => {
                                                         </Row>
                                                         <Row justify={"start"} align={"middle"}>
                                                             <Col>
-                                                                by {course?.teacher?.firstname} {course?.teacher?.lastname}
+                                                                <Text strong>By {course?.teacher?.firstname} {course?.teacher?.lastname}</Text>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row justify={"start"} align={"middle"}>
+                                                            <Col style={{ paddingTop: "1%" }}>
+                                                                <Text strong>
+                                                                    {
+                                                                        course?.type === true ?
+                                                                            "Public Course"
+                                                                            :
+                                                                            "Private Course"
+                                                                    }
+                                                                </Text>
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col style={{ paddingTop: "25px" }}>
+                                                            <Col style={{ paddingTop: "15px" }}>
                                                                 <Text >{course?.detail}</Text>
                                                             </Col>
                                                         </Row>
@@ -349,80 +366,75 @@ const RegisterCourse = () => {
                                             </Card>
                                         </Col>
                                     </Row>
-
-                                    <Row style={{ paddingTop: "1%" }}>
-                                        <Col flex={"auto"}>
-                                            <Card >
-                                                <Row justify={"space-between"}>
-                                                    <Col flex={"auto"} style={{ width: "20%", marginRight: "20px" }}>
-                                                        {
-                                                            course?.condition && course?.condition.map(
-                                                                (item) => (
-                                                                    <Row >
-                                                                        <Col flex={"auto"}>
-                                                                            <Row>
-                                                                                <Title level={4}>
-                                                                                    Plant: {item.plant.name}
-                                                                                </Title>
-                                                                            </Row>
-                                                                            <Row>
-                                                                                <Title level={5}>
-                                                                                    Amount: {item.current} / {item.maximum}
-                                                                                </Title>
-                                                                            </Row>
-                                                                            <Row>
-                                                                                <Progress percent={item.current / item.maximum} />
-                                                                            </Row>
-                                                                        </Col>
-                                                                    </Row>
-                                                                )
-                                                            )
-                                                        }
-                                                    </Col>
-                                                    <Col>
-                                                        <Card>
-                                                            <Row justify={"center"}>
-                                                                <Col style={{ width: "700px", maxWidth: "2000px", }}>
-                                                                    <FullCalendar
-                                                                        plugins={[
-                                                                            dayGridPlugin,
-                                                                            timeGridPlugin,
-                                                                            interactionPlugin,
-                                                                            bootstrap5Plugin,
-                                                                        ]}
-                                                                        headerToolbar={{
-                                                                            left: null,//"prev today",
-                                                                            center: "title",
-                                                                            right: null//"next",
-                                                                        }}
-                                                                        height={500}
-                                                                        themeSystem="bootstrap5"
-                                                                        events={even}
-                                                                        defaultTimedEventDuration={even}
-                                                                        ref={calendarRef}
-                                                                    />
+                                    {
+                                        course && course?.type === false ?
+                                            (
+                                                <Row style={{ paddingTop: "1%" }}>
+                                                    <Col flex={"auto"}>
+                                                        <Card >
+                                                            <Row justify={"space-between"}>
+                                                                <Col flex={"auto"} style={{ width: "20%", marginRight: "20px" }}>
+                                                                    {
+                                                                        course?.condition && course?.condition.map(
+                                                                            (item) => (
+                                                                                <Row >
+                                                                                    <Col flex={"auto"}>
+                                                                                        <Row>
+                                                                                            <Title level={4}>
+                                                                                                Plant: {item.plant.name}
+                                                                                            </Title>
+                                                                                        </Row>
+                                                                                        <Row>
+                                                                                            <Title level={5}>
+                                                                                                Amount: {item.current} / {item.maximum}
+                                                                                            </Title>
+                                                                                        </Row>
+                                                                                        <Row>
+                                                                                            <Progress percent={item.current / item.maximum} />
+                                                                                        </Row>
+                                                                                    </Col>
+                                                                                </Row>
+                                                                            )
+                                                                        )
+                                                                    }
                                                                 </Col>
+                                                                <Col>
+                                                                    <Card>
+                                                                        <Row justify={"center"}>
+                                                                            <Col style={{ width: "700px", maxWidth: "2000px", }}>
+                                                                                <FullCalendar
+                                                                                    plugins={[
+                                                                                        dayGridPlugin,
+                                                                                        timeGridPlugin,
+                                                                                        interactionPlugin,
+                                                                                        bootstrap5Plugin,
+                                                                                    ]}
+                                                                                    headerToolbar={{
+                                                                                        left: null,//"prev today",
+                                                                                        center: "title",
+                                                                                        right: null//"next",
+                                                                                    }}
+                                                                                    height={500}
+                                                                                    themeSystem="bootstrap5"
+                                                                                    events={even}
+                                                                                    defaultTimedEventDuration={even}
+                                                                                    ref={calendarRef}
+                                                                                />
+                                                                            </Col>
 
+                                                                        </Row>
+                                                                    </Card>
+                                                                </Col>
                                                             </Row>
                                                         </Card>
                                                     </Col>
+
                                                 </Row>
-                                            </Card>
-                                        </Col>
-
-                                    </Row>
-
-                                    {/* <Row style={{ paddingTop: "2%" }}>
-                                <Col flex={"auto"}>
-
-                                </Col>
-                            </Row> */}
-
-                                    {/* <Row justify={"center"} style={{ paddingTop: "5%" }}>
-                                <Col flex={"auto"}>
-                                    
-                                </Col>
-                            </Row> */}
+                                            ) :
+                                            (
+                                                null
+                                            )
+                                    }
                                 </Col>
                             </Row>
                         </Card >
