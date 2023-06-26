@@ -42,7 +42,7 @@ import "moment/locale/th";
 import { Link } from "react-router-dom";
 moment.locale("th");
 
-const { Title } = Typography
+const { Title, Text } = Typography
 
 const Course_main = () => {
   const {
@@ -78,7 +78,7 @@ const Course_main = () => {
           content: "First-content",
         },
         {
-          title: "topic",
+          title: "Topic",
           content: "second-content",
         },
         {
@@ -100,7 +100,7 @@ const Course_main = () => {
           content: "third-content",
         },
         {
-          title: "topic",
+          title: "Topic",
           content: "fourth-content",
         },
         {
@@ -115,7 +115,7 @@ const Course_main = () => {
     return (
       <Row justify={"space-between"} style={{ height: "10%" }}>
         <Col>
-          <Button
+          {/* <Button
             type="primary"
             onClick={() => {
               console.log(courseData.calendar);
@@ -123,16 +123,23 @@ const Course_main = () => {
           >
             {" "}
             Preview
-          </Button>
+          </Button> */}
         </Col>
 
         <Col>
           <Row>
-            <Col style={{ paddingRight: "10px" }}>
-              <Button onClick={() => handleDisplay("Previous")}>
-                Previous
-              </Button>
-            </Col>
+            {
+              currentPage !== 0 ?
+                (
+                  <Col style={{ paddingRight: "10px" }}>
+                    <Button onClick={() => handleDisplay("Previous")}>
+                      Previous
+                    </Button>
+                  </Col>
+                )
+                :
+                (null)
+            }
             <Col>
               {currentPage === pageList.length - 2 ? (
                 <Button
@@ -267,23 +274,50 @@ const Course_main = () => {
         currentPage === 1 ? (
         <Row className="course-main-for-calendar">
           <Card className="card-calendar">
-            <Row justify="center">
+            <Row justify="center" align={"middle"}>
               <Col className="col-card-calendar" span={6}>
-                start :{" "}
-                {moment(courseData?.calendar?.start).format("LL")}
+                <Text strong> Start : </Text>
+                &nbsp;
+                {
+                  courseData?.calendar?.start ?
+                    (
+                      moment(courseData?.calendar?.start).format("LL")
+                    )
+                    :
+                    (
+                      "Not selected"
+                    )
+                }
               </Col>
               <Col className="col-card-calendar" span={6}>
-                end :{" "}
-                {moment(courseData?.calendar?.end).format("LL")}
+                <Text strong> End : </Text>
+                &nbsp;
+                {
+                  courseData?.calendar?.end ?
+                    (
+                      moment(courseData?.calendar?.end).format("LL")
+                    )
+                    :
+                    (
+                      "Not selected"
+                    )
+                }
               </Col>
               <Col className="col-card-calendar" span={6}>
                 <ColorPicker
+                  disabled={!courseData?.calendar}
                   onChange={debounceOnChange}
-                  value={courseData?.calendar?.color} />
+                  value={courseData?.calendar?.color}
+                  trigger="hover"
+                />
               </Col>
               <Col className="col-card-calendar" span={6}>
                 <Button onClick={handleRemoveCalendar}>
-                  <DeleteOutlined />
+                  <Row justify={"center"} align={"middle"}>
+                    <Col flex={"auto"} style={{ marginTop: "-5px" }}>
+                      <DeleteOutlined />
+                    </Col>
+                  </Row>
                 </Button>
               </Col>
             </Row>
@@ -293,53 +327,66 @@ const Course_main = () => {
         <></>
       )}
 
-      {courseData.type === true ? (
-        <>
-          {topicData.length !== 0 &&
-            step[1]?.title === "topic" &&
-            currentPage === 1 ? (
-            <>
-              {topicData.map((item, index) => (
-                <Course_topic_children
-                  nextState={nextState}
-                  setNextState={setNextState}
-                  key={item._id}
-                  item={item}
-                  index={index}
-                />
-              ))}
-            </>
-          ) : (
-            <></>
-          )}
-        </>
-      ) : (
-        <>
-          {topicData.length !== 0 &&
-            step[3]?.title === "topic" &&
-            currentPage === 3 ? (
-            <>
-              {topicData.map((item, index) => (
-                <Course_topic_children
-                  nextState={nextState}
-                  setNextState={setNextState}
-                  key={item._id}
-                  item={item}
-                  index={index}
-                />
-              ))}
-            </>
-          ) : (
-            <></>
-          )}
-        </>
-      )}
+
+      {
+        courseData.type === true ? (
+          <>
+            {
+              topicData.length !== 0 &&
+                step[1]?.title === "topic" &&
+                currentPage === 1 ?
+                (
+                  <>
+                    {topicData.map((item, index) => (
+                      <Card>
+                        <Course_topic_children
+                          nextState={nextState}
+                          setNextState={setNextState}
+                          key={item._id}
+                          item={item}
+                          index={index}
+                        />
+                      </Card>
+
+                    ))}
+                  </>
+                )
+                :
+                (
+                  <></>
+                )
+            }
+          </>
+        ) : (
+          <>
+            {topicData.length !== 0 &&
+              step[3]?.title === "topic" &&
+              currentPage === 3 ? (
+              <>
+                {topicData.map((item, index) => (
+                  <Card>
+                    <Course_topic_children
+                      nextState={nextState}
+                      setNextState={setNextState}
+                      key={item._id}
+                      item={item}
+                      index={index}
+                    />
+                  </Card>
+                ))}
+              </>
+            ) : (
+              <></>
+            )}
+          </>
+        )
+      }
       <Row className="course-main-btn-bottom">
         <Col flex={"auto"}>
           {currentPage < pageList.length ? renderPageNav() : null}
         </Col>
       </Row>
-    </Layout>
+    </Layout >
   );
 };
 

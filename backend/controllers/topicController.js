@@ -19,8 +19,13 @@ exports.createTopic = async (req, res) => {
 // GET: /list-topic
 exports.listTopic = async (req, res) => {
   try {
-    const topic = await Topic.find({ course: req.params.id });
-    res.json(topic);
+
+    const course = await Course.findOne({ _id: req.params.id }, "enabled");
+    if (course.enabled) {
+      const topic = await Topic.find({ course: req.params.id });
+      return res.json(topic);
+    }
+    res.json({ enabled: false , message: "Course not avaliable" });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Unexpected error on list topic" });
@@ -66,9 +71,9 @@ exports.addTopicSub = async (req, res) => {
     topic.sub_content.push("");
 
     await Topic.findOneAndUpdate(
-      {_id:req.params.id},
-      {sub_content:topic.sub_content}
-      )
+      { _id: req.params.id },
+      { sub_content: topic.sub_content }
+    )
 
     res.json(topic);
   } catch (err) {
@@ -80,11 +85,11 @@ exports.addTopicSub = async (req, res) => {
 exports.removeTopicSub = async (req, res) => {
   try {
     const topic = await Topic.findOne({ _id: req.params.id });
-    topic.sub_content.splice(req.body.index,1);
+    topic.sub_content.splice(req.body.index, 1);
     await Topic.findOneAndUpdate(
-      {_id:req.params.id},
-      {sub_content:topic.sub_content}
-      )
+      { _id: req.params.id },
+      { sub_content: topic.sub_content }
+    )
 
     res.json(topic);
   } catch (err) {
@@ -98,9 +103,9 @@ exports.updateTopicSub = async (req, res) => {
     const topic = await Topic.findOne({ _id: req.params.id });
     topic.sub_content[req.body.field] = req.body.value;
     await Topic.findOneAndUpdate(
-      {_id:req.params.id},
-      {sub_content:topic.sub_content}
-      )
+      { _id: req.params.id },
+      { sub_content: topic.sub_content }
+    )
 
     res.json(topic);
   } catch (err) {
@@ -115,14 +120,14 @@ exports.addTopicLink = async (req, res) => {
   try {
     const topic = await Topic.findOne({ _id: req.params.id });
     topic.link.push({
-      name:"",
-      link:""
+      name: "",
+      link: ""
     });
 
     await Topic.findOneAndUpdate(
-      {_id:req.params.id},
-      {link:topic.link}
-      )
+      { _id: req.params.id },
+      { link: topic.link }
+    )
 
     res.json(topic);
   } catch (err) {
@@ -134,11 +139,11 @@ exports.addTopicLink = async (req, res) => {
 exports.removeTopicLink = async (req, res) => {
   try {
     const topic = await Topic.findOne({ _id: req.params.id });
-    topic.link.splice(req.body.index,1);
+    topic.link.splice(req.body.index, 1);
     await Topic.findOneAndUpdate(
-      {_id:req.params.id},
-      {link:topic.link}
-      )
+      { _id: req.params.id },
+      { link: topic.link }
+    )
 
     res.json(topic);
   } catch (err) {
@@ -149,17 +154,17 @@ exports.removeTopicLink = async (req, res) => {
 // PUT: update-link-topic
 exports.updateTopicLink = async (req, res) => {
   try {
-    const {field,value,index} = req.body
+    const { field, value, index } = req.body
     const topic = await Topic.findOne({ _id: req.params.id });
-    if(field === "fieldname"){
+    if (field === "fieldname") {
       topic.link[index].name = value
-    }else if(field === "fieldlink"){
+    } else if (field === "fieldlink") {
       topic.link[index].link = value
     }
     await Topic.findOneAndUpdate(
-      {_id:req.params.id},
-      {link:topic.link}
-      )
+      { _id: req.params.id },
+      { link: topic.link }
+    )
 
     res.json(topic);
   } catch (err) {
@@ -171,7 +176,7 @@ exports.updateTopicLink = async (req, res) => {
 // PUT: remove-file-topic
 exports.removeTopicFile = async (req, res) => {
   try {
-    const {index} = req.body
+    const { index } = req.body
     const topic = await Topic.findOne({ _id: req.params.id });
 
     fs.unlink(`./private/uploads/topic/${topic.file[index].name}`, (err) => {
@@ -180,11 +185,11 @@ exports.removeTopicFile = async (req, res) => {
         error_deleteFile = true;
       }
     });
-    topic.file.splice(index,1);
+    topic.file.splice(index, 1);
     await Topic.findOneAndUpdate(
-      {_id:req.params.id},
-      {file:topic.file}
-      )
+      { _id: req.params.id },
+      { file: topic.file }
+    )
 
     res.json(topic);
   } catch (err) {

@@ -43,9 +43,6 @@ const Course_topic = () => {
               <Empty />
               :
               null
-              // topicData.map((item, index) => (
-              //   <Course_topic_children index={index} item={item} nextState={topicData} setNextState={setTopicData} />
-              // ))
           }
         </Col>
         <Col className="col-card-add">

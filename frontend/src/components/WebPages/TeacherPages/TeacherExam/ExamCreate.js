@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useMemo } from "react";
-import { Card, Col, Layout, Row, Button, Typography, Breadcrumb, Steps, } from 'antd';
+import { Card, Col, Layout, Row, Button, Typography, Breadcrumb, Steps, message, } from 'antd';
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "../teach.css"
@@ -87,10 +87,19 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
 
 
     const [hasChanged, setHasChanged] = useState(false);
-
     const [createdCard, setCreatedCard] = useState(false);
     const [examCreated, setExamCreated] = useState(false);
     const [examId, setExamId] = useState(null);
+    const [messageApi, contextHolder] = message.useMessage();
+
+
+    const notify = (type, message) => {
+        //type success / error / warning
+        messageApi.open({
+            type: type,
+            content: message,
+        });
+    };
 
     const examCreateTitle = () => {
         return (
@@ -501,12 +510,16 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             .then(
                 (res) => {
                     // console.log(res.data.data._id)
-                    setExamId(res.data.data._id)
+                    const data = res.data.data
+                    setExamId(data._id)
+                    setExamCreated(true)
                 }
             )
             .catch(
                 (err) => {
-                    console.log(err)
+                    const error = err.response
+                    console.log(`<${error.status}> ${error.data.error}`)
+                    notify("error", error.data.error)
                 }
             )
         return id
@@ -523,14 +536,13 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
             const action = e.target.innerText
 
             if (action === "Next" || action === "Create") {
-                if (currentPage + 1 <= pageStepLength) {
+                if (currentPage + 1 <= pageStepLength && (examCreated || editMode)) {
                     setCurrentPage(currentPage + 1);
                 }
 
                 // noraml condition is Exam Info
                 if (createMode && createSteps[currentPage].title === "Select Course" && !examCreated) {
                     submmitCreateExam()
-                    setExamCreated(true)
                 }
                 // setKeyword("")
             }
@@ -704,8 +716,8 @@ const ExamCreate = ({ mode = null, resetData = false }) => {
 
     return (
         <Layout className="layout-content-card">
+            {contextHolder}
             <Row className="content">
-
                 <Col flex="auto" style={{ justifyContent: "center" }}>
                     <Card title={examCreateTitle()} className="card-shadow">
                         {

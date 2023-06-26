@@ -4,8 +4,15 @@ const Condition = require('../models/condition')
 // POST: create-plant
 exports.createPlant = async (req, res) => {
     try {
-        const plant = await new Plant(req.body).save();
+        const name = req?.body?.name
+        if (!name) return res.status(400).json({ error: "Missing plant name" });
+        
+        const plantFind = await Plant.findOne({ name: name })
+        if(plantFind) {
+            return res.status(400).json({ error: "This plant name is already exist" });
+        }
 
+        const plant = await new Plant(req.body).save();
         res.json({ data: plant });
     }
     catch (err) {
@@ -51,8 +58,8 @@ exports.listPlantNoDuplicate = async (req, res) => {
         }
         const condition = await Condition.find({ course: query }, "plant -_id")
         const mappedCondition = condition.map((item) => item.plant)
-        const plant = await Plant.find({ "_id": { $nin:  mappedCondition  } })
- 
+        const plant = await Plant.find({ "_id": { $nin: mappedCondition } })
+
         return res.json({ data: plant });
     }
     catch (err) {

@@ -13,7 +13,10 @@ exports.createExam = async (req, res) => {
         const { head, body } = req?.body;
         const { user_id } = req?.user;
 
-        // console.log("create: ", head, body)
+        const examFind = await Exam.findOne({ course: head.course })
+        if(examFind) {
+            return res.status(400).json({ error: "This course already created exam" })
+        }
 
         if (head !== undefined) {
             let quiz = null

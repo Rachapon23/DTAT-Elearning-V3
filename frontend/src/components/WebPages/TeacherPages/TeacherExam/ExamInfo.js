@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Col, Row, Input, Typography, Table, Form, Radio, } from 'antd';
+import { Col, Row, Input, Typography, Table, Form, Radio, Image, } from 'antd';
 import "../teach.css"
 
+const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
 const { Text } = Typography;
 const { TextArea } = Input;
 
@@ -33,6 +34,15 @@ const ExamInfo = ({
     //     },
     // ]
 
+    const handleUnloadImage = (e) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.font = '30px Arial';
+        ctx.fillText('Cannot Get Image', 30, 85);
+        const dataUrl = canvas.toDataURL();
+        e.target.src = dataUrl
+    }
+
 
     const coursesCol = [
         {
@@ -41,6 +51,14 @@ const ExamInfo = ({
             key: 'image',
             align: "center",
             width: "15%",
+            render: (image) => {
+                return (
+                    <Image
+                        onError={handleUnloadImage}
+                        src={image?.name ? `${process.env.REACT_APP_IMG}/course/${image?.name}` : DEFAULT_IMAGE}
+                    />
+                )
+            }
         },
         {
             title: "Course",
@@ -60,7 +78,7 @@ const ExamInfo = ({
             dataIndex: 'status',
             key: 'status',
             align: "center",
-            render: (status) => status === true ? "Disable" : "Eanble",
+            render: (status) => status === true ? "Open" : "Close" //"Disable" : "Eanble",
         },
         {
             title: "Select",
@@ -116,6 +134,7 @@ const ExamInfo = ({
                     }
 
                     <Form.Item
+                    style={{paddingTop: "35px"}}
                         label={<Text strong> Exam Name </Text>}
                         required
                         tooltip={editMode ? "This is a required field" : null}
@@ -164,17 +183,17 @@ const ExamInfo = ({
                     <Form.Item
                         label={<Text strong> Detail </Text>}
                         required={previewMode}
-                        tooltip={editMode ? {
-                            title: 'Tooltip with customize icon',
-                            icon: <InfoCircleOutlined />,
-                        } : null}
+                    // tooltip={editMode ? {
+                    //     title: 'Tooltip with customize icon',
+                    //     icon: <InfoCircleOutlined />,
+                    // } : null}
                     >
                         {
                             editMode || createMode ?
                                 (
                                     <TextArea
-                                        showCount
-                                        maxLength={250}
+                                        // showCount
+                                        // maxLength={250}
                                         style={{ height: 120 }}
                                         id="detail"
                                         onChange={handleInputInfoData}

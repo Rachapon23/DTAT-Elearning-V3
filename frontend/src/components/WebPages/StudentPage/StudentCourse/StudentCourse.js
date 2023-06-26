@@ -27,7 +27,6 @@ const StudentExam = () => {
 
   const [course, setCourse] = useState(null);
   const [topicData, setTopicData] = useState([]);
-  const [imageData, setImageData] = useState(null);
   const [openProfile, setOpenProfile] = useState(false)
   const [teacherProfile, setTeacherProfile] = useState(null);
   const [selectedTabIndex] = useState(location?.state?.tabIndex ? location.state.tabIndex : 0)
@@ -80,6 +79,79 @@ const StudentExam = () => {
     );
   };
 
+  const renderTopic = () => {
+    if (Array.isArray(topicData) && topicData.length > 0) {
+      return (
+        <>
+          {
+            topicData.map((item, index) => (
+              <Row key={index} justify={"center"} style={{ marginBottom: "15px" }}>
+                <Col flex={"auto"}>
+                  <Card style={{ padding: "20px", width: "100%" }}>
+                    <Title style={{ color: "#002c8c" }} level={3}>
+                      {item.title}
+                    </Title>
+                    <Text>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      {item.detail}
+                    </Text>
+                    <br />
+                    {
+                      item.sub_content.length > 0 ?
+                        (
+                          <ul style={{ marginTop: "15px" }}>
+                            {item.sub_content.map((ttem, ddex) => (
+                              <li className="li-list">{ttem}</li>
+                            ))}
+                          </ul>
+                        )
+                        :
+                        (
+                          <></>
+                        )
+                    }
+                    {
+                      item.file.length > 0 ?
+                        (
+                          <StudentCourse_file item={item} />
+                        )
+                        :
+                        (
+                          <></>
+                        )
+                    }
+                    {
+                      item.link.length > 0 ?
+                        (
+                          <StudentCourse_link item={item} />
+                        )
+                        :
+                        (
+                          <></>
+                        )
+                    }
+                  </Card>
+                </Col>
+              </Row>
+            ))
+          }
+        </>
+      )
+    }
+    if (topicData === null) {
+      return (
+        <Col flex={"auto"}>
+          <Card>
+            <Row justify={"center"} align={"middle"}>
+              <Title level={4}> Course Not Avaliable </Title>
+            </Row>
+          </Card>
+        </Col>
+      )
+    }
+    return null
+  }
+
   const fetchCourse = async () => {
     await getCourse(
       sessionStorage.getItem("token"),
@@ -91,7 +163,6 @@ const StudentExam = () => {
         fetchTopic(data._id);
         setCourse(data);
         fetchTeacherProfile(data.teacher._id);
-        // handleFetchImage(data.image.name)
       })
       .catch((err) => {
         console.log(err);
@@ -101,7 +172,13 @@ const StudentExam = () => {
   const fetchTopic = (id) => {
     listTopicCourse(sessionStorage.getItem("token"), id)
       .then((res) => {
-        setTopicData(res.data);
+        const data = res.data
+        if (data?.enabled === false) {
+          setTopicData(null)
+        }
+        else {
+          setTopicData(res.data);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -122,32 +199,6 @@ const StudentExam = () => {
         }
       );
   }
-
-  const handleFetchImage = async (imageName) => {
-
-    const image_name = imageName
-    if (!image_name) return
-
-    const field = "course"
-    const param = "file"
-
-    let response
-    await getPrivateFieldImage(sessionStorage.getItem("token"), field, param, image_name)
-      .then(
-        (res) => {
-          response = res
-        }
-      )
-      .catch(
-        (err) => {
-          console.log(err)
-        }
-      )
-
-    const objectUrl = URL.createObjectURL(response.data);
-    setImageData(objectUrl)
-  }
-
 
   useEffect(() => {
     fetchCourse();
@@ -188,7 +239,7 @@ const StudentExam = () => {
               <Row justify={'end'}>
                 <Link>
                   <Text style={{ fontSize: "12px", color: "blue" }} onClick={() => setOpenProfile(true)}>
-                    by {course?.teacher?.firstname} {course?.teacher?.lastname}
+                    By {course?.teacher?.firstname} {course?.teacher?.lastname}
                   </Text>
                 </Link>
 
@@ -264,41 +315,9 @@ const StudentExam = () => {
             </Card>
           </Col>
         </Row>
-        {topicData.map((item, index) => (
-          <Row key={index} justify={"center"} style={{ marginBottom: "15px" }}>
-            <Col flex={"auto"}>
-              <Card style={{ padding: "20px", width: "100%" }}>
-                <Title style={{ color: "#002c8c" }} level={3}>
-                  {item.title}
-                </Title>
-                <Text>
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  {item.detail}
-                </Text>
-                <br />
-                {item.sub_content.length > 0 ? (
-                  <ul style={{ marginTop: "15px" }}>
-                    {item.sub_content.map((ttem, ddex) => (
-                      <li className="li-list">{ttem}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <></>
-                )}
-                {item.file.length > 0 ? (
-                  <StudentCourse_file item={item} />
-                ) : (
-                  <></>
-                )}
-                {item.link.length > 0 ? (
-                  <StudentCourse_link item={item} />
-                ) : (
-                  <></>
-                )}
-              </Card>
-            </Col>
-          </Row>
-        ))}
+        {
+          renderTopic()
+        }
       </div>
     </div>
   );

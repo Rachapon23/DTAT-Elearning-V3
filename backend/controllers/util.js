@@ -49,27 +49,27 @@ exports.validateQuery = (
     disableRole = false,
 ) => {
     const ROLE_AMOUNT = 3
-    const NATIVE_OPTIONS = {
+    const NATIVE_OPTIONS = defaultOptions ? defaultOptions : {
         admin: {
-            fields: "",
-            fetchs: "",
-            selects: "",
-            search: {},
-            subPops: "",
+            fields: defaultOptions?.admin?.fields ? defaultOptions?.admin?.fields : "",
+            fetchs: defaultOptions?.admin?.fetchs ? defaultOptions?.admin?.fetchs : "",
+            selects: defaultOptions?.admin?.selects ? defaultOptions?.admin?.selects : "",
+            search: defaultOptions?.admin?.search ? defaultOptions?.admin?.search : {},
+            subPops: defaultOptions?.admin?.subPops ? defaultOptions?.admin?.subPops : "",
         },
         teacher: {
-            fields: "",
-            fetchs: "",
-            selects: "",
-            search: {},
-            subPops: "",
+            fields: defaultOptions?.teacher?.fields ? defaultOptions?.teacher?.fields : "",
+            fetchs: defaultOptions?.teacher?.fetchs ? defaultOptions?.teacher?.fetchs : "",
+            selects: defaultOptions?.teacher?.selects ? defaultOptions?.teacher?.selects : "",
+            search: defaultOptions?.teacher?.search ? defaultOptions?.teacher?.search : {},
+            subPops: defaultOptions?.teacher?.subPops ? defaultOptions?.teacher?.subPops : "",
         },
         student: {
-            fields: "",
-            fetchs: "",
-            selects: "",
-            search: {},
-            subPops: "",
+            fields: defaultOptions?.student?.fields ? defaultOptions?.student?.fields : "",
+            fetchs: defaultOptions?.student?.fetchs ? defaultOptions?.student?.fetchs : "",
+            selects: defaultOptions?.student?.selects ? defaultOptions?.student?.selects : "",
+            search: defaultOptions?.student?.search ? defaultOptions?.student?.search : {},
+            subPops: defaultOptions?.student?.subPops ? defaultOptions?.student?.subPops : "",
         }
     }
     // return options = { fields, fetchs, selects, search, subPops }
@@ -78,7 +78,7 @@ exports.validateQuery = (
     // fetch field after populate
     // select field in this model
     // search condition
-    // NOTE: subPop or field can use 1 field per request (select once in these two) 
+    // NOTE: subPop or field can use 1 field per request (select one in these two) 
 
     if (!method) return { success: false, code: 400, message: "No method", options: null }
     let subPops = options.subPops
