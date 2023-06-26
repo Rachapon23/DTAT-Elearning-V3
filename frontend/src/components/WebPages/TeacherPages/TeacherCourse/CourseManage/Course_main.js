@@ -333,7 +333,7 @@ const Course_main = () => {
           <>
             {
               topicData.length !== 0 &&
-                step[1]?.title === "topic" &&
+                step[1]?.title === "Topic" &&
                 currentPage === 1 ?
                 (
                   <>
@@ -360,7 +360,7 @@ const Course_main = () => {
         ) : (
           <>
             {topicData.length !== 0 &&
-              step[3]?.title === "topic" &&
+              step[3]?.title === "Topic" &&
               currentPage === 3 ? (
               <>
                 {topicData.map((item, index) => (
