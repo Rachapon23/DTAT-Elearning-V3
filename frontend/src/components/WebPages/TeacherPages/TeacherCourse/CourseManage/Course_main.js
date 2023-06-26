@@ -337,8 +337,8 @@ const Course_main = () => {
                 currentPage === 1 ?
                 (
                   <>
-                    {topicData.map((item, index) => (
-                      <Card>
+                    <Card>
+                      {topicData.map((item, index) => (
                         <Course_topic_children
                           nextState={nextState}
                           setNextState={setNextState}
@@ -346,9 +346,9 @@ const Course_main = () => {
                           item={item}
                           index={index}
                         />
-                      </Card>
 
-                    ))}
+                      ))}
+                    </Card>
                   </>
                 )
                 :
@@ -363,8 +363,9 @@ const Course_main = () => {
               step[3]?.title === "Topic" &&
               currentPage === 3 ? (
               <>
-                {topicData.map((item, index) => (
-                  <Card>
+                <Card>
+                  {topicData.map((item, index) => (
+
                     <Course_topic_children
                       nextState={nextState}
                       setNextState={setNextState}
@@ -372,8 +373,8 @@ const Course_main = () => {
                       item={item}
                       index={index}
                     />
-                  </Card>
-                ))}
+                  ))}
+                </Card>
               </>
             ) : (
               <></>
