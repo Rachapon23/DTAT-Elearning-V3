@@ -206,15 +206,24 @@ const CardContent = ({
                 <Col flex={"auto"}>
                     <Text strong>{`Question ${index + 1}`}</Text>
                 </Col>
-                <Col>
-                    <Button onClick={() => onDelete(index)} >
-                        <Row align={"middle"} justify={"center"}>
-                            <Col style={{ marginTop: "-5px", }}>
-                                <DeleteOutlined />
+                {
+                    editMode ?
+                        (
+                            <Col>
+                                <Button onClick={() => onDelete(index)} >
+                                    <Row align={"middle"} justify={"center"}>
+                                        <Col style={{ marginTop: "-5px", }}>
+                                            <DeleteOutlined />
+                                        </Col>
+                                    </Row>
+                                </Button>
                             </Col>
-                        </Row>
-                    </Button>
-                </Col>
+                        )
+                        :
+                        (
+                            null
+                        )
+                }
             </Row>
         )
     }
@@ -237,7 +246,7 @@ const CardContent = ({
         >
             <Col style={{ width: "100%" }}>
                 <Card title={renderCardContentTitle()} type="inner">
-                    <Row justify={"center"} align={"middle"} style={{paddingTop: "5px"}}>
+                    <Row justify={"center"} align={"middle"} style={{ paddingTop: "5px" }}>
                         <Col style={{ width: "100%" }} >
 
                             {/* <Row style={{ marginTop: "-0.5%", marginBottom: "-0.2%", marginRight: "-0.5%" }} justify={"end"} align={"middle"}>
