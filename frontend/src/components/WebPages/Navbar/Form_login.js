@@ -6,6 +6,7 @@ import {
   Col,
   Row,
   Typography,
+  message,
 } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { login } from "../../../function/auth";
@@ -25,10 +26,22 @@ const Form_login = ({ setStatus }) => {
     handleOkAuth,
     handleCancelAuth,
   } = useContext(NavbarContext);
+  const [messageApi, notifyContextHolder] = message.useMessage();
+
+  const notify = (type, message) => {
+    //type success / error / warning
+    messageApi.open({
+      type: type,
+      content: message,
+    });
+  };
+
   const handleInput = (e) => {
     setInputData({ ...inputData, [e.target.name]: e.target.value });
   };
   const handleLogin = async () => {
+    if (!inputData?.password) return
+    if (inputData.password.length === 0) return
     await login(inputData)
       .then((res) => {
         console.log(res.data);
@@ -41,11 +54,14 @@ const Form_login = ({ setStatus }) => {
         // navigate(`/${sessionStorage.getItem("role")}/page/home`)
       })
       .catch((err) => {
-        console.log(err.response?.data);
+        const error = err.response
+        console.log(`<${error.status}> ${error.data.error}`)
+        notify("error", error.data.error)
       });
   };
   return (
     <>
+      {notifyContextHolder}
       <Row
         justify={"center"}
         style={{ paddingBottom: "10px", marginTop: "-20px" }}

@@ -7,7 +7,8 @@ import {
   Row,
   Typography,
   Select,
-  Modal
+  Modal,
+  message
 } from "antd";
 import {
   LockOutlined,
@@ -41,6 +42,16 @@ const Form_register = ({ setStatus, }) => {
     handleOkAuth,
     handleCancelAuth,
   } = useContext(NavbarContext);
+  const [messageApi, notifyContextHolder] = message.useMessage();
+
+  const notify = (type, message) => {
+    //type success / error / warning
+    messageApi.open({
+      type: type,
+      content: message,
+    });
+  };
+
 
   const handleInput = (e) => {
     setValueRegister({ ...valueRegister, [e.target.name]: e.target.value });
@@ -84,13 +95,13 @@ const Form_register = ({ setStatus, }) => {
   const countDown = () => {
     let secondsToGo = 5;
     const instance = modal.success({
-      title: 'This is a notification message',
-      content: `This modal will be destroyed after ${secondsToGo} second.`,
+      title: 'Notify',
+      content: `Register Success`,
     });
     const timer = setInterval(() => {
       secondsToGo -= 1;
       instance.update({
-        content: `This modal will be destroyed after ${secondsToGo} second.`,
+        content: `Register Success`,
       });
     }, 1000);
     setTimeout(() => {
@@ -107,9 +118,11 @@ const Form_register = ({ setStatus, }) => {
         countDown()
       })
       .catch((err) => {
-        console.log(err)
-      })
+        const error = err.response
+        console.log(`<${error.status}> ${error.data.error}`)
+        notify("error", error.data.error)
 
+      })
   };
 
   return (
@@ -120,6 +133,7 @@ const Form_register = ({ setStatus, }) => {
       >
         <Title style={{ fontSize: "200%" }}>Registeration</Title>
       </Row>
+      {notifyContextHolder}
       {contextHolder}
       {/* name="employee" */}
       <Form.Item
