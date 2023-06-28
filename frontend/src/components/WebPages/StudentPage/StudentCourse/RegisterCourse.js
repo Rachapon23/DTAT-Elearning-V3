@@ -35,29 +35,35 @@ const RegisterCourse = () => {
         navigate(navStr, { state: dataStage })
     }
 
-    const isPassCondition = async () => {
+    const isPassCondition = async (conditionData) => {
         // check registered
         await checkRegistered()
         console.log("conditionData: ", conditionData)
         if (
             Array.isArray(conditionData) &&
-            conditionData.length === 0 &&
-            course?.type === true
+            (
+                conditionData.length === 0 ||
+                course?.type === true
+            )
         ) return setPassedCondition(true)
 
         // check plant
-        let inPlant = false
+        let result = false
         for (let i = 0; i < conditionData.length; i++) {
-            // console.log("condition: ", conditionData[i], " plant: ", plant)
+            console.log("condition: ", conditionData[i], " plant: ", plant)
+            if (conditionData[i].current + 1 > conditionData[i].maximum) {
+                result = false
+                break
+            }
             // console.log("plant: ", conditionData[i].plant.name, " plant: ", plant)
             if (conditionData[i].plant.name === plant) {
-                inPlant = true
+                result = true
                 break
             }
         }
-        //TODO: check course limit
-        // console.log("in plant: ", inPlant)
-        setPassedCondition(inPlant)
+
+        console.log("in plant: ", result)
+        setPassedCondition(result)
         setPageChange(true)
     }
 
@@ -126,7 +132,7 @@ const RegisterCourse = () => {
                 const data = res.data
                 // console.log("DATA: ", data)
                 setConditionData(data);
-                isPassCondition()
+                isPassCondition(data)
             })
             .catch((err) => {
                 console.log(err);
@@ -138,7 +144,7 @@ const RegisterCourse = () => {
             .then(
                 (res) => {
                     const data = res.data
-                    // console.log("calendar:  ",data)
+                    if (!data?.start) return
                     setEven(() => [data])
                 }
             )
@@ -329,7 +335,7 @@ const RegisterCourse = () => {
                                                 <Row style={{ paddingTop: "2%", }}>
                                                     <Col style={{ width: "100%" }}>
                                                         <Button
-                                                            disabled={!passedCondition}
+                                                            // disabled={!passedCondition}
                                                             type="primary"
                                                             size="large"
                                                             block
@@ -390,7 +396,7 @@ const RegisterCourse = () => {
                                                                                             </Title>
                                                                                         </Row>
                                                                                         <Row>
-                                                                                            <Progress percent={item.current / item.maximum} />
+                                                                                            <Progress percent={item.maximum * 100 / item.current} />
                                                                                         </Row>
                                                                                     </Col>
                                                                                 </Row>
@@ -398,33 +404,44 @@ const RegisterCourse = () => {
                                                                         )
                                                                     }
                                                                 </Col>
-                                                                <Col>
-                                                                    <Card>
-                                                                        <Row justify={"center"}>
-                                                                            <Col style={{ width: "700px", maxWidth: "2000px", }}>
-                                                                                <FullCalendar
-                                                                                    plugins={[
-                                                                                        dayGridPlugin,
-                                                                                        timeGridPlugin,
-                                                                                        interactionPlugin,
-                                                                                        bootstrap5Plugin,
-                                                                                    ]}
-                                                                                    headerToolbar={{
-                                                                                        left: null,//"prev today",
-                                                                                        center: "title",
-                                                                                        right: null//"next",
-                                                                                    }}
-                                                                                    height={500}
-                                                                                    themeSystem="bootstrap5"
-                                                                                    events={even}
-                                                                                    defaultTimedEventDuration={even}
-                                                                                    ref={calendarRef}
-                                                                                />
-                                                                            </Col>
+                                                                {console.log("even:", even)}
+                                                                {
+                                                                    even ?
+                                                                        (
 
-                                                                        </Row>
-                                                                    </Card>
-                                                                </Col>
+                                                                            <Col>
+                                                                                <Card>
+                                                                                    <Row justify={"center"}>
+                                                                                        <Col style={{ width: "700px", maxWidth: "2000px", }}>
+                                                                                            <FullCalendar
+                                                                                                plugins={[
+                                                                                                    dayGridPlugin,
+                                                                                                    timeGridPlugin,
+                                                                                                    interactionPlugin,
+                                                                                                    bootstrap5Plugin,
+                                                                                                ]}
+                                                                                                headerToolbar={{
+                                                                                                    left: null,//"prev today",
+                                                                                                    center: "title",
+                                                                                                    right: null//"next",
+                                                                                                }}
+                                                                                                height={500}
+                                                                                                themeSystem="bootstrap5"
+                                                                                                events={even}
+                                                                                                defaultTimedEventDuration={even}
+                                                                                                ref={calendarRef}
+                                                                                            />
+                                                                                        </Col>
+
+                                                                                    </Row>
+                                                                                </Card>
+                                                                            </Col>
+                                                                        )
+                                                                        :
+                                                                        (
+                                                                            null
+                                                                        )
+                                                                }
                                                             </Row>
                                                         </Card>
                                                     </Col>

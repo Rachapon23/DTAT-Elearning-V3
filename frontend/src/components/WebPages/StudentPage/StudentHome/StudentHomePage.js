@@ -346,7 +346,8 @@ const StudentHomePage = () => {
       .then(
         (res) => {
           const data = res.data.data;
-          setCourses(data);
+          if (!Array.isArray(data)) return
+          setCourses(data.filter((item) => item.course));
         }
       )
       .catch(

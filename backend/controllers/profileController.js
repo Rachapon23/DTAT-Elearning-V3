@@ -9,7 +9,7 @@ exports.getProfileByUserId = async (req, res) => {
         if(!user_data.profile) return res.status(404).json({ error: "Profile not found" });
 
         const profile_data = await Profile.findOne({ _id: user_data.profile })
-        return res.json({ data: { ...user_data._doc, ...profile_data._doc } });
+        return res.json({ data: { ...user_data?._doc, ...profile_data?._doc } });
     }
     catch (err) {
         console.log(err);

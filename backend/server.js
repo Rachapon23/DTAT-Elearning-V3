@@ -3,7 +3,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const { readdirSync } = require('fs')
-const { loadData } = require("./loader")
+const { loadData } = require("./mock/_loader")
 
 require('dotenv').config()
 

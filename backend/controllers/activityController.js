@@ -41,6 +41,11 @@ exports.createActivity = async (req, res) => {
             await Condition.findOneAndUpdate({ _id: searchedCondition._id }, { current: currentAmount })
         }
 
+        // check add duplicate  course 
+        const duplicate = await Activity.findOne({ user: user, course: course })
+        if(duplicate) {
+            return  res.status(400).json({ error: "Cannot add duplicate course" })
+        }
         // check current student in course
         const activity = await new Activity({
             score_max: null,
@@ -64,7 +69,7 @@ exports.createActivity = async (req, res) => {
 exports.listActivity = async (req, res) => {
     const allowField = ["user", "course", "ans"]
     const allowedSearch = ["user", "course", "ans"]
-    const allowedPops = ["user", "course", "exam", "plant", "_id", "name", "exam -_id", "ans", "image", "name exam image", "employee firstname lastname", "name exam"]
+    const allowedPops = ["user", "course", "exam", "plant", "_id", "name", "exam -_id", "ans", "image", "name exam image type completed", "employee firstname lastname", "name exam"]
     const allowedPropsField = ["path", "select", "populate"]
     const allowedSelect = ["ans"]
     const allowedFetch = ["-ans", "-__v"]
@@ -94,7 +99,7 @@ exports.listActivity = async (req, res) => {
                 fetchs: allowedFetch,
 
             },
-            false
+            true
         )
         // console.log(result)
         if (!result.success) return res.status(result.code).json({ error: result.message })
@@ -148,6 +153,7 @@ exports.getActivityProgress = async (req, res) => {
         const activity = await Activity.findOne(
             { _id: req.params.id },
         )
+        console.log(activity)
 
         res.json({ data: activity })
     }
@@ -224,7 +230,7 @@ exports.getActivity = async (req, res) => {
     const allowedPops = ["user", "course", "exam", "plant", "_id", "name", "exam -_id", "ans", "image"]
     const allowedPropsField = ["path", "select", "populate"]
     const allowedSelect = ["ans"]
-    const allowedFetch = ["-ans", "-__v", "_id"]
+    const allowedFetch = ["-ans", "-__v", "_id", "_id", "result"]
     try {
         const result = validateQuery(
             "get",
