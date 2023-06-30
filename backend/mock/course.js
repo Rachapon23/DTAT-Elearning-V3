@@ -6,6 +6,11 @@ let course2
 let course3
 let course4
 let course5
+let course6
+let course7
+let course8
+let course9
+let course10
 
 exports.loadCourse = async () => {
     const {
@@ -15,10 +20,10 @@ exports.loadCourse = async () => {
 
 
     course1 = await Course.findOneAndUpdate(
-        { name: "Data struture and Algorithm", },
+        { name: "Basic of Data struture and Algorithm", },
         {
-            name: "Data struture and Algorithm",
-            detail: "Data struture and Algorithm Detail",
+            name: "Basic of Data struture and Algorithm",
+            detail: "Basic of Data struture and Algorithm Detail",
             room: await Room.findOne({ name: "Technical Skill 3" }).select("_id"),
             image: null,
             video: 2,
@@ -57,7 +62,7 @@ exports.loadCourse = async () => {
             room: await Room.findOne({ name: "Technical Skill 1" }).select("_id"),
             image: null,
             video: 2,
-            type: false,
+            type: true,
             enabled: true,
             teacher: admin1,
         },
@@ -65,14 +70,14 @@ exports.loadCourse = async () => {
     )
 
     course4 = await Course.findOneAndUpdate(
-        { name: "Arduino" },
+        { name: "Introduction of Arduino" },
         {
-            name: "Arduino",
-            detail: "Arduino Detail ",
+            name: "Introduction of Arduino",
+            detail: "Introduction of Arduino Detail ",
             room: await Room.findOne({ name: "Technical Skill 1" }).select("_id"),
             image: null,
             video: 2,
-            type: true,//false,
+            type: true,
             enabled: false,
             teacher: teacher1,
         },
@@ -80,15 +85,90 @@ exports.loadCourse = async () => {
     )
 
     course5 = await Course.findOneAndUpdate(
-        { name: "Software Engineer" },
+        { name: "Basic of Software Engineer" },
         {
-            name: "Software Engineer",
-            detail: "Software Engineer Detail ",
+            name: "Basic of Software Engineer",
+            detail: "Basic of Software Engineer Detail ",
             room: await Room.findOne({ name: "Technical Skill 5" }).select("_id"),
             image: null,
             video: 2,
-            type: true,//false,
+            type: true,
             enabled: true,
+            teacher: teacher1,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    course6 = await Course.findOneAndUpdate(
+        { name: "Advance Data struture and Algorithm" },
+        {
+            name: "Advance Data struture and Algorithm",
+            detail: "Advance Data struture and Algorithm Detail ",
+            room: await Room.findOne({ name: "Technical Skill 5" }).select("_id"),
+            image: null,
+            video: 2,
+            type: false, // true
+            enabled: true,
+            teacher: teacher1,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    course7 = await Course.findOneAndUpdate(
+        { name: "Advance Software Engineer" },
+        {
+            name: "Advance Software Engineer",
+            detail: "Advance Software Engineer Detail ",
+            room: await Room.findOne({ name: "Technical Skill 5" }).select("_id"),
+            image: null,
+            video: 2,
+            type: false, // true
+            enabled: true,
+            teacher: teacher1,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    course8 = await Course.findOneAndUpdate(
+        { name: "Advance Docker" },
+        {
+            name: "Advance Docker",
+            detail: "Advance Docker Detail",
+            room: await Room.findOne({ name: "Technical Skill 2" }).select("_id"),
+            image: null,
+            video: 2,
+            type: false,
+            enabled: true,
+            teacher: admin1,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    course9 = await Course.findOneAndUpdate(
+        { name: "Advance IoT" },
+        {
+            name: "Advance IoT",
+            detail: "Advance IoT Detail ",
+            room: await Room.findOne({ name: "Technical Skill 1" }).select("_id"),
+            image: null,
+            video: 2,
+            type: false,
+            enabled: true,
+            teacher: admin1,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    course10 = await Course.findOneAndUpdate(
+        { name: "Advance Arduino" },
+        {
+            name: "Advance Arduino",
+            detail: "Advance Arduino Detail ",
+            room: await Room.findOne({ name: "Technical Skill 1" }).select("_id"),
+            image: null,
+            video: 2,
+            type: false,
+            enabled: false,
             teacher: teacher1,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -102,5 +182,10 @@ exports.getCourse = async () => {
         course3,
         course4,
         course5,
+        course6,
+        course7,
+        course8,
+        course9,
+        course10,
     }
 }

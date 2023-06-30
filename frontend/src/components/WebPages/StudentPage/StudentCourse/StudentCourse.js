@@ -239,7 +239,7 @@ const StudentExam = () => {
               <Row justify={'end'}>
                 <Link>
                   <Text style={{ fontSize: "12px", color: "blue" }} onClick={() => setOpenProfile(true)}>
-                    By {course?.teacher?.firstname} {course?.teacher?.lastname}
+                    By {teacherProfile?.firstname} {teacherProfile?.lastname}
                   </Text>
                 </Link>
 

@@ -45,10 +45,10 @@ const HomePrivate = () => {
     console.log(data?._id)
     e.target.id = data?._id
 
-    // if (!e?.target?.id) return
-    // if (!checkUserLogin()) return
+    if (!e?.target?.id) return
+    if (!checkUserLogin()) return
 
-    // handleNavigate(`/student/page/register-course/${e?.target?.id}`)
+    handleNavigate(`/student/page/register-course/${e?.target?.id}`)
   }
 
   const handleOk = () => {

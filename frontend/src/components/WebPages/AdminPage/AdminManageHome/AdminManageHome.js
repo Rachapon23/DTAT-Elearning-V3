@@ -411,13 +411,13 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
             align: "center",
             width: "10%",
             render: (data) => {
-              // console.log(data?.url)
+              // console.log(data?.name)
               // if (!data?.url) return
               return (
                 <Image
                   width={150}
                   onError={handleUnloadImage}
-                  src={data?.url ? `${process.env.REACT_APP_IMG}${data.url}` : DEFAULT_IMAGE}
+                  src={data?.name ? `${process.env.REACT_APP_IMG}/course/${data?.name}` : DEFAULT_IMAGE}
                 />
               )
             }

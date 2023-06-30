@@ -5,6 +5,8 @@ import { Col, Row, Image, Modal } from "antd";
 import { HomeContext } from './HomeContext';
 import Auth from "../Navbar/Auth";
 import { useNavigate } from "react-router-dom";
+import { NavbarContext } from "../Navbar/NavbarContext";
+import { NavbarProvider } from "../Navbar/NavbarContext";
 
 const GROUP_NUMBER = 3
 const DEFAULT_DATA = {
@@ -16,6 +18,13 @@ const DEFAULT_DATA = {
 const arrayTemplate = new Array(6).fill(false)
 
 const HomePublic = () => {
+  const {
+    isModalOpenAuth,
+    setIsModalOpenAuth,
+    showModalAuth,
+    handleOkAuth,
+    handleCancelAuth,
+  } = useContext(NavbarContext);
 
   const { coursePublic } = useContext(HomeContext)
   const navigate = useNavigate()
@@ -34,7 +43,8 @@ const HomePublic = () => {
       !sessionStorage.getItem("user_id") ||
       !sessionStorage.getItem("role")
     ) {
-      setOpen(true)
+
+      setIsModalOpenAuth(true)
       return false
     }
     return true
@@ -60,7 +70,7 @@ const HomePublic = () => {
   };
 
   const handleCancel = () => {
-    setOpen(false);
+    setIsModalOpenAuth(false);
   };
 
   const renderContent = (index) => {
@@ -139,7 +149,7 @@ const HomePublic = () => {
           left: 0,
           right: 0,
         }}
-        open={open}
+        open={isModalOpenAuth}
         // width={1500}
         // title="login"
         onOk={handleOk}
@@ -147,7 +157,11 @@ const HomePublic = () => {
         footer={[]}
         mask={false}
       >
-        <Auth/>
+        <Row justify={"center"} style={{paddingTop: "30px"}}>
+          <Col flex={"auto"}>
+            <Auth />
+          </Col>
+        </Row>
       </Modal>
     </div>
   );

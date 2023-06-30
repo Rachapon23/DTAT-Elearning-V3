@@ -8,6 +8,7 @@ let condition22
 let condition31
 let condition41
 let condition51
+let condition52
 
 exports.loadCondition = async () => {
     const {
@@ -70,7 +71,7 @@ exports.loadCondition = async () => {
             plant: await Plant.findOne({ name: "A" }).select("_id"),
             maximum: 1,
             course: course3,
-            current: 0,
+            current: 1,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
@@ -98,6 +99,17 @@ exports.loadCondition = async () => {
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
+
+    condition52 = await Condition.findOneAndUpdate(
+        { course: course5, plant: await Plant.findOne({ name: "A" }).select("_id") },
+        {
+            plant: await Plant.findOne({ name: "A" }).select("_id"),
+            maximum: 2,
+            course: course5,
+            current: 1,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
 }
 
 exports.getCondition = async () => {
@@ -109,5 +121,6 @@ exports.getCondition = async () => {
         condition31,
         condition41,
         condition51,
+        condition52,
     }
 }

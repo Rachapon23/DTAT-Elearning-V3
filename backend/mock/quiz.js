@@ -64,161 +64,161 @@ exports.loadQuiz = async () => {
     )
 
     quiz14 = await Quiz.findOneAndUpdate(
-        { question: "What is this?" },
+        { question: "<14> 10 + 10 = ?" },
         {
-            question: "What is this?",
+            question: "<14> 10 + 10 = ?",
             choices: [
-                "What",
-                "is",
-                "this",
-                "?"
+                "10",
+                "20",
+                "30",
+                "40"
             ],
             image: null,
-            answer: 3,
+            answer: 1,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
     quiz21 = await Quiz.findOneAndUpdate(
-        { question: "What is this?" },
+        { question: "<21> 10 + 10 = ?" },
         {
-            question: "What is this?",
+            question: "<21> 10 + 10 = ?",
             choices: [
-                "What",
-                "is",
-                "this",
-                "?"
+                "10",
+                "20",
+                "30",
+                "40"
             ],
             image: null,
-            answer: 3,
+            answer: 1,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
     quiz22 = await Quiz.findOneAndUpdate(
-        { question: "What is this?" },
+        { question: "<22> 10 + 10 = ?" },
         {
-            question: "What is this?",
+            question: "<22> 10 + 10 = ?",
             choices: [
-                "What",
-                "is",
-                "this",
-                "?"
+                "10",
+                "20",
+                "30",
+                "40"
             ],
             image: null,
-            answer: 3,
+            answer: 1,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
     quiz23 = await Quiz.findOneAndUpdate(
-        { question: "What is this?" },
+        { question: "<23> 10 + 10 = ?" },
         {
-            question: "What is this?",
+            question: "<23> 10 + 10 = ?",
             choices: [
-                "What",
-                "is",
-                "this",
-                "?"
+                "10",
+                "20",
+                "30",
+                "40"
             ],
             image: null,
-            answer: 3,
+            answer: 1,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
     quiz31 = await Quiz.findOneAndUpdate(
-        { question: "What is this?" },
+        { question: "<31> 10 + 10 = ?" },
         {
-            question: "What is this?",
+            question: "<31> 10 + 10 = ?",
             choices: [
-                "What",
-                "is",
-                "this",
-                "?"
+                "10",
+                "20",
+                "30",
+                "40"
             ],
             image: null,
-            answer: 3,
+            answer: 1,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
     quiz32 = await Quiz.findOneAndUpdate(
-        { question: "What is this?" },
+        { question: "<32> 10 + 10 = ?" },
         {
-            question: "What is this?",
+            question: "<32> 10 + 10 = ?",
             choices: [
-                "What",
-                "is",
-                "this",
-                "?"
+                "10",
+                "20",
+                "30",
+                "40"
             ],
             image: null,
-            answer: 3,
+            answer: 1,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
     quiz33 = await Quiz.findOneAndUpdate(
-        { question: "What is this?" },
+        { question: "<33> 10 + 10 = ?" },
         {
-            question: "What is this?",
+            question: "<33> 10 + 10 = ?",
             choices: [
-                "What",
-                "is",
-                "this",
-                "?"
+                "10",
+                "20",
+                "30",
+                "40"
             ],
             image: null,
-            answer: 3,
+            answer: 1,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
     quiz41 = await Quiz.findOneAndUpdate(
-        { question: "What is this?" },
+        { question: "<41> 10 + 10 = ?" },
         {
-            question: "What is this?",
+            question: "<41> 10 + 10 = ?",
             choices: [
-                "What",
-                "is",
-                "this",
-                "?"
+                "10",
+                "20",
+                "30",
+                "40"
             ],
             image: null,
-            answer: 3,
+            answer: 1,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
     quiz42 = await Quiz.findOneAndUpdate(
-        { question: "What is this?" },
+        { question: "<42> 10 + 10 = ?" },
         {
-            question: "What is this?",
+            question: "<42> 10 + 10 = ?",
             choices: [
-                "What",
-                "is",
-                "this",
-                "?"
+                "10",
+                "20",
+                "30",
+                "40"
             ],
             image: null,
-            answer: 3,
+            answer: 1,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
     quiz43 = await Quiz.findOneAndUpdate(
-        { question: "What is this?" },
+        { question: "<43> 10 + 10 = ?" },
         {
-            question: "What is this?",
+            question: "<43> 10 + 10 = ?",
             choices: [
-                "What",
-                "is",
-                "this",
-                "?"
+                "10",
+                "20",
+                "30",
+                "40"
             ],
             image: null,
-            answer: 3,
+            answer: 1,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
