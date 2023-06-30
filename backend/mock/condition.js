@@ -70,7 +70,7 @@ exports.loadCondition = async () => {
             plant: await Plant.findOne({ name: "A" }).select("_id"),
             maximum: 1,
             course: course3,
-            current: 0,
+            current: 1,
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )

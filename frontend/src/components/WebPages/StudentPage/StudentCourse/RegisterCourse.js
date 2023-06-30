@@ -1,4 +1,4 @@
-import { Avatar, Breadcrumb, Button, Card, Col, Image, Progress, Row, Typography } from "antd";
+import { Avatar, Breadcrumb, Button, Card, Col, Image, Progress, Row, Typography, message } from "antd";
 import React, { createRef, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createActivity, getActivity, getCourse, getUser, getCalendarByCourseId } from "../../../../function/Student/course";
@@ -28,8 +28,16 @@ const RegisterCourse = () => {
     const [conditionData, setConditionData] = useState([]);
     const [imageData, setImageData] = useState(null);
     const [courseResult, setCourseResult] = useState(false)
-
     const [even, setEven] = useState(null);
+    const [messageApi, notifyContextHolder] = message.useMessage();
+
+    const notify = (type, message) => {
+        //type success / error / warning
+        messageApi.open({
+            type: type,
+            content: message,
+        });
+    };
 
     const handleNavigate = (navStr, dataStage) => {
         navigate(navStr, { state: dataStage })
@@ -117,7 +125,9 @@ const RegisterCourse = () => {
             )
             .catch(
                 (err) => {
-                    console.log(err)
+                    const error = err.response
+                    console.log(`<${error.status}> ${error.data.error}`)
+                    notify("error", error.data.error)
                 }
             )
     }
@@ -258,6 +268,7 @@ const RegisterCourse = () => {
 
     return (
         <div className="bg-st-course">
+            {notifyContextHolder}
             <div style={{ width: "100%", marginTop: "20px", marginBottom: "50px" }}>
                 <Row justify={"center"} >
                     <Col flex={"auto"} >
@@ -335,7 +346,7 @@ const RegisterCourse = () => {
                                                 <Row style={{ paddingTop: "2%", }}>
                                                     <Col style={{ width: "100%" }}>
                                                         <Button
-                                                            // disabled={!passedCondition}
+                                                            disabled={!passedCondition}
                                                             type="primary"
                                                             size="large"
                                                             block
@@ -396,7 +407,7 @@ const RegisterCourse = () => {
                                                                                             </Title>
                                                                                         </Row>
                                                                                         <Row>
-                                                                                            <Progress percent={item.maximum * 100 / item.current} />
+                                                                                            <Progress percent={item.current * 100 / item.maximum} />
                                                                                         </Row>
                                                                                     </Col>
                                                                                 </Row>
@@ -404,7 +415,6 @@ const RegisterCourse = () => {
                                                                         )
                                                                     }
                                                                 </Col>
-                                                                {console.log("even:", even)}
                                                                 {
                                                                     even ?
                                                                         (

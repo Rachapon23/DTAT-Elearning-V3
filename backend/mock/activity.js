@@ -139,7 +139,7 @@ exports.loadActivity = async () => {
     )
 }
 
-exports.getActivity = () => {
+exports.getActivity = async () => {
     return {
         activity1,
         activity2,
