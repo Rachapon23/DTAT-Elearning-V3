@@ -11,10 +11,12 @@ import {
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { login } from "../../../function/auth";
 import { NavbarContext } from "./NavbarContext";
+import { useNavigate } from "react-router-dom";
 
 const { Link, Title } = Typography;
 
 const Form_login = ({ setStatus }) => {
+  const navigate = useNavigate()
   const [inputData, setInputData] = useState({
     employee: "",
     password: "",
@@ -51,7 +53,6 @@ const Form_login = ({ setStatus }) => {
         sessionStorage.setItem("user_id", user?.user_id);
         sessionStorage.setItem("role", user?.role);
         handleCancelAuth()
-        // navigate(`/${sessionStorage.getItem("role")}/page/home`)
       })
       .catch((err) => {
         const error = err.response

@@ -11,7 +11,7 @@ import {
 } from '@dnd-kit/sortable';
 import { DndContext } from '@dnd-kit/core';
 import { Link } from 'react-router-dom';
-import { createAcnounce, createFilePublic, updateAcnounce, updateCourse } from '../../../../function/Admin/adminFunction';
+import { createannounce, createFilePublic, updateannounce, updateCourse } from '../../../../function/Admin/adminFunction';
 import { AdminContext } from './AdminManageContext';
 import ImgCrop from 'antd-img-crop';
 import CourseTable from './CourseTable';
@@ -84,7 +84,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
 
   const [imageData, setImageData] = useState(null)
   const [selectedImage, setSelectedImage] = useState(null)
-  const { acnounce, setAcnounce } = useContext(AdminContext)
+  const { announce, setAnnounce } = useContext(AdminContext)
   const { coursePublic, setCoursePublic } = useContext(AdminContext)
   const { coursePrivate, setCoursePrivate } = useContext(AdminContext)
 
@@ -99,11 +99,11 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
     let createFileField = null
 
     switch (manage) {
-      case "Acnounce": createFileField = "acnounce"; break;
+      case "Announce": createFileField = "announce"; break;
       default: return;
     }
     // if (manage === "Public Course") createFileField = "publicCourse"
-    // if (manage === "Private Course") createFileField = "acnounce"
+    // if (manage === "Private Course") createFileField = "announce"
 
     let formData = new FormData()
     console.log(image?.file)
@@ -135,7 +135,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
     const objectUrl = URL.createObjectURL(image?.file)
     setSelectedImage(objectUrl)
 
-    await createAcnounce(sessionStorage.getItem("token"), {
+    await createannounce(sessionStorage.getItem("token"), {
       name: imageData?.name,
       original_name: imageData?.original_name,
     })
@@ -143,7 +143,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
         (res) => {
           const data = res.data.data
           console.log(data)
-          setAcnounce(() => data.acnounce)
+          setAnnounce(() => data.announce)
         }
       )
       .catch(
@@ -170,7 +170,8 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
   };
 
   const renderButton = (actionMode, manage) => {
-    if (actionMode === "Preview" && manage === "Acnounce") {
+    console.log(actionMode, manage)
+    if (actionMode === "Preview" && manage === "Announce") {
       return (
         <ImgCrop
           showReset
@@ -271,21 +272,21 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
     e.target.src = DEFAULT_IMAGE
   }
 
-  async function handleDeleteAcnounce(index) {
-    const length = acnounce.length
-    const prevData = acnounce.slice(0, index)
-    const nextData = acnounce.slice(index + 1, length)
-    const currData = acnounce[index]
+  async function handleDeleteannounce(index) {
+    const length = announce.length
+    const prevData = announce.slice(0, index)
+    const nextData = announce.slice(index + 1, length)
+    const currData = announce[index]
 
-    await updateAcnounce(sessionStorage.getItem("token"), {
-      acnounce: [...prevData, ...nextData],
+    await updateannounce(sessionStorage.getItem("token"), {
+      announce: [...prevData, ...nextData],
       remove: currData
     })
       .then(
         (res) => {
           const data = res.data.data
           console.log(res.data)
-          setAcnounce(() => data.acnounce)
+          setAnnounce(() => data.announce)
         }
       )
       .catch(
@@ -320,7 +321,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
   const onDragEnd = async ({ active, over }) => {
     if (active.id !== over?.id) {
       let updatedData = null
-      setAcnounce((previous) => {
+      setAnnounce((previous) => {
         const activeIndex = previous.findIndex((i) => i.name === active.id);
         const overIndex = previous.findIndex((i) => i.name === over?.id);
         updatedData = arrayMove(previous, activeIndex, overIndex);
@@ -328,14 +329,14 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
       });
 
       if (updatedData) {
-        await updateAcnounce(sessionStorage.getItem("token"), {
-          acnounce: updatedData
+        await updateannounce(sessionStorage.getItem("token"), {
+          announce: updatedData
         })
           .then(
             (res) => {
               const data = res.data.data
               console.log("update > ", data)
-              setAcnounce(() => data.acnounce)
+              setAnnounce(() => data.announce)
 
             }
           )
@@ -351,7 +352,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
 
   const columnsEdit = () => {
     switch (manage) {
-      case "Acnounce":
+      case "Announce":
         return ([
           {
             key: 'sort',
@@ -391,7 +392,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
             align: "center",
             width: "5%",
             render: (data) => (
-              <Button onClick={() => handleDeleteAcnounce(acnounce.indexOf(data))}>
+              <Button onClick={() => handleDeleteannounce(announce.indexOf(data))}>
                 <DeleteOutlined style={{ fontSize: "120%" }} />
               </Button>
             )
@@ -411,13 +412,13 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
             align: "center",
             width: "10%",
             render: (data) => {
-              // console.log(data?.url)
+              // console.log(data?.name)
               // if (!data?.url) return
               return (
                 <Image
                   width={150}
                   onError={handleUnloadImage}
-                  src={data?.url ? `${process.env.REACT_APP_IMG}${data.url}` : DEFAULT_IMAGE}
+                  src={data?.name ? `${process.env.REACT_APP_IMG}/course/${data?.name}` : DEFAULT_IMAGE}
                 />
               )
             }
@@ -445,7 +446,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
             dataIndex: 'status',
             key: 'status',
             align: "center",
-            render: (status) => status === true ? "Disable" : "Eanble",
+            render: (status) => status === true ? "Close" : "Open"//"Disable" : "Eanble",
           },
         ])
       default: return null
@@ -456,8 +457,9 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
   useEffect(() => {
 
     switch (manage) {
-      case "Acnounce":
-        setManageHomeData(() => acnounce);
+      case "Announce":
+        console.log(":LKLJKJKH")
+        setManageHomeData(() => announce);
         setActionMode("Preview");
         setSaveChange(false)
         break;
@@ -477,7 +479,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
     }
     console.log(saveChange)
 
-  }, [acnounce, manage, saveChange])
+  }, [announce, manage, saveChange])
 
   const renderContent = (actionMode, manage) => {
     // console.log(actionMode, manage)
@@ -486,16 +488,16 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
     if (actionMode === "Preview") {
 
       switch (manage) {
-        case "Acnounce":
+        case "Announce":
           return (
             <Col flex={"auto"}>
               {
-                acnounce ?
+                announce ?
                   (
                     <DndContext onDragEnd={onDragEnd}>
                       <SortableContext
                         // rowKey array
-                        items={acnounce.map((i) => i.name)}
+                        items={announce.map((i) => i.name)}
                         strategy={verticalListSortingStrategy}
                       >
                         <Table
@@ -506,7 +508,7 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
                           }}
                           rowKey="name"
                           columns={columnsEdit()}
-                          dataSource={acnounce}
+                          dataSource={announce}
                         />
                       </SortableContext>
                     </DndContext>
@@ -567,10 +569,12 @@ const AdminManageHome = ({ manage = null, initAction = "Preview" }) => {
           )
         default:
           return (
-            <Table
-              columns={columnsPreview}
-              dataSource={null}
-            />
+            <Col flex={"auto"}>
+              <Table
+                columns={columnsPreview}
+                dataSource={null}
+              />
+            </Col>
           )
       }
 

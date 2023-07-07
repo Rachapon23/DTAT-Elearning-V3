@@ -20,7 +20,7 @@ const EvaluateStudent = () => {
     }
 
     const handleEvaluate = async (activityIndex, value, user_id) => {
-        message.info(`Evaluate as ${value}`);
+        // message.info(`Evaluate as ${value}`);
 
         if (!user_id) return
         if (value === undefined) return
@@ -58,17 +58,17 @@ const EvaluateStudent = () => {
             render: (data) => data?.user?.employee
         },
         {
-            title: "Nmae",
+            title: "Name",
             render: (data) => `${data?.user?.firstname} ${data?.user?.lastname}`
         },
         {
-            title: `score`,
+            title: `Score`,
             align: "center",
             render: (data) => data?.score_value ? data?.score_value : "waiting for test"
         },
 
         {
-            title: `max score`,
+            title: `Max Score`,
             align: "center",
             render: (data) => data?.score_max ? data?.score_max : "waiting for test"
         },
@@ -100,31 +100,31 @@ const EvaluateStudent = () => {
                                 value: 2,
                                 label: 'Pass',
                             },
-                            {
-                                value: 'disabled',
-                                label: 'Disabled',
-                                disabled: true,
-                            },
+                            // {
+                            //     value: 'disabled',
+                            //     label: 'Disabled',
+                            //     disabled: true,
+                            // },
                         ]}
                     />
 
                 )
             }
         },
-        {
-            title: `Action`,
-            align: "center",
-            render: (data) => {
-                return (
-                    <Button
-                        disabled={!data?.course?.exam}
-                        onClick={() => handleNavigate(`/student/page/exam/${data?.course?.exam}`, { activity: data?._id })}
-                    >
-                        Exam
-                    </Button>
-                )
-            }
-        },
+        // {
+        //     title: `Action`,
+        //     align: "center",
+        //     render: (data) => {
+        //         return (
+        //             <Button
+        //                 disabled={!data?.course?.exam}
+        //                 onClick={() => handleNavigate(`/student/page/exam/${data?.course?.exam}`, { activity: data?._id })}
+        //             >
+        //                 Exam
+        //             </Button>
+        //         )
+        //     }
+        // },
 
 
     ];
@@ -177,6 +177,7 @@ const EvaluateStudent = () => {
                 (res) => {
                     const data = res.data.data
                     setActivity(data)
+                    console.log(data)
                 }
             )
             .catch(

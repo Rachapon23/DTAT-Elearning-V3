@@ -7,12 +7,12 @@ export const HomeProvider = ({ children }) => {
   const [home, setHome] = useState(
     null |
       {
-        acnounce: [],
+        announce: [],
         course_public: [],
         course_private: [],
       }
   );
-  const [acnounce, setAcnounce] = useState([]);
+  const [announce, setAnnounce] = useState([]);
   const [coursePublic, setCoursePublic] = useState([]);
   const [coursePrivate, setCoursePrivate] = useState([]);
 
@@ -22,10 +22,10 @@ export const HomeProvider = ({ children }) => {
         const data = res.data.data;
         setHome(data);
         // console.log(data)
-        setAcnounce(() => data.acnounce);
+        setAnnounce(() => data.announce);
         setCoursePublic(() => data.course_public);
         setCoursePrivate(() => data.course_private);
-        // console.log(data.acnounce)
+        // console.log(data.announce)
       })
       .catch((err) => {
         console.log(err);
@@ -42,8 +42,8 @@ export const HomeProvider = ({ children }) => {
       value={{
         home,
         setHome,
-        acnounce,
-        setAcnounce,
+        announce,
+        setAnnounce,
         coursePublic,
         setCoursePublic,
         coursePrivate,

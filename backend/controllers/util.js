@@ -79,6 +79,7 @@ exports.validateQuery = (
     // select field in this model
     // search condition
     // NOTE: subPop or field can use 1 field per request (select one in these two) 
+    // console.log("NATIVE_OPTIONS:", NATIVE_OPTIONS)
 
     if (!method) return { success: false, code: 400, message: "No method", options: null }
     let subPops = options.subPops
@@ -135,50 +136,74 @@ exports.validateQuery = (
     if (!fetchParams.success) return { success: fetchParams.success, code: fetchParams.code, message: fetchParams.message, options: null }
     if (!selectParams.success) return { success: selectParams.success, code: selectParams.code, message: selectParams.message, options: null }
 
-
-
+    console.log("-->> ", searchParams, NATIVE_OPTIONS?.teacher?.search && Object.keys(NATIVE_OPTIONS?.teacher?.search).length === 0, NATIVE_OPTIONS?.teacher?.search)
 
     // checkrole for default query
     if (!disableRole) {
         switch (role) {
             case "admin":
-                searchParams = searchParams ? searchParams : NATIVE_OPTIONS.admin.search
-                fieldParams = fieldParams ? fieldParams : NATIVE_OPTIONS.admin.fields
-                fetchParams = fetchParams ? fetchParams : NATIVE_OPTIONS.admin.fetchs
-                subPropsParams = subPropsParams ? subPropsParams : NATIVE_OPTIONS.admin.subPops
-                selectParams = selectParams ? selectParams : NATIVE_OPTIONS.admin.selects
+                // if(NATIVE_OPTIONS?.admin?.search) {
+                //     if(Object.keys(NATIVE_OPTIONS?.admin?.search).length !== 0) {
+                //         searchParams = NATIVE_OPTIONS?.admin?.search
+                //     }
+                //     else {
+                //         searchParams = searchParams
+                //     }
+                // }
+                // else {
+                //     searchParams = searchParams
+                // }
+                searchParams = !(NATIVE_OPTIONS?.admin?.search && Object.keys(NATIVE_OPTIONS?.admin?.search).length !== 0) ? searchParams : NATIVE_OPTIONS?.admin?.search
+                fieldParams = !NATIVE_OPTIONS?.admin?.fields ? fieldParams : NATIVE_OPTIONS?.admin?.fields
+                fetchParams = !NATIVE_OPTIONS?.admin?.fetchs ? fetchParams : NATIVE_OPTIONS?.admin?.fetchs
+                subPropsParams = !NATIVE_OPTIONS?.admin?.subPops ? subPropsParams : NATIVE_OPTIONS?.admin?.subPops
+                selectParams = !NATIVE_OPTIONS?.admin?.selects ? selectParams : NATIVE_OPTIONS?.admin?.selects
                 break;
             case "teacher":
-                searchParams = searchParams ? searchParams : NATIVE_OPTIONS.teacher.search
-                fieldParams = fieldParams ? fieldParams : NATIVE_OPTIONS.teacher.fields
-                fetchParams = fetchParams ? fetchParams : NATIVE_OPTIONS.teacher.fetchs
-                subPropsParams = subPropsParams ? subPropsParams : NATIVE_OPTIONS.teacher.subPops
-                selectParams = selectParams ? selectParams : NATIVE_OPTIONS.teacher.selects
+                searchParams = !(NATIVE_OPTIONS?.teacher?.search && Object.keys(NATIVE_OPTIONS?.teacher?.search).length !== 0) ? searchParams : NATIVE_OPTIONS?.teacher?.search
+                fieldParams = !NATIVE_OPTIONS?.teacher?.fields ? fieldParams : NATIVE_OPTIONS?.teacher?.fields
+                fetchParams = !NATIVE_OPTIONS?.teacher?.fetchs ? fetchParams : NATIVE_OPTIONS?.teacher?.fetchs
+                subPropsParams = !NATIVE_OPTIONS?.teacher?.subPops ? subPropsParams : NATIVE_OPTIONS?.teacher?.subPops
+                selectParams = !NATIVE_OPTIONS?.teacher?.selects ? selectParams : NATIVE_OPTIONS?.teacher?.selects
                 break;
             case "student":
-                searchParams = searchParams ? searchParams : NATIVE_OPTIONS.student.search
-                fieldParams = fieldParams ? fieldParams : NATIVE_OPTIONS.student.fields
-                fetchParams = fetchParams ? fetchParams : NATIVE_OPTIONS.student.fetchs
-                subPropsParams = subPropsParams ? subPropsParams : NATIVE_OPTIONS.student.subPops
-                selectParams = selectParams ? selectParams : NATIVE_OPTIONS.student.selects
+                searchParams = !(NATIVE_OPTIONS?.student?.search && Object.keys(NATIVE_OPTIONS?.student?.search).length !== 0) ? searchParams : NATIVE_OPTIONS?.student?.search
+                fieldParams = !NATIVE_OPTIONS?.student?.fields ? fieldParams : NATIVE_OPTIONS?.student?.fields
+                fetchParams = !NATIVE_OPTIONS?.student?.fetchs ? fetchParams : NATIVE_OPTIONS?.student?.fetchs
+                subPropsParams = !NATIVE_OPTIONS?.student?.subPops ? subPropsParams : NATIVE_OPTIONS?.student?.subPops
+                selectParams = !NATIVE_OPTIONS?.student?.selects ? selectParams : NATIVE_OPTIONS?.student?.selects
                 break;
             default:
                 return { success: false, code: 400, message: "This role does not exist in system", options: null }
         }
     }
+    
+    // console.log(
+    //     "SSSSSSSSSSSSSSSSSSSSSSSS",
+    //     !NATIVE_OPTIONS?.student?.search ? searchParams : NATIVE_OPTIONS.student.search,
+    //     !NATIVE_OPTIONS?.student?.fields ? fieldParams : NATIVE_OPTIONS.student.fields,
+    //     !NATIVE_OPTIONS?.student?.fetchs ? fetchParams : NATIVE_OPTIONS.student.fetchs,
+    //     !NATIVE_OPTIONS?.student?.subPops ? subPropsParams : NATIVE_OPTIONS.student.subPops,
+    //     !NATIVE_OPTIONS?.student?.selects ? selectParams : NATIVE_OPTIONS.student.selects,
+    //     "xxxxxxxxxxxxxxxxxxxxxxxx",
+    // )
 
-    // console.log("-->> ", searchParams)
+    
+    // console.log("-->> ", !NATIVE_OPTIONS?.student?.search)
+    // console.log("-->> ", fetchParams)
+    // console.log("-->> ", subPropsParams)
+    // console.log("-->> ", selectParams)
 
     return {
         success: true,
         code: 200,
         message: null,
         options: {
-            fieldParams: fieldParams.data,
-            fetchParams: fetchParams.data,
-            selectParams: selectParams.data,
-            searchParams: searchParams.data,
-            subPropsParams: subPropsParams.data,
+            fieldParams: fieldParams?.data,
+            fetchParams: fetchParams?.data,
+            selectParams: selectParams?.data,
+            searchParams: searchParams?.data,
+            subPropsParams: subPropsParams?.data,
         },
     }
 }
@@ -229,6 +254,7 @@ function generateSearches(searches = "", allowed = [], adminBypass = false) {
 
         searchParams[searchMethod] = searchField
     }
+    // console.log("from exter: ", searchParams)
     return { success: true, code: 200, message: null, data: searchParams }
     // if (!stringFields) return { success: false, code: 500, message: `Unexpected error in process on ${controllerName}`, options: null }
 }

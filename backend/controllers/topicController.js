@@ -19,13 +19,20 @@ exports.createTopic = async (req, res) => {
 // GET: /list-topic
 exports.listTopic = async (req, res) => {
   try {
-
-    const course = await Course.findOne({ _id: req.params.id }, "enabled");
-    if (course.enabled) {
-      const topic = await Topic.find({ course: req.params.id });
-      return res.json(topic);
+    switch (req?.user?.role) {
+      case "admin":
+      case "teacher":
+        const topic = await Topic.find({ course: req.params.id });
+        return res.json(topic);
+      case "student":
+        const courseStudent = await Course.findOne({ _id: req.params.id }, "enabled");
+        if (courseStudent.enabled) {
+          const topic = await Topic.find({ course: req.params.id });
+          return res.json(topic);
+        }
+        return res.json({ enabled: false, message: "Course not avaliable" });
+      default: return res.status(400).json({ error: "This role does not exsit in system" });
     }
-    res.json({ enabled: false , message: "Course not avaliable" });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Unexpected error on list topic" });

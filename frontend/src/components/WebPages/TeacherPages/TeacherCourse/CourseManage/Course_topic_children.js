@@ -239,6 +239,7 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
       console.log(objectUrl)
       setfileData((prev) => [...prev, objectUrl])
     }
+    loadTopic();
   }
 
   useEffect(() => {
@@ -471,7 +472,7 @@ const Course_topic_children = ({ item, index, nextState, setNextState }) => {
                           <Row>
                             <Col style={{ width: "94%" }}>
                               <Link
-                                href={process.env.REACT_APP_IMG + `/topic/${ttem?.name}`}
+                                href={fileData[ddex]}
                                 target="_blank">{ttem?.original_name}</Link>
                             </Col>
                             <Col

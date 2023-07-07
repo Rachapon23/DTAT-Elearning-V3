@@ -76,9 +76,9 @@ export const createFilePublic = async (authtoken, data, field) =>
         }
     });
 
-// POST: /create-acnounce
-export const createAcnounce = async (authtoken, data) =>
-    await axios.post(process.env.REACT_APP_API + `/create-acnounce`, data, {
+// POST: /create-announce
+export const createannounce = async (authtoken, data) =>
+    await axios.post(process.env.REACT_APP_API + `/create-announce`, data, {
         headers: {
             authtoken,
         }
@@ -88,9 +88,9 @@ export const createAcnounce = async (authtoken, data) =>
 export const getHome = async () =>
     await axios.get(process.env.REACT_APP_API + `/get-home`);
 
-// DELETE: /update-acnounce
-export const updateAcnounce = async (authtoken, data) =>
-    await axios.put(process.env.REACT_APP_API + `/update-acnounce`, data, {
+// DELETE: /update-announce
+export const updateannounce = async (authtoken, data) =>
+    await axios.put(process.env.REACT_APP_API + `/update-announce`, data, {
         headers: {
             authtoken,
         }

@@ -14,7 +14,7 @@ const StudentHomePage = () => {
   const navigate = useNavigate();
 
   const [courses, setCourses] = useState([]);
-  const [selectedTab] = useState(location?.state?.tabIndex ? location.state.tabIndex : 0)
+  const [selectedTab] = useState(location?.state?.tabIndex ? location.state.tabIndex : 1)
   const [changedTabIndex, setChangedTabIndex] = useState(1)
 
   const handleNavigate = (navStr, dataStage) => {
@@ -146,8 +146,8 @@ const StudentHomePage = () => {
                   width={150}
                   onError={handleUnloadImage}
                   src={
-                    data?.course?.image?.url
-                      ? process.env.REACT_APP_IMG + data?.course?.image?.url
+                    data?.course?.image?.name
+                      ? `${process.env.REACT_APP_IMG}/course/${data?.course?.image?.name}`
                       : DEFAULT_IMAGE
                   }
                 />
@@ -346,7 +346,8 @@ const StudentHomePage = () => {
       .then(
         (res) => {
           const data = res.data.data;
-          setCourses(data);
+          if (!Array.isArray(data)) return
+          setCourses(data.filter((item) => item.course));
         }
       )
       .catch(

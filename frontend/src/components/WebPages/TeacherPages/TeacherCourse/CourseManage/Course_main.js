@@ -329,7 +329,7 @@ const Course_main = () => {
 
 
       {
-        courseData.type === true ? (
+        courseData?.type === true ? (
           <>
             {
               topicData.length !== 0 &&
@@ -359,11 +359,13 @@ const Course_main = () => {
           </>
         ) : (
           <>
-            {topicData.length !== 0 &&
+            {
+            topicData.length !== 0 &&
               step[3]?.title === "Topic" &&
               currentPage === 3 ? (
               <>
                 <Card>
+                
                   {topicData.map((item, index) => (
 
                     <Course_topic_children

@@ -38,6 +38,7 @@ const Course_topic = () => {
     <div style={{ paddingTop: "2%" }}>
       <Row>
         <Col span={24}>
+          
           {
             topicData.length === 0 ?
               <Empty />

@@ -60,7 +60,7 @@ exports.createCourse = async (req, res) => {
     res.json({ data: course });
   } catch (err) {
     console.log("fail to create the course : ", err);
-    if(err?.code === 11000) {
+    if (err?.code === 11000) {
       return res.status(400).json({ error: "Course name cannot be empty, change name before create a new one" });
     }
     res.status(500).json({ error: "Unexpected error on create course" });
@@ -101,11 +101,11 @@ exports.getCourse = async (req, res) => {
         fetchs: allowedFetch,
 
       },
-      false
+      false,
     )
 
+    // console.log(result)
     if (!result.success) return res.status(result.code).json({ error: result.message })
-
     const course = await Course
       .findOne(result.options.searchParams, result.options.fetchParams)
       .populate(result.options.fieldParams ? result.options.fieldParams : result.options.subPropsParams)
@@ -133,8 +133,12 @@ exports.listCourse = async (req, res) => {
       "list course",
       req?.user?.role,
       null,
-      req?.user?.role === "admin",
-      null,
+      false,//req?.user?.role === "admin",
+      {
+        teacher: {
+          search: { data: { teacher: req?.user?.user_id } } // override any request
+        }
+      },
       {
         fields: req?.query?.field,
         fetchs: req?.query?.fetch,
@@ -153,9 +157,9 @@ exports.listCourse = async (req, res) => {
         fetchs: allowedFetch,
 
       },
-      false
+      true
     )
-    // console.log(result)
+    console.log(result)
     if (!result.success) return res.status(result.code).json({ error: result.message })
 
     const courses = await Course
@@ -166,7 +170,7 @@ exports.listCourse = async (req, res) => {
 
   }
   catch (err) {
-    console.log("fail to fetch courses");
+    console.log(err);
     res.status(500).json({ error: "Unexpected error on list courses" });
   }
 };
@@ -369,7 +373,7 @@ exports.getCourseCount = async (req, res) => {
         return res.json({ data: (await Course.find({})).length });
       case "teacher":
         return res.json({
-          data: (await Course.find({ teacher: user_id })).length,
+          data: (await Course.find({ teacher: req?.user?.user_id })).length,
         });
       case "student":
         return res.status(403).json({ error: "Access denine for student" });
@@ -394,7 +398,7 @@ exports.listCourseWoQuiz = async (req, res) => {
         return res.json({ data: await Course.find({ exam: null }) });
       case "teacher":
         return res.json({
-          data: await Course.find({ teacher: user_id, exam: null }),
+          data: await Course.find({ teacher: req?.user?.user_id, exam: null }),
         });
       case "student":
         return res.status(403).json({ error: "Access denine for student" });
@@ -443,7 +447,14 @@ exports.listCourseGraphData = async (req, res) => {
 
         // console.log("user plant: ", searchedCourse.map((item) => item.activity.map((aitem) => aitem.user.firstname)))
         // console.log("curse plant: ", searchedCourse.filter((fitem) => fitem.condition).map((item) => item.condition.map((citem) => citem.plant.name)))
-        const payload = searchedCourse
+        // console.log("test: ", searchedCourse
+        //   .filter((fitem) => fitem.condition && Array.isArray(fitem.condition) && fitem.condition.length > 0)
+        //   .map((item) => item)
+        // )
+        let plant = {}
+        let plant_amount = {}
+        let plant_current = {}
+        const totalStudent = searchedCourse
           .filter((fitem) => fitem.condition && Array.isArray(fitem.condition) && fitem.condition.length > 0)
           .map(
             (item) => (
@@ -451,23 +462,77 @@ exports.listCourseGraphData = async (req, res) => {
                 name: item.name,
                 plant: item.condition?.map((citem) => citem.plant.name),
                 plant_amount: item.condition?.map((amount) => amount.maximum),
-                plant_current: item.condition?.map((citem) => item.activity.map((aitem) => {
-                  // if (citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1)) {
-                  //   console.log("match: ", citem.plant.name, aitem.user.plant.name)
-                  //   console.log("result: ", aitem.result)
-                  //   console.log("logic: ", citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0)
-                  // }
-                  return citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0
-                }).reduce((prev, curr) => prev + curr, 0)),
+                plant_current: item.condition?.map((citem) => {
+                  if (!plant[`${citem.plant.name}`]) {
+                    plant[`${citem.plant.name}`] = {
+                      plant_amount: 0,
+                      plant_current: 0
+                    }
+                  }
+                  if (!plant_amount[`${citem.plant.name}`]) {
+                    plant_amount[`${citem.plant.name}`] = 0
+                  }
+                  plant_amount[`${citem.plant.name}`] = plant_amount[`${citem.plant.name}`] + citem?.maximum
+                  if (!plant_current[`${citem.plant.name}`]) {
+                    plant_current[`${citem.plant.name}`] = 0
+                  }
+
+                  plant[`${citem.plant.name}`].plant_amount = plant_amount[`${citem.plant.name}`]
+                  plant[`${citem.plant.name}`].plant_current = plant_current[`${citem.plant.name}`]
+
+                  return item.activity.map((aitem) => {
+                    if (citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1)) {
+                      plant_current[`${citem.plant.name}`] = plant_current[`${citem.plant.name}`] + 1
+                    }
+                    return citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0
+                  })
+
+                }).reduce((prev, curr) => prev + curr, 0),
                 current: item.activity.map((aitem) => aitem.result === 2 || aitem.result === 1 ? 1 : 0).reduce((prev, curr) => prev + curr, 0),
                 maximum: item.condition.map((amount) => amount.maximum).reduce((prev, curr) => prev + curr, 0),
               }
             )
           )
-        // console.log(payload)
+
+
+
+        // searchedCourse
+        //   .filter((fitem) => fitem.condition && Array.isArray(fitem.condition) && fitem.condition.length > 0)
+        //   .map(
+        //     (item) => {
+
+        //       for (let i = 0; i < item.condition.length; i++) {
+        //         if (!plant[`${item.condition[i].plant.name}`]) {
+        //           plant[`${item.condition[i].plant.name}`] = {
+        //             plant_amount: 0,
+        //             plant_current: 0
+        //           }
+        //         }
+
+        //         if (!plant_amount[`${item.condition[i].plant.name}`]) {
+        //           plant_amount[`${item.condition[i].plant.name}`] = 0
+        //         }
+        //         plant_amount[`${item.condition[i].plant.name}`] = plant_amount[`${item.condition[i].plant.name}`] + item.condition[i]?.maximum
+
+        //         if (!plant_current[`${item.condition[i].plant.name}`]) {
+        //           plant_current[`${item.condition[i].plant.name}`] = 0
+        //         }
+        //         plant_current[`${item.condition[i].plant.name}`] = plant_current[`${item.condition[i].plant.name}`] + item.condition[i]?.current
+
+        //         plant[`${item.condition[i].plant.name}`].plant_amount = plant_amount[`${item.condition[i].plant.name}`]
+        //         plant[`${item.condition[i].plant.name}`].plant_current = plant_current[`${item.condition[i].plant.name}`]
+
+        //       }
+        //     }
+        //   )
+
+
+        const payload = { totalStudent, plant }
+        // console.log(totalStudent)
+        // console.log(plant)
         return res.json({ data: payload });
       case "teacher":
-        const searchedCourseTeacher = await Course.find({ teacher: user_id })
+        const searchedCourseTeacher = await Course.find({ teacher: req?.user?.user_id })
           .populate({
             path: "condition",
             populate: {
@@ -486,7 +551,13 @@ exports.listCourseGraphData = async (req, res) => {
             }
           })
 
-        const payloadTeacher = searchedCourseTeacher
+        console.log(searchedCourseTeacher.filter((fitem) => fitem.condition && Array.isArray(fitem.condition) && fitem.condition.length > 0).map(
+          (item) => item.condition?.map((citem) => item?.activity?.map((aitem) => citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0).reduce((prev, curr) => prev + curr, 0) ) )
+        )
+        let tplant = {}
+        let tplant_amount = {}
+        let tplant_current = {}
+        const tTotalStudent = searchedCourseTeacher
           .filter((fitem) => fitem.condition && Array.isArray(fitem.condition) && fitem.condition.length > 0)
           .map(
             (item) => (
@@ -494,20 +565,40 @@ exports.listCourseGraphData = async (req, res) => {
                 name: item.name,
                 plant: item.condition?.map((citem) => citem.plant.name),
                 plant_amount: item.condition?.map((amount) => amount.maximum),
-                plant_current: item.condition?.map((citem) => item.activity.map((aitem) => {
-                  if (citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1)) {
-                    console.log("match: ", citem.plant.name, aitem.user.plant.name)
-                    console.log("result: ", aitem.result)
-                    console.log("logic: ", citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0)
+                plant_current: item.condition?.map((citem) => {
+                  if (!tplant[`${citem.plant.name}`]) {
+                    tplant[`${citem.plant.name}`] = {
+                      plant_amount: 0,
+                      plant_current: 0
+                    }
                   }
-                  return citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0
-                }).reduce((prev, curr) => prev + curr, 0)),
+                  if (!tplant_amount[`${citem.plant.name}`]) {
+                    tplant_amount[`${citem.plant.name}`] = 0
+                  }
+                  tplant_amount[`${citem.plant.name}`] = tplant_amount[`${citem.plant.name}`] + citem?.maximum
+                  if (!tplant_current[`${citem.plant.name}`]) {
+                    tplant_current[`${citem.plant.name}`] = 0
+                  }
+
+                  tplant[`${citem.plant.name}`].plant_amount = tplant_amount[`${citem.plant.name}`]
+                  tplant[`${citem.plant.name}`].plant_current = tplant_current[`${citem.plant.name}`]
+
+                  return (
+                    item?.activity?.map((aitem) => {
+                      if (citem?.plant?.name === aitem?.user?.plant?.name && (aitem.result === 2 || aitem.result === 1)) {
+                        tplant_current[`${citem.plant.name}`] = tplant_current[`${citem.plant.name}`] + 1
+                      }
+                      return citem.plant.name === aitem.user.plant.name && (aitem.result === 2 || aitem.result === 1) ? 1 : 0
+                    }).reduce((prev, curr) => prev + curr, 0)
+                  )
+                }),
                 current: item.activity.map((aitem) => aitem.result === 2 || aitem.result === 1 ? 1 : 0).reduce((prev, curr) => prev + curr, 0),
                 maximum: item.condition.map((amount) => amount.maximum).reduce((prev, curr) => prev + curr, 0),
               }
             )
           )
-        // console.log(payloadTeacher)
+        const payloadTeacher = { totalStudent: tTotalStudent, plant: tplant }
+        console.log(tTotalStudent)
         return res.json({ data: payloadTeacher });
       case "student":
         return res.status(403).json({ error: "Access denine for student" });

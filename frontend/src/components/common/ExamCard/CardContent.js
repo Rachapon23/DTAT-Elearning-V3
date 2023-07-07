@@ -206,15 +206,25 @@ const CardContent = ({
                 <Col flex={"auto"}>
                     <Text strong>{`Question ${index + 1}`}</Text>
                 </Col>
-                <Col>
-                    <Button onClick={() => onDelete(index)} >
-                        <Row align={"middle"} justify={"center"}>
-                            <Col style={{ marginTop: "-5px", }}>
-                                <DeleteOutlined />
+                {/* {JSON.stringify(actionMode === "Edit")} */}
+                {
+                    editMode || createMode ?
+                        (
+                            <Col>
+                                <Button onClick={() => onDelete(index)} >
+                                    <Row align={"middle"} justify={"center"}>
+                                        <Col style={{ marginTop: "-5px", }}>
+                                            <DeleteOutlined />
+                                        </Col>
+                                    </Row>
+                                </Button>
                             </Col>
-                        </Row>
-                    </Button>
-                </Col>
+                        )
+                        :
+                        (
+                            null
+                        )
+                }
             </Row>
         )
     }
@@ -237,7 +247,7 @@ const CardContent = ({
         >
             <Col style={{ width: "100%" }}>
                 <Card title={renderCardContentTitle()} type="inner">
-                    <Row justify={"center"} align={"middle"} style={{paddingTop: "5px"}}>
+                    <Row justify={"center"} align={"middle"} style={{ paddingTop: "5px" }}>
                         <Col style={{ width: "100%" }} >
 
                             {/* <Row style={{ marginTop: "-0.5%", marginBottom: "-0.2%", marginRight: "-0.5%" }} justify={"end"} align={"middle"}>
@@ -275,8 +285,8 @@ const CardContent = ({
 
                                     </Form.Item>
                                 </Col>
-                                <Col style={{ width: "5%", paddingLeft: "1%" }}>
-                                    <Form >
+                                <Col  style={{ width: "5%", paddingLeft: "1%", }}>
+                                    <Form style={{paddingBottom: "27px"}}>
                                         <Form.Item>
                                             <Tooltip title={imageExtension ? "Change image" : "Add image"} placement="bottom">
                                                 <Upload

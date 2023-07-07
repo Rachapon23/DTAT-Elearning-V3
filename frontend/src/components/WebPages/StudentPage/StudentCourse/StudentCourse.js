@@ -239,7 +239,7 @@ const StudentExam = () => {
               <Row justify={'end'}>
                 <Link>
                   <Text style={{ fontSize: "12px", color: "blue" }} onClick={() => setOpenProfile(true)}>
-                    By {course?.teacher?.firstname} {course?.teacher?.lastname}
+                    By {teacherProfile?.firstname} {teacherProfile?.lastname}
                   </Text>
                 </Link>
 
@@ -267,16 +267,16 @@ const StudentExam = () => {
                     <Col>
                       <Row>
                         <Col style={{ paddingRight: "10px" }}><Text strong> Name: </Text> </Col>
-                        <Col style={{ paddingRight: "10px" }}>{teacherProfile?.firstname}</Col>
+                        <Col style={{ paddingRight: "10px" }}>{teacherProfile?.firstname ? teacherProfile?.firstname : "No data"}</Col>
                         <Col >{teacherProfile?.lastname}</Col>
                       </Row>
                       <Row>
                         <Col style={{ paddingRight: "15px" }}><Text strong> Email: </Text> </Col>
-                        <Col>{teacherProfile?.email}</Col>
+                        <Col>{teacherProfile?.email ? teacherProfile?.email : "No data"}</Col>
                       </Row>
                       <Row>
                         <Col style={{ paddingRight: "30px" }}><Text strong> Tel: </Text> </Col>
-                        <Col>{teacherProfile?.tel}</Col>
+                        <Col>{teacherProfile?.tel ? teacherProfile?.tel : "No data"}</Col>
                       </Row>
                     </Col>
                   </Row>

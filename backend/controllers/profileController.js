@@ -4,12 +4,12 @@ const User = require("../models/user")
 // GET: /get-profile/user/:id
 exports.getProfileByUserId = async (req, res) => {
     try {
-        const { user } = req
-        const user_data = await User.findOne({ _id: user?.user_id }).select("profile firstname lastname email -_id")
-        if(!user_data.profile) return res.status(404).json({ error: "Profile not found" });
+        const user_id = req?.params?.id
+        const user_data = await User.findOne({ _id: user_id }).select("profile firstname lastname email -_id")
+        if(!user_data?.profile) return res.status(404).json({ error: "Profile not found" });
 
         const profile_data = await Profile.findOne({ _id: user_data.profile })
-        return res.json({ data: { ...user_data._doc, ...profile_data._doc } });
+        return res.json({ data: { ...user_data?._doc, ...profile_data?._doc } });
     }
     catch (err) {
         console.log(err);

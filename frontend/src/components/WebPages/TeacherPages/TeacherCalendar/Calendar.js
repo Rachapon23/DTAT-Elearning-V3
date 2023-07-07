@@ -1,4 +1,4 @@
-import React from "react"
+import React, { createRef } from "react"
 import { useState, useEffect } from "react";
 import { Breadcrumb, Card, Col, Row, Typography } from "antd"
 import FullCalendar from "@fullcalendar/react"; // must go before plugins
@@ -15,11 +15,14 @@ const { Title } = Typography
 const Calendar = () => {
 
   const [even, setEven] = useState([]);
+  const [loaded, setLoaded] = useState(false)
+  const calendarRef = createRef()
 
   const loadCalendar = () => {
     listCalendar(sessionStorage.getItem("token"))
       .then((res) => {
         setEven(res.data);
+        setLoaded(true)
       })
       .catch((err) => {
         console.log(err);
@@ -28,9 +31,16 @@ const Calendar = () => {
       });
   };
 
+  const goToDate = () => {
+    const calendarAPI = calendarRef?.current?.getApi()
+    if(!Array.isArray(even)) return
+    if (calendarAPI && even[0]?.start) calendarAPI.gotoDate(even[0].start)
+}
+
   useEffect(() => {
     loadCalendar();
-  }, []);
+    if(loaded) goToDate()
+  }, [loaded]);
   const CalendarTitle = () => {
     return (
       <Row align={"middle"} justify={"space-between"} >
@@ -76,6 +86,7 @@ const Calendar = () => {
         height={500}
         themeSystem="bootstrap5"
         events={even}
+        ref={calendarRef}
       />
     </Card>
   )

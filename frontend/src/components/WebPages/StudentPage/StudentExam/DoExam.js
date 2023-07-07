@@ -105,6 +105,7 @@ const DoExam = () => {
                 (res) => {
                     const data = res.data.data
                     setResult(data)
+                    console.log("da dadadadadad: ", data)
                 }
             )
             .catch(
@@ -130,7 +131,7 @@ const DoExam = () => {
                         name: data.name,
                         detail: data.detail,
                     })
-                    setPageStepLength(data.quiz.length)
+                    // setPageStepLength(data.quiz.length)
                     if (data.course) fetchActivity(data.course)
                 }
             )
@@ -145,7 +146,7 @@ const DoExam = () => {
     }
 
     const renderContent = () => {
-        if(!result) return <>Please wait...</>
+        // if (!result) return <>Please wait...</>
         if (!result?.completed) {
             return (
                 <Col flex="auto">

@@ -1,4 +1,4 @@
-import { Avatar, Breadcrumb, Button, Card, Col, Image, Progress, Row, Typography } from "antd";
+import { Avatar, Breadcrumb, Button, Card, Col, Image, Progress, Row, Typography, message } from "antd";
 import React, { createRef, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createActivity, getActivity, getCourse, getUser, getCalendarByCourseId } from "../../../../function/Student/course";
@@ -28,36 +28,54 @@ const RegisterCourse = () => {
     const [conditionData, setConditionData] = useState([]);
     const [imageData, setImageData] = useState(null);
     const [courseResult, setCourseResult] = useState(false)
-
     const [even, setEven] = useState(null);
+    const [messageApi, notifyContextHolder] = message.useMessage();
+    const [plantLoaded, setPlantLoaded] = useState(false)
+
+    const notify = (type, message) => {
+        //type success / error / warning
+        messageApi.open({
+            type: type,
+            content: message,
+        });
+    };
 
     const handleNavigate = (navStr, dataStage) => {
         navigate(navStr, { state: dataStage })
     }
 
-    const isPassCondition = async () => {
+    const isPassCondition = async (conditionData) => {
         // check registered
         await checkRegistered()
         console.log("conditionData: ", conditionData)
         if (
             Array.isArray(conditionData) &&
-            conditionData.length === 0 &&
-            course?.type === true
+            (
+                conditionData.length === 0 ||
+                course?.type === true
+            )
         ) return setPassedCondition(true)
 
         // check plant
-        let inPlant = false
+        let result = false
         for (let i = 0; i < conditionData.length; i++) {
-            // console.log("condition: ", conditionData[i], " plant: ", plant)
-            // console.log("plant: ", conditionData[i].plant.name, " plant: ", plant)
+            console.log("condition: ", conditionData[i], " plant: ", conditionData[i].plant.name, plant)
             if (conditionData[i].plant.name === plant) {
-                inPlant = true
+                console.log("plan:t: ", plant)
+                result = true
                 break
             }
+
+            if (conditionData[i].current + 1 > conditionData[i].maximum) {
+                result = false
+                break
+            }
+            // console.log("plant: ", conditionData[i].plant.name, " plant: ", plant)
+
         }
-        //TODO: check course limit
-        // console.log("in plant: ", inPlant)
-        setPassedCondition(inPlant)
+
+        console.log("in plant: ", result)
+        setPassedCondition(result)
         setPageChange(true)
     }
 
@@ -92,7 +110,7 @@ const RegisterCourse = () => {
 
     const handleAddCourse = async () => {
 
-        if (!isPassCondition()) {
+        if (!isPassCondition(conditionData)) {
             // alert user or something
             // console.log("????")
             return
@@ -111,7 +129,9 @@ const RegisterCourse = () => {
             )
             .catch(
                 (err) => {
-                    console.log(err)
+                    const error = err.response
+                    console.log(`<${error.status}> ${error.data.error}`)
+                    notify("error", error.data.error)
                 }
             )
     }
@@ -122,11 +142,12 @@ const RegisterCourse = () => {
 
     const fetchCondition = async (id) => {
         await listCondition(sessionStorage.getItem("token"), id)
-            .then((res) => {
+            .then(async (res) => {
+
                 const data = res.data
                 // console.log("DATA: ", data)
                 setConditionData(data);
-                isPassCondition()
+                isPassCondition(data)
             })
             .catch((err) => {
                 console.log(err);
@@ -138,7 +159,7 @@ const RegisterCourse = () => {
             .then(
                 (res) => {
                     const data = res.data
-                    // console.log("calendar:  ",data)
+                    if (!data?.start) return
                     setEven(() => [data])
                 }
             )
@@ -154,7 +175,8 @@ const RegisterCourse = () => {
             .then(
                 (res) => {
                     const data = res.data.data
-                    setPlant(data.plant.name)
+                    console.log(data)
+                    setPlant(data?.plant?.name)
                 }
             )
             .catch(
@@ -170,10 +192,10 @@ const RegisterCourse = () => {
             .then(
                 (res) => {
                     const data = res.data.data
-                    console.log(data)
+                    // console.log(data)
                     setCourse(data)
-                    fetchCondition(data._id);
-                    handleFetchImage(data.image.name)
+                    fetchCondition(data?._id);
+                    handleFetchImage(data?.image?.name)
                 }
             )
             .catch(
@@ -185,7 +207,8 @@ const RegisterCourse = () => {
 
     const goToDate = () => {
         const calendarAPI = calendarRef?.current?.getApi()
-        if (calendarAPI && even?.start) calendarAPI.gotoDate(even[0].start)
+        if (!Array.isArray(even)) return
+        if (calendarAPI && even[0]?.start) calendarAPI.gotoDate(even[0].start)
     }
 
     const handleFetchImage = async (imageName) => {
@@ -252,6 +275,7 @@ const RegisterCourse = () => {
 
     return (
         <div className="bg-st-course">
+            {notifyContextHolder}
             <div style={{ width: "100%", marginTop: "20px", marginBottom: "50px" }}>
                 <Row justify={"center"} >
                     <Col flex={"auto"} >
@@ -390,7 +414,7 @@ const RegisterCourse = () => {
                                                                                             </Title>
                                                                                         </Row>
                                                                                         <Row>
-                                                                                            <Progress percent={item.current / item.maximum} />
+                                                                                            <Progress percent={item.current * 100 / item.maximum} />
                                                                                         </Row>
                                                                                     </Col>
                                                                                 </Row>
@@ -398,33 +422,43 @@ const RegisterCourse = () => {
                                                                         )
                                                                     }
                                                                 </Col>
-                                                                <Col>
-                                                                    <Card>
-                                                                        <Row justify={"center"}>
-                                                                            <Col style={{ width: "700px", maxWidth: "2000px", }}>
-                                                                                <FullCalendar
-                                                                                    plugins={[
-                                                                                        dayGridPlugin,
-                                                                                        timeGridPlugin,
-                                                                                        interactionPlugin,
-                                                                                        bootstrap5Plugin,
-                                                                                    ]}
-                                                                                    headerToolbar={{
-                                                                                        left: null,//"prev today",
-                                                                                        center: "title",
-                                                                                        right: null//"next",
-                                                                                    }}
-                                                                                    height={500}
-                                                                                    themeSystem="bootstrap5"
-                                                                                    events={even}
-                                                                                    defaultTimedEventDuration={even}
-                                                                                    ref={calendarRef}
-                                                                                />
-                                                                            </Col>
+                                                                {
+                                                                    even ?
+                                                                        (
 
-                                                                        </Row>
-                                                                    </Card>
-                                                                </Col>
+                                                                            <Col>
+                                                                                <Card>
+                                                                                    <Row justify={"center"}>
+                                                                                        <Col style={{ width: "700px", maxWidth: "2000px", }}>
+                                                                                            <FullCalendar
+                                                                                                plugins={[
+                                                                                                    dayGridPlugin,
+                                                                                                    timeGridPlugin,
+                                                                                                    interactionPlugin,
+                                                                                                    bootstrap5Plugin,
+                                                                                                ]}
+                                                                                                headerToolbar={{
+                                                                                                    left: null,//"prev today",
+                                                                                                    center: "title",
+                                                                                                    right: null//"next",
+                                                                                                }}
+                                                                                                height={500}
+                                                                                                themeSystem="bootstrap5"
+                                                                                                events={even}
+                                                                                                defaultTimedEventDuration={even}
+                                                                                                ref={calendarRef}
+                                                                                            />
+                                                                                        </Col>
+
+                                                                                    </Row>
+                                                                                </Card>
+                                                                            </Col>
+                                                                        )
+                                                                        :
+                                                                        (
+                                                                            null
+                                                                        )
+                                                                }
                                                             </Row>
                                                         </Card>
                                                     </Col>

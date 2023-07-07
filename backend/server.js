@@ -3,7 +3,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const { readdirSync } = require('fs')
-const { loadData } = require("./loader")
+const { loadData } = require("./mock/_loader")
 
 require('dotenv').config()
 
@@ -16,7 +16,8 @@ app.use(express.static('public'))
 //connect cloud Database
 mongoose.connect(process.env.DATABASE2, {
     useNewUrlParser: true,
-    useUnifiedTopology: false
+    useUnifiedTopology: false,
+    dbName: 'version3',
 })
     .then(() => console.log("Connect DataBase success..."))
     .catch((err) => console.log("Connect DataBase error!!! :" + err))
