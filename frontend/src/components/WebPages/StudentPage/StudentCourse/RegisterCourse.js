@@ -30,6 +30,7 @@ const RegisterCourse = () => {
     const [courseResult, setCourseResult] = useState(false)
     const [even, setEven] = useState(null);
     const [messageApi, notifyContextHolder] = message.useMessage();
+    const [plantLoaded, setPlantLoaded] = useState(false)
 
     const notify = (type, message) => {
         //type success / error / warning
@@ -58,16 +59,19 @@ const RegisterCourse = () => {
         // check plant
         let result = false
         for (let i = 0; i < conditionData.length; i++) {
-            console.log("condition: ", conditionData[i], " plant: ", plant)
+            console.log("condition: ", conditionData[i], " plant: ", conditionData[i].plant.name, plant)
+            if (conditionData[i].plant.name === plant) {
+                console.log("plan:t: ", plant)
+                result = true
+                break
+            }
+
             if (conditionData[i].current + 1 > conditionData[i].maximum) {
                 result = false
                 break
             }
             // console.log("plant: ", conditionData[i].plant.name, " plant: ", plant)
-            if (conditionData[i].plant.name === plant) {
-                result = true
-                break
-            }
+
         }
 
         console.log("in plant: ", result)
@@ -106,7 +110,7 @@ const RegisterCourse = () => {
 
     const handleAddCourse = async () => {
 
-        if (!isPassCondition()) {
+        if (!isPassCondition(conditionData)) {
             // alert user or something
             // console.log("????")
             return
@@ -138,7 +142,8 @@ const RegisterCourse = () => {
 
     const fetchCondition = async (id) => {
         await listCondition(sessionStorage.getItem("token"), id)
-            .then((res) => {
+            .then(async (res) => {
+
                 const data = res.data
                 // console.log("DATA: ", data)
                 setConditionData(data);
@@ -170,7 +175,8 @@ const RegisterCourse = () => {
             .then(
                 (res) => {
                     const data = res.data.data
-                    setPlant(data.plant.name)
+                    console.log(data)
+                    setPlant(data?.plant?.name)
                 }
             )
             .catch(
@@ -186,10 +192,10 @@ const RegisterCourse = () => {
             .then(
                 (res) => {
                     const data = res.data.data
-                    console.log(data)
+                    // console.log(data)
                     setCourse(data)
-                    fetchCondition(data._id);
-                    handleFetchImage(data.image.name)
+                    fetchCondition(data?._id);
+                    handleFetchImage(data?.image?.name)
                 }
             )
             .catch(
@@ -201,7 +207,8 @@ const RegisterCourse = () => {
 
     const goToDate = () => {
         const calendarAPI = calendarRef?.current?.getApi()
-        if (calendarAPI && even?.start) calendarAPI.gotoDate(even[0].start)
+        if (!Array.isArray(even)) return
+        if (calendarAPI && even[0]?.start) calendarAPI.gotoDate(even[0].start)
     }
 
     const handleFetchImage = async (imageName) => {

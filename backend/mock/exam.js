@@ -7,6 +7,11 @@ let exam2
 let exam3
 let exam4
 let exam5
+let exam6
+let exam7
+let exam8
+let exam9
+let exam10
 
 exports.loadExam = async () => {
     const {
@@ -31,6 +36,11 @@ exports.loadExam = async () => {
         course3,
         course4,
         course5,
+        course6,
+        course7,
+        course8,
+        course9,
+        course10,
     } = await getCourse()
 
 
@@ -105,6 +115,78 @@ exports.loadExam = async () => {
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
+
+    await Exam.findOneAndDelete({ course: course6 })
+    
+    exam7 = await Exam.findOneAndUpdate(
+        { name: "Advance Introduction of Docker Final test" },
+        {
+            name: "Introduction of Docker Final test",
+            detail: "Introduction of Docker Final test Detail ",
+            teacher: await User.findOne({ employee: "6100319" }),
+            quiz: [
+                quiz11,
+                quiz12,
+                quiz13,
+                quiz14,
+            ],
+            course: course2,
+            enable: true,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    exam8 = await Exam.findOneAndUpdate(
+        { name: "Advance Basic of IoT Final test" },
+        {
+            name: "Basic of IoT Final test",
+            detail: "Basic of IoT Final test Detail ",
+            teacher: await User.findOne({ employee: "6100319" }),
+            quiz: [
+                quiz21,
+                quiz22,
+                quiz23,
+            ],
+            course: course3,
+            enable: true,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    exam9 = await Exam.findOneAndUpdate(
+        { name: "Advance Arduino Final test" },
+        {
+            name: "Arduino Final test",
+            detail: "Arduino Final test Detail ",
+            teacher: await User.findOne({ employee: "6100999" }),
+            quiz: [
+                quiz31,
+                quiz32,
+                quiz33,
+            ],
+            course: course4,
+            enable: true,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    exam10 = await Exam.findOneAndUpdate(
+        { name: "Advance Software Engineer Final test" },
+        {
+            name: "Software Engineer Final test",
+            detail: "Software Engineer Final test Detail ",
+            teacher: await User.findOne({ employee: "6100999" }),
+            quiz: [
+                quiz41,
+                quiz42,
+                quiz43,
+            ],
+            course: course5,
+            enable: true,
+
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
 }
 
 exports.getExam = async () => {
@@ -114,5 +196,10 @@ exports.getExam = async () => {
         exam3,
         exam4,
         exam5,
+        exam6,
+        exam7,
+        exam8,
+        exam9,
+        exam10,
     }
 }

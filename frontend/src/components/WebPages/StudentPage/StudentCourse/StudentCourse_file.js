@@ -44,6 +44,7 @@ const StudentCourse_file = ({ item }) => {
 
   useEffect(() => {
     handleFetchImage()
+    console.log(fileData)
   }, [])
 
   return (

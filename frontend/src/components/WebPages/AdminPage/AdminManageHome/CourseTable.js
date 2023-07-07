@@ -84,7 +84,7 @@ const CourseTable = ({ manage = null, home_course = null }) => {
                     <Image
                         width={150}
                         onError={handleUnloadImage}
-                        src={data?.url ? `${process.env.REACT_APP_IMG}${data.url}` : DEFAULT_IMAGE}
+                        src={data?.name ? `${process.env.REACT_APP_IMG}/course/${data.name}` : DEFAULT_IMAGE}
                     />
                 )
             }
@@ -112,7 +112,7 @@ const CourseTable = ({ manage = null, home_course = null }) => {
             dataIndex: 'status',
             key: 'status',
             align: "center",
-            render: (status) => status === true ? "Disable" : "Eanble",
+            render: (status) => status === true ? "Close" : "Open"//"Disable" : "Eanble",
         },
         {
             title: "Select",

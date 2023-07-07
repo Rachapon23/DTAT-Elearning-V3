@@ -149,7 +149,7 @@ const App = () => {
   const items = [
     getItem("Home", "home", <HomeOutlined />),
     getItem("Manage Home", "managehome", <HomeOutlined />, [
-      getItem("Acnounce", "acnounce"),
+      getItem("Announce", "announce"),
       getItem("Public Course", "public-course"),
       getItem("Private Course", "private-course"),
     ]),
@@ -164,10 +164,10 @@ const App = () => {
         return <AdminHomePage />;
       case "managehome":
         return <AdminManageHome />;
-      case "acnounce":
+      case "announce":
         return (
           <AdminProvider>
-            <AdminManageHome manage={"Acnounce"} initAction={"Preview"} />
+            <AdminManageHome manage={"Announce"} initAction={"Preview"} />
           </AdminProvider>
         );
       case "public-course":

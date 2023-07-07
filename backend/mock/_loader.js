@@ -1,3 +1,5 @@
+const { loadCalendar, getCalendar } = require("./calendar");
+
 exports.loadData = async () => {
     const { loadPlant } = require("./plant");
     const { loadRole } = require("./role");
@@ -26,22 +28,27 @@ exports.loadData = async () => {
         course3,
         course4,
         course5,
+        course6,
+        course7,
+        course8,
+        course9,
+        course10,
     } = await getCourse()
     const {
-        condition11,
-        condition12,
-        condition21,
-        condition22,
-        condition31,
-        condition41,
-        condition51,
-        condition52
+        condition61,
+        condition62,
+        condition71,
+        condition72,
+        condition81,
+        condition91,
+        condition101,
+        condition102
     } = await getCondition()
-    course1.condition = [condition11, condition12]
-    course2.condition = [condition21, condition22]
-    course3.condition = [condition31]
-    course4.condition = [condition41]
-    course5.condition = [condition51, condition52]
+    course6.condition = [condition61, condition62]
+    course7.condition = [condition71, condition72]
+    course8.condition = [condition81]
+    course9.condition = [condition91]
+    course10.condition = [condition101, condition102]
 
     await loadTopic()
 
@@ -53,6 +60,11 @@ exports.loadData = async () => {
         topic41,
         topic51,
         topic52,
+        topic61,
+        topic71,
+        topic81,
+        topic91,
+        topic101,
     } = await getTopic()
     course1.topic = topic11
     course2.topic = topic21
@@ -60,6 +72,12 @@ exports.loadData = async () => {
     course4.topic = topic41
     course5.topic = topic51
     course5.topic.push(topic52)
+    course6.topic = topic61
+    course7.topic = topic71
+    course8.topic = topic81
+    course9.topic = topic91
+    course10.topic = topic101
+
 
     await loadQuiz()
     await loadExam()
@@ -71,12 +89,22 @@ exports.loadData = async () => {
         exam3,
         exam4,
         exam5,
+        exam6,
+        exam7,
+        exam8,
+        exam9,
+        exam10,
     } = await getExam()
     course1.exam = exam1
     course2.exam = exam2
     course3.exam = exam3
     course4.exam = exam4
     course5.exam = exam5
+    course6.exam = exam6
+    course7.exam = exam7
+    course8.exam = exam8
+    course9.exam = exam9
+    course10.exam = exam10
 
     await loadActivity()
 
@@ -98,10 +126,23 @@ exports.loadData = async () => {
     course4.activity = activity4
     course5.activity = activity5
 
+    await loadCalendar()
+    const {
+        calendar6,
+        calendar7,
+    } = await getCalendar()
+    course6.calendar = calendar6
+    course7.calendar = calendar7
+
     // Save all changes on Course
     course1.save()
     course2.save()
     course3.save()
     course4.save()
     course5.save()
+    course6.save()
+    course7.save()
+    course8.save()
+    course9.save()
+    course10.save()
 }

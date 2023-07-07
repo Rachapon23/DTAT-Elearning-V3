@@ -5,11 +5,11 @@ export const AdminContext = createContext();
 
 export const AdminProvider = ({ children }) => {
     const [home, setHome] = useState(null | {
-        acnounce: [],
+        announce: [],
         course_public: [],
         course_private: [],
     })
-    const [acnounce, setAcnounce] = useState([])
+    const [announce, setAnnounce] = useState([])
     const [ coursePublic, setCoursePublic ] = useState([])
     const [ coursePrivate, setCoursePrivate ] = useState([])
 
@@ -19,10 +19,10 @@ export const AdminProvider = ({ children }) => {
                 (res) => {
                     const data = res.data.data
                     setHome(data)
-                    setAcnounce(() => data.acnounce)
+                    setAnnounce(() => data.announce)
                     setCoursePublic(() => data.course_public)
                     setCoursePrivate(() => data.course_private)
-                    console.log( "fetch: ",data.acnounce, data.course_public,data.course_private)
+                    console.log( "fetch: ",data.announce, data.course_public,data.course_private)
                 }
             )
             .catch(
@@ -41,8 +41,8 @@ export const AdminProvider = ({ children }) => {
             value={{
                 home,
                 setHome,
-                acnounce,
-                setAcnounce,
+                announce,
+                setAnnounce,
                 coursePublic,
                 setCoursePublic,
                 coursePrivate,

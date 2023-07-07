@@ -4,7 +4,7 @@ import HomePublic from "./HomePublic";
 import Navbar from "../Navbar/Navbar";
 import Contact from "./Contact";
 import "./home.css";
-import HomeAcnounce from "./HomeAcnounce";
+import HomeAnnounce from "./HomeAnnounce";
 import { HomeProvider } from "./HomeContext";
 import { NavbarProvider } from "../Navbar/NavbarContext";
 import {
@@ -57,7 +57,7 @@ const Home = () => {
                 </div>
 
                 <div>
-                  <HomeAcnounce />
+                  <HomeAnnounce />
                 </div>
                 <div className="content">
                   <HomePublic />

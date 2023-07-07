@@ -2,32 +2,32 @@ const Home = require('../models/home')
 const fs = require("fs");
 
 
-exports.createAcnounce = async (req, res) => {
+exports.createAnnounce = async (req, res) => {
     try {
         const { name, original_name } = req?.body
 
         // console.log(req?.body)
-        const dataBaseAcnounce = await Home.find({})
-        if (Array.isArray(dataBaseAcnounce) && name && original_name) {
-            if (dataBaseAcnounce.length === 0) {
-                const acnounce = await new Home({
-                    acnounce: {
+        const dataBaseAnnounce = await Home.find({})
+        if (Array.isArray(dataBaseAnnounce) && name && original_name) {
+            if (dataBaseAnnounce.length === 0) {
+                const announce = await new Home({
+                    announce: {
                         name: name,
                         original_name: original_name,
-                        url: `/acnounce/${name}`
+                        url: `/announce/${name}`
                     }
                 }).save()
-                return res.status(200).json({ data: acnounce })
+                return res.status(200).json({ data: announce })
             }
-            else if (dataBaseAcnounce.length === 1) {
-                dataBaseAcnounce[0].acnounce.push({
+            else if (dataBaseAnnounce.length === 1) {
+                dataBaseAnnounce[0].announce.push({
                     name: name,
                     original_name: original_name,
-                    url: `/acnounce/${name}`
+                    url: `/announce/${name}`
                 })
-                await dataBaseAcnounce[0].save()
+                await dataBaseAnnounce[0].save()
 
-                return res.status(200).json({ data: dataBaseAcnounce[0] })
+                return res.status(200).json({ data: dataBaseAnnounce[0] })
             }
             else {
                 return res.status(500).json({ error: "Unexpected error on create carousel" })
@@ -49,10 +49,10 @@ exports.getHome = async (req, res) => {
         // if(field) field.replace(",", " ")
         // if(fetch) fetch.replace(",", " ")
 
-        const dataBaseAcnounce = await Home.findOne({}).populate(`course_public course_private`, `image name detail`).select(`-_id`)//.populate(`${fetch}`)
-        console.log(dataBaseAcnounce)
-        if (dataBaseAcnounce) {
-            return res.status(200).json({ data: dataBaseAcnounce })
+        const dataBaseAnnounce = await Home.findOne({}).populate(`course_public course_private`, `image name detail`).select(`-_id`)//.populate(`${fetch}`)
+        console.log(dataBaseAnnounce)
+        if (dataBaseAnnounce) {
+            return res.status(200).json({ data: dataBaseAnnounce })
         }
         return res.status(500).json({ error: "Unexpected error on get home" })
     }
@@ -62,16 +62,16 @@ exports.getHome = async (req, res) => {
     }
 }
 
-exports.updateAcnounce = async (req, res) => {
+exports.updateAnnounce = async (req, res) => {
     try {
-        const { acnounce, remove } = req?.body
+        const { announce, remove } = req?.body
 
-        const dataBaseAcnounce = await Home.find({})
-        if (Array.isArray(dataBaseAcnounce)) {
-            if (dataBaseAcnounce.length === 0) {
+        const dataBaseAnnounce = await Home.find({})
+        if (Array.isArray(dataBaseAnnounce)) {
+            if (dataBaseAnnounce.length === 0) {
 
                 const payload = await new Home({
-                    acnounce: acnounce
+                    announce: announce
                 }).save()
 
                 if (remove) {
@@ -88,10 +88,10 @@ exports.updateAcnounce = async (req, res) => {
 
 
                 return res.status(200).json({ data: payload })
-                // return res.status(500).json({ error: "Cannot find acnounce to update" })
+                // return res.status(500).json({ error: "Cannot find announce to update" })
             }
-            else if (dataBaseAcnounce.length === 1) {
-                const payload = await Home.findOneAndUpdate({}, { acnounce: acnounce }, { new: true })
+            else if (dataBaseAnnounce.length === 1) {
+                const payload = await Home.findOneAndUpdate({}, { announce: announce }, { new: true })
 
 
                 if (remove) {
@@ -107,14 +107,14 @@ exports.updateAcnounce = async (req, res) => {
                 return res.status(200).json({ data: payload })
             }
             else {
-                return res.status(500).json({ error: "Unexpected error on update acnounce" })
+                return res.status(500).json({ error: "Unexpected error on update announce" })
             }
         }
-        return res.status(500).json({ error: "Unexpected error on update acnounce" })
+        return res.status(500).json({ error: "Unexpected error on update announce" })
     }
     catch (err) {
         console.log(err)
-        res.status(500).json({ error: "Unexpected error on update acnounce" })
+        res.status(500).json({ error: "Unexpected error on update announce" })
     }
 }
 
@@ -237,7 +237,7 @@ exports.updateCoursePublic = async (req, res) => {
 
                 }
                 return res.status(200).json({ data: payload })
-                // return res.status(500).json({ error: "Cannot find acnounce to update" })
+                // return res.status(500).json({ error: "Cannot find announce to update" })
             }
             else if (dataBaseCoursePublic.length === 1) {
                 const payload = await Home.findOneAndUpdate(searchParams, updateParams, option).populate(fields, fetchs)

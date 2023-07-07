@@ -12,14 +12,14 @@ const contentStyle = {
 };
 
 
-const HomeAcnounce = () => {
-  const { acnounce } = useContext(HomeContext)
+const HomeAnnounce = () => {
+  const { announce } = useContext(HomeContext)
   const [imageLoaded, setImageLoaded] = useState(true)
 
   const handleUnloadedImage = (e) => {
     // e.target.src = listCarouselCard
     setImageLoaded(false)
-    setListCarouselNoImage(acnounce.map((_, index) => carouselCard(`${index + 1} - No Image`)))
+    setListCarouselNoImage(announce.map((_, index) => carouselCard(`${index + 1} - No Image`)))
   }
 
   const carouselCard = (data) => {
@@ -30,8 +30,8 @@ const HomeAcnounce = () => {
     )
   }
 
-  const listCarouselCard = [carouselCard("1 - No Acnounce"), carouselCard("2 - No Acnounce"), carouselCard("3 - No Acnounce"), carouselCard("4 - No Acnounce")]
-  const [listCarouselNoImage, setListCarouselNoImage] = useState([carouselCard("1 - No Acnounce")])
+  const listCarouselCard = [carouselCard("1 - No Announce"), carouselCard("2 - No Announce"), carouselCard("3 - No Announce"), carouselCard("4 - No Announce")]
+  const [listCarouselNoImage, setListCarouselNoImage] = useState([carouselCard("1 - No Announce")])
 
 
   return (
@@ -40,9 +40,9 @@ const HomeAcnounce = () => {
         <Col style={{ width: "1200px", height: "500px" }}>
           <Carousel autoplay autoplaySpeed={5000}>
             {
-              acnounce.length > 0 ?
+              announce.length > 0 ?
                 (
-                  acnounce.map((item, index) => (
+                  announce.map((item, index) => (
                     <Row justify={'center'} align={'middle'}>
                       <Col flex={"auto"}>
                         {
@@ -81,4 +81,4 @@ const HomeAcnounce = () => {
   );
 }
 
-export default HomeAcnounce;
+export default HomeAnnounce;
