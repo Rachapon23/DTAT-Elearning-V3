@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'DTAT-Elearning'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_63F216B2BA3D4C5A876E5D0B899F807B }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E83568D097FE4CB5A52C02B99ABED2EE }}
           package: .
