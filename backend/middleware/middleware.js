@@ -6,7 +6,7 @@ const fs = require("fs")
 const allowedField = [
     "exam",
     "course",
-    "acnounce",
+    "announce",
     "topic"
 ]
 
@@ -41,11 +41,11 @@ exports.checkTeacher = async (req, res, next) => {
         const { user_id } = req?.user
         const teacherUser = await User.findOne({ _id: user_id }).populate("role", "name -_id").exec()
 
-        if (teacherUser.role.name == 'teacher' || teacherUser.role.name == 'admin') {
+        if (teacherUser?.role?.name === 'teacher' || teacherUser?.role?.name === 'admin') {
             next()
         }
         else {
-            return res.status(403).json({ error: "Teacher Access denied", role: teacherUser.role })
+            return res.status(403).json({ error: "Teacher Access denied", role: teacherUser?.role })
         }
 
     }

@@ -142,7 +142,7 @@ exports.listExam = async (req, res) => {
                 break;
             case "teacher":
                 return res.json({
-                    data: await Exam.find({ teacher: user_id })
+                    data: await Exam.find({ teacher: req?.user?.user_id })
                         .select("-createdAt -updatedAt -__v")
                         .populate({
                             path: "course",

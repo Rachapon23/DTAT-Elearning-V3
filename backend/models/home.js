@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const {ObjectId} = mongoose.Schema;
 
 const HomeSchema = new mongoose.Schema({
-    acnounce: [],
+    announce: [],
     course_public: [{
         type: ObjectId,
         ref:"course"

@@ -41,7 +41,7 @@ exports.register = async (req, res) => {
       image: null,
       tel: null,
       email: email,
-      target: null,
+      target: 0,
     }).save();
 
     // create new user data

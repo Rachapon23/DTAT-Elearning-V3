@@ -16,7 +16,7 @@ const {
 router.post("/create-file/private/:field", checkUser, checkTeacher, uploadPrivate, createPrivateFile);
 // GET: /get-image/private/:field?id=<ID> | for fetch data to display, edit
 // GET: /get-image/private/:field?file=<filename> | for fetch data in create process only
-router.get("/get-image/private/:field", checkUser, checkTeacher, getPrivateFieldImage);
+router.get("/get-image/private/:field", checkUser, getPrivateFieldImage);
 router.delete("/delete-file/course/:id", checkUser, checkTeacher, deleteImageCourse);
 
 // admin

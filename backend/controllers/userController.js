@@ -32,7 +32,7 @@ exports.listUser = async (req, res) => {
 
 // POST: /get-user/:id
 exports.getUser = async (req, res) => {
-    const allowField = ["user", "course", "ans", "plant"]
+    const allowField = ["user", "course", "ans", "plant", "-_id"]
     const allowedSearch = ["user", "course", "ans", "_id"]
     const allowedPops = ["user", "course", "exam", "plant", "_id", "name", "exam -_id", "ans", "image"]
     const allowedPropsField = ["path", "select", "populate"]
@@ -46,11 +46,20 @@ exports.getUser = async (req, res) => {
             null,
             req?.user?.role === "admin",
             {
-                fields: "role",
-                fetchs: "role",
-                selects: "role",
-                search: { _id: req?.params?.id },
-                subPops: null,
+                teacher: {
+                    // fields: { data: "role"},
+                    // fetchs: { data: "role"},
+                    // selects: { data: "role"},
+                    search: { data: { _id: req?.params?.id }},
+                    subPops: null,
+                },
+                student: {
+                    // fields: { data: "role"},
+                    // fetchs: { data: "role"},
+                    // selects: { data: "role"},
+                    search: { data: { _id: req?.params?.id }},
+                    // subPops: null,
+                }
             },
             {
                 fields: req?.query?.field,
@@ -70,16 +79,16 @@ exports.getUser = async (req, res) => {
                 fetchs: allowedFetch,
 
             },
-            true
+            false
         )
-        // console.log(result)
+        console.log(result)
         if (!result.success) return res.status(result.code).json({ error: result.message })
 
         const user = await User
             .findOne(result.options.searchParams, result.options.fetchParams)
             .populate(result.options.fieldParams ? result.options.fieldParams : result.options.subPropsParams)
             .select(result.options.selectParams)
-        // console.log(user)
+        console.log(user)
         return res.json({ data: user })
     }
     catch (err) {

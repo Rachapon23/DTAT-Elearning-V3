@@ -206,8 +206,9 @@ const CardContent = ({
                 <Col flex={"auto"}>
                     <Text strong>{`Question ${index + 1}`}</Text>
                 </Col>
+                {/* {JSON.stringify(actionMode === "Edit")} */}
                 {
-                    editMode ?
+                    editMode || createMode ?
                         (
                             <Col>
                                 <Button onClick={() => onDelete(index)} >
@@ -284,8 +285,8 @@ const CardContent = ({
 
                                     </Form.Item>
                                 </Col>
-                                <Col style={{ width: "5%", paddingLeft: "1%" }}>
-                                    <Form >
+                                <Col  style={{ width: "5%", paddingLeft: "1%", }}>
+                                    <Form style={{paddingBottom: "27px"}}>
                                         <Form.Item>
                                             <Tooltip title={imageExtension ? "Change image" : "Add image"} placement="bottom">
                                                 <Upload

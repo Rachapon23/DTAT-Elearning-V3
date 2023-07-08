@@ -32,7 +32,7 @@ export const TeacherHomeProvider = ({ children }) => {
                     const data = res.data.data
                     // setGraphData(() => data.map(item => ({ name: item.name, maximum: item.condition.map((i => i.maximum)) })) )
                     setGraphData(data)
-                    // console.log(data)
+                    console.log(data)
                 }
             )
             .catch(

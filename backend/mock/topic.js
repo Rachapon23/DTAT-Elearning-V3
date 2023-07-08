@@ -7,6 +7,11 @@ let topic31
 let topic41
 let topic51
 let topic52
+let topic61
+let topic71
+let topic81
+let topic91
+let topic101
 
 exports.loadTopic = async () => {
     const {
@@ -137,6 +142,106 @@ exports.loadTopic = async () => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
+    topic61 = await Topic.findOneAndUpdate(
+        { course: course5, title: "Topic61" },
+        {
+            title: "Topic61",
+            detail: "Topic61 Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, ipsum repudiandae dolor excepturi rem sit atque dolorum voluptatum molestiae iusto culpa vitae dignissimos pariatur illum harum officia nobis animi asperiores!",
+            sub_content: [
+                "1. Lorem ipsum dolor sit amet consectetur adipisicing elit",
+                "2. Amet, voluptatibus ipsam nisi dicta, ratione saepe molestias aliquam laudantium quidem",
+                "3. Dignissimos ullam cumque sunt odit facere impedit veritatis sequi suscipit nihil"
+            ],
+            link: {
+                name: "Python",
+                link: "https://www.youtube.com/watch?v=x7X9w_GIm1s"
+            },
+            file: [
+            ],
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    topic71 = await Topic.findOneAndUpdate(
+        { course: course5, title: "Topic61" },
+        {
+            title: "Topic71",
+            detail: "Topic71 Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, ipsum repudiandae dolor excepturi rem sit atque dolorum voluptatum molestiae iusto culpa vitae dignissimos pariatur illum harum officia nobis animi asperiores!",
+            sub_content: [
+                "1. Lorem ipsum dolor sit amet consectetur adipisicing elit",
+                "2. Amet, voluptatibus ipsam nisi dicta, ratione saepe molestias aliquam laudantium quidem",
+                "3. Dignissimos ullam cumque sunt odit facere impedit veritatis sequi suscipit nihil"
+            ],
+            link: {
+                name: "Python",
+                link: "https://www.youtube.com/watch?v=x7X9w_GIm1s"
+            },
+            file: [
+            ],
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    topic81 = await Topic.findOneAndUpdate(
+        { course: course5, title: "Topic81" },
+        {
+            title: "Topic81",
+            detail: "Topic61 Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, ipsum repudiandae dolor excepturi rem sit atque dolorum voluptatum molestiae iusto culpa vitae dignissimos pariatur illum harum officia nobis animi asperiores!",
+            sub_content: [
+                "1. Lorem ipsum dolor sit amet consectetur adipisicing elit",
+                "2. Amet, voluptatibus ipsam nisi dicta, ratione saepe molestias aliquam laudantium quidem",
+                "3. Dignissimos ullam cumque sunt odit facere impedit veritatis sequi suscipit nihil"
+            ],
+            link: {
+                name: "Python",
+                link: "https://www.youtube.com/watch?v=x7X9w_GIm1s"
+            },
+            file: [
+            ],
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    topic91 = await Topic.findOneAndUpdate(
+        { course: course5, title: "Topic91" },
+        {
+            title: "Topic91",
+            detail: "Topic91 Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, ipsum repudiandae dolor excepturi rem sit atque dolorum voluptatum molestiae iusto culpa vitae dignissimos pariatur illum harum officia nobis animi asperiores!",
+            sub_content: [
+                "1. Lorem ipsum dolor sit amet consectetur adipisicing elit",
+                "2. Amet, voluptatibus ipsam nisi dicta, ratione saepe molestias aliquam laudantium quidem",
+                "3. Dignissimos ullam cumque sunt odit facere impedit veritatis sequi suscipit nihil"
+            ],
+            link: {
+                name: "Python",
+                link: "https://www.youtube.com/watch?v=x7X9w_GIm1s"
+            },
+            file: [
+            ],
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
+    topic101 = await Topic.findOneAndUpdate(
+        { course: course5, title: "Topic101" },
+        {
+            title: "Topic101",
+            detail: "Topic101 Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae, ipsum repudiandae dolor excepturi rem sit atque dolorum voluptatum molestiae iusto culpa vitae dignissimos pariatur illum harum officia nobis animi asperiores!",
+            sub_content: [
+                "1. Lorem ipsum dolor sit amet consectetur adipisicing elit",
+                "2. Amet, voluptatibus ipsam nisi dicta, ratione saepe molestias aliquam laudantium quidem",
+                "3. Dignissimos ullam cumque sunt odit facere impedit veritatis sequi suscipit nihil"
+            ],
+            link: {
+                name: "Python",
+                link: "https://www.youtube.com/watch?v=x7X9w_GIm1s"
+            },
+            file: [
+            ],
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
+
 }
 
 exports.getTopic = async () => {
@@ -147,5 +252,10 @@ exports.getTopic = async () => {
         topic41,
         topic51,
         topic52,
+        topic61,
+        topic71,
+        topic81,
+        topic91,
+        topic101,
     }
 }

@@ -75,7 +75,7 @@ const TeacherHomeProfile = ({ actionMode, setActionMode }) => {
                             }
                         </Col>
                     </Row>
-                    <Row style={{ marginTop: "5%" }} />
+                    <Row style={{ marginTop: "5%", }} />
                     {
                         actionMode === "Preview" ?
                             (
@@ -106,7 +106,7 @@ const TeacherHomeProfile = ({ actionMode, setActionMode }) => {
                                     </p>
                                     <p>
                                         <Col> <Text strong> Target </Text> </Col>
-                                        <Col> {profile.target ? profile.target : "No data"} </Col>
+                                        <Col> {profile?.target ? profile.target : "No data"} </Col>
 
                                     </p>
                                 </>

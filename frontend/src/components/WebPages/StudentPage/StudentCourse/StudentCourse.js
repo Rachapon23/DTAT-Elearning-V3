@@ -267,16 +267,16 @@ const StudentExam = () => {
                     <Col>
                       <Row>
                         <Col style={{ paddingRight: "10px" }}><Text strong> Name: </Text> </Col>
-                        <Col style={{ paddingRight: "10px" }}>{teacherProfile?.firstname}</Col>
+                        <Col style={{ paddingRight: "10px" }}>{teacherProfile?.firstname ? teacherProfile?.firstname : "No data"}</Col>
                         <Col >{teacherProfile?.lastname}</Col>
                       </Row>
                       <Row>
                         <Col style={{ paddingRight: "15px" }}><Text strong> Email: </Text> </Col>
-                        <Col>{teacherProfile?.email}</Col>
+                        <Col>{teacherProfile?.email ? teacherProfile?.email : "No data"}</Col>
                       </Row>
                       <Row>
                         <Col style={{ paddingRight: "30px" }}><Text strong> Tel: </Text> </Col>
-                        <Col>{teacherProfile?.tel}</Col>
+                        <Col>{teacherProfile?.tel ? teacherProfile?.tel : "No data"}</Col>
                       </Row>
                     </Col>
                   </Row>

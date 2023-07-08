@@ -89,7 +89,7 @@ const AdminManageTeacher = () => {
       render: (data) => `${data?.firstname} ${data?.lastname}`,
     },
     {
-      title: `role`,
+      title: `Role`,
       align: "center",
       width: "15%",
       render: (data) => {

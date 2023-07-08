@@ -6,6 +6,7 @@ const Condition = require('../models/condition')
 const User = require('../models/user')
 
 const { validateQuery } = require('./util')
+const { updateCourse } = require('./courseController')
 
 // POST: /create-activity
 exports.createActivity = async (req, res) => {
@@ -22,7 +23,7 @@ exports.createActivity = async (req, res) => {
                     select: "name"
                 }
             })
-        const searchedUser = await User.findOne({ user: user }).populate("plant", "name")
+        const searchedUser = await User.findOne({ _id: user }).populate("plant", "name")
 
         if (searchedCourse.type === false) {
             // find required data
@@ -32,7 +33,7 @@ exports.createActivity = async (req, res) => {
 
             // check plant
             const searchedCondition = await Condition.findOne({ course: course, plant: searchedUser.plant._id })
-            console.log("course: ", searchedCourse)
+            console.log("course: ", course, searchedUser.plant._id, searchedCondition)
             if (!searchedCondition) return res.status(403).json({ error: "Plant does not match with condition" })
             if (!Number.isInteger(searchedCondition.maximum)) return res.status(500).json({ error: "Condition data corrupted, data is not a number" })
             if (searchedCondition.current + 1 > searchedCondition.maximum) return res.status(500).json({ error: "Student exceed course limit" })
@@ -43,8 +44,8 @@ exports.createActivity = async (req, res) => {
 
         // check add duplicate  course 
         const duplicate = await Activity.findOne({ user: user, course: course })
-        if(duplicate) {
-            return  res.status(400).json({ error: "Cannot add duplicate course" })
+        if (duplicate) {
+            return res.status(400).json({ error: "Cannot add duplicate course" })
         }
         // check current student in course
         const activity = await new Activity({
@@ -56,6 +57,10 @@ exports.createActivity = async (req, res) => {
             user: user,
             course: course,
         }).save()
+
+        const updateCourse = await Course.findOne({ _id: course})
+        updateCourse.activity.push(activity)
+        updateCourse.save()
 
         res.json({ data: activity })
     }
@@ -74,12 +79,13 @@ exports.listActivity = async (req, res) => {
     const allowedSelect = ["ans"]
     const allowedFetch = ["-ans", "-__v"]
     try {
+        // console.log(req?.user?.role)
         const result = validateQuery(
             "get",
             "list activity",
             req?.user?.role,
             null,
-            req?.user?.role === "admin",
+            false,//req?.user?.role === "admin",
             null,
             {
                 fields: req?.query?.field,
@@ -101,13 +107,14 @@ exports.listActivity = async (req, res) => {
             },
             true
         )
-        // console.log(result)
+        console.log(result.options)
         if (!result.success) return res.status(result.code).json({ error: result.message })
 
         const activity_course = await Activity
             .find(result.options.searchParams, result.options.fetchParams)
             .populate(result.options.fieldParams ? result.options.fieldParams : result.options.subPropsParams)
             .select(result.options.selectParams)
+        // console.log(activity_course)
         return res.json({ data: activity_course })
     }
     catch (err) {
