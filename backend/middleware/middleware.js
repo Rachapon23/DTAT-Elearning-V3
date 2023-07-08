@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const Multer = require("multer")
-const { app, express } = require("../server")
 const fs = require("fs")
 
 const allowedField = [
