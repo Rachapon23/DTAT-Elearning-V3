@@ -37,7 +37,7 @@ const HomeAnnounce = () => {
   return (
     <div>
       <Row justify={"center"} align={"middle"} style={{ paddingTop: "7%", paddingBottom: "7%" }}>
-        <Col style={{ width: "1200px", height: "500px" }}>
+        <Col sm={16} xs={7} style={{width: "1200px", height: "500px" }}>
           <Carousel autoplay autoplaySpeed={5000}>
             {
               announce.length > 0 ?

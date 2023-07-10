@@ -149,15 +149,14 @@ const Navbar = () => {
 
   return (
     <Header className="header-home">
-      {/* แยก role navbar 20 06 66 */}
       <Row className="row-navbar-role-home">
-        <Col>
+        <Col flex={'auto'}>
           <h2 className="logo">Logo</h2>
         </Col>
         {checkLogedin() ? (
           <Col>{renderNavigator()}</Col>
         ) : (
-          <Col className="col-login">
+          <Col flex={'auto'} style={{display: 'flex', alignItems:'center' ,justifyContent: 'flex-end'}} className="col-login">
             <Button ghost size="large" onClick={showModalAuth}>
               Login
             </Button>
