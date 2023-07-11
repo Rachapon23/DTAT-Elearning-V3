@@ -15,7 +15,7 @@ const DEFAULT_DATA = {
   name: "No course available",
 }
 
-const arrayTemplate = new Array(6).fill(false)
+const arrayTemplate = new Array(10).fill(false)
 
 const HomePublic = () => {
   const {
@@ -73,7 +73,7 @@ const HomePublic = () => {
     setIsModalOpenAuth(false);
   };
 
-  const renderContent = (index) => {
+  const homePublicPc = (index) => {
     if (index % GROUP_NUMBER !== 0) return null
 
     return (
@@ -112,11 +112,63 @@ const HomePublic = () => {
 
   }
 
+  const homePublicMobile = (index) => {
+    if (index % GROUP_NUMBER !== 0) return null
+
+    return (
+      <div className="row-content">
+        {
+          coursePublic.length > 0 ?
+            (
+              coursePublic.slice(index, index + GROUP_NUMBER).map((data) => (
+                <Col span={6} >
+                  <div className="col-content">
+                    <CardCourse
+                      onClick={(e) => handleClickCourse(e, data)}
+                      data={{
+                        name: data?.name,
+                        detail: data?.detail,
+                        image: data?.image?.name
+                      }}
+                    />
+                  </div>
+                </Col>
+              ))
+            )
+            :
+            (
+              <div style={{ overflowX: 'scroll', width: '80%', height: '100%' }}>
+                <div style={{ display: 'flex', alignContent: 'baseline' }}>
+                  {
+                    arrayTemplate.map(() => (
+                      <div className="col-content" style={{paddingRight: 20}}>
+                        <CardCourse data={DEFAULT_DATA} />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            )
+        }
+      </div>
+    )
+
+  }
+
+  const renderHomePublic = (index) => {
+    if (false) {
+      return homePublicPc(index)
+    }
+    if (true) {
+      return homePublicMobile(index)
+    }
+  }
+
   return (
     <div className="content-course">
       <div className="title-content">
         <p className="title-1">Public Course</p>
-        <p className="title-2">
+        <p className="title-2" style={{paddingInline: 10}}>
           It is a long established fact that a reader will be distracted by the
           readable content of a page when looking at its layout.
         </p>
@@ -127,21 +179,19 @@ const HomePublic = () => {
             coursePublic.length > 0 ?
               (
                 coursePublic.map((_, index) => (
-                  renderContent(index)
+                  renderHomePublic(index)
                 ))
               )
               :
               (
-                arrayTemplate.map((_, index) => (
-                  renderContent(index)
+                [false].map((_, index) => (
+                  renderHomePublic(index)
                 ))
               )
           }
         </div>
       </div>
-      {/* <div className="btn-navigate">
-        <button className="btn-show-more">Show More</button>
-      </div> */}
+
       <Modal
         className="modal-ant"
         style={{
@@ -157,7 +207,7 @@ const HomePublic = () => {
         footer={[]}
         mask={false}
       >
-        <Row justify={"center"} style={{paddingTop: "30px"}}>
+        <Row justify={"center"} style={{ paddingTop: "30px" }}>
           <Col flex={"auto"}>
             <Auth />
           </Col>

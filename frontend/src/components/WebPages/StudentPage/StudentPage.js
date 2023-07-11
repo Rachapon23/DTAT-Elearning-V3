@@ -4,13 +4,14 @@ import {
   ScheduleOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
-import { Layout, theme } from "antd";
+import { Col, Layout, Row, theme } from "antd";
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import StudentHomePage from "./StudentHome/StudentHomePage";
 import DoExam from "./StudentExam/DoExam";
 import StudentCourse from "./StudentCourse/StudentCourse"
 import RegisterCourse from "./StudentCourse/RegisterCourse";
+// import "../HomePage/home.css";
 
 // for haeder or navbar
 import Navbar from "../Navbar/Navbar";
@@ -76,8 +77,6 @@ const App = () => {
         return (
           <RegisterCourse />
         )
-      // case 'preview-exam':
-      //   return <ExamCreate mode={"Preview"}/>;
       case "calendar":
         return <p className="success">Calendar</p>;
       default:
@@ -90,7 +89,13 @@ const App = () => {
       <NavbarProvider>
         <Navbar />
       </NavbarProvider>
-      <Content>{renderContent()}</Content>
+      <Content style={{ paddingTop: 80, paddingBottom: 70 }}>
+        <Row justify={'center'}>
+          <Col>
+            {renderContent()}
+          </Col>
+        </Row>
+      </Content>
     </Layout>
   );
 };

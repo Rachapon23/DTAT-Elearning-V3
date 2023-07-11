@@ -12,7 +12,7 @@ const contentStyle = {
 };
 
 
-const HomeAnnounce = () => {
+const HomeAnnounce = ({ preview = false}) => {
   const { announce } = useContext(HomeContext)
   const [imageLoaded, setImageLoaded] = useState(true)
 
@@ -33,33 +33,78 @@ const HomeAnnounce = () => {
   const listCarouselCard = [carouselCard("1 - No Announce"), carouselCard("2 - No Announce"), carouselCard("3 - No Announce"), carouselCard("4 - No Announce")]
   const [listCarouselNoImage, setListCarouselNoImage] = useState([carouselCard("1 - No Announce")])
 
+  const announcePc = () => {
+    return (
+      <div>
+        <Row justify={"center"} align={"middle"} style={{ paddingTop: "7%", paddingBottom: "7%" }}>
+          <Col style={{ width: "1200px", height: "500px" }}>
+            <Carousel autoplay autoplaySpeed={5000}>
+              {
+                announce.length > 0 ?
+                  (
+                    announce.map((item, index) => (
+                      <Row justify={'center'} align={'middle'}>
+                        <Col flex={"auto"}>
+                          {
+                            imageLoaded ?
+                              (
+                                <Image
+                                  key={index}
+                                  preview={preview}
+                                  width={1200}
+                                  height={500}
+                                  src={process.env.REACT_APP_IMG + item.url}
+                                  onError={handleUnloadedImage}
+                                />
+                              )
+                              :
+                              (
+                                <Col key={index}>{listCarouselNoImage[index]}</Col>
+                              )
+                          }
 
-  return (
-    <div>
+                        </Col>
+                      </Row>
+                    ))
+                  )
+                  :
+                  (
+                    listCarouselCard.map((card, index) => (
+                      <Col key={index}>{card}</Col>
+                    ))
+                  )
+              }
+            </Carousel>
+          </Col>
+        </Row>
+      </div>
+    )
+  }
+
+  const announceMobile = () => {
+    return (
       <Row justify={"center"} align={"middle"} style={{ paddingTop: "7%", paddingBottom: "7%" }}>
-        <Col style={{ width: "1200px", height: "500px" }}>
+        <Col style={{ width: "95%"}}>
           <Carousel autoplay autoplaySpeed={5000}>
             {
               announce.length > 0 ?
                 (
                   announce.map((item, index) => (
-                    <Row justify={'center'} align={'middle'}>
-                      <Col flex={"auto"}>
+                    <Row >
+                      <Col>
                         {
                           imageLoaded ?
                             (
                               <Image
                                 key={index}
-                                preview={false}
-                                width={1200}
-                                height={500}
+                                preview={preview}
                                 src={process.env.REACT_APP_IMG + item.url}
                                 onError={handleUnloadedImage}
                               />
                             )
                             :
                             (
-                               <Col key={index}>{listCarouselNoImage[index]}</Col>
+                              <Col key={index}>{listCarouselNoImage[index]}</Col>
                             )
                         }
 
@@ -77,8 +122,18 @@ const HomeAnnounce = () => {
           </Carousel>
         </Col>
       </Row>
-    </div>
-  );
+    )
+  }
+
+  const renderAnnounce = () => {
+    if (false) {
+      return announcePc()
+    }
+    if (true) {
+      return announceMobile()
+    }
+  }
+  return renderAnnounce()
 }
 
 export default HomeAnnounce;

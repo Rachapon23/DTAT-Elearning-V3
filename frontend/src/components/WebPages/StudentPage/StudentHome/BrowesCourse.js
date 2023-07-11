@@ -50,26 +50,7 @@ const BrowesCourse = () => {
         }
     }, [filterType])
 
-    // just in case
-    // const browesCourseTitle = () => {
-    //     return (
-    //         <Row align={"middle"} justify={"space-between"} >
-    //             <Col>
-    //                 <Breadcrumb
-    //                     separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
-    //                     items={[
-    //                         {
-    //                             title: <Title level={5} style={{ marginTop: "10px" }}><p >Browes Course</p></Title>,
-    //                             key: "courses"
-    //                         },
-    //                     ]}
-    //                 />
-    //             </Col>
-    //         </Row>
-    //     )
-    // }
-
-    const renderContent = useCallback((index) => {
+    const renderContentPc = useCallback((index) => {
         // console.log("index:", filteredCourse)
         if (index % GROUP_NUMBER !== 0) return null
 
@@ -95,7 +76,34 @@ const BrowesCourse = () => {
         )
 
     }, [courses, fileterCourse, handleClickCourse])
-    // fileterCourse(courses)
+
+    const renderContentMobile = useCallback((index) => {
+        // console.log("index:", filteredCourse)
+        if (index % GROUP_NUMBER !== 0) return null
+
+        return (
+            <Row justify={"center"} style={{ paddingLeft: "3%", paddingRight: "3%", paddingTop: 40 }}>
+                {
+                    fileterCourse(courses).slice(index, index + GROUP_NUMBER).map((data) => (
+                        <Col style={{ padding: "1%", paddingBottom: 5}}>
+                            {console.log("data: ", data)}
+                            <CardCourse
+                                onClick={(e) => handleClickCourse(e, data)}
+                                width={300}
+                                data={{
+                                    _id: data?._id,
+                                    name: data?.name,
+                                    detail: data?.detail,
+                                    image: data?.image?.name
+                                }}
+                            />
+                        </Col>
+                    ))
+                }
+            </Row>
+        )
+
+    }, [courses, fileterCourse, handleClickCourse])
 
     const fetchCourse = async () => {
         await listCourse(sessionStorage.getItem("token"), `?selects=name,detail,image,type`)
@@ -113,58 +121,71 @@ const BrowesCourse = () => {
             )
     }
 
-    const handleFetchImage = async (imageName) => {
-        console.log("course: ", imageName)
-
-        const image_name = imageName
-        if (!image_name) return
-
-        const field = "course"
-        const param = "file"
-
-        let response
-        await getPrivateFieldImage(sessionStorage.getItem("token"), field, param, image_name)
-            .then(
-                (res) => {
-                    response = res
-                }
-            )
-            .catch(
-                (err) => {
-                    console.log(err)
-                }
-            )
-
-
-        const objectUrl = URL.createObjectURL(response.data);
-        setImageData(objectUrl)
-
-    }
-
     useEffect(() => {
         fetchCourse()
-
     }, [])
 
+    const BrowseCoursePc = () => {
+        return (
+            <div style={{ width: "100%", }}>
+                <Row justify={"center"} >
+                    <Col flex={"auto"} >
+                        {/* style={{ padding: "2%", paddingTop: "4%" }} */}
+                        <Row justify={"center"} align={"top"}>
+                            <Col flex={"auto"}>
+                                <Card>
+                                    <Row style={{ paddingLeft: "3%", paddingRight: "3%", paddingBottom: "0.5%", }}>
+                                        <Segmented
+                                            style={{ width: "220px" }}
+                                            value={filterType}
+                                            block
+                                            onChange={handleFilterCourseType}
+                                            options={[
+                                                "All",
+                                                "Public",
+                                                "Private"
+                                            ]}
+                                        />
+                                    </Row>
+                                    {
+                                        fileterCourse(courses).length > 0 ?
+                                            (
+                                                fileterCourse(courses).map((_, index) => (
+                                                    renderContentPc(index)
+                                                ))
+                                            )
+                                            :
+                                            (
+                                                <Empty />
+                                            )
+                                    }
+                                </Card>
+                            </Col>
+                        </Row>
+                    </Col >
+                </Row >
+            </div>
+        )
+    }
 
-    return (
-        <div style={{ width: "100%", }}>
-            <Row justify={"center"} >
-                <Col flex={"auto"} >
-                    {/* style={{ padding: "2%", paddingTop: "4%" }} */}
-                    <Row justify={"center"} align={"top"}>
-                        <Col flex={"auto"}>
-                            <Card>
-                                <Row style={{ paddingLeft: "3%", paddingRight: "3%", paddingBottom: "0.5%", }}>
+    const BrowseCourseMobile = () => {
+        return (
+            <div style={{ width: "100%", }}>
+                <Row justify={"center"} >
+                    <Col flex={"auto"} >
+                        <Row justify={"center"} align={"top"}>
+                            <Col flex={"auto"}>
+                                {/* <Card> */}
+                                <Row justify={'center'} style={{ paddingLeft: "3%", paddingRight: "3%", paddingBottom: 10, }}>
                                     <Segmented
-                                        style={{ width: "220px" }}
+                                        style={{ width: "220px", position: 'fixed', zIndex: 10 }}
                                         value={filterType}
                                         block
                                         onChange={handleFilterCourseType}
                                         options={[
                                             "All",
                                             "Public",
-                                            "Private"
+                                            "Private",
                                         ]}
                                     />
                                 </Row>
@@ -172,7 +193,7 @@ const BrowesCourse = () => {
                                     fileterCourse(courses).length > 0 ?
                                         (
                                             fileterCourse(courses).map((_, index) => (
-                                                renderContent(index)
+                                                renderContentMobile(index)
                                             ))
                                         )
                                         :
@@ -180,13 +201,21 @@ const BrowesCourse = () => {
                                             <Empty />
                                         )
                                 }
-                            </Card>
-                        </Col>
-                    </Row>
-                </Col >
-            </Row >
-        </div>
-    )
+                                {/* </Card> */}
+                            </Col>
+                        </Row>
+                    </Col >
+                </Row >
+            </div>
+        )
+    }
+
+    const renderBrowesCourse = () => {
+        if (false) return BrowseCoursePc()
+        if (true) return BrowseCourseMobile()
+    }
+
+    return renderBrowesCourse()
 
 }
 

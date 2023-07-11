@@ -204,123 +204,188 @@ const StudentExam = () => {
     fetchCourse();
   }, []);
 
-  return (
-    <div className="bg-st-course">
-      <div style={{ width: "100%", marginTop: "20px", marginBottom: "50px" }}>
-        <Row justify={"center"} style={{ marginBottom: "15px" }}>
-          <Col flex={"auto"}>
-            <Card
-              // cover={
-              //   <img
-              //     alt="example"
-              //     src={`http://localhost:5500/uploads/course/${course?.image?.name}`}
-              //   />
-              // }
-              title={studentCourseTitle()} style={{ width: "100%" }}
-            >
-              <Row gutter={16}>
-                <Col span={6}>
-                  <Image
-                    style={{ borderRadius: "5px" }}
-                    preview={false}
-                    onError={handleUnloadImage}
-                    src={course?.image?.name ? `${process.env.REACT_APP_IMG}/course/${course?.image?.name}` : DEFAULT_IMAGE}
-                  />
-                </Col>
-                <Col span={6}>
-                  <Title style={{ color: "#002c8c" }} level={3}>
-                    {course?.name}
-                  </Title>
-                  <Text style={{ fontSize: "13px" }}>
-                    {course?.detail}</Text>
+  const studentCoursePc = () => {
+    return (
+      <div className="bg-st-course">
+        <div style={{ width: "100%", marginTop: "20px", marginBottom: "50px" }}>
+          <Row justify={"center"} style={{ marginBottom: "15px" }}>
+            <Col flex={"auto"}>
+              <Card
+                // cover={
+                //   <img
+                //     alt="example"
+                //     src={`http://localhost:5500/uploads/course/${course?.image?.name}`}
+                //   />
+                // }
+                title={studentCourseTitle()} style={{ width: "100%" }}
+              >
+                <Row gutter={16}>
+                  <Col span={6}>
+                    <Image
+                      style={{ borderRadius: "5px" }}
+                      preview={false}
+                      onError={handleUnloadImage}
+                      src={course?.image?.name ? `${process.env.REACT_APP_IMG}/course/${course?.image?.name}` : DEFAULT_IMAGE}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Title style={{ color: "#002c8c" }} level={3}>
+                      {course?.name}
+                    </Title>
+                    <Text style={{ fontSize: "13px" }}>
+                      {course?.detail}</Text>
 
-                </Col>
-              </Row>
-              <Row justify={'end'}>
-                <Link>
-                  <Text style={{ fontSize: "12px", color: "blue" }} onClick={() => setOpenProfile(true)}>
-                    By {teacherProfile?.firstname} {teacherProfile?.lastname}
-                  </Text>
-                </Link>
+                  </Col>
+                </Row>
+                <Row justify={'end'}>
+                  <Link>
+                    <Text style={{ fontSize: "12px", color: "blue" }} onClick={() => setOpenProfile(true)}>
+                      By {teacherProfile?.firstname} {teacherProfile?.lastname}
+                    </Text>
+                  </Link>
 
-                <Modal title="Teacher Profile" open={openProfile} onOk={() => setOpenProfile(false)} onCancel={() => setOpenProfile(false)} footer={null}>
-                  <Row>
-                    <Col flex={"auto"} style={{ maxWidth: "150px" }}>
-                      <Avatar
-                        shape="square"
-                        size={120}
-                        style={{
-                          cursor: "pointer",
-                          paddingBottom: "0.5%",
-                          verticalAlign: "middle",
-                        }}
-                      >
-                        <Row justify={"center"} align={"middle"}>
-                          <Col flex={"auto"} style={{ paddingTop: "10px" }}>
-                            <Text style={{ fontSize: "300%", color: "white" }}>
-                              {teacherProfile?.firstname ? teacherProfile?.firstname.substring(0, 1) : ""}
-                            </Text>
-                          </Col>
+                  <Modal title="Teacher Profile" open={openProfile} onOk={() => setOpenProfile(false)} onCancel={() => setOpenProfile(false)} footer={null}>
+                    <Row>
+                      <Col flex={"auto"} style={{ maxWidth: "150px" }}>
+                        <Avatar
+                          shape="square"
+                          size={120}
+                          style={{
+                            cursor: "pointer",
+                            paddingBottom: "0.5%",
+                            verticalAlign: "middle",
+                          }}
+                        >
+                          <Row justify={"center"} align={"middle"}>
+                            <Col flex={"auto"} style={{ paddingTop: "10px" }}>
+                              <Text style={{ fontSize: "300%", color: "white" }}>
+                                {teacherProfile?.firstname ? teacherProfile?.firstname.substring(0, 1) : ""}
+                              </Text>
+                            </Col>
+                          </Row>
+                        </Avatar>
+                      </Col>
+                      <Col>
+                        <Row>
+                          <Col style={{ paddingRight: "10px" }}><Text strong> Name: </Text> </Col>
+                          <Col style={{ paddingRight: "10px" }}>{teacherProfile?.firstname ? teacherProfile?.firstname : "No data"}</Col>
+                          <Col >{teacherProfile?.lastname}</Col>
                         </Row>
-                      </Avatar>
-                    </Col>
-                    <Col>
-                      <Row>
-                        <Col style={{ paddingRight: "10px" }}><Text strong> Name: </Text> </Col>
-                        <Col style={{ paddingRight: "10px" }}>{teacherProfile?.firstname ? teacherProfile?.firstname : "No data"}</Col>
-                        <Col >{teacherProfile?.lastname}</Col>
-                      </Row>
-                      <Row>
-                        <Col style={{ paddingRight: "15px" }}><Text strong> Email: </Text> </Col>
-                        <Col>{teacherProfile?.email ? teacherProfile?.email : "No data"}</Col>
-                      </Row>
-                      <Row>
-                        <Col style={{ paddingRight: "30px" }}><Text strong> Tel: </Text> </Col>
-                        <Col>{teacherProfile?.tel ? teacherProfile?.tel : "No data"}</Col>
-                      </Row>
-                    </Col>
-                  </Row>
-                </Modal>
-              </Row>
-              {/* <Row justify={"center"}>
-                <Col flex={"auto"}>
-                  <Row
-                    justify={"start"}
-                    style={{ paddingTop: "0.5%", paddingBottom: "1%" }}
-                  >
-                    <Col style={{ width: "330px" }}></Col>
-                    <Col flex={"auto"} style={{ minWidth: "30%" }}>
-                      <Row>
-                        <Col flex={"auto"} style={{ width: "80%" }}>
-                          <Title style={{ color: "#002c8c" }} level={3}>
-                            {course?.name}
-                          </Title>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col>
-                          <Text>{course?.detail}</Text>
-                        </Col>
-                      </Row>
-                      <Row justify={"end"} align={"end"}>
-                        <Col style={{ fontSize: "12px" }}>
-                          by {course?.teacher?.firstname}{" "}
-                          {course?.teacher?.lastname}
-                        </Col>
-                      </Row>
-                    </Col>
-                  </Row>
-                </Col>
-              </Row> */}
-            </Card>
-          </Col>
-        </Row>
-        {
-          renderTopic()
-        }
+                        <Row>
+                          <Col style={{ paddingRight: "15px" }}><Text strong> Email: </Text> </Col>
+                          <Col>{teacherProfile?.email ? teacherProfile?.email : "No data"}</Col>
+                        </Row>
+                        <Row>
+                          <Col style={{ paddingRight: "30px" }}><Text strong> Tel: </Text> </Col>
+                          <Col>{teacherProfile?.tel ? teacherProfile?.tel : "No data"}</Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                  </Modal>
+                </Row>
+              </Card>
+            </Col>
+          </Row>
+          {
+            renderTopic()
+          }
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  const studentCourseMobile = () => {
+    return (
+      <div className="bg-st-course">
+        <div style={{ width: "100%", marginTop: "20px", marginBottom: "50px" }}>
+          <Row justify={"center"} style={{ marginBottom: "15px" }}>
+            <Col flex={"auto"}>
+              <Card title={studentCourseTitle()} style={{ width: "100%" }} >
+                <Row gutter={16}>
+                  <Col span={6}>
+                    <Image
+                      style={{ borderRadius: "5px" }}
+                      preview={false}
+                      onError={handleUnloadImage}
+                      src={course?.image?.name ? `${process.env.REACT_APP_IMG}/course/${course?.image?.name}` : DEFAULT_IMAGE}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Title style={{ color: "#002c8c" }} level={3}>
+                      {course?.name}
+                    </Title>
+                    <Text style={{ fontSize: "13px" }}>
+                      {course?.detail}</Text>
+
+                  </Col>
+                </Row>
+                <Row justify={'end'}>
+                  <Link>
+                    <Text style={{ fontSize: "12px", color: "blue" }} onClick={() => setOpenProfile(true)}>
+                      By {teacherProfile?.firstname} {teacherProfile?.lastname}
+                    </Text>
+                  </Link>
+
+                  <Modal title="Teacher Profile" open={openProfile} onOk={() => setOpenProfile(false)} onCancel={() => setOpenProfile(false)} footer={null}>
+                    <Row>
+                      <Col flex={"auto"} style={{ maxWidth: "150px" }}>
+                        <Avatar
+                          shape="square"
+                          size={120}
+                          style={{
+                            cursor: "pointer",
+                            paddingBottom: "0.5%",
+                            verticalAlign: "middle",
+                          }}
+                        >
+                          <Row justify={"center"} align={"middle"}>
+                            <Col flex={"auto"} style={{ paddingTop: "10px" }}>
+                              <Text style={{ fontSize: "300%", color: "white" }}>
+                                {teacherProfile?.firstname ? teacherProfile?.firstname.substring(0, 1) : ""}
+                              </Text>
+                            </Col>
+                          </Row>
+                        </Avatar>
+                      </Col>
+                      <Col>
+                        <Row>
+                          <Col style={{ paddingRight: "10px" }}><Text strong> Name: </Text> </Col>
+                          <Col style={{ paddingRight: "10px" }}>{teacherProfile?.firstname ? teacherProfile?.firstname : "No data"}</Col>
+                          <Col >{teacherProfile?.lastname}</Col>
+                        </Row>
+                        <Row>
+                          <Col style={{ paddingRight: "15px" }}><Text strong> Email: </Text> </Col>
+                          <Col>{teacherProfile?.email ? teacherProfile?.email : "No data"}</Col>
+                        </Row>
+                        <Row>
+                          <Col style={{ paddingRight: "30px" }}><Text strong> Tel: </Text> </Col>
+                          <Col>{teacherProfile?.tel ? teacherProfile?.tel : "No data"}</Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                  </Modal>
+                </Row>
+              </Card>
+            </Col>
+          </Row>
+          {
+            renderTopic()
+          }
+        </div>
+      </div>
+    );
+  }
+
+  const renderStudentCourse = () => {
+    if (false) {
+      return studentCoursePc()
+    }
+    if (true) {
+      return studentCourseMobile()
+    }
+  }
+
+  return renderStudentCourse()
 };
 
 export default StudentExam;

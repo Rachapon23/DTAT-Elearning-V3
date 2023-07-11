@@ -34,64 +34,73 @@ const Calendar = () => {
 
   const goToDate = () => {
     const calendarAPI = calendarRef?.current?.getApi()
-    if(!Array.isArray(even)) return
+    if (!Array.isArray(even)) return
     if (calendarAPI && even[0]?.start) calendarAPI.gotoDate(even[0].start)
-}
+  }
 
   useEffect(() => {
     loadCalendar();
-    if(loaded) goToDate()
+    if (loaded) goToDate()
   }, [loaded]);
-  const CalendarTitle = () => {
+
+
+  const calendarPc = () => {
     return (
-      <Row align={"middle"} justify={"space-between"} >
-        <Col>
-          <Breadcrumb
-            separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
-            items={[
-              {
-                title: <Title level={5} style={{ marginTop: "10px" }}><p >Calendar</p></Title>,
-                key: "calendar"
-              },
-              // {
-              //     title: <Title level={5} style={{ marginTop: "10px" }}><p>{course?.name}</p></Title>,
-              //     key: "courses_create",
-              // },
-            ]}
-          />
-        </Col>
-        {/* <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-                    <Row>
-                        <Button onClick={() => navigate(-1)}>
-                            Back
-                        </Button>
-                    </Row>
-                </Col> */}
-      </Row >
+      <Card>
+        <FullCalendar
+          plugins={[
+            dayGridPlugin,
+            timeGridPlugin,
+            interactionPlugin,
+            bootstrap5Plugin,
+          ]}
+          headerToolbar={{
+            left: "prev today",
+            center: "title",
+            right: "next",
+          }}
+          height={500}
+          themeSystem="bootstrap5"
+          events={even}
+          ref={calendarRef}
+        />
+      </Card>
     )
   }
-  return (
-    // <Card title={CalendarTitle()}>
-    <Card>
-      <FullCalendar
-        plugins={[
-          dayGridPlugin,
-          timeGridPlugin,
-          interactionPlugin,
-          bootstrap5Plugin,
-        ]}
-        headerToolbar={{
-          left: "prev today",
-          center: "title",
-          right: "next",
-        }}
-        height={500}
-        themeSystem="bootstrap5"
-        events={even}
-        ref={calendarRef}
-      />
-    </Card>
-  )
+
+  const calendarMobile = () => {
+    return (
+      <Card style={{ width: 350 }}>
+        <FullCalendar
+          plugins={[
+            dayGridPlugin,
+            timeGridPlugin,
+            interactionPlugin,
+            bootstrap5Plugin,
+          ]}
+          headerToolbar={{
+            left: "prev",
+            center: "title",
+            right: "next",
+          }}
+          footerToolbar={{
+            right: "today"
+          }}
+          height={400}
+          themeSystem="bootstrap5"
+          events={even}
+          ref={calendarRef}
+        />
+      </Card>
+    )
+  }
+
+  const renderCalendar = () => {
+    if (false) return calendarPc()
+    if (true) return calendarMobile()
+  }
+
+  return renderCalendar()
 }
 
 export default Calendar;

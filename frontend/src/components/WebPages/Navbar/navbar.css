@@ -1,8 +1,8 @@
 .header-home{
-  /* position: fixed;  wrong*/ 
+  position: fixed; 
   width: 100%;
   z-index: 1000;
-  background: rgba(159, 187, 246, 0.3);
+  background: rgba(159, 187, 246, 1);
 }
 .row-login{
     display: flex;

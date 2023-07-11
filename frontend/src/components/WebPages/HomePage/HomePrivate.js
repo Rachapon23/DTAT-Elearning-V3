@@ -63,7 +63,7 @@ const HomePrivate = () => {
     setOpen(false);
   };
 
-  const renderContent = (index) => {
+  const homePrivatePc = (index) => {
     if (index % GROUP_NUMBER !== 0) return null
 
     return (
@@ -100,11 +100,62 @@ const HomePrivate = () => {
 
   }
 
+  const homePrivateMobile = (index) => {
+    if (index % GROUP_NUMBER !== 0) return null
+
+    return (
+      <div className="row-content">
+        {
+          coursePrivate.length > 0 ?
+            (
+              coursePrivate.slice(index, index + GROUP_NUMBER).map((data) => (
+                <Col span={6} >
+                  <div className="col-content">
+                    <CardCourse
+                      onClick={(e) => handleClickCourse(e, data)}
+                      data={{
+                        name: data?.name,
+                        detail: data?.detail,
+                        image: data?.image?.name
+                      }}
+                    />
+                  </div>
+                </Col>
+              ))
+            )
+            :
+            (
+              <div style={{ overflowX: 'scroll', width: '80%', height: '100%' }}>
+                <div style={{ display: 'flex', alignContent: 'baseline' }}>
+                  {
+                    arrayTemplate.map(() => (
+                      <div className="col-content" style={{ paddingRight: 20 }}>
+                        <CardCourse data={DEFAULT_DATA} />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            )
+        }
+      </div>
+    )
+  }
+
+  const renderHomePrivate = (index) => {
+    if (false) {
+      return homePrivatePc(index)
+    }
+    if (true) {
+      return homePrivateMobile(index)
+    }
+  }
+
   return (
     <div className="content-course">
       <div className="title-content">
         <p className="title-1">Private Course</p>
-        <p className="title-2">
+        <p className="title-2" style={{ paddingInline: 10 }}>
           It is a long established fact that a reader will be distracted by the
           readable content of a page when looking at its layout.
         </p>
@@ -115,21 +166,19 @@ const HomePrivate = () => {
             coursePrivate.length > 0 ?
               (
                 coursePrivate.map((_, index) => (
-                  renderContent(index)
+                  renderHomePrivate(index)
                 ))
               )
               :
               (
-                arrayTemplate.map((_, index) => (
-                  renderContent(index)
+                [false].map((_, index) => (
+                  renderHomePrivate(index)
                 ))
               )
           }
         </div>
       </div>
-      {/* <div className="btn-navigate">
-        <button className="btn-show-more">Show More</button>
-      </div> */}
+
       <Modal
         className="modal-ant"
         style={{
@@ -145,7 +194,7 @@ const HomePrivate = () => {
         footer={[]}
         mask={false}
       >
-        <Auth/>
+        <Auth />
       </Modal>
     </div>
   )

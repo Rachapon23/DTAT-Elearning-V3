@@ -8,6 +8,7 @@ const DEBUG = false
 
 const CardCourse = ({
   data = { _id: null, image: null, name: null, detail: null },
+  width = null,
   onClick = null
 }) => {
 
@@ -21,9 +22,8 @@ const CardCourse = ({
     <Card
       id={data?._id}
       onClick={onClick}
-      className='card-content'
       hoverable
-      style={{ height: "100%" }}
+      style={{ height: "100%", width: width ? width : 250 }}
       cover={
         <img
           // width={350}

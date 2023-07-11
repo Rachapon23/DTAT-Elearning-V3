@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "./studenthome.css";
-import { Button, Image, Table, Tabs } from "antd";
+import { Button, Card, Col, Empty, Image, Row, Space, Table, Tabs } from "antd";
 import Calendar from "../StudentCalendar/Calendar";
 import { listActivity } from "../../../../function/Student/course";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getExam } from "../../../../function/Teacher/exam";
 import BrowseCourse from "./BrowesCourse"
+import { HomeOutlined, HistoryOutlined, CalendarOutlined, SearchOutlined } from "@ant-design/icons"
+import { Grid, TabBar } from 'antd-mobile'
+import { ContentOutline } from 'antd-mobile-icons'
+import CardContent from "../../../common/ExamCard/CardContent";
+import CardCourse from "../../../common/CourseCard/CardCourse";
+
 
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
 
@@ -15,7 +21,7 @@ const StudentHomePage = () => {
 
   const [courses, setCourses] = useState([]);
   const [selectedTab] = useState(location?.state?.tabIndex ? location.state.tabIndex : 1)
-  const [changedTabIndex, setChangedTabIndex] = useState(1)
+  const [changedTabIndex, setChangedTabIndex] = useState(0)
 
   const handleNavigate = (navStr, dataStage) => {
     navigate(navStr, { state: dataStage });
@@ -236,7 +242,7 @@ const StudentHomePage = () => {
     }
   };
 
-  const tabContent = (tab) => {
+  const tabContentPc = (tab) => {
     switch (tab) {
       case 0: return (
         <div className="">
@@ -281,7 +287,7 @@ const StudentHomePage = () => {
     }
   }
 
-  const tabList = [
+  const tabListPc = [
     {
       key: '1',
       label: (
@@ -289,7 +295,7 @@ const StudentHomePage = () => {
           My Course
         </a>
       ),
-      children: tabContent(0),
+      children: tabContentPc(0),
     },
     {
       key: '2',
@@ -298,7 +304,7 @@ const StudentHomePage = () => {
           My History
         </a>
       ),
-      children: tabContent(1),
+      children: tabContentPc(1),
     },
     {
       key: '3',
@@ -307,7 +313,7 @@ const StudentHomePage = () => {
           Calendar
         </a>
       ),
-      children: tabContent(2),
+      children: tabContentPc(2),
     },
     {
       key: '4',
@@ -316,7 +322,110 @@ const StudentHomePage = () => {
           Browse Courses
         </a>
       ),
-      children: tabContent(3),
+      children: tabContentPc(3),
+    }
+  ]
+
+  const tabContentMobile = (tab) => {
+
+    switch (tab) {
+      case 0: return (
+        <div className="">
+          <Row justify={'center'} >
+            {
+              courses.filter((item) => item.result === 0).map((mitem) => (
+                <Col style={{ paddingBottom: 10 }}>
+                  <CardCourse
+                    data={{
+                      _id: mitem.course?._id,
+                      name: mitem.course?.name,
+                      detail: mitem.course?.type ? "Public" : "Private",
+                      image: mitem.course?.image?.name
+                        ? `${process.env.REACT_APP_IMG}/course/${mitem?.course?.image?.name}`
+                        : DEFAULT_IMAGE,
+                    }}
+                    width={300}
+                  />
+                </Col>
+              ))
+            }
+          </Row>
+        </div>
+      )
+      case 1: return (
+        <div className="">
+          <Row justify={'center'} >
+            {
+              Array.isArray(courses) && courses.filter((item) => item.result !== 0).length !== 0 ?
+                (
+                  courses.filter((item) => item.result !== 0).map((mitem) => (
+                    <Col style={{ paddingBottom: 10 }}>
+                      <CardCourse
+                        data={{
+                          _id: mitem.course?._id,
+                          name: mitem.course?.name,
+                          detail: mitem.course?.type ? "Public" : "Private",
+                          image: mitem.course?.image?.name
+                            ? `${process.env.REACT_APP_IMG}/course/${mitem?.course?.image?.name}`
+                            : DEFAULT_IMAGE,
+                        }}
+                        width={300}
+                      />
+                    </Col>
+                  )
+                  )
+                )
+                :
+                (
+                  <Col >
+                    <Card style={{ padding: 100 }}>
+                      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                    </Card>
+                  </Col>
+                )
+
+            }
+          </Row>
+        </div>
+      )
+      case 2: return (
+        <div className="">
+          <Calendar />
+        </div>
+      )
+      case 3: return (
+        <div className="">
+          <BrowseCourse />
+        </div>
+      )
+      default: return null
+    }
+  }
+
+  const tabListMobile = [
+    {
+      key: '1',
+      label: <div style={{ paddingTop: 10, fontSize: '120%' }}>My Course</div>,
+      icon: (<HomeOutlined />),
+      children: tabContentMobile(0),
+    },
+    {
+      key: '2',
+      label: <div style={{ paddingTop: 10, fontSize: '120%' }}>My History</div>,
+      icon: (<HistoryOutlined />),
+      children: tabContentMobile(1),
+    },
+    {
+      key: '3',
+      label: <div style={{ paddingTop: 10, fontSize: '120%' }}>Calendar</div>,
+      icon: (<CalendarOutlined />),
+      children: tabContentMobile(2),
+    },
+    {
+      key: '4',
+      label: <div style={{ paddingTop: 10, fontSize: '120%' }}>Browse Courses</div>,
+      icon: (<SearchOutlined />),
+      children: tabContentMobile(3),
     }
   ]
 
@@ -359,23 +468,73 @@ const StudentHomePage = () => {
 
   useEffect(() => {
     fetchActivity();
-  }, []);
+  }, [changedTabIndex]);
 
   const updateTabIndex = (index) => {
-    setChangedTabIndex(index)
+    console.log("click: ", index)
+    setChangedTabIndex(() => index)
   }
 
-  return (
-    <div className="bg-st-course">
-      <div className="content-home">
-        <Tabs
-          defaultActiveKey={`${selectedTab}`}
-          onChange={updateTabIndex}
-          items={tabList}
-        />
+  const studentHomePc = () => {
+    return (
+      <div className="bg-st-course">
+        <div className="content-home">
+          <Tabs
+            defaultActiveKey={`${selectedTab}`}
+            onChange={updateTabIndex}
+            items={tabListPc}
+          />
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  const studentHomeMobile = () => {
+    return (
+      <div >
+        <div >
+          <Grid columns={1} >
+            <Grid.Item>
+              <Grid columns={1}>
+                <Row>
+                  <Grid.Item>
+                    {tabListMobile[changedTabIndex].children}
+                  </Grid.Item>
+                </Row>
+                <Row style={{ height: '50%' }} />
+                <Row justify={'center'} style={{ position: 'fixed', width: '100%', background: 'rgba(255, 255, 255, 1)', zIndex: 1000, bottom: 0, left: 0 }}>
+                  <TabBar
+                    defaultActiveKey={`${selectedTab}`}
+                    onChange={updateTabIndex}
+                    items={tabListMobile}
+                  >
+                    {
+                      tabListMobile.map((item, index) => (
+                        <TabBar.Item style={{ paddingLeft: 23 }} key={index} icon={item.icon} title={item.label} />
+                      ))
+                    }
+                  </TabBar>
+                </Row>
+              </Grid>
+            </Grid.Item>
+          </Grid>
+        </div>
+      </div>
+    )
+  }
+
+  const renderStudentHome = () => {
+    if (false) {
+      return studentHomePc()
+    }
+    if (true) {
+      return studentHomeMobile()
+    }
+  }
+
+  return renderStudentHome()
+
+
 };
 
 export default StudentHomePage;
