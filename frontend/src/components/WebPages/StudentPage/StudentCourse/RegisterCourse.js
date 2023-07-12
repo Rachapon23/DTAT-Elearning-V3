@@ -1,4 +1,4 @@
-import { Avatar, Breadcrumb, Button, Card, Col, Image, Progress, Row, Typography, message } from "antd";
+import { Avatar, Breadcrumb, Button, Card, Col, Divider, Image, Progress, Row, Typography, message } from "antd";
 import React, { createRef, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createActivity, getActivity, getCourse, getUser, getCalendarByCourseId } from "../../../../function/Student/course";
@@ -143,7 +143,6 @@ const RegisterCourse = () => {
     const fetchCondition = async (id) => {
         await listCondition(sessionStorage.getItem("token"), id)
             .then(async (res) => {
-
                 const data = res.data
                 // console.log("DATA: ", data)
                 setConditionData(data);
@@ -188,7 +187,11 @@ const RegisterCourse = () => {
 
     const fetchCourse = async () => {
         // console.log("id: ", params.id)
-        await getCourse(sessionStorage.getItem("token"), params.id, `?fetch=name,detail,image,condition,teacher,type&pops=path:condition$populate:plant$select:plant maximum current,path:teacher$select:firstname lastname -_id`)
+        await getCourse(
+            sessionStorage.getItem("token"),
+            params.id,
+            `?fetch=name,detail,image,condition,teacher,type&pops=path:condition$populate:plant$select:plant maximum current,path:teacher$select:firstname lastname -_id`
+        )
             .then(
                 (res) => {
                     const data = res.data.data
@@ -243,7 +246,7 @@ const RegisterCourse = () => {
         goToDate()
     }, [pageChange])
 
-    const registerCourseTitle = () => {
+    const registerCourseTitlePc = () => {
         return (
             <Row align={"middle"} justify={"space-between"} >
 
@@ -273,41 +276,313 @@ const RegisterCourse = () => {
         )
     }
 
-    return (
-        <div className="bg-st-course">
-            {notifyContextHolder}
-            <div style={{ width: "100%", marginTop: "20px", marginBottom: "50px" }}>
-                <Row justify={"center"} >
-                    <Col flex={"auto"} >
-                        {/* style={{ padding: "2%", paddingTop: "4%" }} */}
-                        <Card title={registerCourseTitle()}>
-                            <Row justify={"center"}>
-                                <Col flex={"auto"}>
-                                    <Row>
-                                        <Col flex={"auto"}>
-                                            <Card>
-                                                <Row justify={"start"} style={{ paddingTop: "0.5%", paddingBottom: "1%" }}>
-                                                    <Col style={{ width: "330px" }}>
+    const registerCourseTitleMobile = () => {
+        return (
+            <Row align={"middle"} justify={"space-between"} >
+
+                <Col>
+                    <Breadcrumb
+                        separator={<Title level={5} style={{ marginTop: "10px" }}> {">"} </Title>}
+                        items={[
+                            {
+                                // title: <Title level={5} style={{ marginTop: "10px" }}><p>{course?.name}</p></Title>,
+                                key: "courses_create",
+                            },
+                        ]}
+                    />
+                </Col>
+                <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
+                    <Button onClick={() => handleNavigate("/student/page/home", { tabIndex: 3 })}>
+                        Back
+                    </Button>
+                </Col>
+            </Row>
+        )
+    }
+
+    const rerenderCalendarPc = () => {
+        return (
+            <Col>
+                <Card>
+                    <Row justify={"center"}>
+                        <Col style={{ width: "700px", maxWidth: "2000px", }}>
+                            <FullCalendar
+                                plugins={[
+                                    dayGridPlugin,
+                                    timeGridPlugin,
+                                    interactionPlugin,
+                                    bootstrap5Plugin,
+                                ]}
+                                headerToolbar={{
+                                    left: null,//"prev today",
+                                    center: "title",
+                                    right: null//"next",
+                                }}
+                                height={500}
+                                themeSystem="bootstrap5"
+                                events={even}
+                                defaultTimedEventDuration={even}
+                                ref={calendarRef}
+                            />
+                        </Col>
+
+                    </Row>
+                </Card>
+            </Col>
+        )
+    }
+
+    const rerenderCalendarMobile = () => {
+        return (
+            <Col flex={'auto'}>
+                {/* <Card style={{ width: 270 }}> */}
+                <FullCalendar
+                    plugins={[
+                        dayGridPlugin,
+                        timeGridPlugin,
+                        interactionPlugin,
+                        bootstrap5Plugin,
+                    ]}
+                    headerToolbar={{
+                        left: null,//"prev today",
+                        center: "title",
+                        right: null//"next",
+                    }}
+                    height={400}
+                    themeSystem="bootstrap5"
+                    events={even}
+                    defaultTimedEventDuration={even}
+                    ref={calendarRef}
+                />
+                {/* </Card> */}
+            </Col>
+        )
+    }
+
+    const renderConditionPc = () => {
+        return (
+            <Row style={{ paddingTop: "1%" }}>
+                <Col flex={"auto"}>
+                    <Card >
+                        <Row justify={"space-between"}>
+                            <Col flex={"auto"} style={{ width: "20%", marginRight: "20px" }}>
+                                {
+                                    course?.condition && course?.condition.map(
+                                        (item) => (
+                                            <Row >
+                                                <Col flex={"auto"}>
+                                                    <Row>
+                                                        <Title level={4}>
+                                                            Plant: {item.plant.name}
+                                                        </Title>
+                                                    </Row>
+                                                    <Row>
+                                                        <Title level={5}>
+                                                            Amount: {item.current} / {item.maximum}
+                                                        </Title>
+                                                    </Row>
+                                                    <Row>
+                                                        <Progress percent={item.current * 100 / item.maximum} />
+                                                    </Row>
+                                                </Col>
+                                            </Row>
+                                        )
+                                    )
+                                }
+                            </Col>
+                            {
+                                even ? rerenderCalendarPc() : null
+                            }
+                        </Row>
+                    </Card>
+                </Col>
+            </Row>
+        )
+    }
+
+    const renderConditionMobile = () => {
+        return (
+            <Row style={{ paddingTop: "1%" }}>
+                <Col flex={"auto"} style={{ paddingTop: 15 }}>
+                    <Card style={{ marginInline: -10 }}>
+                        <Row justify={"space-between"}>
+                            <Col flex={"auto"} style={{ width: "20%" }}>
+                                <Row>
+                                    <Col flex={'auto'}>
+                                        {
+                                            course?.condition && course?.condition.map(
+                                                (item) => (
+                                                    <Row >
+                                                        <Col flex={"auto"}>
+                                                            <Row>
+                                                                <Title level={4}>
+                                                                    Plant: {item.plant.name}
+                                                                </Title>
+                                                            </Row>
+                                                            <Row>
+                                                                <Title level={5}>
+                                                                    Amount: {item.current} / {item.maximum}
+                                                                </Title>
+                                                            </Row>
+                                                            <Row>
+                                                                <Progress percent={item.current * 100 / item.maximum} />
+                                                            </Row>
+                                                        </Col>
+                                                    </Row>
+                                                )
+                                            )
+                                        }
+                                    </Col>
+                                </Row>
+                                {
+                                    even ? <Divider /> : null
+                                }
+                                <Row>
+                                    {
+                                        even ? rerenderCalendarMobile() : null
+                                    }
+                                </Row>
+                            </Col>
+
+                        </Row>
+                    </Card>
+                </Col>
+            </Row>
+        )
+    }
+
+    const registerCoursePc = () => {
+        return (
+            <div className="bg-st-course">
+                {notifyContextHolder}
+                <div style={{ width: "100%", marginTop: "20px", marginBottom: "50px" }}>
+                    <Row justify={"center"} >
+                        <Col flex={"auto"} >
+                            <Card title={registerCourseTitlePc()}>
+                                <Row justify={"center"}>
+                                    <Col flex={"auto"}>
+                                        <Row>
+                                            <Col flex={"auto"}>
+                                                <Card>
+
+                                                    <Row justify={"start"} style={{ paddingTop: "0.5%", paddingBottom: "1%" }}>
+                                                        <Col style={{ width: "330px" }}>
+                                                            <Image
+                                                                width={300}
+                                                                preview={false}
+                                                                onError={handleUnloadImage}
+                                                                src={course?.image?.name ? `${process.env.REACT_APP_IMG}/course/${course?.image?.name}` : DEFAULT_IMAGE}
+                                                            />
+                                                        </Col>
+                                                        <Col flex={"auto"} style={{ minWidth: "30%" }}>
+                                                            <Row>
+                                                                <Col flex={"auto"} style={{ width: "80%" }}>
+                                                                    <h4>{course?.name}</h4>
+                                                                </Col>
+                                                            </Row>
+                                                            <Row justify={"start"} align={"middle"}>
+                                                                <Col>
+                                                                    <Text strong>By {course?.teacher?.firstname} {course?.teacher?.lastname}</Text>
+                                                                </Col>
+                                                            </Row>
+                                                            <Row justify={"start"} align={"middle"}>
+                                                                <Col style={{ paddingTop: "1%" }}>
+                                                                    <Text strong>
+                                                                        {
+                                                                            course?.type === true ?
+                                                                                "Public Course"
+                                                                                :
+                                                                                "Private Course"
+                                                                        }
+                                                                    </Text>
+                                                                </Col>
+                                                            </Row>
+                                                            <Row>
+                                                                <Col style={{ paddingTop: "15px" }}>
+                                                                    <Text >{course?.detail}</Text>
+                                                                </Col>
+                                                            </Row>
+                                                        </Col>
+                                                    </Row>
+
+                                                    <Row style={{ paddingTop: "2%", }}>
+                                                        <Col style={{ width: "100%" }}>
+                                                            <Button
+                                                                disabled={!passedCondition}
+                                                                type="primary"
+                                                                size="large"
+                                                                block
+                                                                onClick={
+                                                                    () => registered ? handleOpenCourse() : handleAddCourse()
+                                                                }
+                                                            >
+                                                                {
+                                                                    registered ?
+                                                                        (
+                                                                            "Go to Course"
+                                                                        )
+                                                                        :
+                                                                        (
+                                                                            "Add Course"
+                                                                        )
+                                                                }
+
+                                                            </Button>
+                                                        </Col>
+                                                    </Row>
+
+                                                </Card>
+                                            </Col>
+                                        </Row>
+                                        {
+                                            course && course?.type === false ? renderConditionPc() : null
+                                        }
+                                    </Col>
+                                </Row>
+                            </Card >
+                        </Col >
+                    </Row >
+                </div>
+            </div>
+        )
+    }
+
+    const registerCourseMobile = () => {
+        return (
+            <div >
+                {notifyContextHolder}
+                <div style={{ width: "100%", marginBottom: "50px" }}>
+                    <Row justify={"center"} >
+                        <Col flex={"auto"} style={{ paddingInline: 5 }}>
+                            <Card title={registerCourseTitleMobile()} >
+                                <Row justify={"center"}>
+                                    <Col flex={"auto"}>
+                                        <Row>
+                                            <Col flex={"auto"}>
+                                                {/* <Card > */}
+
+                                                <Row justify={'center'} style={{ paddingTop: "0.5%", paddingBottom: "1%" }}>
+                                                    <Col>
                                                         <Image
-                                                            width={300}
+                                                            style={{ borderRadius: "5px" }}
                                                             preview={false}
                                                             onError={handleUnloadImage}
                                                             src={course?.image?.name ? `${process.env.REACT_APP_IMG}/course/${course?.image?.name}` : DEFAULT_IMAGE}
                                                         />
                                                     </Col>
-                                                    <Col flex={"auto"} style={{ minWidth: "30%" }}>
+                                                    <Col flex={"auto"} style={{ minWidth: "30%", paddingTop: 5 }}>
                                                         <Row>
-                                                            <Col flex={"auto"} style={{ width: "80%" }}>
+                                                            <Col flex={"auto"} style={{ width: "80%", paddingTop: 10 }}>
                                                                 <h4>{course?.name}</h4>
                                                             </Col>
                                                         </Row>
                                                         <Row justify={"start"} align={"middle"}>
-                                                            <Col>
+                                                            <Col style={{ paddingTop: 10 }}>
                                                                 <Text strong>By {course?.teacher?.firstname} {course?.teacher?.lastname}</Text>
                                                             </Col>
                                                         </Row>
                                                         <Row justify={"start"} align={"middle"}>
-                                                            <Col style={{ paddingTop: "1%" }}>
+                                                            <Col style={{ paddingTop: 2 }}>
                                                                 <Text strong>
                                                                     {
                                                                         course?.type === true ?
@@ -319,35 +594,11 @@ const RegisterCourse = () => {
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col style={{ paddingTop: "15px" }}>
+                                                            <Col style={{ paddingTop: 15, paddingBottom: 10 }}>
                                                                 <Text >{course?.detail}</Text>
                                                             </Col>
                                                         </Row>
                                                     </Col>
-
-                                                    {/* <Col style={{ width: "15%" }}>
-                                                <Row style={{ paddingTop: "18%", paddingBottom: "20px" }}>
-                                                    <Button
-                                                        type="primary"
-                                                        size="large"
-                                                        block
-                                                        onClick={handleAddCourse}
-                                                    >
-                                                        Add Course
-                                                    </Button>
-                                                </Row>
-                                                <Row>
-                                                    <Button
-                                                        type="primary"
-                                                        size="large"
-                                                        block
-                                                        onClick={handleAddCourse}
-                                                    >
-                                                        Start
-                                                    </Button>
-                                                </Row>
-                                            </Col >
-                                            <Col style={{ width: "25px" }} /> */}
                                                 </Row>
 
                                                 <Row style={{ paddingTop: "2%", }}>
@@ -374,109 +625,30 @@ const RegisterCourse = () => {
 
                                                         </Button>
                                                     </Col>
-                                                    {/* <Col style={{ width: "2%" }} /> */}
-                                                    {/* <Col flex={"auto"}>
-                                                <Button
-                                                    type="primary"
-                                                    size="large"
-                                                    block
-                                                    onClick={handleAddCourse}
-                                                >
-                                                    Start
-                                                </Button>
-                                            </Col> */}
-
                                                 </Row>
-                                            </Card>
-                                        </Col>
-                                    </Row>
-                                    {
-                                        course && course?.type === false ?
-                                            (
-                                                <Row style={{ paddingTop: "1%" }}>
-                                                    <Col flex={"auto"}>
-                                                        <Card >
-                                                            <Row justify={"space-between"}>
-                                                                <Col flex={"auto"} style={{ width: "20%", marginRight: "20px" }}>
-                                                                    {
-                                                                        course?.condition && course?.condition.map(
-                                                                            (item) => (
-                                                                                <Row >
-                                                                                    <Col flex={"auto"}>
-                                                                                        <Row>
-                                                                                            <Title level={4}>
-                                                                                                Plant: {item.plant.name}
-                                                                                            </Title>
-                                                                                        </Row>
-                                                                                        <Row>
-                                                                                            <Title level={5}>
-                                                                                                Amount: {item.current} / {item.maximum}
-                                                                                            </Title>
-                                                                                        </Row>
-                                                                                        <Row>
-                                                                                            <Progress percent={item.current * 100 / item.maximum} />
-                                                                                        </Row>
-                                                                                    </Col>
-                                                                                </Row>
-                                                                            )
-                                                                        )
-                                                                    }
-                                                                </Col>
-                                                                {
-                                                                    even ?
-                                                                        (
 
-                                                                            <Col>
-                                                                                <Card>
-                                                                                    <Row justify={"center"}>
-                                                                                        <Col style={{ width: "700px", maxWidth: "2000px", }}>
-                                                                                            <FullCalendar
-                                                                                                plugins={[
-                                                                                                    dayGridPlugin,
-                                                                                                    timeGridPlugin,
-                                                                                                    interactionPlugin,
-                                                                                                    bootstrap5Plugin,
-                                                                                                ]}
-                                                                                                headerToolbar={{
-                                                                                                    left: null,//"prev today",
-                                                                                                    center: "title",
-                                                                                                    right: null//"next",
-                                                                                                }}
-                                                                                                height={500}
-                                                                                                themeSystem="bootstrap5"
-                                                                                                events={even}
-                                                                                                defaultTimedEventDuration={even}
-                                                                                                ref={calendarRef}
-                                                                                            />
-                                                                                        </Col>
-
-                                                                                    </Row>
-                                                                                </Card>
-                                                                            </Col>
-                                                                        )
-                                                                        :
-                                                                        (
-                                                                            null
-                                                                        )
-                                                                }
-                                                            </Row>
-                                                        </Card>
-                                                    </Col>
-
-                                                </Row>
-                                            ) :
-                                            (
-                                                null
-                                            )
-                                    }
-                                </Col>
-                            </Row>
-                        </Card >
-                    </Col >
-                </Row >
+                                                {/* </Card> */}
+                                            </Col>
+                                        </Row>
+                                        {
+                                            course && course?.type === false ? renderConditionMobile() : null
+                                        }
+                                    </Col>
+                                </Row>
+                            </Card >
+                        </Col >
+                    </Row >
+                </div>
             </div>
-        </div>
-    )
+        )
+    }
+
+    const renderRegisterCourse = () => {
+        if (false) return registerCoursePc()
+        if (true) return registerCourseMobile()
+    }
+
+    return renderRegisterCourse()
 }
 
 export default RegisterCourse;

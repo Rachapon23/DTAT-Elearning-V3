@@ -1,14 +1,23 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Avatar, Col, Divider, Layout, Popover, Row, Typography, Button, Modal, Drawer, Space, } from "antd";
+import { Avatar, Col, Divider, Layout, Popover, Row, Typography, Button, Modal, Drawer, Space, Image, } from "antd";
 import "./navbar.css";
 import { MenuOutlined } from "@ant-design/icons"
 import { NavbarContext } from "./NavbarContext";
 import Auth from "./Auth";
+import { useMediaQuery } from "react-responsive";
 const { Header } = Layout;
 const { Title, Text } = Typography;
 
 const Navbar = () => {
+  const isDesktopOrLaptop = useMediaQuery({
+    query: '(min-width: 1224px)'
+  })
+  const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+  const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+  const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
   const navigate = useNavigate();
   const [open, setOpen] = useState(false)
   const {
@@ -104,7 +113,7 @@ const Navbar = () => {
     );
   };
 
-  const renderNavigator = () => {
+  const renderNavigatorPc = () => {
     let item1 = null;
     let item2 = null;
     let item3 = null;
@@ -121,11 +130,47 @@ const Navbar = () => {
     }
     return (
       <Row>
-        <Col>
-          <Row style={{ paddingBottom: 10 }}>
+        <Col className="link-navbar-role">
+          <a href="/">Home</a>
+        </Col>
+        <Col className="link-navbar-role">{item1}</Col>
+        {item2 === null ? (
+          <></>
+        ) : (
+          <Col className="link-navbar-role">{item2}</Col>
+        )}
+        {item3 === null ? (
+          <></>
+        ) : (
+          <Col className="link-navbar-role">{item3}</Col>
+        )}
+        <Col className="link-navbar-role">{renderProfile()}</Col>
+      </Row>
+    );
+  };
+
+  const renderNavigatorMobile = () => {
+    let item1 = null;
+    let item2 = null;
+    let item3 = null;
+
+    if (sessionStorage.getItem("role") === "admin") {
+      item1 = <a href="/admin/page/home">Manage</a>;
+      item2 = <a href="/teacher/page/home">Teacher page</a>;
+      item3 = <a href="/student/page/home">Student Page</a>;
+    } else if (sessionStorage.getItem("role") === "teacher") {
+      item1 = <a href="/teacher/page/home">Teaching</a>;
+      item3 = <a href={`/student/page/home`}>Student Page</a>;
+    } else if (sessionStorage.getItem("role") === "student") {
+      item1 = <a href="/student/page/home">Learning</a>;
+    }
+    return (
+      <Row>
+        <Col flex={'auto'}>
+          <Row style={{ paddingBottom: 20 }}>
             <Text strong style={{ fontSize: '120%' }}><a href="/">Home</a></Text>
           </Row>
-          <Row style={{ paddingBottom: 10 }}>
+          <Row style={{ paddingBottom: 20 }}>
             <Text strong style={{ fontSize: '120%' }}>{item1}</Text>
           </Row>
           {
@@ -135,7 +180,7 @@ const Navbar = () => {
               )
               :
               (
-                <Row style={{ paddingBottom: 10 }}>
+                <Row style={{ paddingBottom: 20 }}>
                   <Text strong style={{ fontSize: '120%' }}>{item2}</Text>
                 </Row>
               )
@@ -148,6 +193,7 @@ const Navbar = () => {
               :
               (
                 <Row style={{ paddingBottom: 10 }}>
+                  {/* <Divider/> */}
                   <Text strong style={{ fontSize: '120%' }}>{item3}</Text>
                 </Row>
               )
@@ -162,11 +208,16 @@ const Navbar = () => {
     return (
       <Header className="header-home">
         <Row className="row-navbar-role-home">
-          <Col>
-            <h2 className="logo">Logo</h2>
+          <Col flex={'auto'}>
+            <Image
+              height={48}
+              width={100}
+              preview={false}
+              src='/logo-v2.png'
+            />
           </Col>
           {checkLogedin() ? (
-            <Col>{renderNavigator()}</Col>
+            <Col>{renderNavigatorPc()}</Col>
           ) : (
             <Col>
               <Button ghost size="large" onClick={showModalAuth}>
@@ -206,14 +257,17 @@ const Navbar = () => {
                 width={'70%'}
                 onClose={() => setOpen(false)}
                 open={open}
+                style={{}}
+                headerStyle={{ backgroundColor: "rgba(159, 187, 246, 0.8)" }}
+              // bodyStyle={{ backgroundColor: "rgba(159, 187, 246, 0.2)" }}
               >
-                {renderNavigator()}
+                {renderNavigatorMobile()}
               </Drawer>
             )
             :
             (null)
         }
-        <Row justify={'space-between'}>
+        <Row justify={'space-between'} style={{ marginInline: -20 }}>
           {
             checkLogedin() ?
               (
@@ -224,9 +278,16 @@ const Navbar = () => {
               :
               (null)
           }
-          <Col>
-            <h2 className="logo">Logo</h2>
-          </Col>
+          <Row justify={'center'}>
+            <Col flex={'auto'} onClick={() => navigate('/')}>
+              <Image
+                height={48}
+                width={100}
+                preview={false}
+                src='/logo-v2.png'
+              />
+            </Col>
+          </Row>
           {
             checkLogedin() ?
               (
@@ -248,30 +309,15 @@ const Navbar = () => {
               )
           }
         </Row>
-        <Modal
-          open={isModalOpenAuth}
-          onOk={handleOkAuth}
-          onCancel={handleCancelAuth}
-          footer={[]}
-          bodyStyle={{
-            paddingTop: "50px",
-          }}
-          className="modal-auth"
-          style={{
-            top: 20,
-          }}
-        >
-          <Auth />
-        </Modal>
       </Header>
     );
   }
 
   const renderNavBar = () => {
-    if (false) {
+    if (isDesktopOrLaptop) {
       return navBarPc()
     }
-    if (true) {
+    if (isTabletOrMobile) {
       return navBarMobile()
     }
   }

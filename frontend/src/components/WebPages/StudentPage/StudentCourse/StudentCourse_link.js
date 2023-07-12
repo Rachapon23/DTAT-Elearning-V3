@@ -15,10 +15,11 @@ const StudentCourse_link = ({ item }) => {
                 <Spin tip="Loading" size="large" />
               }
             >
+              {/* {window.innerWidth} */}
               <div key={index} className="mb-2 d-flex justify-content-center">
                 <iframe
-                  width="400"
-                  height="270"
+                  width={265}
+                  height={190}
                   src={actualLink.replace("watch?v=", "embed/")}
                   title="YouTube video player"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

@@ -10,18 +10,24 @@ import { NavbarProvider } from "../Navbar/NavbarContext";
 import { Avatar, Col, Divider, Card, Layout, Menu, Popover, Row, Typography, theme, } from "antd";
 import { AutoCenter, Grid } from 'antd-mobile'
 import { useMediaQuery } from 'react-responsive'
+import { useNavigate } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
+const { Text, Title } = Typography
 
 const Home = () => {
-
+  const navigate = useNavigate()
   const isDesktopOrLaptop = useMediaQuery({
     query: '(min-width: 1224px)'
   })
+
   const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
   const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
   const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
+  const isIphoneSe = useMediaQuery({ query: '(min-width: 375px)' })
+  const isIpad = useMediaQuery({ query: '(min-width: 820px)' })
 
   const homePc = () => {
     return (
@@ -38,16 +44,17 @@ const Home = () => {
                     <div className="top-content">
                       <div className="left-content">
                         <p className="title-1">
-                          What is Lorem Ipsum? Lorem Ipsum is simply dummy text of
-                          the printing and typesetting industry. Lorem Ipsum
+                          <Title level={1} style={{ marginTop: -10, color: "#14347d" }}>DENSO Training Academy Thailand</Title>
                         </p>
-                        <p className="title-2">
-                          has been the industry's standard dummy text ever since the
-                          1500s, when an unknown printer took a galley of type and
-                          scrambled it to make a type specimen book. It has survived
-                          not only five
+                        <p className="title-2" style={{ marginBottom: -15 }}>
+                          <Row>
+                            <Title level={3}>"Unlock Konwledge Anytime, Anywhere"</Title>
+                          </Row>
+                          <Row>
+                            <Title level={3}>"ปลดล็อกความรู้ ทุกที่ ทุกเวลา"</Title>
+                          </Row>
                         </p>
-                        <button className="btn-aboutme">About Me</button>
+                        <button className="btn-aboutme" onClick={() => navigate('/about-us')}>About Me</button>
                       </div>
 
                       <div className="right-content">
@@ -79,35 +86,47 @@ const Home = () => {
   }
 
   const homeMobile = () => {
+    let titleLevel2 = 5
+    let titleLevel1 = 2
+    let marginButton = -10
+    if (isIphoneSe) {
+      titleLevel2 = 5
+      titleLevel1 = 2
+    }
+    if (isIpad) {
+      titleLevel2 = 2
+      titleLevel1 = 1
+      marginButton = -50
+    }
     return (
       <div className="layout-home">
         <NavbarProvider>
           <Navbar />
-          
+
           <HomeProvider>
-            <Grid columns={1} >
+            <Grid columns={1} style={{ paddingTop: 50, }}>
               <Grid.Item>
                 <Grid columns={1}>
                   <Row justify={'center'} align={'middle'}>
-                    <Col>
-                      <Row>
+                    <Col flex={'auto'}>
+                      <Row justify={'center'}>
                         <Grid.Item >
-                          <Col flex={'auto'} style={{ padding: 30 }}>
+                          <Col flex={'auto'} style={{ padding: 30, marginBottom: -30 }}>
                             <p className="title-1-mobile">
-                              What is Lorem Ipsum? Lorem Ipsum is simply dummy text of
-                              the printing and typesetting industry. Lorem Ipsum
+                              <Title level={titleLevel1} style={{ color: "#14347d" }}>DENSO</Title>
+                              <Title level={titleLevel1} style={{ marginTop: -10, color: "#14347d" }}>Training Academy Thailand</Title>
                             </p>
-                            <p className="title-2-mobile">
-                              has been the industry's standard dummy text ever since the
-                              1500s, when an unknown printer took a galley of type and
-                              scrambled it to make a type specimen book. It has survived
-                              not only five
-                            </p>
+                            <Row>
+                              <Title level={titleLevel2}>"Unlock Konwledge Anytime, Anywhere"</Title>
+                            </Row>
+                            <Row>
+                              <Title level={titleLevel2}>"ปลดล็อกความรู้ ทุกที่ ทุกเวลา"</Title>
+                            </Row>
                           </Col>
                         </Grid.Item>
                       </Row>
-                      <Row justify={'center'}>
-                        <button className="btn-aboutme-mobile">About Us</button>
+                      <Row justify={'center'} style={{ paddingTop: 20, marginBottom: marginButton }}>
+                        <button className="btn-aboutme-mobile" onClick={() => navigate('/about-us')}>About Us</button>
                       </Row>
                     </Col>
                   </Row>
@@ -144,10 +163,10 @@ const Home = () => {
 
 
   const renderContent = () => {
-    if (false) {
+    if (isDesktopOrLaptop) {
       return homePc()
     }
-    if (true) {
+    if (isTabletOrMobile) {
       return homeMobile()
     }
   }

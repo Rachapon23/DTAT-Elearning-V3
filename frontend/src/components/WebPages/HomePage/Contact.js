@@ -1,10 +1,26 @@
 import React from "react";
-import { Col, Row } from "antd";
+import { Col, Layout, Row, Typography } from "antd";
 import "./content.css";
 import GoogleMapReact from "google-map-react";
+import Navbar from "../Navbar/Navbar";
+import { NavbarProvider } from "../Navbar/NavbarContext";
+import { Content } from "antd/es/layout/layout";
+import { useMediaQuery } from "react-responsive";
+
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
+const { Text, Title } = Typography
 
 const Contact = () => {
+
+  const isDesktopOrLaptop = useMediaQuery({
+    query: '(min-width: 1224px)'
+  })
+
+  const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+  const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+  const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
   const defaultProps = {
     center: {
       lat: 10.99835602,
@@ -13,56 +29,128 @@ const Contact = () => {
     zoom: 11,
   };
 
-  return (
-    <div>
-      <p style={{ fontSize: "2em", fontWeight: "600", textAlign: "center" }}>
-        contact
-      </p>
-      <Row gutter={24}>
-        <Col span={12}>
-          <p style={{ fontSize: "2rem", fontWeight: "500", marginTop: "50px" }}>
-            DENSO Training Academy (Thailand) - DTAT
-          </p>
-          <p style={{ fontSize: "2em", fontWeight: "400", marginTop: "10px" }}>
-            address
-          </p>
-          <p style={{ fontSize: "1.5em", fontWeight: "400" }}>
-            Amata Nakorn Industrial Estate Bankao, Pantong Chonburi 20160
-            Thailand
-          </p>
-          <p style={{ fontSize: "1em", fontWeight: "400", marginTop: "50px" }}>
-            What does LOREM mean? ‘Lorem ipsum dolor sit amet, consectetur
-            adipisici elit…’ (complete text) is dummy text that is not meant to
-            mean anything. It is used as a placeholder in magazine layouts, for
-            example, in order to give an impression of the finished document.
-            The text is intentionally unintelligible so that the viewer is not
-            distracted by the content. The language is not real Latin and even
-            the first word ‘Lorem’ does not exist. It is said that the lorem
-            ipsum text has been common among typesetters since the 16th century
-            (Source: Wikipedia.com).
-          </p>
-          <div className="btn-navigate">
-            <button href="#" className="btn-go-up">Go up</button>
-          </div>
-        </Col>
-        <Col span={12}>
-          <div className="map">
-            <GoogleMapReact
-              bootstrapURLKeys={{ key: "" }}
-              defaultCenter={defaultProps.center}
-              defaultZoom={defaultProps.zoom}
-            >
-              <AnyReactComponent
-                lat={13.435063698236556}
-                lng={101.01941840644946}
-                text="My Marker"
-              />
-            </GoogleMapReact>
-          </div>
-        </Col>
-      </Row>
-    </div>
-  );
+  const contactPc = () => {
+    return (
+      <Layout className="layout-home">
+        <NavbarProvider>
+          <Navbar />
+        </NavbarProvider>
+        <Content style={{ paddingTop: 80, paddingBottom: 70, paddingInline: 20 }}>
+          <Row justify={'center'}>
+            <Col flex={'auto'}>
+              <Row justify={'center'}>
+                <Title style={{ color: "#14347d" }}>
+                  CONTACT
+                </Title>
+              </Row>
+              <Row justify={'center'}>
+                <Col flex={'auto'}>
+                  <Row justify={'center'}>
+                    <Title style={{ color: "#14347d" }}>
+                      DENSO Training Academy Thailand (DTAT)
+                    </Title>
+                  </Row>
+                  <Row justify={'center'}>
+                    <Title level={3}>
+                      Amata Nakorn Industrial Estate
+                    </Title>
+                  </Row>
+                  <Row justify={'center'}>
+                    <Title level={3}>
+                      700/87 Moo 1, Bangna-Trad Rd., Km.57,
+                    </Title>
+                  </Row>
+                  <Row justify={'center'}>
+                    <Title level={3}>
+                      T.Bankao, A.Panthong, Chonburi 20160 Thailand
+                    </Title>
+                  </Row>
+                  <Row justify={'center'}>
+                    <Title level={3}>
+                      Tel: +66(0)-3821-4651 Nice-Net: (5062)-2808
+                    </Title>
+                  </Row>
+
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Content>
+      </Layout>
+    );
+  }
+
+  const contactMobile = () => {
+    return (
+      <Layout className="layout-home">
+        <NavbarProvider>
+          <Navbar />
+        </NavbarProvider>
+        <Content style={{ paddingTop: 80, paddingBottom: 70, paddingInline: 20 }}>
+          <Row justify={'center'}>
+            <Col flex={'auto'}>
+              <Row justify={'center'}>
+                <Title style={{ color: "#14347d" }}>
+                  CONTACT
+                </Title>
+              </Row>
+              <Row justify={'center'}>
+                <Col flex={'auto'}>
+                  <Row justify={'center'} align={'middle'}>
+                    <Col >
+                      <Title level={3} style={{marginTop: -10, color: "#14347d" }}>
+                        DENSO
+                      </Title>
+                    </Col>
+                    &nbsp;
+                    <Col>
+                      <Title level={3} style={{ marginTop: -10, color: "#14347d" }}>
+                        Training Academy Thailand
+                      </Title>
+                    </Col>
+                    &nbsp;
+                    <Col>
+                      <Title level={3} style={{ marginTop: -10, color: "#14347d" }}>
+                        (DTAT)
+                      </Title>
+                    </Col>
+                  </Row>
+                  <Row justify={'center'}>
+                    <Text strong>
+                      Amata Nakorn Industrial Estate
+                    </Text>
+                  </Row>
+                  <Row justify={'center'}>
+                    <Text strong>
+                      700/87 Moo 1, Bangna-Trad Rd., Km.57,
+                    </Text>
+                  </Row>
+                  <Row justify={'center'}>
+                    <Text strong>
+                      T.Bankao, A.Panthong, Chonburi 20160 Thailand
+                    </Text>
+                  </Row>
+                  <Row justify={'center'}>
+                    <Text strong>
+                      Tel: +66(0)-3821-4651 Nice-Net: (5062)-2808
+                    </Text>
+                  </Row>
+
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Content>
+      </Layout>
+    );
+  }
+
+  const renderContact = () => {
+    if (isDesktopOrLaptop) return contactPc()
+    if (isTabletOrMobile) return contactMobile()
+  }
+
+  return renderContact()
 };
 
 export default Contact;

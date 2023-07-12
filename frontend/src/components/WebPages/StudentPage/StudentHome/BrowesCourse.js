@@ -5,10 +5,20 @@ import { useLocation, useNavigate } from "react-router-dom";
 // import "./studentcourse.css";
 import { listCourse } from "../../../../function/Student/course";
 import { getPrivateFieldImage } from "../../../../function/Student/topic";
+import { useMediaQuery } from "react-responsive";
 
 const GROUP_NUMBER = 4
 
 const BrowesCourse = () => {
+
+    const isDesktopOrLaptop = useMediaQuery({
+        query: '(min-width: 1224px)'
+    })
+    const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+    const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+    const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
     const location = useLocation()
     const navigate = useNavigate()
 
@@ -82,10 +92,10 @@ const BrowesCourse = () => {
         if (index % GROUP_NUMBER !== 0) return null
 
         return (
-            <Row justify={"center"} style={{ paddingLeft: "3%", paddingRight: "3%", paddingTop: 40 }}>
+            <Row justify={"center"} style={{ paddingLeft: "3%", paddingRight: "3%", paddingTop: 30}}>
                 {
                     fileterCourse(courses).slice(index, index + GROUP_NUMBER).map((data) => (
-                        <Col style={{ padding: "1%", paddingBottom: 5}}>
+                        <Col style={{ padding: "1%", paddingBottom: 5 }}>
                             {console.log("data: ", data)}
                             <CardCourse
                                 onClick={(e) => handleClickCourse(e, data)}
@@ -211,8 +221,8 @@ const BrowesCourse = () => {
     }
 
     const renderBrowesCourse = () => {
-        if (false) return BrowseCoursePc()
-        if (true) return BrowseCourseMobile()
+        if (isDesktopOrLaptop) return BrowseCoursePc()
+        if (isTabletOrMobile) return BrowseCourseMobile()
     }
 
     return renderBrowesCourse()

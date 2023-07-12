@@ -13,14 +13,16 @@ import DevNav from "./components/common/Dev/DevNav";
 import StudentRoute from "./components/common/ProtectedRoute/StudentRoute";
 import AdminRoute from "./components/common/ProtectedRoute/AdminRoute";
 import TeacherRoute from "./components/common/ProtectedRoute/TeacherRoute";
+import Contact from "./components/WebPages/HomePage/Contact";
 
 function App() {
   const navigate = useNavigate()
   return (
     <div>
       <Routes>
-        <Route path="*" element={<>404 Not Found...</>}/>
+        <Route path="*" element={<>404 Not Found...</>} />
         <Route path="/" element={<Home />} />
+        <Route path="/about-us" element={<Contact />} />
 
         <Route element={<StudentRoute />}>
           {/* <Route path="*" element={<>404 Not Found</>} /> */}

@@ -9,10 +9,19 @@ import bootstrap5Plugin from "@fullcalendar/bootstrap5";
 
 // fucntion : GET
 import { listCalendar } from "../../../../function/Student/calendar";
+import { useMediaQuery } from "react-responsive";
 
 const { Title } = Typography
 
 const Calendar = () => {
+
+  const isDesktopOrLaptop = useMediaQuery({
+    query: '(min-width: 1224px)'
+  })
+  const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+  const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+  const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
 
   const [even, setEven] = useState(null);
   const [loaded, setLoaded] = useState(false)
@@ -69,6 +78,7 @@ const Calendar = () => {
   }
 
   const calendarMobile = () => {
+    // let 
     return (
       <Card style={{ width: 350 }}>
         <FullCalendar
@@ -96,8 +106,8 @@ const Calendar = () => {
   }
 
   const renderCalendar = () => {
-    if (false) return calendarPc()
-    if (true) return calendarMobile()
+    if (isDesktopOrLaptop) return calendarPc()
+    if (isTabletOrMobile) return calendarMobile()
   }
 
   return renderCalendar()

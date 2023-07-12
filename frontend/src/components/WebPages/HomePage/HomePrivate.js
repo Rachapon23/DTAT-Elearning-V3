@@ -5,6 +5,7 @@ import { Col, Modal, Row } from "antd";
 import { HomeContext } from './HomeContext';
 import { useNavigate } from 'react-router-dom';
 import Auth from "../Navbar/Auth";
+import { useMediaQuery } from 'react-responsive';
 
 const GROUP_NUMBER = 3
 const DEFAULT_DATA = {
@@ -16,6 +17,14 @@ const DEFAULT_DATA = {
 const arrayTemplate = new Array(6).fill(false)
 
 const HomePrivate = () => {
+
+  const isDesktopOrLaptop = useMediaQuery({
+    query: '(min-width: 1224px)'
+  })
+  const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+  const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+  const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
 
   const { coursePrivate } = useContext(HomeContext)
   const navigate = useNavigate()
@@ -143,10 +152,10 @@ const HomePrivate = () => {
   }
 
   const renderHomePrivate = (index) => {
-    if (false) {
+    if (isDesktopOrLaptop) {
       return homePrivatePc(index)
     }
-    if (true) {
+    if (isTabletOrMobile) {
       return homePrivateMobile(index)
     }
   }

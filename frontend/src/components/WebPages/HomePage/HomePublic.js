@@ -7,6 +7,7 @@ import Auth from "../Navbar/Auth";
 import { useNavigate } from "react-router-dom";
 import { NavbarContext } from "../Navbar/NavbarContext";
 import { NavbarProvider } from "../Navbar/NavbarContext";
+import { useMediaQuery } from "react-responsive";
 
 const GROUP_NUMBER = 3
 const DEFAULT_DATA = {
@@ -18,6 +19,15 @@ const DEFAULT_DATA = {
 const arrayTemplate = new Array(10).fill(false)
 
 const HomePublic = () => {
+
+  const isDesktopOrLaptop = useMediaQuery({
+    query: '(min-width: 1224px)'
+  })
+  const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+  const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+  const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
   const {
     isModalOpenAuth,
     setIsModalOpenAuth,
@@ -141,7 +151,7 @@ const HomePublic = () => {
                 <div style={{ display: 'flex', alignContent: 'baseline' }}>
                   {
                     arrayTemplate.map(() => (
-                      <div className="col-content" style={{paddingRight: 20}}>
+                      <div className="col-content" style={{ paddingRight: 20 }}>
                         <CardCourse data={DEFAULT_DATA} />
                       </div>
                     ))
@@ -156,10 +166,10 @@ const HomePublic = () => {
   }
 
   const renderHomePublic = (index) => {
-    if (false) {
+    if (isDesktopOrLaptop) {
       return homePublicPc(index)
     }
-    if (true) {
+    if (isTabletOrMobile) {
       return homePublicMobile(index)
     }
   }
@@ -168,7 +178,7 @@ const HomePublic = () => {
     <div className="content-course">
       <div className="title-content">
         <p className="title-1">Public Course</p>
-        <p className="title-2" style={{paddingInline: 10}}>
+        <p className="title-2" style={{ paddingInline: 10 }}>
           It is a long established fact that a reader will be distracted by the
           readable content of a page when looking at its layout.
         </p>

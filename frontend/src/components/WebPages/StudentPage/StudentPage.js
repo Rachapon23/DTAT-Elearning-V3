@@ -16,10 +16,21 @@ import RegisterCourse from "./StudentCourse/RegisterCourse";
 // for haeder or navbar
 import Navbar from "../Navbar/Navbar";
 import { NavbarProvider } from "../Navbar/NavbarContext";
+import { useMediaQuery } from "react-responsive";
+import { StudentPageProvider } from "./StudentPageContext";
 
 const { Content } = Layout;
 
 const App = () => {
+
+  const isDesktopOrLaptop = useMediaQuery({
+    query: '(min-width: 1224px)'
+  })
+  const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+  const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+  const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },
@@ -84,19 +95,31 @@ const App = () => {
     }
   }, [params]);
 
+  const stylePc = () => {
+    return { paddingTop: 60, paddingLeft: 50, paddingRight: 50 }
+  }
+
+  const styleMobile = () => {
+    return { paddingTop: 80, paddingBottom: 70 }
+  }
+
+  const renderStyle = () => {
+    if (isDesktopOrLaptop) return stylePc()
+    if (isTabletOrMobile) return styleMobile()
+  }
+
   return (
     <Layout className="layout-home">
       <NavbarProvider>
         <Navbar />
       </NavbarProvider>
-      <Content style={{ paddingTop: 80, paddingBottom: 70 }}>
-        <Row justify={'center'}>
-          <Col>
-            {renderContent()}
-          </Col>
-        </Row>
+      <Content style={renderStyle()}>
+        <StudentPageProvider>
+          {renderContent()}
+        </StudentPageProvider>
       </Content>
     </Layout>
+
   );
 };
 export default App;
