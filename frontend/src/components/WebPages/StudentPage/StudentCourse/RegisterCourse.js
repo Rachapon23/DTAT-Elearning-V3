@@ -1,5 +1,5 @@
 import { Avatar, Breadcrumb, Button, Card, Col, Divider, Image, Progress, Row, Typography, message } from "antd";
-import React, { createRef, useEffect, useState } from "react";
+import React, { createRef, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createActivity, getActivity, getCourse, getUser, getCalendarByCourseId } from "../../../../function/Student/course";
 import { listCondition } from "../../../../function/Student/condition";
@@ -10,11 +10,19 @@ import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import timeGridPlugin from "@fullcalendar/timegrid";
 import bootstrap5Plugin from "@fullcalendar/bootstrap5";
+import { useMediaQuery } from "react-responsive";
+import { StudentPageContext } from "../StudentPageContext";
 
 const { Text, Title } = Typography
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
 
 const RegisterCourse = () => {
+
+    const isDesktopOrLaptop = useMediaQuery({ query: '(min-width: 1224px)' })
+    const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+    const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+    const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
 
     const params = useParams()
     const navigate = useNavigate()
@@ -30,7 +38,8 @@ const RegisterCourse = () => {
     const [courseResult, setCourseResult] = useState(false)
     const [even, setEven] = useState(null);
     const [messageApi, notifyContextHolder] = message.useMessage();
-    const [plantLoaded, setPlantLoaded] = useState(false)
+
+    const { currentPage, setCurrentPage } = useContext(StudentPageContext)
 
     const notify = (type, message) => {
         //type success / error / warning
@@ -101,10 +110,13 @@ const RegisterCourse = () => {
 
     const handleOpenCourse = () => {
         if (courseResult === 0) {
-            handleNavigate(`/student/page/course/${params.id}`, { tabIndex: 1 })
+            setCurrentPage(0)
+            handleNavigate(`/student/page/course/${params.id}`)
+            
         }
         else {
-            handleNavigate(`/student/page/course/${params.id}`, { tabIndex: 2 })
+            setCurrentPage(1)
+            handleNavigate(`/student/page/course/${params.id}`)
         }
     }
 
@@ -292,7 +304,10 @@ const RegisterCourse = () => {
                     />
                 </Col>
                 <Col style={{ paddingTop: "1px", paddingBottom: "1px", }}>
-                    <Button onClick={() => handleNavigate("/student/page/home", { tabIndex: 3 })}>
+                    <Button onClick={() => {
+                        handleNavigate("/student/page/home")
+                        setCurrentPage(3)
+                    }}>
                         Back
                     </Button>
                 </Col>
@@ -644,8 +659,8 @@ const RegisterCourse = () => {
     }
 
     const renderRegisterCourse = () => {
-        if (false) return registerCoursePc()
-        if (true) return registerCourseMobile()
+        if (isDesktopOrLaptop) return registerCoursePc()
+        if (isTabletOrMobile) return registerCourseMobile()
     }
 
     return renderRegisterCourse()

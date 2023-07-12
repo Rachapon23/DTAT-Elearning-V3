@@ -23,6 +23,8 @@ const Calendar = () => {
   const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
   const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
 
+  const isIpad = useMediaQuery({ query: '(min-width: 768px)' })
+
   const [even, setEven] = useState(null);
   const [loaded, setLoaded] = useState(false)
   const calendarRef = createRef()
@@ -78,9 +80,14 @@ const Calendar = () => {
   }
 
   const calendarMobile = () => {
-    // let 
+    let width = 350
+    let height = 400
+    if(isIpad) {
+      width = 600
+      height = 500
+    }
     return (
-      <Card style={{ width: 350 }}>
+      <Card style={{ width: width }}>
         <FullCalendar
           plugins={[
             dayGridPlugin,
@@ -96,7 +103,7 @@ const Calendar = () => {
           footerToolbar={{
             right: "today"
           }}
-          height={400}
+          height={height}
           themeSystem="bootstrap5"
           events={even}
           ref={calendarRef}

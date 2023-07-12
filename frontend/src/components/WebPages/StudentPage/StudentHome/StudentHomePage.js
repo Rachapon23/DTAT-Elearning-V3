@@ -19,25 +19,26 @@ const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e5
 
 const StudentHomePage = () => {
 
-  const isDesktopOrLaptop = useMediaQuery({
-    query: '(min-width: 1224px)'
-  })
+  const isDesktopOrLaptop = useMediaQuery({ query: '(min-width: 1224px)' })
   const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
   const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
   const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
 
+  const isIpad = useMediaQuery({ query: '(min-width: 768px)' })
+
   const location = useLocation()
   const navigate = useNavigate();
-
-  const [courses, setCourses] = useState([]);
-  const [selectedTab] = useState(location?.state?.tabIndex ? location.state.tabIndex : 0)
-  const [changedTabIndex, setChangedTabIndex] = useState(0)
 
   const {
     currentPage,
     setCurrentPage,
   } = useContext(StudentPageContext);
+
+  const [courses, setCourses] = useState([]);
+  const [changedTabIndex, setChangedTabIndex] = useState(currentPage)
+
+  console.log("switch tab to: ", currentPage)
 
   const handleNavigate = (navStr, dataStage) => {
     navigate(navStr, { state: dataStage });
@@ -231,27 +232,6 @@ const StudentHomePage = () => {
               );
             },
           },
-          // {
-          //   title: `Action`,
-          //   align: "center",
-          //   width: "10%",
-          //   render: (data) => {
-          //     console.log(data?.course?.exam);
-          //     return (
-          //       <Button
-          //         // disabled={!data?.course?.exam}
-          //         disabled={true}
-          //         onClick={() =>
-          //           handleNavigate(`/student/page/exam/${data?.course?.exam}`, {
-          //             activity: data?._id,
-          //           })
-          //         }
-          //       >
-          //         Exam
-          //       </Button>
-          //     );
-          //   },
-          // },
         ];
       default:
         return null;
@@ -304,7 +284,7 @@ const StudentHomePage = () => {
 
   const tabListPc = [
     {
-      key: '1',
+      key: '0',
       label: (
         <a className="label-home-st" htmlFor="">
           My Course
@@ -313,7 +293,7 @@ const StudentHomePage = () => {
       children: tabContentPc(0),
     },
     {
-      key: '2',
+      key: '1',
       label: (
         <a htmlFor="" className="label-home-st">
           My History
@@ -322,7 +302,7 @@ const StudentHomePage = () => {
       children: tabContentPc(1),
     },
     {
-      key: '3',
+      key: '2',
       label: (
         <a htmlFor="" className="label-home-st">
           Calendar
@@ -331,7 +311,7 @@ const StudentHomePage = () => {
       children: tabContentPc(2),
     },
     {
-      key: '4',
+      key: '3',
       label: (
         <a htmlFor="" className="label-home-st">
           Browse Courses
@@ -342,12 +322,13 @@ const StudentHomePage = () => {
   ]
 
   const tabContentMobile = (tab) => {
-
+    let widthEmpty = 350
+    if (isIpad) widthEmpty = 700
     switch (tab) {
       case 0: return (
         <Row justify={'center'}>
-          <Col style={{ width: '5%', }} />
-          <Col style={{ width: '90%', }}>
+          {/* <Col style={{ width: '5%', }} /> */}
+          <Col style={{ width: '100%', }}>
             <Row justify={'center'}>
               {
                 courses.filter((item) => item.result === 0).map((mitem) => (
@@ -368,7 +349,7 @@ const StudentHomePage = () => {
               }
             </Row>
           </Col>
-          <Col style={{ width: '5%', }} />
+          {/* <Col style={{ width: '5%', }} /> */}
         </Row>
 
       )
@@ -398,7 +379,7 @@ const StudentHomePage = () => {
                 :
                 (
                   <Col >
-                    <Card style={{ padding: 100, }}>
+                    <Card style={{ padding: 100, width: widthEmpty }}>
                       <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                     </Card>
                   </Col>
@@ -424,25 +405,25 @@ const StudentHomePage = () => {
 
   const tabListMobile = [
     {
-      key: '1',
+      key: '0',
       label: <div style={{ paddingTop: 10, fontSize: '120%' }}>My Course</div>,
       icon: (<HomeOutlined />),
       children: tabContentMobile(0),
     },
     {
-      key: '2',
+      key: '1',
       label: <div style={{ paddingTop: 10, fontSize: '120%' }}>My History</div>,
       icon: (<HistoryOutlined />),
       children: tabContentMobile(1),
     },
     {
-      key: '3',
+      key: '2',
       label: <div style={{ paddingTop: 10, fontSize: '120%' }}>Calendar</div>,
       icon: (<CalendarOutlined />),
       children: tabContentMobile(2),
     },
     {
-      key: '4',
+      key: '3',
       label: <div style={{ paddingTop: 10, fontSize: '120%' }}>Browse Courses</div>,
       icon: (<SearchOutlined />),
       children: tabContentMobile(3),
@@ -501,6 +482,7 @@ const StudentHomePage = () => {
       <div >
         <div className="content-home">
           <Tabs
+            // activeKey={currentPage}
             defaultActiveKey={`${currentPage}`}
             onChange={updateTabIndex}
             items={tabListPc}
@@ -508,6 +490,12 @@ const StudentHomePage = () => {
         </div>
       </div>
     );
+  }
+
+  const calculatePage = () => {
+    if (currentPage - 1 < 0) return 0
+    if (currentPage - 1 === 0) return 1
+    return currentPage
   }
 
   const studentHomeMobile = () => {
@@ -518,11 +506,12 @@ const StudentHomePage = () => {
             <Grid.Item>
               <Grid columns={1}>
                 <Row justify={'center'}>
-                  {tabListMobile[changedTabIndex]?.children}
+                  {tabListMobile[calculatePage()]?.children}
                 </Row>
                 {/* <Row style={{ height: '100%' }} /> */}
                 <Row justify={'center'} style={{ position: 'fixed', width: '100%', background: 'rgba(255, 255, 255, 1)', zIndex: 1000, bottom: 0, left: 0 }}>
                   <TabBar
+                    // activeKey={currentPage}
                     defaultActiveKey={`${currentPage}`}
                     onChange={updateTabIndex}
                     items={tabListMobile}
@@ -544,9 +533,11 @@ const StudentHomePage = () => {
 
   const renderStudentHome = () => {
     if (isDesktopOrLaptop) {
+      console.log("current page:", currentPage)
       return studentHomePc()
     }
     if (isTabletOrMobile) {
+      console.log("current page:", currentPage)
       return studentHomeMobile()
     }
   }

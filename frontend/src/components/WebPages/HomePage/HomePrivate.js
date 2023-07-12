@@ -85,6 +85,7 @@ const HomePrivate = () => {
                   <div className="col-content">
                     <CardCourse
                       onClick={(e) => handleClickCourse(e, data)}
+                      width={325}
                       data={{
                         name: data?.name,
                         detail: data?.detail,
@@ -110,27 +111,32 @@ const HomePrivate = () => {
   }
 
   const homePrivateMobile = (index) => {
-    if (index % GROUP_NUMBER !== 0) return null
+    // if (index % GROUP_NUMBER !== 0) return null
 
     return (
       <div className="row-content">
         {
           coursePrivate.length > 0 ?
             (
-              coursePrivate.slice(index, index + GROUP_NUMBER).map((data) => (
-                <Col span={6} >
-                  <div className="col-content">
-                    <CardCourse
-                      onClick={(e) => handleClickCourse(e, data)}
-                      data={{
-                        name: data?.name,
-                        detail: data?.detail,
-                        image: data?.image?.name
-                      }}
-                    />
-                  </div>
-                </Col>
-              ))
+              <div style={{ overflowX: 'scroll', width: '80%', height: '100%' }}>
+                <div style={{ display: 'flex', alignContent: 'baseline' }}>
+                  {
+                    coursePrivate.map((data) => (
+                      <div className="col-content" style={{ paddingRight: 20 }}>
+                        <CardCourse
+                          onClick={(e) => handleClickCourse(e, data)}
+                          data={{
+                            name: data?.name,
+                            detail: data?.detail,
+                            image: data?.image?.name
+                          }}
+                        />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+
             )
             :
             (

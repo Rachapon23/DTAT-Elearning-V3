@@ -70,10 +70,10 @@ const Home = () => {
                   <div>
                     <HomeAnnounce />
                   </div>
-                  <div className="content">
+                  <div >
                     <HomePublic />
                   </div>
-                  <div className="content">
+                  <div style={{paddingTop: 50}}>
                     <HomePrivate />
                   </div>
                 </div>

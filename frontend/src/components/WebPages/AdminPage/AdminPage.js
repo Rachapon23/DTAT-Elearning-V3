@@ -93,7 +93,7 @@ const App = () => {
                 <Title level={5}>
                   {sessionStorage.getItem("role")
                     ? sessionStorage.getItem("role").charAt(0).toUpperCase() +
-                      sessionStorage.getItem("role").slice(1)
+                    sessionStorage.getItem("role").slice(1)
                     : null}
                 </Title>
               </Row>
@@ -197,29 +197,35 @@ const App = () => {
 
   return (
     <Layout className="layout-admin">
-      <Sider
-        className="sider-admin"
-        collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
-      >
-        <div className="logo-admin">
-          <img alt="iconAdmin" className="w-100" src="/Admin.png" />
-        </div>
-        <Menu
-          onClick={(e) => navigate(`/admin/page/${e.key}`)}
-          className="menu-admin"
-          // theme="dark"
-          mode="inline"
-          defaultSelectedKeys={[`${params}`]}
-          items={items}
-        />
-      </Sider>
+
       <Layout className="site-layout-admin">
-        <NavbarProvider>
-          <Navbar />
-        </NavbarProvider>
-        <Content className="contentTeacher">
+        <Row>
+          <Col style={{zIndex: 1001}}>
+            <Sider
+              style={{ height: '100%' }}
+              className="sider-admin"
+              collapsible
+              collapsed={collapsed}
+              onCollapse={(value) => setCollapsed(value)}
+            >
+              <div className="logo-admin">
+                <img alt="iconAdmin" className="w-100" src="/Admin.png" />
+              </div>
+              <Menu
+                onClick={(e) => navigate(`/admin/page/${e.key}`)}
+                className="menu-admin"
+                // theme="dark"
+                mode="inline"
+                defaultSelectedKeys={[`${params}`]}
+                items={items}
+              />
+            </Sider>
+          </Col>
+          <NavbarProvider>
+            <Navbar />
+          </NavbarProvider>
+        </Row>
+        <Content className="contentTeacher" style={{ paddingTop: 50 }}>
           <Layout className="layout-content">
             <Row className="row-admin">
               <Col className="col-admin">{renderContent()}</Col>

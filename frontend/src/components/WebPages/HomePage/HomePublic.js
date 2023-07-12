@@ -96,6 +96,7 @@ const HomePublic = () => {
                   <div className="col-content">
                     <CardCourse
                       onClick={(e) => handleClickCourse(e, data)}
+                      width={325}
                       data={{
                         name: data?.name,
                         detail: data?.detail,
@@ -130,20 +131,25 @@ const HomePublic = () => {
         {
           coursePublic.length > 0 ?
             (
-              coursePublic.slice(index, index + GROUP_NUMBER).map((data) => (
-                <Col span={6} >
-                  <div className="col-content">
-                    <CardCourse
-                      onClick={(e) => handleClickCourse(e, data)}
-                      data={{
-                        name: data?.name,
-                        detail: data?.detail,
-                        image: data?.image?.name
-                      }}
-                    />
-                  </div>
-                </Col>
-              ))
+              <div style={{ overflowX: 'scroll', width: '80%', height: '100%' }}>
+                <div style={{ display: 'flex', alignContent: 'baseline' }}>
+                  {
+                    coursePublic.slice(index, index + GROUP_NUMBER).map((data) => (
+                      <div className="col-content" style={{ paddingRight: 20 }}>
+                        <CardCourse
+                          onClick={(e) => handleClickCourse(e, data)}
+                          data={{
+                            name: data?.name,
+                            detail: data?.detail,
+                            image: data?.image?.name
+                          }}
+                        />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+
             )
             :
             (

@@ -12,7 +12,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: fit-content;
+  /* width: fit-content; */
+  width: '-moz-fit-content';
   height: 300%;
   background-size: cover;
   padding: 0 100px;

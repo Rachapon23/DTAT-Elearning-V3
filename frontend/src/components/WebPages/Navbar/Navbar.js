@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Avatar, Col, Divider, Layout, Popover, Row, Typography, Button, Modal, Drawer, Space, Image, } from "antd";
 import "./navbar.css";
 import { MenuOutlined } from "@ant-design/icons"
@@ -27,6 +27,7 @@ const Navbar = () => {
     handleOkAuth,
     handleCancelAuth,
   } = useContext(NavbarContext);
+  const location = useLocation()
 
   const checkLogedin = () => {
     if (sessionStorage.getItem("token")) return true;
@@ -204,18 +205,35 @@ const Navbar = () => {
     );
   };
 
+  const renderLogo = () => {
+    // console.log(location.pathname.includes('admin'))
+
+    if (location.pathname.includes('admin')) return false
+    if (location.pathname.includes('teacher')) return false
+    if (location?.pathname) return true
+  }
+
   const navBarPc = () => {
     return (
       <Header className="header-home">
         <Row className="row-navbar-role-home">
-          <Col flex={'auto'}>
-            <Image
-              height={48}
-              width={100}
-              preview={false}
-              src='/logo-v2.png'
-            />
-          </Col>
+          {
+            renderLogo() ?
+              (
+                <Row justify={'center'}>
+                  <Col flex={'auto'} onClick={() => navigate('/')}>
+                    <Image
+                      height={48}
+                      width={100}
+                      preview={false}
+                      src='/logo-v2.png'
+                    />
+                  </Col>
+                </Row>
+              )
+              :
+              (<Row></Row>)
+          }
           {checkLogedin() ? (
             <Col>{renderNavigatorPc()}</Col>
           ) : (
@@ -278,36 +296,52 @@ const Navbar = () => {
               :
               (null)
           }
-          <Row justify={'center'}>
-            <Col flex={'auto'} onClick={() => navigate('/')}>
-              <Image
-                height={48}
-                width={100}
-                preview={false}
-                src='/logo-v2.png'
-              />
-            </Col>
-          </Row>
           {
-            checkLogedin() ?
-              (
-                <Row>
-                  <Col>
-                    {renderProfile()}
-                  </Col>
-                </Row>
-              )
-              :
-              (
-                <Row>
-                  <Col>
-                    <Button ghost size="large" onClick={showModalAuth}>
-                      Login
-                    </Button>
-                  </Col>
-                </Row>
-              )
+
           }
+          {
+            renderLogo() ?
+              (
+                <Row justify={'center'}>
+                  <Col flex={'auto'} onClick={() => navigate('/')}>
+                    <Image
+                      height={48}
+                      width={100}
+                      preview={false}
+                      src='/logo-v2.png'
+                    />
+                  </Col>
+                </Row>
+              ) : (renderNavigatorPc())
+          }
+          {
+            renderLogo() ?
+              (
+                <>
+                  {
+                    checkLogedin() ?
+                      (
+                        <Row>
+                          <Col>
+                            {renderProfile()}
+                          </Col>
+                        </Row>
+                      )
+                      :
+                      (
+                        <Row>
+                          <Col>
+                            <Button ghost size="large" onClick={showModalAuth}>
+                              Login
+                            </Button>
+                          </Col>
+                        </Row>
+                      )
+                  }
+                </>
+              ) : (null)
+          }
+
         </Row>
       </Header>
     );

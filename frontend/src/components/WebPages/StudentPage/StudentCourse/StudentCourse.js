@@ -1,5 +1,5 @@
 import { Avatar, Breadcrumb, Button, Card, Col, Divider, Image, Modal, Row, Typography, } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { getActivity, getCourse, getProfile, listActivity } from "../../../../function/Student/course";
 import { getPrivateFieldImage, listTopicCourse } from "../../../../function/Student/topic";
@@ -7,11 +7,20 @@ import "./studentcourse.css";
 import StudentCourse_file from "./StudentCourse_file";
 import StudentCourse_link from "./StudentCourse_link";
 import { FormOutlined } from '@ant-design/icons';
+import { useMediaQuery } from "react-responsive";
+import { StudentPageContext } from "../StudentPageContext";
 
 const { Text, Title } = Typography;
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
 
 const StudentExam = () => {
+
+  const isDesktopOrLaptop = useMediaQuery({ query: '(min-width: 1224px)' })
+  const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+  const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+  const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
   const params = useParams();
   const location = useLocation()
   const navigate = useNavigate();
@@ -21,7 +30,6 @@ const StudentExam = () => {
   const [topicData, setTopicData] = useState([]);
   const [openProfile, setOpenProfile] = useState(false)
   const [teacherProfile, setTeacherProfile] = useState(null);
-  const [selectedTabIndex] = useState(location?.state?.tabIndex ? location.state.tabIndex : 0)
 
   const handleNavigate = (navStr, dataStage) => {
     navigate(navStr, { state: dataStage })
@@ -64,7 +72,7 @@ const StudentExam = () => {
         </Col>
         <Col style={{ paddingTop: "1px", paddingBottom: "1px" }}>
           <Row>
-            <Button onClick={() => handleNavigate(`/student/page/home`, { tabIndex: selectedTabIndex })}>Back</Button>
+            <Button onClick={() => handleNavigate(`/student/page/home`)}>Back</Button>
           </Row>
         </Col>
       </Row>
@@ -95,7 +103,7 @@ const StudentExam = () => {
         </Col>
         <Col>
           <Row align={'middle'} >
-            <Button onClick={() => handleNavigate(`/student/page/home`, { tabIndex: selectedTabIndex })}>
+            <Button onClick={() => handleNavigate(`/student/page/home`)}>
               Back
             </Button>
           </Row>
@@ -252,7 +260,7 @@ const StudentExam = () => {
 
   const studentCoursePc = () => {
     return (
-      <div className="bg-st-course">
+      <div >
         <div style={{ width: "100%", marginTop: "20px", marginBottom: "50px" }}>
           <Row justify={"center"} style={{ marginBottom: "15px" }}>
             <Col flex={"auto"}>
@@ -359,7 +367,7 @@ const StudentExam = () => {
             </Row>
             <Row style={{ paddingTop: 15 }}>
               <Col flex={'auto'}>
-                <Button  block={true} type='primary' onClick={() => navigate(`/student/page/exam/${course?.exam?._id}`, { state: { activity: activity?._id } })}> Start </Button>
+                <Button block={true} type='primary' onClick={() => navigate(`/student/page/exam/${course?.exam?._id}`, { state: { activity: activity?._id } })}> Start </Button>
               </Col>
             </Row>
           </Card>
@@ -457,10 +465,10 @@ const StudentExam = () => {
   }
 
   const renderStudentCourse = () => {
-    if (false) {
+    if (isDesktopOrLaptop) {
       return studentCoursePc()
     }
-    if (true) {
+    if (isTabletOrMobile) {
       return studentCourseMobile()
     }
   }
