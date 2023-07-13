@@ -212,7 +212,7 @@ const Course_info = () => {
                       <Image
                         height={250}
                         onError={handleUnloadImage}
-                        src={courseData?.image?.name ? `${process.env.REACT_APP_IMG}/course/${courseData?.image?.name}`: DEFAULT_IMAGE}
+                        src={courseData?.image?.name ? `${process.env.REACT_APP_IMG}/course/${courseData?.image?.name}` : DEFAULT_IMAGE}
                       />
                     </Badge>
                   )}
@@ -224,10 +224,11 @@ const Course_info = () => {
           <Form.Item
             label="Course Name"
             // require
-            tooltip="Name of the course"
+            tooltip="Name of the course will display correctly when name has length under 38 character"
             name="fieldName"
           >
             <Input
+              showCount
               placeholder="Course name"
               name="name"
               onChange={debounceOnChange}

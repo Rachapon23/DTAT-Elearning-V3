@@ -17,6 +17,11 @@ const BrowesCourse = () => {
     const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
     const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
 
+    const isScreenCondition1 = useMediaQuery({ query: '(min-width: 1500px)' })
+    const isScreenCondition2 = useMediaQuery({ query: '(min-width: 1400px)' })
+    const isScreenCondition3 = useMediaQuery({ query: '(min-width: 1300px)' })
+    const isScreenCondition4 = useMediaQuery({ query: '(min-width: 1270px)' })
+
     const location = useLocation()
     const navigate = useNavigate()
 
@@ -61,6 +66,12 @@ const BrowesCourse = () => {
     const renderContentPc = useCallback((index) => {
         // console.log("index:", filteredCourse)
         // if (index % GROUP_NUMBER !== 0) return null
+        let cardWidth = 250
+        if(isBigScreen) cardWidth = 400
+        else if(isScreenCondition1) cardWidth = 300
+        else if(isScreenCondition2) cardWidth = 250
+        else if(isScreenCondition3) cardWidth = 260
+        else if(isScreenCondition4) cardWidth = 260
 
         return (
             <Row gutter={[32, 0]} justify={"start"} style={{ paddingLeft: "3%", paddingRight: "3%" }}>
@@ -69,7 +80,7 @@ const BrowesCourse = () => {
                         <Col span={6} style={{ padding: "1%", }}>
                             <CardCourse
                                 onClick={(e) => handleClickCourse(e, data)}
-                                width={300}
+                                width={cardWidth}
                                 data={{
                                     _id: data?._id,
                                     name: data?.name,
@@ -83,7 +94,7 @@ const BrowesCourse = () => {
             </Row>
         )
 
-    }, [courses, fileterCourse, handleClickCourse])
+    }, [courses, fileterCourse, handleClickCourse, isBigScreen, isScreenCondition1, isScreenCondition2, isScreenCondition3, isScreenCondition4])
 
     const renderContentMobile = useCallback((index) => {
         // console.log("index:", filteredCourse)

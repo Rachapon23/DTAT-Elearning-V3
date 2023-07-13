@@ -234,15 +234,20 @@ const Navbar = () => {
               :
               (<Row></Row>)
           }
-          {checkLogedin() ? (
-            <Col>{renderNavigatorPc()}</Col>
-          ) : (
-            <Col>
-              <Button ghost size="large" onClick={showModalAuth}>
-                Login
-              </Button>
-            </Col>
-          )}
+          {
+            checkLogedin() ?
+              (
+                <Col>{renderNavigatorPc()}</Col>
+              )
+              :
+              (
+                <Col>
+                  <Button ghost size="large" onClick={showModalAuth}>
+                    Login
+                  </Button>
+                </Col>
+              )
+          }
         </Row>
         <Modal
           open={isModalOpenAuth}

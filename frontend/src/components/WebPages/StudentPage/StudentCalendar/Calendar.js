@@ -1,17 +1,21 @@
 import React, { createRef } from "react"
 import { useState, useEffect } from "react";
-import { Breadcrumb, Card, Col, Row, Typography } from "antd"
+import { Breadcrumb, Button, Card, Col, Modal, Row, Typography } from "antd"
 import FullCalendar from "@fullcalendar/react"; // must go before plugins
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import timeGridPlugin from "@fullcalendar/timegrid";
 import bootstrap5Plugin from "@fullcalendar/bootstrap5";
+import moment from "moment";
+import "moment/locale/th";
+
 
 // fucntion : GET
 import { listCalendar } from "../../../../function/Student/calendar";
 import { useMediaQuery } from "react-responsive";
 
-const { Title } = Typography
+const { Title, Text } = Typography
+moment.locale("th");
 
 const Calendar = () => {
 
@@ -27,7 +31,21 @@ const Calendar = () => {
 
   const [even, setEven] = useState(null);
   const [loaded, setLoaded] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modalData, setModalData] = useState({})
   const calendarRef = createRef()
+
+  const handleModalOk = () => {
+    setIsModalOpen(false)
+  }
+
+  const handleModalCancel = () => {
+    setIsModalOpen(false)
+  }
+
+  const handleOpenModal = () => {
+    if (modalData) setIsModalOpen(true)
+  }
 
   const loadCalendar = () => {
     listCalendar(sessionStorage.getItem("token"))
@@ -49,15 +67,64 @@ const Calendar = () => {
     if (calendarAPI && even[0]?.start) calendarAPI.gotoDate(even[0].start)
   }
 
+  const handleClickCalendar = (e) => {
+    if (!e) return
+    setModalData(() => ({
+      title: e.event.title,
+      start: moment(e.event.start).format("LL"),
+      end: moment(e.event.end).format("LL"),
+    }))
+    handleOpenModal()
+  }
+
   useEffect(() => {
     loadCalendar();
     if (loaded) goToDate()
-  }, [loaded]);
+  }, [loaded, modalData]);
 
+  const renderModal = () => {
+    return (
+      <Modal title="Info" open={isModalOpen} onOk={handleModalOk} onCancel={handleModalCancel} footer={false}>
+        <Row>
+          <Col>
+            <Row>
+              <Text strong>Course name</Text>
+            </Row>
+            <Row>
+              {modalData?.title}
+            </Row>
+          </Col>
+        </Row>
+
+        <Row style={{ paddingTop: 10 }}>
+          <Col>
+            <Row>
+              <Text strong>Start </Text>
+            </Row>
+            <Row>
+              {modalData?.start}
+            </Row>
+          </Col>
+        </Row>
+
+        <Row style={{ paddingTop: 10 }}>
+          <Col>
+            <Row>
+              <Text strong>End </Text>
+            </Row>
+            <Row>
+              {modalData?.end}
+            </Row>
+          </Col>
+        </Row>
+      </Modal>
+    )
+  }
 
   const calendarPc = () => {
     return (
       <Card>
+        {renderModal()}
         <FullCalendar
           plugins={[
             dayGridPlugin,
@@ -74,6 +141,7 @@ const Calendar = () => {
           themeSystem="bootstrap5"
           events={even}
           ref={calendarRef}
+          eventClick={handleClickCalendar}
         />
       </Card>
     )
@@ -82,12 +150,13 @@ const Calendar = () => {
   const calendarMobile = () => {
     let width = 350
     let height = 400
-    if(isIpad) {
+    if (isIpad) {
       width = 600
       height = 500
     }
     return (
       <Card style={{ width: width }}>
+        {renderModal()}
         <FullCalendar
           plugins={[
             dayGridPlugin,
@@ -107,6 +176,7 @@ const Calendar = () => {
           themeSystem="bootstrap5"
           events={even}
           ref={calendarRef}
+          eventClick={handleClickCalendar}
         />
       </Card>
     )
