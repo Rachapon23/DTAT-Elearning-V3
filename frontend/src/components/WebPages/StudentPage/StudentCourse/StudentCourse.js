@@ -21,6 +21,8 @@ const StudentExam = () => {
   const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
   const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
 
+  const isScreenCondition1= useMediaQuery({ query: '(min-width: 397px)' })
+
   const params = useParams();
   const location = useLocation()
   const navigate = useNavigate();
@@ -336,6 +338,7 @@ const StudentExam = () => {
                       </Col>
                     </Row>
                   </Modal>
+                  
                 </Row>
               </Card>
             </Col>
@@ -349,6 +352,9 @@ const StudentExam = () => {
   }
 
   const renderExamCard = () => {
+    if(!activity) {
+      fetchActivity()
+    }
     return (
       <Row style={{ marginBottom: 5 }}>
         <Col flex={'auto'}>
@@ -367,7 +373,8 @@ const StudentExam = () => {
             </Row>
             <Row style={{ paddingTop: 15 }}>
               <Col flex={'auto'}>
-                <Button block={true} type='primary' onClick={() => navigate(`/student/page/exam/${course?.exam?._id}`, { state: { activity: activity?._id } })}> Start </Button>
+                {/* {JSON.stringify(activity._id)} */}
+                <Button block={true} type='primary' onClick={() => navigate(`/student/page/exam/${course?.exam?._id}`, { state: { activity: activity._id } })}> Start </Button>
               </Col>
             </Row>
           </Card>
@@ -377,6 +384,14 @@ const StudentExam = () => {
   }
 
   const studentCourseMobile = () => {
+    let justify = 'center'
+    let paddingTop = 10
+    let flex = 'none'
+    if(isScreenCondition1) {
+      justify = 'start'
+      paddingTop = 0
+      flex = 'auto'
+    }
     return (
       <div style={{ width: "100%", marginBottom: "50px", paddingInline: 10 }}>
         <Row justify={"center"} style={{ marginBottom: 5 }}>
@@ -410,8 +425,8 @@ const StudentExam = () => {
                     </Link>
 
                     <Modal title="Teacher Profile" open={openProfile} onOk={() => setOpenProfile(false)} onCancel={() => setOpenProfile(false)} footer={null}>
-                      <Row>
-                        <Col flex={"auto"} style={{ maxWidth: "150px" }}>
+                      <Row justify={justify}>
+                        <Col flex={flex} style={{ maxWidth: "150px" }}>
                           <Avatar
                             shape="square"
                             size={120}
@@ -421,8 +436,8 @@ const StudentExam = () => {
                               verticalAlign: "middle",
                             }}
                           >
-                            <Row justify={"center"} align={"middle"}>
-                              <Col flex={"auto"} style={{ paddingTop: "10px" }}>
+                            <Row justify={"center"} align={"middle"} >
+                              <Col flex={"auto"} style={{ paddingTop: 10 }}>
                                 <Text style={{ fontSize: "300%", color: "white" }}>
                                   {teacherProfile?.firstname ? teacherProfile?.firstname.substring(0, 1) : ""}
                                 </Text>
@@ -430,7 +445,8 @@ const StudentExam = () => {
                             </Row>
                           </Avatar>
                         </Col>
-                        <Col>
+
+                        <Col style={{paddingTop: paddingTop}}>
                           <Row>
                             <Col style={{ paddingRight: "10px" }}><Text strong> Name: </Text> </Col>
                             <Col style={{ paddingRight: "10px" }}>{teacherProfile?.firstname ? teacherProfile?.firstname : "No data"}</Col>
@@ -447,6 +463,7 @@ const StudentExam = () => {
                         </Col>
                       </Row>
                     </Modal>
+                    
                   </Row>
                 </Col>
               </Row>

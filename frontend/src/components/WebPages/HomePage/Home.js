@@ -54,7 +54,7 @@ const Home = () => {
                             <Title level={3}>"ปลดล็อกความรู้ ทุกที่ ทุกเวลา"</Title>
                           </Row>
                         </p>
-                        <button className="btn-aboutme" onClick={() => navigate('/about-us')}>About Me</button>
+                        <button className="btn-aboutme" onClick={() => navigate('/about-us')}>About Us</button>
                       </div>
 
                       <div className="right-content">

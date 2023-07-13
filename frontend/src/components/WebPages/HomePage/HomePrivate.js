@@ -18,13 +18,14 @@ const arrayTemplate = new Array(6).fill(false)
 
 const HomePrivate = () => {
 
-  const isDesktopOrLaptop = useMediaQuery({
-    query: '(min-width: 1224px)'
-  })
+  const isDesktopOrLaptop = useMediaQuery({ query: '(min-width: 1224px)' })
   const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
   const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
   const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
+  const isScreenCondition1 = useMediaQuery({ query: '(min-width: 1300px)' })
+  const isScreenCondition2 = useMediaQuery({ query: '(min-width: 1500px)' })
 
   const { coursePrivate } = useContext(HomeContext)
   const navigate = useNavigate()
@@ -75,6 +76,11 @@ const HomePrivate = () => {
   const homePrivatePc = (index) => {
     if (index % GROUP_NUMBER !== 0) return null
 
+    let width = 250
+    if (isBigScreen) width = 420
+    else if (isScreenCondition2) width = 340
+    else if (isScreenCondition1) width = 290
+
     return (
       <div className="row-content">
         {
@@ -85,7 +91,7 @@ const HomePrivate = () => {
                   <div className="col-content">
                     <CardCourse
                       onClick={(e) => handleClickCourse(e, data)}
-                      width={325}
+                      width={width}
                       data={{
                         name: data?.name,
                         detail: data?.detail,
@@ -170,19 +176,28 @@ const HomePrivate = () => {
     <div className="content-course">
       <div className="title-content">
         <p className="title-1">Private Course</p>
-        <p className="title-2" style={{ paddingInline: 10 }}>
+        {/* <p className="title-2" style={{ paddingInline: 10 }}>
           It is a long established fact that a reader will be distracted by the
           readable content of a page when looking at its layout.
-        </p>
+        </p> */}
       </div>
       <div className="">
         <div className="row-content">
           {
             coursePrivate.length > 0 ?
               (
-                coursePrivate.map((_, index) => (
-                  renderHomePrivate(index)
-                ))
+                isDesktopOrLaptop ?
+                  (
+                    coursePrivate.map((_, index) => (
+                      renderHomePrivate(index)
+                    ))
+                  )
+                  :
+                  (
+                    [false].map((_, index) => (
+                      renderHomePrivate(index)
+                    ))
+                  )
               )
               :
               (

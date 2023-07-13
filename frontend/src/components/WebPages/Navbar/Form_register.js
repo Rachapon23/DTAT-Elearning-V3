@@ -26,14 +26,14 @@ const Form_register = ({ setStatus, }) => {
   const [departments, setDepartments] = useState([]);
   const [plants, setPlants] = useState([]);
   const [valueRegister, setValueRegister] = useState({
-    employee: "",
-    department: "",
-    password: "",
-    confirm: "",
-    email: "",
-    plant: "",
-    firstname: "",
-    lastname: ""
+    employee: null,
+    // department: null,
+    password: null,
+    confirm: null,
+    // email: null,
+    plant: null,
+    firstname: null,
+    lastname: null
   })
   const {
     isModalOpenAuth,
@@ -111,6 +111,9 @@ const Form_register = ({ setStatus, }) => {
   };
 
   const onRegister = async () => {
+    for (let key in valueRegister) {
+      if (!valueRegister[key]) return
+    }
     await register(valueRegister)
       .then((res) => {
         // console.log(res.data)
@@ -137,6 +140,7 @@ const Form_register = ({ setStatus, }) => {
       {contextHolder}
       {/* name="employee" */}
       <Form.Item
+        name="employee"
         rules={[
           {
             required: true,
@@ -153,7 +157,7 @@ const Form_register = ({ setStatus, }) => {
       </Form.Item>
 
       {/* name="department" */}
-      <Form.Item
+      {/* <Form.Item
         rules={[
           {
             required: true,
@@ -171,11 +175,12 @@ const Form_register = ({ setStatus, }) => {
             </Option>
           ))}
         </Select>
-      </Form.Item>
+      </Form.Item> */}
 
       {/* name="password" */}
 
       <Form.Item
+        name="password"
         rules={[
           {
             required: true,
@@ -193,6 +198,7 @@ const Form_register = ({ setStatus, }) => {
 
       {/* name="confirm" */}
       <Form.Item
+        name="confirm"
         rules={[
           {
             required: true,
@@ -209,7 +215,7 @@ const Form_register = ({ setStatus, }) => {
       </Form.Item>
 
       {/* name="email" */}
-      <Form.Item
+      {/* <Form.Item
         rules={[
           {
             required: true,
@@ -223,10 +229,11 @@ const Form_register = ({ setStatus, }) => {
           placeholder="Email"
           onChange={handleInput}
         />
-      </Form.Item>
+      </Form.Item> */}
 
       {/* name="plant" */}
       <Form.Item
+        name="plant"
         rules={[
           {
             required: true,
@@ -234,13 +241,13 @@ const Form_register = ({ setStatus, }) => {
           },
         ]}
       >
-        <Select placeholder="Please select a Plant"
+        <Select
+          placeholder="Please select a Plant"
           onChange={handleSelectPlant}
         >
           {plants.map((plant) => (
             <Option key={plant._id} value={plant._id}>
-              {" "}
-              {plant.name}{" "}
+              {" "}{plant.name}{" "}
             </Option>
           ))}
         </Select>
@@ -248,6 +255,7 @@ const Form_register = ({ setStatus, }) => {
 
       {/* name="firstname" */}
       <Form.Item
+        name="firstname"
         rules={[
           {
             required: true,
@@ -265,6 +273,7 @@ const Form_register = ({ setStatus, }) => {
 
       {/* name="lastname" */}
       <Form.Item
+        name="lastname"
         rules={[
           {
             required: true,
@@ -281,7 +290,10 @@ const Form_register = ({ setStatus, }) => {
       </Form.Item>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit" block
+        <Button
+          type="primary"
+          htmlType="submit"
+          block
           onClick={onRegister}
         >
           Register

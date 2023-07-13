@@ -304,7 +304,7 @@ const StudentHomePage = () => {
 
   const tabListPc = [
     {
-      key: '1',
+      key: '0',
       label: (
         <a className="label-home-st" htmlFor="">
           My Course
@@ -313,7 +313,7 @@ const StudentHomePage = () => {
       children: tabContentPc(0),
     },
     {
-      key: '2',
+      key: '1',
       label: (
         <a htmlFor="" className="label-home-st">
           My History
@@ -322,7 +322,7 @@ const StudentHomePage = () => {
       children: tabContentPc(1),
     },
     {
-      key: '3',
+      key: '2',
       label: (
         <a htmlFor="" className="label-home-st">
           Calendar
@@ -331,7 +331,7 @@ const StudentHomePage = () => {
       children: tabContentPc(2),
     },
     {
-      key: '4',
+      key: '3',
       label: (
         <a htmlFor="" className="label-home-st">
           Browse Courses
@@ -352,6 +352,7 @@ const StudentHomePage = () => {
               {
                 courses.filter((item) => item.result === 0).map((mitem) => (
                   <Col style={{ paddingBottom: 10, paddingInline: 5, }} onClick={() => navigate(`/student/page/course/${mitem.course?._id}`)}>
+                    {/* {JSON.stringify(mitem.course?.activity)} */}
                     <CardCourse
                       data={{
                         _id: mitem.course?._id,
@@ -424,25 +425,25 @@ const StudentHomePage = () => {
 
   const tabListMobile = [
     {
-      key: '1',
+      key: '0',
       label: <div style={{ paddingTop: 10, fontSize: '120%' }}>My Course</div>,
       icon: (<HomeOutlined />),
       children: tabContentMobile(0),
     },
     {
-      key: '2',
+      key: '1',
       label: <div style={{ paddingTop: 10, fontSize: '120%' }}>My History</div>,
       icon: (<HistoryOutlined />),
       children: tabContentMobile(1),
     },
     {
-      key: '3',
+      key: '2',
       label: <div style={{ paddingTop: 10, fontSize: '120%' }}>Calendar</div>,
       icon: (<CalendarOutlined />),
       children: tabContentMobile(2),
     },
     {
-      key: '4',
+      key: '3',
       label: <div style={{ paddingTop: 10, fontSize: '120%' }}>Browse Courses</div>,
       icon: (<SearchOutlined />),
       children: tabContentMobile(3),

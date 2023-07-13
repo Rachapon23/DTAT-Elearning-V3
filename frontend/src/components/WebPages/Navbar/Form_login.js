@@ -94,7 +94,7 @@ const Form_login = ({ setStatus }) => {
           },
         ]}
       >
-        <Input
+        <Input.Password
           name="password"
           prefix={<LockOutlined />}
           type="password"

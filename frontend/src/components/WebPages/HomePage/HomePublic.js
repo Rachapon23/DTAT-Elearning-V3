@@ -20,13 +20,14 @@ const arrayTemplate = new Array(10).fill(false)
 
 const HomePublic = () => {
 
-  const isDesktopOrLaptop = useMediaQuery({
-    query: '(min-width: 1224px)'
-  })
+  const isDesktopOrLaptop = useMediaQuery({ query: '(min-width: 1224px)' })
   const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
   const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
   const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
+  const isScreenCondition1 = useMediaQuery({ query: '(min-width: 1300px)' })
+  const isScreenCondition2 = useMediaQuery({ query: '(min-width: 1500px)' })
 
   const {
     isModalOpenAuth,
@@ -86,6 +87,12 @@ const HomePublic = () => {
   const homePublicPc = (index) => {
     if (index % GROUP_NUMBER !== 0) return null
 
+    let width = 250
+    if (isBigScreen) width = 420
+    else if (isScreenCondition2) width = 340
+    else if (isScreenCondition1) width = 290
+
+
     return (
       <div className="row-content">
         {
@@ -96,7 +103,7 @@ const HomePublic = () => {
                   <div className="col-content">
                     <CardCourse
                       onClick={(e) => handleClickCourse(e, data)}
-                      width={325}
+                      width={width}
                       data={{
                         name: data?.name,
                         detail: data?.detail,
@@ -134,7 +141,7 @@ const HomePublic = () => {
               <div style={{ overflowX: 'scroll', width: '80%', height: '100%' }}>
                 <div style={{ display: 'flex', alignContent: 'baseline' }}>
                   {
-                    coursePublic.slice(index, index + GROUP_NUMBER).map((data) => (
+                    coursePublic.map((data) => (
                       <div className="col-content" style={{ paddingRight: 20 }}>
                         <CardCourse
                           onClick={(e) => handleClickCourse(e, data)}
@@ -184,19 +191,28 @@ const HomePublic = () => {
     <div className="content-course">
       <div className="title-content">
         <p className="title-1">Public Course</p>
-        <p className="title-2" style={{ paddingInline: 10 }}>
+        {/* <p className="title-2" style={{ paddingInline: 10 }}>
           It is a long established fact that a reader will be distracted by the
           readable content of a page when looking at its layout.
-        </p>
+        </p> */}
       </div>
       <div className="">
         <div className="row-content">
           {
             coursePublic.length > 0 ?
               (
-                coursePublic.map((_, index) => (
-                  renderHomePublic(index)
-                ))
+                isDesktopOrLaptop ?
+                  (
+                    coursePublic.map((_, index) => (
+                      renderHomePublic(index)
+                    ))
+                  )
+                  :
+                  (
+                    [false].map((_, index) => (
+                      renderHomePublic(index)
+                    ))
+                  )
               )
               :
               (

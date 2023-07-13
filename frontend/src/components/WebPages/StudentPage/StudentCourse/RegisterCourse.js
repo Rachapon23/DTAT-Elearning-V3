@@ -468,7 +468,7 @@ const RegisterCourse = () => {
 
     const registerCoursePc = () => {
         return (
-            <div className="bg-st-course">
+            <div>
                 {notifyContextHolder}
                 <div style={{ width: "100%", marginTop: "20px", marginBottom: "50px" }}>
                     <Row justify={"center"} >

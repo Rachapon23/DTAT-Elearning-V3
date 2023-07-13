@@ -4,9 +4,6 @@ export const NavbarContext = createContext();
 
 export const NavbarProvider = ({ children }) => {
 
-
-  const [openAuth, setOpenAuth] = useState(false);
-
   const [isModalOpenAuth, setIsModalOpenAuth] = useState(false);
 
   const showModalAuth = () => {

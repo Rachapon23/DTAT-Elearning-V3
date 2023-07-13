@@ -20,6 +20,7 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const [open, setOpen] = useState(false)
+  
   const {
     isModalOpenAuth,
     setIsModalOpenAuth,
@@ -262,7 +263,7 @@ const Navbar = () => {
             top: 20,
           }}
         >
-          <Auth />
+          <Auth/>
         </Modal>
       </Header>
     );
