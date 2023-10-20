@@ -80,7 +80,7 @@ const Plant = () => {
   ];
 
   const fetchPlant = async () => {
-    await listPlant()
+    await listPlant(sessionStorage.getItem("token"))
       .then(
         (res) => {
           const data = res.data.data

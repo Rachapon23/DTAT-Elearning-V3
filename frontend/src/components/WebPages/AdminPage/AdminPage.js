@@ -27,6 +27,7 @@ import AdminManageHome from "./AdminManageHome/AdminManageHome";
 import AdminListUser from "./AdminListUser/AdminListUser";
 import AdminManageTeacher from "./AdminManageTeacher/AdminManageTeacher";
 import AdminManageStudent from "./AdminManageStudent/AdminManageStudent";
+import AdminRegisterUser from "./AdminRegisterUser/AdminRegisterUser";
 
 import { AdminProvider } from "./AdminManageHome/AdminManageContext";
 
@@ -93,7 +94,7 @@ const App = () => {
                 <Title level={5}>
                   {sessionStorage.getItem("role")
                     ? sessionStorage.getItem("role").charAt(0).toUpperCase() +
-                      sessionStorage.getItem("role").slice(1)
+                    sessionStorage.getItem("role").slice(1)
                     : null}
                 </Title>
               </Row>
@@ -153,6 +154,7 @@ const App = () => {
       getItem("Public Course", "public-course"),
       getItem("Private Course", "private-course"),
     ]),
+    getItem("Register User", "registeruser", <CalendarOutlined />),
     getItem("List User", "listuser", <HomeOutlined />),
     getItem("Manage Teacher", "manageteacher", <HomeOutlined />),
     getItem("Manage Student", "managestudent", <CalendarOutlined />),
@@ -188,8 +190,8 @@ const App = () => {
         return <AdminManageTeacher />;
       case "managestudent":
         return <AdminManageStudent />;
-      // case 'calendar':
-      //   return <p className="success">Calendar</p>;
+      case 'registeruser':
+        return <AdminRegisterUser />;
       default:
         return <p className="success">404 not found ... </p>;
     }
@@ -197,29 +199,35 @@ const App = () => {
 
   return (
     <Layout className="layout-admin">
-      <Sider
-        className="sider-admin"
-        collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
-      >
-        <div className="logo-admin">
-          <img alt="iconAdmin" className="w-100" src="/Admin.png" />
-        </div>
-        <Menu
-          onClick={(e) => navigate(`/admin/page/${e.key}`)}
-          className="menu-admin"
-          // theme="dark"
-          mode="inline"
-          defaultSelectedKeys={[`${params}`]}
-          items={items}
-        />
-      </Sider>
+
       <Layout className="site-layout-admin">
-        <NavbarProvider>
-          <Navbar />
-        </NavbarProvider>
-        <Content className="contentTeacher">
+        <Row>
+          <Col style={{zIndex: 1001}}>
+            <Sider
+              style={{ height: '100%' }}
+              className="sider-admin"
+              collapsible
+              collapsed={collapsed}
+              onCollapse={(value) => setCollapsed(value)}
+            >
+              <div className="logo-admin">
+                <img alt="iconAdmin" className="w-100" src="/Admin.png" />
+              </div>
+              <Menu
+                onClick={(e) => navigate(`/admin/page/${e.key}`)}
+                className="menu-admin"
+                // theme="dark"
+                mode="inline"
+                defaultSelectedKeys={[`${params}`]}
+                items={items}
+              />
+            </Sider>
+          </Col>
+          <NavbarProvider>
+            <Navbar />
+          </NavbarProvider>
+        </Row>
+        <Content className="contentTeacher" style={{ paddingTop: 50 }}>
           <Layout className="layout-content">
             <Row className="row-admin">
               <Col className="col-admin">{renderContent()}</Col>

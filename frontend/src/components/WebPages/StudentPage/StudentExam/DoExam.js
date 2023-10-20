@@ -4,10 +4,19 @@ import { getExam, sendExam } from "../../../../function/Student/exam";
 import { Button, Card, Col, Empty, Form, Modal, Row, Typography } from "antd";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { getActivity } from "../../../../function/Student/course";
+import "../StudentCourse/studentcourse.css";
+import { useMediaQuery } from "react-responsive";
 
 const { Title, Text } = Typography
 
 const DoExam = () => {
+
+    const isDesktopOrLaptop = useMediaQuery({ query: '(min-width: 1224px)' })
+    const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+    const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+    const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
     const [exam, setExam] = useState({})
     const [infoData, setInfoData] = useState({})
     const [answer, setAnswer] = useState({})
@@ -40,11 +49,11 @@ const DoExam = () => {
     }
 
     const submitExam = async () => {
-        await sendExam(sessionStorage.getItem("token"), location.state.activity, { answer: answer })
+        await sendExam(sessionStorage.getItem("token"), location?.state?.activity, { answer: answer })
             .then(
                 (res) => {
                     const data = res.data.data
-                    // console.log(data)
+                    console.log(data)
                 }
             )
             .catch(
@@ -145,7 +154,7 @@ const DoExam = () => {
             )
     }
 
-    const renderContent = () => {
+    const renderContentPc = () => {
         // if (!result) return <>Please wait...</>
         if (!result?.completed) {
             return (
@@ -194,92 +203,233 @@ const DoExam = () => {
         }
     }
 
+    const renderContentMobile = () => {
+        if (!result) return <>Please wait...</>
+        if (result?.completed) {
+            return (
+                <Col flex={"auto"}>
+                    <Card>
+                        <Row justify={"center"}>
+                            <Title level={4}>You already done this exam</Title>
+                        </Row>
+                        <Row justify={"center"}>
+                            <Text>Your scoure is {result.score_value} / {result.score_max}</Text>
+                        </Row>
+                        <Row justify={"center"} style={{ paddingTop: "20px" }}>
+                            <Button type="primary" onClick={() => navigate(-1)}>Back to Course</Button>
+                        </Row>
+                    </Card>
+                </Col>
+            )
+        }
+        else {
+            return (
+                <Col flex="auto">
+                    {
+                        exam?.quiz && exam?.quiz.length > 0 ?
+                            (
+                                exam.quiz.map((item, index) => (
+                                    <Col style={{ paddingTop: 5 }}>
+                                        <CardContent
+                                            key={item._id}
+                                            index={index}
+                                            head={infoData}
+                                            actionMode={actionMode}
+                                            data={{ ...item, answer: answer[`${item._id}`] }}
+                                            examID={exam._id}
+                                            onChangeChoiceAnswer={handleChangeChoiceAnswer}
+                                        />
+                                    </Col>
+                                ))
+                            )
+                            :
+                            (
+                                <Card>
+                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                </Card>
+                            )
+                    }
+                </Col>
+            )
+        }
+    }
+
     useEffect(() => {
         if (params?.id) fetchExam()
     }, [])
 
-    return (
-        <div className="bg-st-course">
-            {/* <NavBarHome /> */}
-            <div className="content-home">
-                <Row>
-                    <Col flex={"auto"}>
-                        <Row justify={"center"}>
-                            <Col flex={"auto"} style={{ paddingLeft: "2.5%", paddingRight: "2.5%", paddingTop: "2%" }}>
-                                <Card >
+    const doExamPc = () => {
+        return (
+            <div >
+                {/* <NavBarHome /> */}
+                <div className="content-home">
+                    <Row>
+                        <Col flex={"auto"}>
+                            <Row justify={"center"}>
+                                <Col flex={"auto"} style={{ paddingLeft: "2.5%", paddingRight: "2.5%", paddingTop: "2%" }}>
+                                    <Card >
+                                        {
+                                            infoData?.name && infoData?.detail ?
+                                                (
+                                                    <>
+                                                        <p><h5>{infoData?.name}</h5></p>
+                                                        <br></br>
+                                                        {infoData?.detail}
+                                                    </>
+                                                )
+                                                :
+                                                (
+                                                    <Row justify={"center"}>
+                                                        <Col >
+                                                            {
+                                                                error ?
+                                                                    (
+                                                                        <h4>{error}</h4>
+                                                                    ) :
+                                                                    (
+                                                                        <h4>No Exam Info</h4>
+                                                                    )
+                                                            }
+                                                        </Col>
+                                                    </Row>
+                                                )
+                                        }
+                                    </Card>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col flex={"auto"}>
+                                    <Form
+                                        style={{ paddingTop: "1%" }}
+                                        form={form}
+                                        layout="vertical"
+                                        initialValues={{
+                                            requiredMarkValue: requiredMark,
+                                        }}
+                                        onValuesChange={onRequiredTypeChange}
+                                        requiredMark={requiredMark}
+                                    >
+                                        <Row justify={"center"}>
+                                            <Col style={{ width: "95%" }} >
+                                                <Row style={{ paddingTop: "1%" }}>
+                                                    {
+                                                        renderContentPc()
+                                                    }
+                                                </Row>
+                                            </Col>
+                                        </Row>
+                                    </Form>
+                                </Col>
+                            </Row>
+                            <Row justify={"space-between"} style={{ paddingTop: "0.5%", paddingLeft: "2.5%", paddingRight: "2.5%", paddingBottom: "0.5%" }}>
+                                <Col flex={"auto"}>
                                     {
-                                        infoData?.name && infoData?.detail ?
+                                        !result?.completed && exam?.quiz && exam?.quiz.length > 0 ?
                                             (
-                                                <>
-                                                    <p><h5>{infoData?.name}</h5></p>
-                                                    <br></br>
-                                                    {infoData?.detail}
-                                                </>
+                                                renderPageNav()
                                             )
                                             :
                                             (
-                                                <Row justify={"center"}>
-                                                    <Col >
-                                                        {
-                                                            error ?
-                                                                (
-                                                                    <h4>{error}</h4>
-                                                                ) :
-                                                                (
-                                                                    <h4>No Exam Info</h4>
-                                                                )
-                                                        }
-                                                    </Col>
-                                                </Row>
+                                                null
                                             )
                                     }
-                                </Card>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col flex={"auto"}>
-                                <Form
-                                    style={{ paddingTop: "1%" }}
-                                    form={form}
-                                    layout="vertical"
-                                    initialValues={{
-                                        requiredMarkValue: requiredMark,
-                                    }}
-                                    onValuesChange={onRequiredTypeChange}
-                                    requiredMark={requiredMark}
-                                >
-                                    <Row justify={"center"}>
-                                        <Col style={{ width: "95%" }} >
-                                            <Row style={{ paddingTop: "1%" }}>
-                                                {
-                                                    renderContent()
-                                                }
-                                            </Row>
-                                        </Col>
-                                    </Row>
-                                </Form>
-                            </Col>
-                        </Row>
-                        <Row justify={"space-between"} style={{ paddingTop: "0.5%", paddingLeft: "2.5%", paddingRight: "2.5%", paddingBottom: "0.5%" }}>
-                            <Col flex={"auto"}>
+                                </Col>
+                            </Row>
+                        </Col>
+                    </Row>
+                </div>
+            </div>
+
+        )
+    }
+
+    const doExamMobile = () => {
+        return (
+            <Row justify={'center'} style={{ paddingInline: 10 }}>
+                <Col flex={"auto"}>
+                    <Row justify={"center"}>
+                        <Col flex={"auto"} >
+                            <Card style={{ width: '100%' }}>
                                 {
-                                    !result?.completed && exam?.quiz && exam?.quiz.length > 0 ?
+                                    infoData?.name && infoData?.detail ?
                                         (
-                                            renderPageNav()
+                                            <>
+                                                <p><h5>{infoData?.name}</h5></p>
+                                                <br></br>
+                                                {infoData?.detail}
+                                            </>
                                         )
                                         :
                                         (
-                                            null
+                                            <Row justify={"center"}>
+                                                <Col >
+                                                    {
+                                                        error ?
+                                                            (
+                                                                <h4>{error}</h4>
+                                                            ) :
+                                                            (
+                                                                <h4>No Exam Info</h4>
+                                                            )
+                                                    }
+                                                </Col>
+                                            </Row>
                                         )
                                 }
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
-            </div>
-        </div>
+                            </Card>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col flex={"auto"}>
+                            <Form
+                                style={{ paddingTop: "1%" }}
+                                form={form}
+                                layout="vertical"
+                                initialValues={{
+                                    requiredMarkValue: requiredMark,
+                                }}
+                                onValuesChange={onRequiredTypeChange}
+                                requiredMark={requiredMark}
+                            >
+                                <Row justify={"center"}>
+                                    <Col style={{ width: "100%" }} >
+                                        <Row style={{ paddingTop: "1%" }}>
+                                            {
+                                                renderContentMobile()
+                                            }
+                                        </Row>
+                                    </Col>
+                                </Row>
+                            </Form>
+                        </Col>
+                    </Row>
+                    <Row justify={"space-between"} >
+                        <Col flex={"auto"} style={{ paddingTop: 5 }}>
+                            {
+                                !result?.completed && exam?.quiz && exam?.quiz.length > 0 ?
+                                    (
+                                        renderPageNav()
+                                    )
+                                    :
+                                    (
+                                        null
+                                    )
+                            }
+                        </Col>
+                    </Row>
+                </Col>
+            </Row>
 
-    )
+        )
+    }
+
+    const renderDoExam = () => {
+        if (isDesktopOrLaptop) return doExamPc()
+        if (isTabletOrMobile) return doExamMobile()
+    }
+
+    return renderDoExam()
+
 }
 
 export default DoExam;

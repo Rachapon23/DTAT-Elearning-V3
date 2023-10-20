@@ -1,19 +1,23 @@
 .header-home{
-  /* position: fixed;  wrong*/ 
+  position: fixed; 
   width: 100%;
   z-index: 1000;
-  background: rgba(159, 187, 246, 0.3);
+  background: rgba(159, 187, 246, 1);
 }
 .row-login{
     display: flex;
     justify-content: space-between;
 }
 .logo {
-  font-size: 2rem;
-  color: #fff;
-  background-color: transparent;
   display: flex;
+  justify-content: center;
   align-items: center;
+  /* width: fit-content; */
+  width: '-moz-fit-content';
+  height: 300%;
+  background-size: cover;
+  padding: 0 100px;
+  background-image: url("../../../../public/logo.png");
 }
 /* navbar */
 .row-navbar-role-home {

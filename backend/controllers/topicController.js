@@ -19,6 +19,7 @@ exports.createTopic = async (req, res) => {
 // GET: /list-topic
 exports.listTopic = async (req, res) => {
   try {
+    console.log("resss: ", req.body)
     switch (req?.user?.role) {
       case "admin":
       case "teacher":

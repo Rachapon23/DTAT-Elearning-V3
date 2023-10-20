@@ -17,8 +17,12 @@ export const listUserRole = async (authtoken, role) =>
     });
 
 // GET: /list-plant
-export const listPlant = async () =>
-    await axios.get(process.env.REACT_APP_API + `/list-plant`);
+export const listPlant = async (authtoken) =>
+    await axios.get(process.env.REACT_APP_API + `/list-plant`, {
+        headers: {
+            authtoken,
+        }
+    });
 
 // POST: /create-plant
 export const createPlant = async (authtoken, data) =>

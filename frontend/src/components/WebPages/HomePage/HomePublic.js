@@ -7,6 +7,7 @@ import Auth from "../Navbar/Auth";
 import { useNavigate } from "react-router-dom";
 import { NavbarContext } from "../Navbar/NavbarContext";
 import { NavbarProvider } from "../Navbar/NavbarContext";
+import { useMediaQuery } from "react-responsive";
 
 const GROUP_NUMBER = 3
 const DEFAULT_DATA = {
@@ -15,9 +16,19 @@ const DEFAULT_DATA = {
   name: "No course available",
 }
 
-const arrayTemplate = new Array(6).fill(false)
+const arrayTemplate = new Array(10).fill(false)
 
 const HomePublic = () => {
+
+  const isDesktopOrLaptop = useMediaQuery({ query: '(min-width: 1224px)' })
+  const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+  const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+  const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
+  const isScreenCondition1 = useMediaQuery({ query: '(min-width: 1300px)' })
+  const isScreenCondition2 = useMediaQuery({ query: '(min-width: 1500px)' })
+
   const {
     isModalOpenAuth,
     setIsModalOpenAuth,
@@ -73,19 +84,26 @@ const HomePublic = () => {
     setIsModalOpenAuth(false);
   };
 
-  const renderContent = (index) => {
+  const homePublicPc = (index) => {
     if (index % GROUP_NUMBER !== 0) return null
 
+    let width = 250
+    if (isBigScreen) width = 420
+    else if (isScreenCondition2) width = 340
+    else if (isScreenCondition1) width = 290
+
+
     return (
-      <div className="row-content">
+      <div key={`${index}-pc`} className="row-content">
         {
           coursePublic.length > 0 ?
             (
-              coursePublic.slice(index, index + GROUP_NUMBER).map((data) => (
-                <Col span={6} >
+              coursePublic.slice(index, index + GROUP_NUMBER).map((data, index) => (
+                <Col key={`${index}-empty-pc`} span={6} >
                   <div className="col-content">
                     <CardCourse
                       onClick={(e) => handleClickCourse(e, data)}
+                      width={width}
                       data={{
                         name: data?.name,
                         detail: data?.detail,
@@ -98,8 +116,8 @@ const HomePublic = () => {
             )
             :
             (
-              arrayTemplate.slice(index, index + GROUP_NUMBER).map(() => (
-                <Row>
+              arrayTemplate.slice(index, index + GROUP_NUMBER).map((_, index) => (
+                <Row key={`${index}-empty-pc`}>
                   <div className="col-content">
                     <CardCourse data={DEFAULT_DATA} />
                   </div>
@@ -112,36 +130,100 @@ const HomePublic = () => {
 
   }
 
+  const homePublicMobile = (index) => {
+    if (index % GROUP_NUMBER !== 0) return null
+
+    return (
+      <div key={`${index}-mobile`} className="row-content">
+        {
+          coursePublic.length > 0 ?
+            (
+              <div style={{ overflowX: 'scroll', width: '80%', height: '100%' }}>
+                <div style={{ display: 'flex', alignContent: 'baseline' }}>
+                  {
+                    coursePublic.map((data, index) => (
+                      <div key={`${index}-empty-mobile`} className="col-content" style={{ paddingRight: 20 }}>
+                        <CardCourse
+                          onClick={(e) => handleClickCourse(e, data)}
+                          data={{
+                            name: data?.name,
+                            detail: data?.detail,
+                            image: data?.image?.name
+                          }}
+                        />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+
+            )
+            :
+            (
+              <div style={{ overflowX: 'scroll', width: '80%', height: '100%' }}>
+                <div style={{ display: 'flex', alignContent: 'baseline' }}>
+                  {
+                    arrayTemplate.map((_, index) => (
+                      <div key={`${index}-empty-mobile`} className="col-content" style={{ paddingRight: 20 }}>
+                        <CardCourse data={DEFAULT_DATA} />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            )
+        }
+      </div>
+    )
+
+  }
+
+  const renderHomePublic = (index) => {
+    if (isDesktopOrLaptop) {
+      return homePublicPc(index)
+    }
+    if (isTabletOrMobile) {
+      return homePublicMobile(index)
+    }
+  }
+
   return (
     <div className="content-course">
       <div className="title-content">
         <p className="title-1">Public Course</p>
-        <p className="title-2">
+        {/* <p className="title-2" style={{ paddingInline: 10 }}>
           It is a long established fact that a reader will be distracted by the
           readable content of a page when looking at its layout.
-        </p>
+        </p> */}
       </div>
       <div className="">
         <div className="row-content">
           {
             coursePublic.length > 0 ?
               (
-                coursePublic.map((_, index) => (
-                  renderContent(index)
-                ))
+                isDesktopOrLaptop ?
+                  (
+                    coursePublic.map((_, index) => (
+                      renderHomePublic(index)
+                    ))
+                  )
+                  :
+                  (
+                    [false].map((_, index) => (
+                      renderHomePublic(index)
+                    ))
+                  )
               )
               :
               (
-                arrayTemplate.map((_, index) => (
-                  renderContent(index)
+                [false].map((_, index) => (
+                  renderHomePublic(index)
                 ))
               )
           }
         </div>
       </div>
-      {/* <div className="btn-navigate">
-        <button className="btn-show-more">Show More</button>
-      </div> */}
+
       <Modal
         className="modal-ant"
         style={{
@@ -157,7 +239,7 @@ const HomePublic = () => {
         footer={[]}
         mask={false}
       >
-        <Row justify={"center"} style={{paddingTop: "30px"}}>
+        <Row justify={"center"} style={{ paddingTop: "30px" }}>
           <Col flex={"auto"}>
             <Auth />
           </Col>

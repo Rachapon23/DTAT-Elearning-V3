@@ -29,7 +29,7 @@ import { NavbarProvider } from "../../../Navbar/NavbarContext";
 const { Header, Sider, Content } = Layout;
 const { Title, Text } = Typography
 const Course = () => {
-  
+
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate()
   function getItem(label, key, icon, children, type) {
@@ -57,44 +57,17 @@ const Course = () => {
     getItem("Calendar", "calendar", <CalendarOutlined />),
   ];
 
-  const redirect = (e) =>{
+  const redirect = (e) => {
     console.log(e)
-    if(e !== "create"){
+    if (e !== "create") {
       navigate(`/teacher/page/${e}`)
     }
   }
 
   return (
-    <Layout className="layout-teacher">
-      <Sider
-        className="sider-teacher"
-        collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
-      >
-        <div className="logo-teacher d-flex justify-content-center my-3">
-          <img alt="iconTeacher" style={{ width: "75%" }} src="/Teacher.png" />
-        </div>
-        <Menu
-          onClick={(e) => redirect(e.key)}
-          className="menu-teacher"
-          mode="inline"
-          defaultSelectedKeys={["create"]}
-          // selectedKeys={[`${params}`]}
-          items={items}
-        />
-      </Sider>
-      <Layout className="site-layout-teacher">
-      <NavbarProvider>
-          <Navbar />
-        </NavbarProvider>
-        <Content className="contentTeacher">
-          <CourseProvider>
-            <Course_main />
-          </CourseProvider>
-        </Content>
-      </Layout>
-    </Layout>
+    <CourseProvider>
+      <Course_main />
+    </CourseProvider>
   );
 };
 

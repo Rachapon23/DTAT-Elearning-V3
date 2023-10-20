@@ -4,21 +4,33 @@ import {
   ScheduleOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
-import { Layout, theme } from "antd";
+import { Col, Layout, Row, theme } from "antd";
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import StudentHomePage from "./StudentHome/StudentHomePage";
 import DoExam from "./StudentExam/DoExam";
 import StudentCourse from "./StudentCourse/StudentCourse"
 import RegisterCourse from "./StudentCourse/RegisterCourse";
+// import "../HomePage/home.css";
 
 // for haeder or navbar
 import Navbar from "../Navbar/Navbar";
 import { NavbarProvider } from "../Navbar/NavbarContext";
+import { useMediaQuery } from "react-responsive";
+import { StudentPageProvider } from "./StudentPageContext";
 
 const { Content } = Layout;
 
 const App = () => {
+
+  const isDesktopOrLaptop = useMediaQuery({
+    query: '(min-width: 1224px)'
+  })
+  const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+  const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+  const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },
@@ -76,8 +88,6 @@ const App = () => {
         return (
           <RegisterCourse />
         )
-      // case 'preview-exam':
-      //   return <ExamCreate mode={"Preview"}/>;
       case "calendar":
         return <p className="success">Calendar</p>;
       default:
@@ -85,13 +95,31 @@ const App = () => {
     }
   }, [params]);
 
+  const stylePc = () => {
+    return { paddingTop: 60, paddingLeft: 50, paddingRight: 50 }
+  }
+
+  const styleMobile = () => {
+    return { paddingTop: 80, paddingBottom: 70 }
+  }
+
+  const renderStyle = () => {
+    if (isDesktopOrLaptop) return stylePc()
+    if (isTabletOrMobile) return styleMobile()
+  }
+
   return (
     <Layout className="layout-home">
       <NavbarProvider>
         <Navbar />
       </NavbarProvider>
-      <Content>{renderContent()}</Content>
+      <Content style={renderStyle()}>
+        <StudentPageProvider>
+          {renderContent()}
+        </StudentPageProvider>
+      </Content>
     </Layout>
+
   );
 };
 export default App;

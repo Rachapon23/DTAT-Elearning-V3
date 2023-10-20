@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const Multer = require("multer")
-const { app, express } = require("../server")
 const fs = require("fs")
 
 const allowedField = [
@@ -10,6 +9,34 @@ const allowedField = [
     "announce",
     "topic"
 ]
+
+exports.checkFileAccess = (req, res, next) => {
+    try {
+        const token = req.query.token
+        let invalid = null
+
+        if (!token) {
+            return res.status(401).json({ error: "No token, authorization denied" })
+        }
+
+        jwt.verify(token, process.env.JWT_CODE, (err, decoded) => {
+            if (err) {
+                invalid = err;
+                return res.status(401).json({ error: "Invalid token, authorization denied" })
+            }
+            if(!decoded.private_file_access) {
+                invalid = true
+                return res.status(403).json({ error: "Forbidden to access private file" })
+            }
+        })
+        if (invalid) return
+        next()
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).json({ error: "Unxpected error on check user" })
+    }
+}
 
 exports.checkUser = (req, res, next) => {
     try {
@@ -20,7 +47,7 @@ exports.checkUser = (req, res, next) => {
             return res.status(401).json({ error: "No token, authorization denied" })
         }
 
-        jwt.verify(token, "jwtSecret", (err, decoded) => {
+        jwt.verify(token, process.env.JWT_CODE, (err, decoded) => {
             if (err) {
                 invalid = err;
                 return res.status(401).json({ error: "Invalid token, authorization denied" })

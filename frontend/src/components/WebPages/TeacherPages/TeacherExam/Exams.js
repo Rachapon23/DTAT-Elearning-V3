@@ -321,9 +321,7 @@ const Exams = () => {
 
     return (
         <Layout className="layout-content-card">
-            {/* <NavBar page={"Exams"} /> */}
             <Row>
-                {/* <Col sm={2} /> */}
                 <Col flex="auto" style={{ display: "flex", justifyContent: "center" }}>
                     <Card className="card-shadow" title={myQuizesTitle()} style={{ maxWidth: "100%", }}>
                         <Row justify="space-between" style={{ marginBottom: "1%" }}>
@@ -359,8 +357,6 @@ const Exams = () => {
                         </Row>
                     </Card>
                 </Col>
-                {/* <Col sm={2} /> */}
-
             </Row>
         </Layout>
     )

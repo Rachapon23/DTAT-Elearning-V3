@@ -177,7 +177,7 @@ exports.validateQuery = (
                 return { success: false, code: 400, message: "This role does not exist in system", options: null }
         }
     }
-    
+
     // console.log(
     //     "SSSSSSSSSSSSSSSSSSSSSSSS",
     //     !NATIVE_OPTIONS?.student?.search ? searchParams : NATIVE_OPTIONS.student.search,
@@ -188,7 +188,7 @@ exports.validateQuery = (
     //     "xxxxxxxxxxxxxxxxxxxxxxxx",
     // )
 
-    
+
     // console.log("-->> ", !NATIVE_OPTIONS?.student?.search)
     // console.log("-->> ", fetchParams)
     // console.log("-->> ", subPropsParams)
@@ -346,3 +346,15 @@ function generateFetchs(fetch = "", allowed = [], adminBypass = false) {
     return { success: true, code: 200, message: null, data: arrayFetch.join(" ") }
 }
 
+exports.getDiffTimePeriod = (diff) => {
+    let milliseconds = Math.floor((diff % 1000) / 100)
+    let seconds = Math.floor((diff / 1000) % 60)
+    let minutes = Math.floor((diff / (1000 * 60)) % 60)
+    let hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
+
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+    return`${hours}:${minutes}:${seconds}.${milliseconds}`
+} 

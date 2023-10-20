@@ -6,6 +6,7 @@ const nodeMailer = require("nodemailer")
 const Role = require("../models/role")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const TimeUsage = require('../models/timeUsage')
 
 // POST: /register
 exports.register = async (req, res) => {
@@ -15,32 +16,35 @@ exports.register = async (req, res) => {
       employee,
       password,
       department,
-      email,
+      // email,
+      confirm,
       firstname,
       lastname,
       plant,
     } = req.body
 
+    // check password and confirm password are match
+    if (password !== confirm) return res.status(400).json({ error: "Password and confirm password not match" });
+
     // check if user already registered
     let user = await User.findOne({ employee })
     if (user) {
-      console.log(user)
       return res.status(400).json({ error: "User already exist already" });
     }
 
     // check user email will not duplicate with other
-    if (email.length > 0) {
-      const query_email = await User.findOne({ email: email })
-      if (query_email) {
-        return res.status(400).json({ error: "This email has been used" });
-      }
-    }
+    // if (email.length > 0) {
+    //   const query_email = await User.findOne({ email: email })
+    //   if (query_email) {
+    //     return res.status(400).json({ error: "This email has been used" });
+    //   }
+    // }
 
     // create profile
     const profile = await new Profile({
       image: null,
       tel: null,
-      email: email,
+      email: null,
       target: 0,
     }).save();
 
@@ -49,7 +53,7 @@ exports.register = async (req, res) => {
       employee,
       password,
       department,
-      email,
+      email: null,
       firstname,
       lastname,
       plant,
@@ -80,7 +84,6 @@ exports.login = async (req, res) => {
     // extract data from request
     const { employee, password } = req.body;
 
-
     // find user
     var user = await User.findOneAndUpdate({ employee }, { new: true }).populate("role", "name -_id");
     if (user && user.enabled) {
@@ -89,6 +92,34 @@ exports.login = async (req, res) => {
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         return res.status(400).json({ error: "Password not match" });
+      }
+
+      // create TimeUsage if not exist
+      const timeUsage = await TimeUsage.findOne({ user: user._id })
+
+      const findDate = new Date().setHours(24, 0, 0, 0)
+      const logged_in_at = new Date()
+      const hasTimeUsage = await TimeUsage.findOne({ user: user._id, date: findDate })
+      if (!hasTimeUsage) {
+        await TimeUsage.create({
+          user: user._id,
+          date: findDate,
+          timeusage: [{
+            logged_in_at: logged_in_at,
+            diff: null,
+            used_time: null,
+          }]
+        })
+      }
+      else {
+        const length = timeUsage.timeusage?.length
+        timeUsage.timeusage[length] = {
+          logged_in_at: logged_in_at,
+          diff: null,
+          used_time: null,
+        }
+        timeUsage.markModified('timeusage')
+        timeUsage.save()
       }
 
       // create payload
@@ -100,11 +131,24 @@ exports.login = async (req, res) => {
         },
       };
 
+      // create private file token payload
+      const privateFilePayload = {
+        user: {
+          role: user.role.name,
+          user_id: user._id,
+        },
+        private_file_access: true,
+      }
+      const file_token = jwt.sign(privateFilePayload, process.env.JWT_CODE, { expiresIn: '1d' })
       // Generate Token Time_limit( 1 day )
       // JWT_CODE="jwtSecret"
       jwt.sign(payload, process.env.JWT_CODE, { expiresIn: '1d' }, (err, token) => {
         if (err) throw err;
-        return res.json({ token, payload });
+        return res.json({
+          token,
+          file_token,
+          payload
+        });
       });
     }
     else if (user && !user.enabled) {
@@ -164,7 +208,7 @@ exports.sendEmail = async (req, res) => {
         to: email,
         subject: 'Reseting your elearning password',
         html: `
-                <html>
+        < html >
                 <h1>Do not delete this email utill you reseted your password</h1>
                 <h1> Click the link below to link to reset password page <h1>
                 <a href="http://localhost:3000/reset-password/${token}"> click </a>

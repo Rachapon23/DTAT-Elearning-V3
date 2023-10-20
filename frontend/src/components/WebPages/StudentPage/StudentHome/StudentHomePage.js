@@ -1,21 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./studenthome.css";
-import { Button, Image, Table, Tabs } from "antd";
+import { Button, Card, Col, Empty, Image, Row, Space, Table, Tabs } from "antd";
 import Calendar from "../StudentCalendar/Calendar";
 import { listActivity } from "../../../../function/Student/course";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getExam } from "../../../../function/Teacher/exam";
 import BrowseCourse from "./BrowesCourse"
+import { HomeOutlined, HistoryOutlined, CalendarOutlined, SearchOutlined } from "@ant-design/icons"
+import { Grid, TabBar } from 'antd-mobile'
+import { ContentOutline } from 'antd-mobile-icons'
+import CardContent from "../../../common/ExamCard/CardContent";
+import CardCourse from "../../../common/CourseCard/CardCourse";
+import { useMediaQuery } from "react-responsive";
+import { StudentPageContext } from "../StudentPageContext";
+
 
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
 
 const StudentHomePage = () => {
+
+  const isDesktopOrLaptop = useMediaQuery({
+    query: '(min-width: 1224px)'
+  })
+  const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+  const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+  const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
   const location = useLocation()
   const navigate = useNavigate();
 
   const [courses, setCourses] = useState([]);
-  const [selectedTab] = useState(location?.state?.tabIndex ? location.state.tabIndex : 1)
-  const [changedTabIndex, setChangedTabIndex] = useState(1)
+  const [selectedTab] = useState(location?.state?.tabIndex ? location.state.tabIndex : 0)
+  const [changedTabIndex, setChangedTabIndex] = useState(0)
+
+  const {
+    currentPage,
+    setCurrentPage,
+  } = useContext(StudentPageContext);
 
   const handleNavigate = (navStr, dataStage) => {
     navigate(navStr, { state: dataStage });
@@ -236,10 +258,10 @@ const StudentHomePage = () => {
     }
   };
 
-  const tabContent = (tab) => {
+  const tabContentPc = (tab) => {
     switch (tab) {
       case 0: return (
-        <div className="">
+        <div>
           <Table
             columns={columns("Course")}
             dataSource={courses.filter((item) => item.result === 0)}
@@ -253,8 +275,7 @@ const StudentHomePage = () => {
         </div>
       )
       case 1: return (
-        <div className="">
-
+        <div>
           <Table
             columns={columns("History")}
             dataSource={courses.filter((item) => item.result !== 0)}
@@ -281,42 +302,151 @@ const StudentHomePage = () => {
     }
   }
 
-  const tabList = [
+  const tabListPc = [
     {
-      key: '1',
+      key: '0',
       label: (
         <a className="label-home-st" htmlFor="">
           My Course
         </a>
       ),
-      children: tabContent(0),
+      children: tabContentPc(0),
     },
     {
-      key: '2',
+      key: '1',
       label: (
         <a htmlFor="" className="label-home-st">
           My History
         </a>
       ),
-      children: tabContent(1),
+      children: tabContentPc(1),
     },
     {
-      key: '3',
+      key: '2',
       label: (
         <a htmlFor="" className="label-home-st">
           Calendar
         </a>
       ),
-      children: tabContent(2),
+      children: tabContentPc(2),
     },
     {
-      key: '4',
+      key: '3',
       label: (
         <a htmlFor="" className="label-home-st">
           Browse Courses
         </a>
       ),
-      children: tabContent(3),
+      children: tabContentPc(3),
+    }
+  ]
+
+  const tabContentMobile = (tab) => {
+
+    switch (tab) {
+      case 0: return (
+        <Row justify={'center'}>
+          <Col style={{ width: '5%', }} />
+          <Col style={{ width: '90%', }}>
+            <Row justify={'center'}>
+              {
+                courses.filter((item) => item.result === 0).map((mitem) => (
+                  <Col style={{ paddingBottom: 10, paddingInline: 5, }} onClick={() => navigate(`/student/page/course/${mitem.course?._id}`)}>
+                    {/* {JSON.stringify(mitem.course?.activity)} */}
+                    <CardCourse
+                      data={{
+                        _id: mitem.course?._id,
+                        name: mitem.course?.name,
+                        detail: mitem.course?.type ? "Public" : "Private",
+                        image: mitem.course?.image?.name
+                          ? `${process.env.REACT_APP_IMG}/course/${mitem?.course?.image?.name}`
+                          : DEFAULT_IMAGE,
+                      }}
+                      width={300}
+                    />
+                  </Col>
+                ))
+              }
+            </Row>
+          </Col>
+          <Col style={{ width: '5%', }} />
+        </Row>
+
+      )
+      case 1: return (
+        <div className="">
+          <Row justify={'center'}>
+            {
+              Array.isArray(courses) && courses.filter((item) => item.result !== 0).length !== 0 ?
+                (
+                  courses.filter((item) => item.result !== 0).map((mitem) => (
+                    <Col style={{ paddingBottom: 10 }}>
+                      <CardCourse
+                        data={{
+                          _id: mitem.course?._id,
+                          name: mitem.course?.name,
+                          detail: mitem.course?.type ? "Public" : "Private",
+                          image: mitem.course?.image?.name
+                            ? `${process.env.REACT_APP_IMG}/course/${mitem?.course?.image?.name}`
+                            : DEFAULT_IMAGE,
+                        }}
+                        width={300}
+                      />
+                    </Col>
+                  )
+                  )
+                )
+                :
+                (
+                  <Col >
+                    <Card style={{ padding: 100, }}>
+                      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                    </Card>
+                  </Col>
+                )
+
+            }
+          </Row>
+        </div>
+      )
+      case 2: return (
+        <div className="">
+          <Calendar />
+        </div>
+      )
+      case 3: return (
+        <div className="">
+          <BrowseCourse />
+        </div>
+      )
+      default: return null
+    }
+  }
+
+  const tabListMobile = [
+    {
+      key: '0',
+      label: <div style={{ paddingTop: 10, fontSize: '120%' }}>My Course</div>,
+      icon: (<HomeOutlined />),
+      children: tabContentMobile(0),
+    },
+    {
+      key: '1',
+      label: <div style={{ paddingTop: 10, fontSize: '120%' }}>My History</div>,
+      icon: (<HistoryOutlined />),
+      children: tabContentMobile(1),
+    },
+    {
+      key: '2',
+      label: <div style={{ paddingTop: 10, fontSize: '120%' }}>Calendar</div>,
+      icon: (<CalendarOutlined />),
+      children: tabContentMobile(2),
+    },
+    {
+      key: '3',
+      label: <div style={{ paddingTop: 10, fontSize: '120%' }}>Browse Courses</div>,
+      icon: (<SearchOutlined />),
+      children: tabContentMobile(3),
     }
   ]
 
@@ -359,23 +489,78 @@ const StudentHomePage = () => {
 
   useEffect(() => {
     fetchActivity();
-  }, []);
+  }, [changedTabIndex]);
 
   const updateTabIndex = (index) => {
-    setChangedTabIndex(index)
+    console.log("click: ", index)
+    setChangedTabIndex(() => index)
+    setCurrentPage(index)
   }
 
-  return (
-    <div className="bg-st-course">
-      <div className="content-home">
-        <Tabs
-          defaultActiveKey={`${selectedTab}`}
-          onChange={updateTabIndex}
-          items={tabList}
-        />
+  const studentHomePc = () => {
+    return (
+      <div >
+        <div className="content-home">
+          <Tabs
+            defaultActiveKey={`${currentPage}`}
+            onChange={updateTabIndex}
+            items={tabListPc}
+          />
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  const calculatePage = () => {
+    if (currentPage - 1 < 0) return 0
+    if (currentPage - 1 === 0) return 1
+    return currentPage
+  }
+
+  const studentHomeMobile = () => {
+    return (
+      <div >
+        <div >
+          <Grid columns={1} >
+            <Grid.Item>
+              <Grid columns={1}>
+                <Row justify={'center'}>
+                  {tabListMobile[calculatePage()]?.children}
+                </Row>
+                {/* <Row style={{ height: '100%' }} /> */}
+                <Row justify={'center'} style={{ position: 'fixed', width: '100%', background: 'rgba(255, 255, 255, 1)', zIndex: 1000, bottom: 0, left: 0 }}>
+                  <TabBar
+                    defaultActiveKey={`${currentPage}`}
+                    onChange={updateTabIndex}
+                    items={tabListMobile}
+                  >
+                    {
+                      tabListMobile.map((item, index) => (
+                        <TabBar.Item style={{ paddingLeft: 23 }} key={index} icon={item.icon} title={item.label} />
+                      ))
+                    }
+                  </TabBar>
+                </Row>
+              </Grid>
+            </Grid.Item>
+          </Grid>
+        </div>
+      </div>
+    )
+  }
+
+  const renderStudentHome = () => {
+    if (isDesktopOrLaptop) {
+      return studentHomePc()
+    }
+    if (isTabletOrMobile) {
+      return studentHomeMobile()
+    }
+  }
+
+  return renderStudentHome()
+
+
 };
 
 export default StudentHomePage;

@@ -5,6 +5,7 @@ import { Col, Modal, Row } from "antd";
 import { HomeContext } from './HomeContext';
 import { useNavigate } from 'react-router-dom';
 import Auth from "../Navbar/Auth";
+import { useMediaQuery } from 'react-responsive';
 
 const GROUP_NUMBER = 3
 const DEFAULT_DATA = {
@@ -16,6 +17,15 @@ const DEFAULT_DATA = {
 const arrayTemplate = new Array(6).fill(false)
 
 const HomePrivate = () => {
+
+  const isDesktopOrLaptop = useMediaQuery({ query: '(min-width: 1224px)' })
+  const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+  const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+  const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+
+  const isScreenCondition1 = useMediaQuery({ query: '(min-width: 1300px)' })
+  const isScreenCondition2 = useMediaQuery({ query: '(min-width: 1500px)' })
 
   const { coursePrivate } = useContext(HomeContext)
   const navigate = useNavigate()
@@ -63,19 +73,25 @@ const HomePrivate = () => {
     setOpen(false);
   };
 
-  const renderContent = (index) => {
+  const homePrivatePc = (index) => {
     if (index % GROUP_NUMBER !== 0) return null
 
+    let width = 250
+    if (isBigScreen) width = 420
+    else if (isScreenCondition2) width = 340
+    else if (isScreenCondition1) width = 290
+
     return (
-      <div className="row-content">
+      <div key={`${index}-pc`} className="row-content">
         {
           coursePrivate.length > 0 ?
             (
-              coursePrivate.slice(index, index + GROUP_NUMBER).map((data) => (
-                <Col span={6} >
+              coursePrivate.slice(index, index + GROUP_NUMBER).map((data, index) => (
+                <Col key={`${index}-data-pc`} span={6} >
                   <div className="col-content">
                     <CardCourse
                       onClick={(e) => handleClickCourse(e, data)}
+                      width={width}
                       data={{
                         name: data?.name,
                         detail: data?.detail,
@@ -89,7 +105,7 @@ const HomePrivate = () => {
             :
             (
               arrayTemplate.slice(index, index + GROUP_NUMBER).map(() => (
-                <div className="col-content">
+                <div key={`${index}-empty-mobile`} className="col-content">
                   <CardCourse data={DEFAULT_DATA} />
                 </div>
               ))
@@ -100,36 +116,99 @@ const HomePrivate = () => {
 
   }
 
+  const homePrivateMobile = (index) => {
+    // if (index % GROUP_NUMBER !== 0) return null
+
+    return (
+      <div key={`${index}-mobile`} className="row-content">
+        {
+          coursePrivate.length > 0 ?
+            (
+              <div style={{ overflowX: 'scroll', width: '80%', height: '100%' }}>
+                <div style={{ display: 'flex', alignContent: 'baseline' }}>
+                  {
+                    coursePrivate.map((data, index) => (
+                      <div key={`${index}-data-mobile`} className="col-content" style={{ paddingRight: 20 }}>
+                        <CardCourse
+                          onClick={(e) => handleClickCourse(e, data)}
+                          data={{
+                            name: data?.name,
+                            detail: data?.detail,
+                            image: data?.image?.name
+                          }}
+                        />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+
+            )
+            :
+            (
+              <div style={{ overflowX: 'scroll', width: '80%', height: '100%' }}>
+                <div style={{ display: 'flex', alignContent: 'baseline' }}>
+                  {
+                    arrayTemplate.map((_, index) => (
+                      <div key={`${index}-empty-mobile`} className="col-content" style={{ paddingRight: 20 }}>
+                        <CardCourse data={DEFAULT_DATA} />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            )
+        }
+      </div>
+    )
+  }
+
+  const renderHomePrivate = (index) => {
+    if (isDesktopOrLaptop) {
+      return homePrivatePc(index)
+    }
+    if (isTabletOrMobile) {
+      return homePrivateMobile(index)
+    }
+  }
+
   return (
     <div className="content-course">
       <div className="title-content">
         <p className="title-1">Private Course</p>
-        <p className="title-2">
+        {/* <p className="title-2" style={{ paddingInline: 10 }}>
           It is a long established fact that a reader will be distracted by the
           readable content of a page when looking at its layout.
-        </p>
+        </p> */}
       </div>
       <div className="">
         <div className="row-content">
           {
             coursePrivate.length > 0 ?
               (
-                coursePrivate.map((_, index) => (
-                  renderContent(index)
-                ))
+                isDesktopOrLaptop ?
+                  (
+                    coursePrivate.map((_, index) => (
+                      renderHomePrivate(index)
+                    ))
+                  )
+                  :
+                  (
+                    [false].map((_, index) => (
+                      renderHomePrivate(index)
+                    ))
+                  )
               )
               :
               (
-                arrayTemplate.map((_, index) => (
-                  renderContent(index)
+                [false].map((_, index) => (
+                  renderHomePrivate(index)
                 ))
               )
           }
         </div>
       </div>
-      {/* <div className="btn-navigate">
-        <button className="btn-show-more">Show More</button>
-      </div> */}
+
       <Modal
         className="modal-ant"
         style={{
@@ -145,7 +224,7 @@ const HomePrivate = () => {
         footer={[]}
         mask={false}
       >
-        <Auth/>
+        <Auth />
       </Modal>
     </div>
   )

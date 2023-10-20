@@ -30,6 +30,7 @@ import Calendar from "./TeacherCalendar/Calendar";
 // for haeder or navbar
 import Navbar from "../Navbar/Navbar";
 import { NavbarProvider } from "../Navbar/NavbarContext";
+import Course from "./TeacherCourse/CourseManage/Course";
 
 const { Sider, Content } = Layout;
 const { Title, Text } = Typography;
@@ -173,6 +174,8 @@ const App = () => {
             <Courses />
           </TeacherCourseProvider>
         );
+      case "create-course":
+        return <Course />
       case "list-exam":
         return <Exames />;
       case "create-exam":
@@ -196,29 +199,34 @@ const App = () => {
 
   return (
     <Layout className="layout-teacher">
-      <Sider
-        className="sider-teacher"
-        collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
-      >
-        <div className="logo-teacher d-flex justify-content-center my-3">
-          <img alt="iconTeacher" style={{ width: "75%" }} src="/Teacher.png" />
-        </div>
-        <Menu
-          onClick={(e) => navigate(`/teacher/page/${e.key}`)}
-          className="menu-teacher"
-          mode="inline"
-          //   defaultSelectedKeys={["create"]}
-          // selectedKeys={[`${params}`]}
-          items={items}
-        />
-      </Sider>
       <Layout className="site-layout-teacher">
-        <NavbarProvider>
-          <Navbar />
-        </NavbarProvider>
-        <Content className="contentTeacher">{renderContent()}</Content>
+        <Row>
+          <Col style={{ zIndex: 1001 }}>
+            <Sider
+              style={{ height: '100%' }}
+              className="sider-teacher"
+              collapsible
+              collapsed={collapsed}
+              onCollapse={(value) => setCollapsed(value)}
+            >
+              <div className="logo-teacher d-flex justify-content-center my-3">
+                <img alt="iconTeacher" style={{ width: "75%" }} src="/Teacher.png" />
+              </div>
+              <Menu
+                onClick={(e) => navigate(`/teacher/page/${e.key}`)}
+                className="menu-teacher"
+                mode="inline"
+                items={items}
+              />
+            </Sider>
+          </Col>
+          <NavbarProvider>
+            <Navbar />
+          </NavbarProvider>
+        </Row>
+        <Content className="contentTeacher" style={{ paddingTop: 50 }}>
+          {renderContent()}
+        </Content>
       </Layout>
     </Layout>
   );

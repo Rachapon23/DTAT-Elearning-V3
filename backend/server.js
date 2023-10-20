@@ -4,6 +4,7 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const { readdirSync } = require('fs')
 const { loadData } = require("./mock/_loader")
+const { checkUser, checkFileAccess } = require('./middleware/middleware')
 
 require('dotenv').config()
 
@@ -12,6 +13,13 @@ module.exports = { app, express }
 
 // Static file for displat image
 app.use(express.static('public'))
+app.use('/uploads/:path', checkFileAccess,
+    (req, res, next) => {
+        req.url = `/uploads/${req.params.path}/${req.query.file}`;
+        express.static(`./private`)(req, res, next)
+    }
+)
+
 
 //connect cloud Database
 mongoose.connect(process.env.DATABASE2, {
@@ -23,7 +31,7 @@ mongoose.connect(process.env.DATABASE2, {
     .catch((err) => console.log("Connect DataBase error!!! :" + err))
 
 // data first load when start server
-loadData()
+// loadData()
 
 
 //midleware

@@ -16,33 +16,31 @@ import {
   UserOutlined,
   SolutionOutlined,
 } from "@ant-design/icons";
-import { listPlant, listDepartment, register } from "../../../function/auth";
-import { NavbarContext } from "./NavbarContext";
+import {
+  listPlant,
+  // listDepartment,
+  register,
+} from "../../../../function/auth";
+import { useForm } from "antd/es/form/Form";
+// import { NavbarContext } from "./NavbarContext";
 
 const { Link, Title } = Typography;
 const { Option } = Select;
 
-const Form_register = ({ setStatus, }) => {
-  const [departments, setDepartments] = useState([]);
+const AdminRegisterUserModal = ({ onChange }) => {
+  // const [departments, setDepartments] = useState([]);
   const [plants, setPlants] = useState([]);
   const [valueRegister, setValueRegister] = useState({
     employee: null,
-    // department: null,
     password: null,
     confirm: null,
-    // email: null,
     plant: null,
     firstname: null,
     lastname: null
   })
-  const {
-    isModalOpenAuth,
-    setIsModalOpenAuth,
-    showModalAuth,
-    handleOkAuth,
-    handleCancelAuth,
-  } = useContext(NavbarContext);
+
   const [messageApi, notifyContextHolder] = message.useMessage();
+  const [form] = Form.useForm()
 
   const notify = (type, message) => {
     //type success / error / warning
@@ -59,9 +57,9 @@ const Form_register = ({ setStatus, }) => {
   const handleSelectPlant = (e) => {
     setValueRegister({ ...valueRegister, 'plant': e });
   };
-  const handleSelectDepartment = (e) => {
-    setValueRegister({ ...valueRegister, 'department': e });
-  };
+  // const handleSelectDepartment = (e) => {
+  //   setValueRegister({ ...valueRegister, 'department': e });
+  // };
 
   // const fetchDepartment = async () => {
   //   await listDepartment()
@@ -90,61 +88,48 @@ const Form_register = ({ setStatus, }) => {
     fetchPlant();
   }, []);
 
-
-  const [modal, contextHolder] = Modal.useModal();
-  const countDown = () => {
-    let secondsToGo = 5;
-    const instance = modal.success({
-      title: 'Notify',
-      content: `Register Success`,
-    });
-    const timer = setInterval(() => {
-      secondsToGo -= 1;
-      instance.update({
-        content: `Register Success`,
-      });
-    }, 1000);
-    setTimeout(() => {
-      clearInterval(timer);
-      instance.destroy();
-    }, secondsToGo * 1000);
-  };
-
   const onRegister = async () => {
-    for (let key in valueRegister) {
-      if (!valueRegister[key]) return
+
+    try {
+      await form.validateFields()
+      for (let key in valueRegister) {
+        if (!valueRegister[key]) return
+      }
     }
-    await register(valueRegister)
+    catch (e) {
+      if (e?.errorFields?.length > 0) return
+    }
+
+
+
+    await register(sessionStorage.getItem("token"), valueRegister)
       .then((res) => {
-        // console.log(res.data)
-        setIsModalOpenAuth(false)
-        countDown()
+        onChange()
+        notify("success", res.data.data)
+        form.resetFields()
       })
       .catch((err) => {
         const error = err.response
-        console.log(`<${error.status}> ${error.data.error}`)
         notify("error", error.data.error)
 
       })
   };
 
   return (
-    <>
+    <Form form={form}>
       <Row
         justify={"center"}
         style={{ paddingBottom: "10px", marginTop: "-20px" }}
       >
-        <Title style={{ fontSize: "200%" }}>Registeration</Title>
+        <Title style={{ fontSize: "200%" }}> Registeration </Title>
       </Row>
       {notifyContextHolder}
-      {contextHolder}
-      {/* name="employee" */}
       <Form.Item
         name="employee"
         rules={[
           {
             required: true,
-            message: "Please input your Employee ID",
+            message: "Please enter Employee ID",
           },
         ]}
       >
@@ -156,35 +141,12 @@ const Form_register = ({ setStatus, }) => {
         />
       </Form.Item>
 
-      {/* name="department" */}
-      {/* <Form.Item
-        rules={[
-          {
-            required: true,
-            message: "Please select a Department",
-          },
-        ]}
-      >
-        <Select placeholder="Please select a Department"
-          onChange={handleSelectDepartment}
-        >
-          {departments.map((department) => (
-            <Option key={department._id} value={department._id}>
-              {" "}
-              {department.id}{" "}
-            </Option>
-          ))}
-        </Select>
-      </Form.Item> */}
-
-      {/* name="password" */}
-
       <Form.Item
         name="password"
         rules={[
           {
             required: true,
-            message: "Please input your Password",
+            message: "Please enter Password",
           },
         ]}
       >
@@ -196,14 +158,23 @@ const Form_register = ({ setStatus, }) => {
         />
       </Form.Item>
 
-      {/* name="confirm" */}
       <Form.Item
         name="confirm"
+        dependencies={['password']}
+        // validateTrigger="onBlur"
         rules={[
           {
             required: true,
             message: "Please Confirm Password",
           },
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              if (!value || getFieldValue('password') === value) {
+                return Promise.resolve();
+              }
+              return Promise.reject(new Error('Confirm password do not match with Password'));
+            },
+          }),
         ]}
       >
         <Input.Password
@@ -214,24 +185,6 @@ const Form_register = ({ setStatus, }) => {
         />
       </Form.Item>
 
-      {/* name="email" */}
-      {/* <Form.Item
-        rules={[
-          {
-            required: true,
-            message: "Please input your Email",
-          },
-        ]}
-      >
-        <Input
-          name="email"
-          prefix={<MailOutlined />}
-          placeholder="Email"
-          onChange={handleInput}
-        />
-      </Form.Item> */}
-
-      {/* name="plant" */}
       <Form.Item
         name="plant"
         rules={[
@@ -245,21 +198,22 @@ const Form_register = ({ setStatus, }) => {
           placeholder="Please select a Plant"
           onChange={handleSelectPlant}
         >
-          {plants.map((plant) => (
-            <Option key={plant._id} value={plant._id}>
-              {" "}{plant.name}{" "}
-            </Option>
-          ))}
+          {
+            plants.map((plant) => (
+              <Option key={plant._id} value={plant._id}>
+                {" "}{plant.name}{" "}
+              </Option>
+            ))
+          }
         </Select>
       </Form.Item>
 
-      {/* name="firstname" */}
       <Form.Item
         name="firstname"
         rules={[
           {
             required: true,
-            message: "Please input your First Name",
+            message: "Please enter First Name",
           },
         ]}
       >
@@ -271,13 +225,12 @@ const Form_register = ({ setStatus, }) => {
         />
       </Form.Item>
 
-      {/* name="lastname" */}
       <Form.Item
         name="lastname"
         rules={[
           {
             required: true,
-            message: "Please input your Last Name",
+            message: "Please enter Last Name",
           },
         ]}
       >
@@ -289,33 +242,28 @@ const Form_register = ({ setStatus, }) => {
         />
       </Form.Item>
 
-      <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          block
-          onClick={onRegister}
-        >
-          Register
-        </Button>
-      </Form.Item>
-      <Form.Item>
-        <Row justify={"center"}>
-          <Col>
-            <p>Don't have an account ?</p>
-          </Col>
-          <Col>
-            <Link
-              style={{ marginLeft: "10px" }}
-              onClick={() => setStatus(true)}
-            >
-              Login
-            </Link>
-          </Col>
-        </Row>
-      </Form.Item>
-    </>
+      <Row justify={'space-between'}>
+        <Col>
+          <Button
+            block
+            onClick={() => form.resetFields()}
+          >
+            Clear
+          </Button>
+        </Col>
+        <Col>
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            onClick={onRegister}
+          >
+            Register
+          </Button>
+        </Col>
+      </Row>
+    </Form>
   );
 };
 
-export default Form_register;
+export default AdminRegisterUserModal;

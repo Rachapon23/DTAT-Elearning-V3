@@ -50,7 +50,7 @@ exports.getHome = async (req, res) => {
         // if(fetch) fetch.replace(",", " ")
 
         const dataBaseAnnounce = await Home.findOne({}).populate(`course_public course_private`, `image name detail`).select(`-_id`)//.populate(`${fetch}`)
-        console.log(dataBaseAnnounce)
+        // console.log(dataBaseAnnounce)
         if (dataBaseAnnounce) {
             return res.status(200).json({ data: dataBaseAnnounce })
         }
