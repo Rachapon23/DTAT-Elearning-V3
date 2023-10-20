@@ -27,6 +27,7 @@ import AdminManageHome from "./AdminManageHome/AdminManageHome";
 import AdminListUser from "./AdminListUser/AdminListUser";
 import AdminManageTeacher from "./AdminManageTeacher/AdminManageTeacher";
 import AdminManageStudent from "./AdminManageStudent/AdminManageStudent";
+import AdminRegisterUser from "./AdminRegisterUser/AdminRegisterUser";
 
 import { AdminProvider } from "./AdminManageHome/AdminManageContext";
 
@@ -153,6 +154,7 @@ const App = () => {
       getItem("Public Course", "public-course"),
       getItem("Private Course", "private-course"),
     ]),
+    getItem("Register User", "registeruser", <CalendarOutlined />),
     getItem("List User", "listuser", <HomeOutlined />),
     getItem("Manage Teacher", "manageteacher", <HomeOutlined />),
     getItem("Manage Student", "managestudent", <CalendarOutlined />),
@@ -188,8 +190,8 @@ const App = () => {
         return <AdminManageTeacher />;
       case "managestudent":
         return <AdminManageStudent />;
-      // case 'calendar':
-      //   return <p className="success">Calendar</p>;
+      case 'registeruser':
+        return <AdminRegisterUser />;
       default:
         return <p className="success">404 not found ... </p>;
     }

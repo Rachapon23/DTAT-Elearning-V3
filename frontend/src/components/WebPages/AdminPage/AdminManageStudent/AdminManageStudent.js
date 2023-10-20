@@ -75,11 +75,11 @@ const AdminManageStudent = () => {
       align: "center",
       render: (data) => data?.plant?.name,
     },
-    {
-      title: `Department ID`,
-      align: "center",
-      render: (data) => data?.department?.id,
-    },
+    // {
+    //   title: `Department ID`,
+    //   align: "center",
+    //   render: (data) => data?.department?.id,
+    // },
     {
       title: `Employee ID`,
       align: "center",

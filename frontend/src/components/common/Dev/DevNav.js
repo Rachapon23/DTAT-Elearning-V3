@@ -7,8 +7,10 @@ import { checkRole } from '../../../function/auth';
 const DevNav = () => {
     const navigate = useNavigate()
     const [status, setStatus] = useState(null);
+    const [hasToken] = useState(sessionStorage?.getItem("token"));
 
     const CheckAdmin = async () => {
+        if (!hasToken) return
         await checkRole(sessionStorage.getItem("token"))
             .then((res) => {
                 const data = res.data.data
@@ -47,7 +49,7 @@ const DevNav = () => {
 
     useEffect(() => {
         CheckAdmin()
-    }, [status, sessionStorage.getItem("token")])
+    }, [status, hasToken])
     return renderPage()
 }
 

@@ -12,7 +12,8 @@ import { createTopic } from "../../../../../function/Teacher/course_topic";
 export const CourseContext = createContext();
 
 export const CourseProvider = ({ children }) => {
-  const { course_id } = useParams();
+  const { id } = useParams();
+  const course_id = id;
   const [courseData, setCourseData] = useState({});
   const [even, setEven] = useState([]);
 

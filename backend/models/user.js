@@ -21,10 +21,20 @@ const UserSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-    }, 
+    },
     enabled: {
         type: Boolean,
         default: true,
+    },
+    timeusage: {
+        last_use: {
+            type: Number,
+            default: 0
+        },
+        used_time: {
+            type: String,
+            default: null
+        }
     },
     profile: {
         type: ObjectId,

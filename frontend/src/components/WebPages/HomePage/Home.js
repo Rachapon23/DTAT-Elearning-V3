@@ -112,10 +112,10 @@ const Home = () => {
                       <Row justify={'center'}>
                         <Grid.Item >
                           <Col flex={'auto'} style={{ padding: 30, marginBottom: -30 }}>
-                            <p className="title-1-mobile">
+                            <div className="title-1-mobile">
                               <Title level={titleLevel1} style={{ color: "#14347d" }}>DENSO</Title>
                               <Title level={titleLevel1} style={{ marginTop: -10, color: "#14347d" }}>Training Academy Thailand</Title>
-                            </p>
+                            </div>
                             <Row>
                               <Title level={titleLevel2}>"Unlock Konwledge Anytime, Anywhere"</Title>
                             </Row>

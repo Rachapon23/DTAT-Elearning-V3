@@ -53,7 +53,7 @@ const HomeAnnounce = ({ preview = false }) => {
                 announce.length > 0 ?
                   (
                     announce.map((item, index) => (
-                      <Row justify={'center'} align={'middle'}>
+                      <Row key={index} justify={'center'} align={'middle'}>
                         <Col flex={"auto"}>
                           {
                             imageLoaded ?
@@ -100,7 +100,7 @@ const HomeAnnounce = ({ preview = false }) => {
               announce.length > 0 ?
                 (
                   announce.map((item, index) => (
-                    <Row >
+                    <Row key={index} >
                       <Col>
                         {
                           imageLoaded ?

@@ -154,7 +154,7 @@ const Courses = () => {
       render: (data) => {
         const index = courses.indexOf(data);
         return (
-          <Link to={`/teacher/course/${courses[index]?._id}`}>
+          <Link to={`/teacher/page/create-course/${courses[index]?._id}`}>
             <Button>
               <EditOutlined />
             </Button>
@@ -260,7 +260,7 @@ const Courses = () => {
   const CreateCourseEmpty = () => {
     createCourse(sessionStorage.getItem("token"))
       .then((res) => {
-        navigate(`/teacher/course/${res.data.data._id}`);
+        navigate(`/teacher/page/create-course/${res.data.data._id}`);
         // console.log(res);
       })
       .catch((err) => {

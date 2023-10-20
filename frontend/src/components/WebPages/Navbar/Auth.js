@@ -21,7 +21,8 @@ const Auth = () => {
       {status ? (
         <Form_login setStatus={setStatus} />
       ) : (
-        <Form_register setStatus={setStatus} />
+        // <Form_register setStatus={setStatus} />
+        null
       )}
     </Form>
   );

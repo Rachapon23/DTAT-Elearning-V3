@@ -50,14 +50,14 @@ exports.getUser = async (req, res) => {
                     // fields: { data: "role"},
                     // fetchs: { data: "role"},
                     // selects: { data: "role"},
-                    search: { data: { _id: req?.params?.id }},
+                    search: { data: { _id: req?.params?.id } },
                     subPops: null,
                 },
                 student: {
                     // fields: { data: "role"},
                     // fetchs: { data: "role"},
                     // selects: { data: "role"},
-                    search: { data: { _id: req?.params?.id }},
+                    search: { data: { _id: req?.params?.id } },
                     // subPops: null,
                 }
             },
@@ -162,5 +162,48 @@ exports.updateUserEnabled = async (req, res) => {
     }
 }
 
+// PUT: /update-timeusage/:id
+exports.updateTimeusage = async (req, res) => {
+    try {
+        const id = req?.params?.id
+        const timeusage = req?.body?.timeusage
+        if (!id) return res.status(400).json({ error: "Request not in correct form" });
+        if (!timeusage) return res.status(400).json({ error: "Request not in correct form" });
+        const updated_user = await User.findOneAndUpdate(
+            { _id: id },
+            { timeusage: timeusage },
+            { new: true }
+        )
+        if (!updated_user) return res.status(404).json({ error: "User not found" });
+        return res.json({ data: "Saved time usage" });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Server Error!!! on save time usage" });
+    }
+}
 
+// DELETE: /remove-user/:id
+exports.removeUser = async (req, res) => {
+    try {
+        const id = req?.params?.id
+        if (!id) return res.status(400).json({ error: "Request not in correct form" });
+        const deletedUser = await User.findOne({ _id: id }).populate('role', 'name')
+        if (deletedUser.role.name === 'admin') {
+            return res.status(403).json({ error: "Cannot delete admin user" });
+        }
+        
+        if (!deletedUser) return res.status(404).json({ error: "User not found" });
+        const affected = await User.deleteOne({ _id: id })
+        if (affected.deletedCount === 1) {
+            return res.json({ data: 'Delete user success' });
+        }
+        return res.status(404).json({ error: "Targer user not affected by delete" });
+
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Server Error!!! on remove user" });
+    }
+}
 

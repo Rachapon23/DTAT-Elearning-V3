@@ -12,8 +12,7 @@ const {
     listPlantNoDuplicate,
 } = require('../controllers/plantController')
 
-// non-system-user
-router.get("/list-plant", listPlant);
+router.get("/list-plant", checkUser, listPlant);
 router.get("/list-plant/sp/no-duplicate", checkUser, checkTeacher, listPlantNoDuplicate);
 
 // admin

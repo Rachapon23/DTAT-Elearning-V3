@@ -189,7 +189,7 @@ const Course_info = () => {
           <Form.Item label="Cover Image">
             <Row justify={"center"} align={"middle"}>
               <Col>
-                {courseData?.image?.name === null ?
+                {courseData?.image?.name === null && courseData?.image?.name === "" ?
                   (
                     <>{renderUploadButton()}</>
                   ) : (

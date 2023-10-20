@@ -82,12 +82,12 @@ const HomePrivate = () => {
     else if (isScreenCondition1) width = 290
 
     return (
-      <div className="row-content">
+      <div key={`${index}-pc`} className="row-content">
         {
           coursePrivate.length > 0 ?
             (
-              coursePrivate.slice(index, index + GROUP_NUMBER).map((data) => (
-                <Col span={6} >
+              coursePrivate.slice(index, index + GROUP_NUMBER).map((data, index) => (
+                <Col key={`${index}-data-pc`} span={6} >
                   <div className="col-content">
                     <CardCourse
                       onClick={(e) => handleClickCourse(e, data)}
@@ -105,7 +105,7 @@ const HomePrivate = () => {
             :
             (
               arrayTemplate.slice(index, index + GROUP_NUMBER).map(() => (
-                <div className="col-content">
+                <div key={`${index}-empty-mobile`} className="col-content">
                   <CardCourse data={DEFAULT_DATA} />
                 </div>
               ))
@@ -120,15 +120,15 @@ const HomePrivate = () => {
     // if (index % GROUP_NUMBER !== 0) return null
 
     return (
-      <div className="row-content">
+      <div key={`${index}-mobile`} className="row-content">
         {
           coursePrivate.length > 0 ?
             (
               <div style={{ overflowX: 'scroll', width: '80%', height: '100%' }}>
                 <div style={{ display: 'flex', alignContent: 'baseline' }}>
                   {
-                    coursePrivate.map((data) => (
-                      <div className="col-content" style={{ paddingRight: 20 }}>
+                    coursePrivate.map((data, index) => (
+                      <div key={`${index}-data-mobile`} className="col-content" style={{ paddingRight: 20 }}>
                         <CardCourse
                           onClick={(e) => handleClickCourse(e, data)}
                           data={{
@@ -149,8 +149,8 @@ const HomePrivate = () => {
               <div style={{ overflowX: 'scroll', width: '80%', height: '100%' }}>
                 <div style={{ display: 'flex', alignContent: 'baseline' }}>
                   {
-                    arrayTemplate.map(() => (
-                      <div className="col-content" style={{ paddingRight: 20 }}>
+                    arrayTemplate.map((_, index) => (
+                      <div key={`${index}-empty-mobile`} className="col-content" style={{ paddingRight: 20 }}>
                         <CardCourse data={DEFAULT_DATA} />
                       </div>
                     ))

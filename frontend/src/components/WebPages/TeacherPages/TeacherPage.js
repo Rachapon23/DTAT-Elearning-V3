@@ -30,6 +30,7 @@ import Calendar from "./TeacherCalendar/Calendar";
 // for haeder or navbar
 import Navbar from "../Navbar/Navbar";
 import { NavbarProvider } from "../Navbar/NavbarContext";
+import Course from "./TeacherCourse/CourseManage/Course";
 
 const { Sider, Content } = Layout;
 const { Title, Text } = Typography;
@@ -173,6 +174,8 @@ const App = () => {
             <Courses />
           </TeacherCourseProvider>
         );
+      case "create-course":
+        return <Course />
       case "list-exam":
         return <Exames />;
       case "create-exam":

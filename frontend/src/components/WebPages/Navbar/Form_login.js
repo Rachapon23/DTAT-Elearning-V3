@@ -132,7 +132,7 @@ const Form_login = ({ setStatus }) => {
         </Button>
         {/* Or <a href="">register now!</a> */}
       </Form.Item>
-      <Form.Item>
+      {/* <Form.Item>
         <Row justify={"center"}>
           <Col>
             <p>Don't have an account ?</p>
@@ -146,7 +146,7 @@ const Form_login = ({ setStatus }) => {
             </Link>
           </Col>
         </Row>
-      </Form.Item>
+      </Form.Item> */}
     </>
   );
 };

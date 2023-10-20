@@ -12,8 +12,7 @@ const {
 } = require('../controllers/departmentController')
 
 
-// non-system-user
-router.get('/list-department', listDepartment)
+router.get('/list-department', checkUser, listDepartment)
 
 // admin
 router.post("/create-department", checkUser, checkAdmin, createDepartment);
