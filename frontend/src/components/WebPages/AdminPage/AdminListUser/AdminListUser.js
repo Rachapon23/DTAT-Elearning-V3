@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from "react";
 import "../AdminHome/adminhome.css";
-import { Button, Input, Select, Table, Typography, Breadcrumb, Row, Col, Modal } from "antd";
-import { listUser } from "../../../../function/Admin/adminFunction";
+import { Button, Input, Select, Table, Typography, Breadcrumb, Row, Col, Modal, Popconfirm } from "antd";
+import { listUser, removeUser } from "../../../../function/Admin/adminFunction";
 import AdminRegisterUserModal from "./AdminRegisterUserModal.js"
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import AdminEditUserModal from "./AdminEditUserModal";
+import MediaQuery from "react-responsive";
+
 const { Title } = Typography;
 
 const AdminListUser = () => {
 
   const [isModalOpenAuth, setIsModalOpenAuth] = useState(false);
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
+  const [selectedData, setSelectedData] = useState();
+  const [opendPopup, setOpenPopup] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const [users, setUsers] = useState([
     {
@@ -59,13 +66,12 @@ const AdminListUser = () => {
       render: (data) => data?.role?.name,
     },
     {
-      title: `Edit`,
+      title: `Reset Password`,
       align: "center",
       width: "10%",
       render: (data) => {
-        // TODO: implement delete user
         return (
-          <Button>
+          <Button onClick={() => { setSelectedData(data); setIsModalEditOpen(true); }}>
             <EditOutlined />
           </Button>
         )
@@ -76,9 +82,17 @@ const AdminListUser = () => {
       align: "center",
       width: "10%",
       render: (data) => {
-        // TODO: implement delete user
+        const user_id = data?._id
+        const role = data?.role?.name
         return (
-          <Button>
+          <Button
+            disabled={role === 'admin'}
+            danger
+            onClick={() => {
+              setOpenPopup(true)
+              setDeleteId(user_id)
+            }}
+          >
             <DeleteOutlined />
           </Button>
         )
@@ -102,8 +116,29 @@ const AdminListUser = () => {
       )
   }
 
+
+  const onDeleteUser = async () => {
+    console.log(deleteId)
+    await removeUser(sessionStorage.getItem('token'), deleteId)
+      .then(
+        (res) => {
+          console.log(res)
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err)
+        }
+      )
+    setOpenPopup(false)
+    setIsChanged(true)
+  }
+
   useEffect(() => {
     fetchUsers()
+    return () => {
+      setIsChanged(false)
+    }
   }, [isChanged])
 
   return (
@@ -112,7 +147,7 @@ const AdminListUser = () => {
         <Row justify={'space-between'}>
           <Col flex={'auto'}>
             <Title level={5} >
-              <p>List User</p>
+              <p>Manage User</p>
             </Title>
           </Col>
           <Col >
@@ -148,6 +183,37 @@ const AdminListUser = () => {
         }}
       >
         <AdminRegisterUserModal onChange={() => setIsChanged(true)} />
+      </Modal>
+
+      <Modal
+        open={isModalEditOpen}
+        onCancel={() => setIsModalEditOpen(false)}
+        footer={[]}
+        bodyStyle={{
+          paddingTop: "50px",
+        }}
+        className="modal-auth"
+        style={{
+          top: 20,
+        }}
+      >
+        <AdminEditUserModal data={selectedData} />
+      </Modal>
+
+      <Modal
+        open={opendPopup}
+        onCancel={() => setOpenPopup(false)}
+        onOk={() => onDeleteUser()}
+        bodyStyle={{
+          paddingTop: "10px",
+        }}
+        className="modal-auth"
+        title="Delete user"
+        style={{
+          top: 20,
+        }}
+      >
+        Are you sure to delete this user?
       </Modal>
 
     </Row>

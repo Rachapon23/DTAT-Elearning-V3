@@ -152,3 +152,11 @@ export const removeDepartment = async (authtoken, id) =>
             authtoken,
         }
     });
+
+// DELETE: /remove-user/:id
+export const removeUser = async (authtoken, id) =>
+    await axios.delete(process.env.REACT_APP_API + `/remove-user/${id}`, {
+        headers: {
+            authtoken,
+        }
+    });

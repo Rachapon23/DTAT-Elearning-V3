@@ -6,6 +6,7 @@ import { MenuOutlined } from "@ant-design/icons"
 import { NavbarContext } from "./NavbarContext";
 import Auth from "./Auth";
 import { useMediaQuery } from "react-responsive";
+import { updateTimeusage } from "../../../function/func";
 const { Header } = Layout;
 const { Title, Text } = Typography;
 
@@ -20,7 +21,7 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const [open, setOpen] = useState(false)
-  
+
   const {
     isModalOpenAuth,
     setIsModalOpenAuth,
@@ -90,6 +91,9 @@ const Navbar = () => {
                   touchAction: "inherit",
                 }}
                 onClick={() => {
+                  const now = new Date().getTime()
+                  const timeusage = { now }
+                  updateTimeusage(sessionStorage.getItem("token"), sessionStorage.getItem("user_id"), { timeusage })
                   sessionStorage.clear();
                   window.location.reload();
                 }}
@@ -263,7 +267,7 @@ const Navbar = () => {
             top: 20,
           }}
         >
-          <Auth/>
+          <Auth />
         </Modal>
       </Header>
     );
