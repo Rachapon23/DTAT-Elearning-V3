@@ -155,7 +155,7 @@ const App = () => {
       getItem("Private Course", "private-course"),
     ]),
     getItem("Register User", "registeruser", <CalendarOutlined />),
-    getItem("List User", "listuser", <HomeOutlined />),
+    getItem("Manage User", "listuser", <HomeOutlined />),
     getItem("Manage Teacher", "manageteacher", <HomeOutlined />),
     getItem("Manage Student", "managestudent", <CalendarOutlined />),
   ];
