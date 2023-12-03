@@ -165,6 +165,7 @@ const AdminListUser = () => {
                 showSizeChanger: true,
                 pageSizeOptions: ["10", "20", "30"],
               }}
+              rowKey="_id"
             />
           </Col>
         </Row>
@@ -197,7 +198,7 @@ const AdminListUser = () => {
           top: 20,
         }}
       >
-        <AdminEditUserModal data={selectedData} />
+        <AdminEditUserModal data={selectedData} onChange={() => setIsChanged(true)}/>
       </Modal>
 
       <Modal

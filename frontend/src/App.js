@@ -25,7 +25,7 @@ function App() {
     }
     updateTimeusage(sessionStorage.getItem("token"), sessionStorage.getItem("user_id"), { timeusage })
   }
-  
+
   return (
     <div>
       <Routes>
@@ -41,6 +41,7 @@ function App() {
 
         <Route element={<AdminRoute />}>
           <Route path="/admin/page/:params" element={<AdminPage />} />
+          <Route path="/admin/page/:params/:id" element={<AdminPage />} />
           {/* <Route path="/teacher/courses" element={<Courses/>} /> */}
           {/* <Route path="/teacher/exams" element={<Exames/>} /> */}
           {/* <Route path="/teacher/calendar" element={<Calendar/>} /> */}
@@ -54,7 +55,6 @@ function App() {
           <Route path="/teacher/exams/create" element={<ExamCreate />} />
         </Route>
       </Routes>
-
 
       <DevNav />
 

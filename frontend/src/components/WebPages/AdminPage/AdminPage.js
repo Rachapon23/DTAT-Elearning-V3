@@ -27,7 +27,9 @@ import AdminManageHome from "./AdminManageHome/AdminManageHome";
 import AdminListUser from "./AdminListUser/AdminListUser";
 import AdminManageTeacher from "./AdminManageTeacher/AdminManageTeacher";
 import AdminManageStudent from "./AdminManageStudent/AdminManageStudent";
-import AdminRegisterUser from "./AdminRegisterUser/AdminRegisterUser";
+import AdminTimeTracking from "./AdminTimeTracking/AdminTimeTracking";
+import AdminTimeDetails from "./AdminTimeTracking/AdminTimeDetails";
+import AdminTimeDetail from "./AdminTimeTracking/AdminTimeDetail"
 
 import { AdminProvider } from "./AdminManageHome/AdminManageContext";
 
@@ -154,7 +156,7 @@ const App = () => {
       getItem("Public Course", "public-course"),
       getItem("Private Course", "private-course"),
     ]),
-    getItem("Register User", "registeruser", <CalendarOutlined />),
+    getItem("Time Tracking", "timetracking", <CalendarOutlined />),
     getItem("Manage User", "listuser", <HomeOutlined />),
     getItem("Manage Teacher", "manageteacher", <HomeOutlined />),
     getItem("Manage Student", "managestudent", <CalendarOutlined />),
@@ -190,8 +192,12 @@ const App = () => {
         return <AdminManageTeacher />;
       case "managestudent":
         return <AdminManageStudent />;
-      case 'registeruser':
-        return <AdminRegisterUser />;
+      case 'timetracking':
+        return <AdminTimeTracking />;
+      case 'timedetails':
+        return <AdminTimeDetails />;
+      case 'timedetail':
+        return <AdminTimeDetail />;
       default:
         return <p className="success">404 not found ... </p>;
     }
@@ -202,7 +208,7 @@ const App = () => {
 
       <Layout className="site-layout-admin">
         <Row>
-          <Col style={{zIndex: 1001}}>
+          <Col style={{ zIndex: 1001 }}>
             <Sider
               style={{ height: '100%' }}
               className="sider-admin"
