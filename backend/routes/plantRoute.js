@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 //middleware
-const { checkUser, checkTeacher, checkAdmin } = require('../middleware/middleware')
+const { checkUser, updateTimeUsage, checkTeacher, checkAdmin } = require('../middleware/middleware')
 
 //controller
 const {
@@ -12,11 +12,11 @@ const {
     listPlantNoDuplicate,
 } = require('../controllers/plantController')
 
-router.get("/list-plant", checkUser, listPlant);
-router.get("/list-plant/sp/no-duplicate", checkUser, checkTeacher, listPlantNoDuplicate);
+router.get("/list-plant", checkUser, updateTimeUsage, listPlant);
+router.get("/list-plant/sp/no-duplicate", checkUser, updateTimeUsage, checkTeacher, listPlantNoDuplicate);
 
 // admin
-router.post("/create-plant", checkUser, checkAdmin, createPlant);
-router.delete("/remove-plant/:id", checkUser, checkAdmin, removePlant);
+router.post("/create-plant", checkUser, updateTimeUsage, checkAdmin, createPlant);
+router.delete("/remove-plant/:id", checkUser, updateTimeUsage, checkAdmin, removePlant);
 
 module.exports = router;

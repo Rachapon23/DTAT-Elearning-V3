@@ -3,7 +3,7 @@
 const express = require('express')
 const router = express.Router()
 
-const { checkUser, checkTeacher } = require('../middleware/middleware')
+const { checkUser, updateTimeUsage, checkTeacher } = require('../middleware/middleware')
 const {
     createCalendar,
     // listCalendarRole,
@@ -16,17 +16,17 @@ const {
 
 
 // all
-// router.get("/list-calendar/role/:id", checkUser, checkTeacher, listCalendarRole);
+// router.get("/list-calendar/role/:id", checkUser, updateTimeUsage, checkTeacher, listCalendarRole);
 
 // teacher
-router.post("/create-calendar/course/:id", checkUser, checkTeacher, createCalendar);
-router.get("/list-calendar", checkUser, checkTeacher, listCalendar);
-router.put("/update-calendar/:id", checkUser, checkTeacher, updateCalendar);
-router.delete("/delete-calendar/:id", checkUser, checkTeacher, deleteCalendar);
+router.post("/create-calendar/course/:id", checkUser, updateTimeUsage, checkTeacher, createCalendar);
+router.get("/list-calendar", checkUser, updateTimeUsage, checkTeacher, listCalendar);
+router.put("/update-calendar/:id", checkUser, updateTimeUsage, checkTeacher, updateCalendar);
+router.delete("/delete-calendar/:id", checkUser, updateTimeUsage, checkTeacher, deleteCalendar);
 
 // student
-router.get("/list-calendar-student", checkUser, listCalendarStudent);
-router.get("/get-calendar/course/:id", checkUser, getCalendarByCourseId)
+router.get("/list-calendar-student", checkUser, updateTimeUsage, listCalendarStudent);
+router.get("/get-calendar/course/:id", checkUser, updateTimeUsage, getCalendarByCourseId)
 
 
 

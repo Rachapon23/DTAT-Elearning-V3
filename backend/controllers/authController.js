@@ -7,6 +7,7 @@ const Role = require("../models/role")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const TimeUsage = require('../models/timeUsage')
+const { dev } = require('#devUtil.js')
 
 // POST: /register
 exports.register = async (req, res) => {
@@ -83,9 +84,10 @@ exports.login = async (req, res) => {
   try {
     // extract data from request
     const { employee, password } = req.body;
+    // dev.log({ employee: req.body.employee })
 
     // find user
-    var user = await User.findOneAndUpdate({ employee }, { new: true }).populate("role", "name -_id");
+    const user = await User.findOneAndUpdate({ employee }, { new: true }).populate("role", "name -_id");
     if (user && user.enabled) {
 
       // check password
@@ -95,37 +97,45 @@ exports.login = async (req, res) => {
       }
 
       // create TimeUsage if not exist
-      const timeUsage = await TimeUsage.findOne({ user: user._id })
+      // const timeUsage = await TimeUsage.findOne({ user: user._id })
 
       const findDate = new Date().setHours(24, 0, 0, 0)
       const logged_in_at = new Date()
       const hasTimeUsage = await TimeUsage.findOne({ user: user._id, date: findDate })
       if (!hasTimeUsage) {
-        await TimeUsage.create({
+        const timeUsage = await TimeUsage.create({
           user: user._id,
           date: findDate,
           timeusage: [{
             logged_in_at: logged_in_at,
-            diff: null,
+            diff: 0,
             used_time: null,
           }]
         })
+        user.timeusage = timeUsage
+        user.markModified('timeusage')
+        user.save()
       }
       else {
-        const length = timeUsage.timeusage?.length
-        timeUsage.timeusage[length] = {
+        const length = hasTimeUsage.timeusage?.length
+        hasTimeUsage.timeusage[length] = {
           logged_in_at: logged_in_at,
           diff: null,
           used_time: null,
         }
-        timeUsage.markModified('timeusage')
-        timeUsage.save()
+        hasTimeUsage.markModified('timeusage')
+        hasTimeUsage.save()
       }
+
+      // update time useage to user
+
 
       // create payload
       const payload = {
         user: {
           firstname: user.firstname,
+          lastname: user.lastname,
+          employee: user.employee,
           role: user.role.name,
           user_id: user._id,
         },
