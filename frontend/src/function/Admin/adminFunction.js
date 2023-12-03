@@ -160,3 +160,24 @@ export const removeUser = async (authtoken, id) =>
             authtoken,
         }
     });
+
+// POST:  /update-password/:id
+export const updateResetPassword = async (authtoken, id, data) =>
+    await axios.put(process.env.REACT_APP_API + `/update-password/${id}`, data, {
+        headers: {
+            authtoken,
+        }
+    });
+
+// GET:  /list-timeusage
+export const listTimeusage = async (authtoken, id, date) => {
+    console.log(id, date)
+    let reqStr = `/list-timeusage/user/${id}`
+    if (date) reqStr += `?date=${date}`
+    return await axios.get(process.env.REACT_APP_API + reqStr, {
+        headers: {
+            authtoken,
+        }
+    });
+}
+    

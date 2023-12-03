@@ -23,6 +23,7 @@ import {
 } from "../../../../function/auth";
 import { useForm } from "antd/es/form/Form";
 import InputReadOnly from "../../../common/Input/InputReadOnly";
+import { updateResetPassword } from "../../../../function/Admin/adminFunction";
 // import { NavbarContext } from "./NavbarContext";
 
 const { Link, Title } = Typography;
@@ -30,18 +31,13 @@ const { Option } = Select;
 
 const AdminEditUserModal = ({ data, onChange }) => {
     // const [departments, setDepartments] = useState([]);
-    
     const [_data, _setData] = useState({ ...data })
     console.log("data", data)
 
     const [plants, setPlants] = useState([]);
-    const [valueRegister, setValueRegister] = useState({
-        employee: null,
-        password: null,
+    const [valueReset, setValueReset] = useState({
+        new_password: null,
         confirm: null,
-        plant: null,
-        firstname: null,
-        lastname: null
     })
 
     const [messageApi, notifyContextHolder] = message.useMessage();
@@ -57,13 +53,13 @@ const AdminEditUserModal = ({ data, onChange }) => {
 
 
     const handleInput = (e) => {
-        setValueRegister({ ...valueRegister, [e.target.name]: e.target.value });
+        setValueReset({ ...valueReset, [e.target.name]: e.target.value });
     };
     const handleSelectPlant = (e) => {
-        setValueRegister({ ...valueRegister, 'plant': e });
+        setValueReset({ ...valueReset, 'plant': e });
     };
     // const handleSelectDepartment = (e) => {
-    //   setValueRegister({ ...valueRegister, 'department': e });
+    //   setValueReset({ ...valueReset, 'department': e });
     // };
 
     // const fetchDepartment = async () => {
@@ -93,19 +89,20 @@ const AdminEditUserModal = ({ data, onChange }) => {
         fetchPlant();
     }, []);
 
-    const onRegister = async () => {
-
+    const onReset = async () => {
         try {
             await form.validateFields()
-            for (let key in valueRegister) {
-                if (!valueRegister[key]) return
+            for (let key in valueReset) {
+                console.log(valueReset[key])
+
+                if (!valueReset[key]) return
             }
         }
         catch (e) {
             if (e?.errorFields?.length > 0) return
         }
 
-        await register(sessionStorage.getItem("token"), valueRegister)
+        await updateResetPassword(sessionStorage.getItem("token"), data._id, valueReset)
             .then((res) => {
                 onChange()
                 notify("success", res.data.data)
@@ -153,7 +150,7 @@ const AdminEditUserModal = ({ data, onChange }) => {
 
 
             <Form.Item
-                name="password"
+                name="new_password"
                 rules={[
                     {
                         required: true,
@@ -162,7 +159,7 @@ const AdminEditUserModal = ({ data, onChange }) => {
                 ]}
             >
                 <Input.Password
-                    name="password"
+                    name="new_password"
                     prefix={<LockOutlined />}
                     placeholder="Password"
                     onChange={handleInput}
@@ -171,7 +168,7 @@ const AdminEditUserModal = ({ data, onChange }) => {
 
             <Form.Item
                 name="confirm"
-                dependencies={['password']}
+                dependencies={['new_password']}
                 // validateTrigger="onBlur"
                 rules={[
                     {
@@ -180,7 +177,7 @@ const AdminEditUserModal = ({ data, onChange }) => {
                     },
                     ({ getFieldValue }) => ({
                         validator(_, value) {
-                            if (!value || getFieldValue('password') === value) {
+                            if (!value || getFieldValue('new_password') === value) {
                                 return Promise.resolve();
                             }
                             return Promise.reject(new Error('Confirm password do not match with Password'));
@@ -212,9 +209,9 @@ const AdminEditUserModal = ({ data, onChange }) => {
                         type="primary"
                         htmlType="submit"
                         block
-                        onClick={onRegister}
+                        onClick={onReset}
                     >
-                        Register
+                        Reset
                     </Button>
                 </Col>
             </Row>

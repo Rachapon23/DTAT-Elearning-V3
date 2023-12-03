@@ -114,7 +114,6 @@ const DoExam = () => {
                 (res) => {
                     const data = res.data.data
                     setResult(data)
-                    console.log("da dadadadadad: ", data)
                 }
             )
             .catch(
@@ -204,7 +203,11 @@ const DoExam = () => {
     }
 
     const renderContentMobile = () => {
-        if (!result) return <>Please wait...</>
+        if (!result) return (
+            <Card style={{width: '100%'}}>
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            </Card>
+        )
         if (result?.completed) {
             return (
                 <Col flex={"auto"}>
