@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 //middleware
-const { checkUser, checkAdmin } = require('../middleware/middleware')
+const { checkUser, updateTimeUsage, checkAdmin } = require('../middleware/middleware')
 
 //controller
 const {
@@ -12,11 +12,11 @@ const {
 } = require('../controllers/departmentController')
 
 
-router.get('/list-department', checkUser, listDepartment)
+router.get('/list-department', checkUser, updateTimeUsage, listDepartment)
 
 // admin
-router.post("/create-department", checkUser, checkAdmin, createDepartment);
-router.delete("/remove-department/:id", checkUser, checkAdmin, removeDepartment);
+router.post("/create-department", checkUser, updateTimeUsage, checkAdmin, createDepartment);
+router.delete("/remove-department/:id", checkUser, updateTimeUsage, checkAdmin, removeDepartment);
 
 
 

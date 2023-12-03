@@ -2,14 +2,15 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const mongoose = require('mongoose')
+const mongoSanitize = require('express-mongo-sanitize')
 const { readdirSync } = require('fs')
-const { loadData } = require("./mock/_loader")
-const { checkUser, checkFileAccess } = require('./middleware/middleware')
-
+// const { loadData } = require("./mock/_loader")
+const { checkFileAccess } = require('./middleware/middleware')
 require('dotenv').config()
 
 const app = express()
 module.exports = { app, express }
+
 
 // Static file for displat image
 app.use(express.static('public'))
@@ -20,8 +21,8 @@ app.use('/uploads/:path', checkFileAccess,
     }
 )
 
-
 //connect cloud Database
+mongoose.set('strictQuery', false);
 mongoose.connect(process.env.DATABASE2, {
     useNewUrlParser: true,
     useUnifiedTopology: false,
@@ -36,6 +37,9 @@ mongoose.connect(process.env.DATABASE2, {
 
 //midleware
 app.use(express.json())
+app.use(mongoSanitize({
+    replaceWith: '_',
+}))
 app.use(cors())
 app.use(morgan('dev'))
 

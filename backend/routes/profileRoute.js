@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 //middleware
-const { checkUser, checkTeacher, checkAdmin } = require('../middleware/middleware')
+const { checkUser, updateTimeUsage, checkTeacher, checkAdmin } = require('../middleware/middleware')
 const {
     getProfileByUserId,
     updateProfile,
@@ -10,10 +10,10 @@ const {
 } = require('../controllers/profileController')
 
 // user
-router.get("/get-profile/user/:id", checkUser, getProfileByUserId);
-router.put("/update-profile/:id", checkUser, updateProfile);
+router.get("/get-profile/user/:id", checkUser, updateTimeUsage, getProfileByUserId);
+router.put("/update-profile/:id", checkUser, updateTimeUsage, updateProfile);
 
 // wait for review
-// router.put("/update-target", checkUser, checkTeacher, updateTarget);
+// router.put("/update-target", checkUser, updateTimeUsage, checkTeacher, updateTarget);
 
 module.exports = router;

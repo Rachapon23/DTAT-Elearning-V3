@@ -27,14 +27,9 @@ const UserSchema = new mongoose.Schema({
         default: true,
     },
     timeusage: {
-        last_use: {
-            type: Number,
-            default: 0
-        },
-        used_time: {
-            type: String,
-            default: null
-        }
+        type: ObjectId,
+        ref: "timeUsage",
+        default: null,
     },
     profile: {
         type: ObjectId,

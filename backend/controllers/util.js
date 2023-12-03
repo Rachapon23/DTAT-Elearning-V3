@@ -136,9 +136,9 @@ exports.validateQuery = (
     if (!fetchParams.success) return { success: fetchParams.success, code: fetchParams.code, message: fetchParams.message, options: null }
     if (!selectParams.success) return { success: selectParams.success, code: selectParams.code, message: selectParams.message, options: null }
 
-    console.log("-->> ", searchParams, NATIVE_OPTIONS?.teacher?.search && Object.keys(NATIVE_OPTIONS?.teacher?.search).length === 0, NATIVE_OPTIONS?.teacher?.search)
+    // console.log("-->> ", searchParams, NATIVE_OPTIONS?.teacher?.search && Object.keys(NATIVE_OPTIONS?.teacher?.search).length === 0, NATIVE_OPTIONS?.teacher?.search)
 
-    // checkrole for default query
+    // check role for default query
     if (!disableRole) {
         switch (role) {
             case "admin":
@@ -193,6 +193,18 @@ exports.validateQuery = (
     // console.log("-->> ", fetchParams)
     // console.log("-->> ", subPropsParams)
     // console.log("-->> ", selectParams)
+    if(debug) console.log('validate result:', {
+        success: true,
+        code: 200,
+        message: null,
+        options: {
+            fieldParams: fieldParams?.data,
+            fetchParams: fetchParams?.data,
+            selectParams: selectParams?.data,
+            searchParams: searchParams?.data,
+            subPropsParams: subPropsParams?.data,
+        },
+    })
 
     return {
         success: true,
@@ -338,7 +350,6 @@ function generateFetchs(fetch = "", allowed = [], adminBypass = false) {
     if (arrayFetch.length < 1) return { success: false, code: 500, message: "2????", data: null }
 
 
-
     for (let i = 0; i < arrayFetch.length; i++) {
         // console.log(allowed, arrayFetch[i])
         if (!allowed.includes(arrayFetch[i])) return { success: false, code: 400, message: "Query params not allowed (array)", data: null }
@@ -356,5 +367,5 @@ exports.getDiffTimePeriod = (diff) => {
     minutes = (minutes < 10) ? "0" + minutes : minutes;
     seconds = (seconds < 10) ? "0" + seconds : seconds;
 
-    return`${hours}:${minutes}:${seconds}.${milliseconds}`
+    return `${hours}:${minutes}:${seconds}.${milliseconds}`
 } 
