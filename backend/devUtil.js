@@ -3,6 +3,9 @@ exports.dev = {
         if (process.env.ENV === 'DEV') {
             console.log(_getFileName(), ...params)
         }
+    },
+    testAPI: (_, res) => {
+        res.json({ data: 'OK' })
     }
 }
 

@@ -8,6 +8,7 @@ const { checkFileAccess } = require('./middleware/middleware')
 const { default: helmet } = require('helmet')
 require('dotenv').config()
 // const { loadData } = require("./mock/_loader")
+// const { dev } = require('./devUtil')
 
 const app = express()
 module.exports = { app, express }
@@ -34,6 +35,9 @@ mongoose.connect(process.env.DATABASE2, {
 
 // data first load when start server
 // loadData()
+
+// test API
+// app.use('/api/test', (_, res) => dev.testAPI(_, res))
 
 
 //midleware

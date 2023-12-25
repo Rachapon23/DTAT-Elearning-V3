@@ -14,8 +14,8 @@ exports.loadUser = async () => {
         {
             employee: "6100319",
             department: await Department.findOne({ id: "919323" }).select("_id"),
-            firstname: "Rachapon",
-            lastname: "Pongkittisak",
+            firstname: "Ringerton",
+            lastname: "Piewood",
             profile: await new Profile({
                 image: null,
                 tel: "0999999999",
