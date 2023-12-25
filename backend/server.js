@@ -4,9 +4,10 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const mongoSanitize = require('express-mongo-sanitize')
 const { readdirSync } = require('fs')
-// const { loadData } = require("./mock/_loader")
 const { checkFileAccess } = require('./middleware/middleware')
+const { default: helmet } = require('helmet')
 require('dotenv').config()
+// const { loadData } = require("./mock/_loader")
 
 const app = express()
 module.exports = { app, express }
@@ -42,6 +43,7 @@ app.use(mongoSanitize({
 }))
 app.use(cors())
 app.use(morgan('dev'))
+app.use(helmet())
 
 
 
